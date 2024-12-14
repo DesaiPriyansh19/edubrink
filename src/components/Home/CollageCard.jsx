@@ -120,12 +120,12 @@ const CollegeCard = ({ college }) => (
 );
 
 const CollegeCarousel = () => (<>
-<div className="flex items-center">
+<div className="grid grid-cols-2 md:flex items-center justify-start ">
     <h1 className="text-start text-3xl font-bold pl-4">Featured Universites</h1> 
  <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" /> </div>
-<p className="text-start font-normal text-[.9rem] pl-4">
+<p className="text-start font-normal text-[.9rem] px-0 pl-4 pr-1 md:pr-[50%]">
     Effortlessly explore diverse courses, find programs tailored to your academic 
-    <br></br> goals, compare study opportunities, and make informed decisions</p>
+ goals, compare study opportunities, and make informed decisions</p>
     <div className="w-full flex justify-end items-center px-4"> 
           <button className="bg-white hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
         View All 

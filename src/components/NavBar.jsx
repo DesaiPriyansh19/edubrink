@@ -11,7 +11,7 @@ const NavBar = () => {
   return (
     <nav className="flex py-4 items-center w-[98%] my-3 mx-auto  justify-between  px-4  text-sm bg-white rounded-3xl shadow-md">
       {/* Logo */}
-      <h2 className="text-2xl font-bold bg-white text-gray-800">Edubrink</h2>
+      <h2 className="text-2xl font-bold bg-white cursor-pointer pointer text-gray-800"><Link to={"/"}>Edubrink</Link></h2>
 
       {/* Search Bar */}
       <div className="flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4">
@@ -155,34 +155,21 @@ const NavBar = () => {
             onClick={() => setShowAboutDropdown(!showAboutDropdown)}
             className="flex items-center space-x-1 bg-white text-gray-800"
           >
-            <span className=" bg-white font-medium ">About</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-4 h-4  bg-white "
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
+            <span className=" bg-white font-medium "><Link to="/about">About</Link></span>
+          
           </button>
-          {showAboutDropdown && (
-            <ul className="absolute right-0 mt-2 bg-white rounded-md shadow-lg">
-              <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
-                Our Team
-              </li>
-              <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
-                Careers
-              </li>
-              <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
-                Contact Us
-              </li>
-            </ul>
+          {showAboutDropdown && (<></>
+            // <ul className="absolute right-0 mt-2 bg-white rounded-md shadow-lg">
+            //   <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
+            //     Our Team
+            //   </li>
+            //   <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
+            //     Careers
+            //   </li>
+            //   <li className="px-4 py-2  bg-white  hover:bg-gray-100 cursor-pointer">
+            //     Contact Us
+            //   </li>
+            // </ul>
           )}
         </div>
 

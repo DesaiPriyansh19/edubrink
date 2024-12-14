@@ -8,7 +8,7 @@ import AboutHeader from "./AboutHeader";
 
 const AboutPage = () => {
   return (
-    <div className="font-sans">
+    <div className="font-sans m-0 p-0">
       {/* Hero Section */}
       <AboutHeader />
 

@@ -4,6 +4,8 @@ import CarouselSection from './CarouselSection'
 import OurStatastics from './OurStatastics'
 import HowToApply from './HowToApply'
 import CollegeCarousel from './CollageCard'
+import HowWeWork from './HowWeWork'
+import OurCourses from './OurCourses'
 
 function HomePage() {
   return (
@@ -13,6 +15,8 @@ function HomePage() {
 <OurStatastics/>
 <HowToApply/>
 <CollegeCarousel/>
+<HowWeWork/> 
+<OurCourses/>
 </>
   )
 }
