@@ -1,13 +1,9 @@
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import GoogleIconSvg from "../svg/GoogleIconSvg";
 
-
-export default function GoogleButton() {
-  const navigate = useNavigate();
-
-
+export default function GoogleButton({onClose}) {
   const googleRespone = async (authResult) => {
     try {
       const response = await axios.get(
@@ -22,8 +18,7 @@ export default function GoogleButton() {
           token: response.data.token,
         };
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
-        navigate("/");
+        onClose();
         console.log("User Data:", response.data);
       } else if (response.data && response.data.message) {
         console.warn("Message from backend:", response.data.message);
@@ -48,10 +43,14 @@ export default function GoogleButton() {
   return (
     <div>
       <button
-        className="w-full mb-8 text-lg font-medium bg-inherit border-2 border-black p-3 rounded-xl"
+        className=" py-2 border w-full rounded-full flex items-center justify-center  text-sm sm:text-base cursor-pointer font-medium hover:underline"
+        style={{ gap: "5px" }}
         onClick={googleLogin}
       >
-        Sign Up with Google
+        <span>
+          <GoogleIconSvg />
+        </span>
+        <span>Sign Up with Google</span>
       </button>
     </div>
   );
