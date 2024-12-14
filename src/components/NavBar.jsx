@@ -227,7 +227,7 @@ const NavBar = () => {
 
       {/* Contact Us Button */}
       <button
-        className="hidden md:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
+        className="hidden md:flex px-4 py-2 w-auto text-sm text-white rounded-full hover:bg-gradient-to-l bg-gradient-to-r from-[#380C95] to-[#E15754]"
       >
         Contact Us
       </button>
