@@ -54,7 +54,7 @@ const colleges = [
 ];
 
 const CollegeCard = ({ college }) => (
-  <div className="relative w-auto  border rounded-xl shadow-md bg-white">
+  <div className="relative w-auto mt-3 border rounded-xl shadow-md bg-white">
   {/* Most Popular Badge */}
    <div className="px-3 pr-3 sm:pr-8 md:pr-9 lg:pr-14 p-4"> 
     <div className="absolute top-0 right-0 bg-red-500 text-white text-sm px-2 py-1 rounded-bl-[4px] rounded-tr-xl">
@@ -73,10 +73,10 @@ const CollegeCard = ({ college }) => (
           <img src={college.flag} alt="Flag" className="w-5 h-5 rounded-full mr-1" />
           {college.location}
         </p>
-        <p  className="text-[.8rem] font-medium text-black  flex items-center mt-1">
+     <div  className="flex items-center mt-1">   
            <span className="w-5 h-5 rounded-full mr-1" >{college.ptivetLogo} </span>
-              Private University
-            </p>
+           <p  className="text-[.8rem] font-medium text-black  ">  Private University
+            </p></div>
       </div>
     </div>
 
@@ -120,14 +120,14 @@ const CollegeCard = ({ college }) => (
 );
 
 const CollegeCarousel = () => (<>
-<div className="grid grid-cols-2 md:flex items-center justify-start ">
+<div className="grid grid-cols-2 md:flex items-center mt-6 mb-2 justify-start ">
     <h1 className="text-start text-3xl font-bold pl-4">Featured Universites</h1> 
  <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" /> </div>
 <p className="text-start font-normal text-[.9rem] px-0 pl-4 pr-1 md:pr-[50%]">
     Effortlessly explore diverse courses, find programs tailored to your academic 
  goals, compare study opportunities, and make informed decisions</p>
     <div className="w-full flex justify-end items-center px-4"> 
-          <button className="bg-white hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+          <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
         View All 
       </button>
       </div>

@@ -36,17 +36,18 @@ const AboutFQA = () => {
     },
   ];
 
-  return (
-    <div className="bg-white w-full max-w-7xl mx-auto p-6">
-      <div className="faq-outer-text">
-        <h2 className="text-4xl font-bold mb-6">FAQ</h2>
-        <p className="text-gray-600 mb-8">
+  return (<>
+   <div className="faq-outer-text max-w-7xl  px-6  ">
+        <h2 className="text-4xl font-bold mb-2 mt-5 ">FAQ</h2>
+        <p className="text-gray-600 mb-8 pr-[10%] md:pr-[50%]">
           Our Study Abroad FAQ covers everything you need to know—from choosing
           the right destination and applying to universities, to visa
           requirements.
         </p>
       </div>
-      <div className="space-y-4">
+    <div className=" w-[90%] rounded-3xl mb-16 mx-auto bg-white  p-6">
+     
+      <div className="space-y-4  bg-white">
         {faqItems.map((item) => (
           <div
             key={item.id}
@@ -81,6 +82,7 @@ const AboutFQA = () => {
         ))}
       </div>
     </div>
+    </>
   );
 };
 

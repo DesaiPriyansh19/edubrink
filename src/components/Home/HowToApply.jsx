@@ -44,24 +44,24 @@ function HowToApply() {
         compare study options, and receive guidance throughout the application.
       </p>
       {/* Four Divs in One Line */}
-      <div className="grid grid-cols-2 gap-3 lg:flex mx-2 lg:mx-8 rounded-3xl justify-center space-x-1 sm:space-x-4 px-2  ">
+      <div className="grid grid-cols-2 gap-3 lg:flex mx-2 lg:mx-8 rounded-3xl justify-center space-x-1 sm:space-x-2 px-2  ">
         {items.map((item, index) => (
           <div
             key={index}
-            className=" p-1 sm:p-4 pb-9 rounded-3xl  bg-white w-auto lg:w-56 text-center"
+            className=" p-1 sm:p-4 pb-2 pt-2 sm:pt-0 sm:pb-9 rounded-3xl  bg-white w-auto lg:w-56 text-center"
           >
             {/* P tag and round div in one line */}
             <div className=" mb-4">
-              <div className="p-10  flex items-center justify-center bg-white rounded-full">
-                <span className="w-8 h-8 mb-4 md:mb-8 flex items-center justify-center">
+              <div className=" p-5 pt-12  sm:p-14 flex items-center justify-center bg-white rounded-full">
+                <span className=" h-1 w-1 sm:w-5 sm:h-5 mt-2 sm:mt-0 mb-4 md:mb-8 flex items-center justify-center">
                   {item.logo}
                 </span>
               </div>
             </div>
             {/* H3 Title */}
-            <h3 className="text-xl font-bold mb-1">{item.title}</h3>
+            <h3 className="text-xl px-4 sm:px-0 font-bold mb-1">{item.title}</h3>
             {/* P Description */}
-            <p className="text-black text-[.9rem] font-normal">
+            <p className="text-black text-[.7rem] sm:text-[.9rem] font-normal">
               {item.description}
             </p>
           </div>

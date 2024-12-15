@@ -10,7 +10,7 @@ import bg4 from '../../assets/HowWe4.png'
 function HowWeWork() {
   
   return (
-    <div>
+    <div className='mt-6'>
       <h1 className="text-3xl font-bold flex items-center justify-center text-center mb-1">How we work<img src={ManSticker}></img></h1>
       <p className='text-[.9rem] px-12 md:p-0 text-center mb-6'>Effortlessly explore diverse courses, find programs tailored to 
         your academic <br></br> goals, compare study opportunities, and make informed decisions</p>

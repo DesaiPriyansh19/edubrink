@@ -6,6 +6,8 @@ import HowToApply from './HowToApply'
 import CollegeCarousel from './CollageCard'
 import HowWeWork from './HowWeWork'
 import OurCourses from './OurCourses'
+import FindCourses from './FindCourses'
+import RecentBlog from './RecentBlog'
 
 function HomePage() {
   return (
@@ -17,6 +19,8 @@ function HomePage() {
 <CollegeCarousel/>
 <HowWeWork/> 
 <OurCourses/>
+<FindCourses/>
+<RecentBlog/>
 </>
   )
 }

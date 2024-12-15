@@ -5,7 +5,8 @@ import bgImage from "../assets/1293242-dual-degree.webp"
 function ContactSection() {
     return (
         <section
-          className="w-[92%] mb-5 sm:w-[90%] mt-6 mx-auto rounded-3xl  h-[43vh] sm:h-[50vh] md:vh-[60vh] lg:h-[70vh] relative overflow-hidden"
+          className="w-[92%] mb-10 sm:w-[90%] mt-6 mx-auto rounded-3xl 
+           h-[33vh] sm:h-[40vh] md:vh-[50vh] lg:h-[60vh] relative overflow-hidden"
           style={{
             backgroundImage: `url(${bgImage})`,
             backgroundSize: "cover",
