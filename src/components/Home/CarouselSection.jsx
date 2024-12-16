@@ -25,14 +25,14 @@ const CarouselSection = () => {
   return (
     <section className="bg-transparent w-full mb-20">
       {/* Title with Logo */}
-      <div className="flex items-center justify-center mb-16">
-        <h1 className="text-4xl text-center font-bold mb-2 mr-4">🎓Find out best study destination</h1>
+      <div className="flex items-center justify-center mb-8 sm:mb-16">
+        <h1 className="text-3xl sm:text-5xl text-center font-semibold mr-4">🎓 Find out best study destination</h1>
        
       </div>
 
       {/* Horizontal Scrollable Carousel */}
       <div className="w-full overflow-x-auto hide-scrollbar">
-        <div className="flex gap-11">
+        <div className="flex gap-6 sm:gap-11">
           {carouselItems.map((item, index) => (
             <div
               key={index}

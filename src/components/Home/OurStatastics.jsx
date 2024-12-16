@@ -34,7 +34,7 @@ function OurStatastics() {
       return (
         <section className="w-full mb-20">
           {/* Title */}
-          <h1 className="text-5xl font-semibold text-center mb-16">Our statistics over year</h1>
+          <h1 className="text-3xl sm:text-5xl font-semibold text-center mb-8 sm:mb-16">Our statistics over year</h1>
     
           {/* Four Divs in One Line */}
           <div className="grid grid-cols-2 lg:flex  rounded-3xl justify-between gap-4 max-w-[1242px] py-4 px-4 mx-auto bg-white ">

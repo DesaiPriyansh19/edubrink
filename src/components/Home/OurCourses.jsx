@@ -68,7 +68,7 @@ function OurCourses() {
         </div>
       </div>
 
-      <div className="flex sm:flex-row flex-col px-4 1xl:pl-28 gap-6 scrollbar-hide overflow-x-auto">
+      <div className="flex sm:flex-row mb-20 flex-col px-4 1xl:pl-28 gap-6 scrollbar-hide overflow-x-auto">
         {slides.map((slide) => (
           <div
             key={slide.id}

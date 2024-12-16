@@ -10,7 +10,7 @@ import bgImage from "../../assets/1293242-dual-degree.webp";
 function Discover() {
   return (
     <section
-      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl mb-20 h-[60vh] sm:h-[70vh] md:h-[600px] relative overflow-hidden"
+      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl mb-10 sm:mb-20 h-[60vh] sm:h-[70vh] md:h-[600px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",

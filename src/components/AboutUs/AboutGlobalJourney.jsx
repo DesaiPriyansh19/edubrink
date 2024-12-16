@@ -16,10 +16,10 @@ const AboutGlobalJourney = () => {
         </p>
       </div>
 
-      <div class="relative w-full max-w-[90%] aspect-[1240/634] mx-auto bg-[rgba(248,248,248,1)] flex justify-center items-center p-0 m-0 border-none mt-10">
+      <div className="relative w-full max-w-[90%] aspect-[1240/634] mx-auto bg-[rgba(248,248,248,1)] flex justify-center items-center p-0 m-0 border-none mt-10">
         <img
           src={global}
-          class="object-cover rounded-tl-[5%] rounded-tr-[5%]"
+          className="object-cover rounded-tl-[5%] rounded-tr-[5%]"
           alt="World Map"
         />
       </div>

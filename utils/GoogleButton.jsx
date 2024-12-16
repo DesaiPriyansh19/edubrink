@@ -11,13 +11,13 @@ export default function GoogleButton({onClose}) {
       );
 
       if (response.data && response.data.data.user) {
-        const userInfo = {
+        const eduuserInfo = {
           userId: response.data.data.user._id,
           email: response.data.data.user.Email,
           MobileNumber: response.data.data.user.MobileNumber,
           token: response.data.token,
         };
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
         onClose();
         console.log("User Data:", response.data);
       } else if (response.data && response.data.message) {

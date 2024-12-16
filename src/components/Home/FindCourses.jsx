@@ -4,7 +4,7 @@ const FindCourses = () => {
   return (
     <div className="bg-white w-[90%] sm:w-[85%] mb-24  h-auto mx-auto p-6 rounded-3xl mt-5 py-14 shadow-lg">
         
-      <h1 className="text-3xl font-bold mb-8 text-center">Find courses to study in all destinations</h1>
+      <h1 className="text-3xl sm:text-5xl font-semibold mb-12 text-center">Find courses to study in all destinations</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Dropdown 1 */}
         <div className="relative">

@@ -37,7 +37,7 @@ function HowToApply() {
   ];
 
   return (
-    <section className="w-full py-8">
+    <section className="w-full mb-20 py-8">
       {/* Title */}
       <h1 className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-3">
         How to apply<img src={ManSticker}></img>
