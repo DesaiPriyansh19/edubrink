@@ -1,95 +1,95 @@
-import React from 'react';
+import React from "react";
 import ManSticker from "../../assets/ManSticker.png";
-import Search from '../../assets/SearchStcker.png';
-import Book from '../../assets/BookSticker.png';
-import Plain from '../../assets/PlanSticker.png'
-import bg1 from '../../assets/HowWe1.png';
-import bg2 from '../../assets/HowWe2.png';
-import bg3 from '../../assets/HowWe3.png';
-import bg4 from '../../assets/HowWe4.png'
+import Search from "../../assets/SearchStcker.png";
+import Book from "../../assets/BookSticker.png";
+import Plain from "../../assets/PlanSticker.png";
+import bg1 from "../../assets/HowWe1.png";
+import bg2 from "../../assets/HowWe2.png";
+import bg3 from "../../assets/HowWe3.png";
+import bg4 from "../../assets/HowWe4.png";
 function HowWeWork() {
-  
+  const cards = [
+    {
+      id: 1,
+      bgImage: bg1,
+      smallImage: Search,
+      smallImagePosition: "absolute -bottom-2 -right-2",
+      title: "Discover your future",
+      description:
+        "Discover the art of ad production, with where creativity meets strategy.",
+      borderRadius: "rounded-bl-[4rem] rounded-br-[3rem] rounded-tr-[4rem]",
+    },
+    {
+      id: 2,
+      bgImage: bg2,
+      smallImage: Book,
+      smallImagePosition: "absolute -top-2 -left-2",
+      title: "Find skilled courses",
+      description:
+        "Discover the art of ad production, with where creativity meets strategy.",
+      borderRadius: "rounded-bl-[4rem] rounded-br-[4rem] rounded-tl-[3rem]",
+    },
+    {
+      id: 3,
+      bgImage: bg3,
+      smallImage: Plain,
+      smallImagePosition: "absolute -bottom-2 -left-2",
+      title: "Study abroad university",
+      description:
+        "Discover the art of ad production, with where creativity meets strategy.",
+      borderRadius: "rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem]",
+    },
+    {
+      id: 4,
+      bgImage: bg4,
+      smallImage: Book,
+      smallImagePosition: "absolute -top-2 -left-2",
+      title: "Enrolment courses",
+      description:
+        "Discover the art of ad production, with where creativity meets strategy.",
+      borderRadius: "rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem]",
+    },
+  ];
+
   return (
-    <div className='mt-6'>
-      <h1 className="text-3xl font-bold flex items-center justify-center text-center mb-1">How we work<img src={ManSticker}></img></h1>
-      <p className='text-[.9rem] px-12 md:p-0 text-center mb-6'>Effortlessly explore diverse courses, find programs tailored to 
-        your academic <br></br> goals, compare study opportunities, and make informed decisions</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 sm:px-auto sm:mx-auto  px-0 lg:flex flex-nowrap justify-between gap-4 mx-auto w-[90%]">
-      {/* Card 1 */}
-      <div className="w-[80%] mx-auto  lg:w-1/4 sm::mx-0">
-        <div className="relative overflow-hidden">
-          <img
-            src={bg1}
-            alt="Main"
-            className="w-full h-auto object-contain rounded-bl-[4rem] rounded-br-[3rem] rounded-tr-[4rem]"
-          />
-          <img
-            src={Search}
-            alt="Small"
-            className="absolute bottom-[0] right-0 w-[30%] h-[30%] "
-          />
+    <div className="max-w-[1240px] px-0 md:px-4 mx-auto">
+      <h1 className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-4">
+        How we work<img className="w-8 h-8 sm:w-auto sm:h-auto" src={ManSticker}></img>
+      </h1>
+      <p className="text-[.9rem] max-w-2xl mx-auto px-12 md:p-0 text-center mb-6">
+        Effortlessly explore diverse courses, find programs tailored to your
+        academic goals, compare study opportunities, and make informed decisions
+      </p>
+      <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex justify-between mb-16 gap-4">
+          {cards.map((card) => (
+            <div key={card.id} className="w-auto p-4 lg:px-0 lg:w-1/4 mx-auto">
+              <div className="relative">
+                <img
+                  src={card.bgImage}
+                  alt="Main"
+                  className={`w-full h-auto  object-contain ${card.borderRadius}`}
+                />
+                <img
+                  src={card.smallImage}
+                  alt="Small"
+                  className={`${card.smallImagePosition} w-[30%] h-[30%]`}
+                />
+              </div>
+              <div>
+                <p className="mt-4  font-semibold sm:font-medium text-black">
+                  {card.title}
+                </p>
+                <p className="text-black text-[.8rem] font-light ">
+                  {card.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
-        <p className="mt-2 font-semibold sm:font-medium text-black">Discover your future</p>
-        <p className="text-black  text-[.8rem] font-light px-1">Discover the art of ad production, with where creativity meets strategy.</p>
-      </div>
-
-      {/* Card 2 */}
-      <div className="w-[80%] mx-auto  lg:w-1/4 sm::mx-0">
-        <div className="relative overflow-hidden">
-          <img
-            src={bg2}
-            alt="Main"
-            className="w-full h-auto object-contain  rounded-bl-[4rem] rounded-br-[4rem] rounded-tl-[3rem]"
-          />
-          <img
-            src={Book}
-            alt="Small"
-            className="absolute top-0 left-0 w-[30%] h-[30%] "
-          />
-        </div>
-        <p className="mt-2 font-semibold sm:font-medium text-black">Find skilled courses</p>
-        <p className="text-black  text-[.8rem] font-light px-1">Discover the art of ad production, with where creativity meets strategy.</p>
-      </div>
-
-      {/* Card 3 */}
-      <div className="w-[80%] mx-auto   lg:w-1/4 sm::mx-0">
-        <div className="relative overflow-hidden">
-          <img
-            src={bg3}
-            alt="Main"
-            className="w-full h-auto object-contain  rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem]"
-          />
-          <img
-            src={Plain}
-            alt="Small"
-            className="absolute bottom-0 left-0 w-[30%] h-[30%] "
-          />
-        </div>
-        <p className="mt-2 font-semibold sm:font-medium text-black">Study abroad university</p>
-        <p className="text-black  text-[.8rem] font-light px-1">Discover the art of ad production, with where creativity meets strategy.</p>
-      </div>
-
-      {/* Card 4 */}
-      <div className="w-[80%] mx-auto  lg:w-1/4 sm:mx-0 ">
-        <div className="relative overflow-hidden">
-          <img
-            src={bg4}
-            alt="Main"
-            className="w-full h-auto object-contain rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem] "
-          />
-          <img
-            src={Book}
-            alt="Small"
-            className="absolute top-0 left-0 w-[30%] h-[30%] "
-          />
-        </div>
-        <p className="mt-2 font-semibold sm:font-medium text-black ">Enrolment courses</p>
-        <p className="text-black  text-[.8rem] font-light px-1">Discover the art of ad production, with where creativity meets strategy.</p>
       </div>
     </div>
-
-    </div>
-  )
+  );
 }
 
 export default HowWeWork;

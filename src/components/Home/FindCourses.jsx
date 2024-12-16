@@ -2,7 +2,7 @@ import React from 'react';
 
 const FindCourses = () => {
   return (
-    <div className="bg-white w-[85%]  h-auto mx-auto p-6 rounded-3xl mt-5 py-14 shadow-lg">
+    <div className="bg-white w-[90%] sm:w-[85%] mb-24  h-auto mx-auto p-6 rounded-3xl mt-5 py-14 shadow-lg">
         
       <h1 className="text-3xl font-bold mb-8 text-center">Find courses to study in all destinations</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -65,7 +65,7 @@ const FindCourses = () => {
           </label>
           <select
             id="language"
-            className="w-full bg-gradient-to-r from-[#380C95] to-[#E15754]  rounded-full py-2 pl-3 pr-10 text-white
+            className="w-full bg-gradient-to-r appearance-none from-[#380C95] to-[#E15754]  rounded-full py-2  text-white
              focus:outline-none focus:ring-[#380C95] text-center  focus:bg-white text-[.9rem]"
           >
             <option className='text-black'value=""> Find Courses</option>

@@ -32,21 +32,21 @@ function OurStatastics() {
       ];
     
       return (
-        <section className="w-full py-8">
+        <section className="w-full mb-20">
           {/* Title */}
-          <h1 className="text-3xl font-bold text-center mb-8">Our statistics over year</h1>
+          <h1 className="text-5xl font-semibold text-center mb-16">Our statistics over year</h1>
     
           {/* Four Divs in One Line */}
-          <div className="grid grid-cols-2 gap-3 lg:flex mx-2 lg:mx-8 rounded-3xl justify-center space-x-1 sm:space-x-4 px-2 lg:px-4 py-3 bg-white ">
+          <div className="grid grid-cols-2 lg:flex  rounded-3xl justify-between gap-4 max-w-[1242px] py-4 px-4 mx-auto bg-white ">
             {items.map((item, index) => (
               <div
                 key={index}
-                className=" p-4 rounded-3xl  bg-[#F8F8F8] w-auto lg:w-56 text-center"
+                className=" p-4 rounded-3xl  bg-[#F8F8F8] w-auto lg:w-72 text-center"
               >
                 {/* P tag and round div in one line */}
                 <div className="flex items-center justify-between space-x-2 mb-4">
                   <p className="text-black font-medium">{item.info}</p>
-                  <div className="w-12 h-12 flex items-center justify-center bg-white rounded-full">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center bg-white rounded-full">
                     <span
                       
                    
@@ -55,9 +55,9 @@ function OurStatastics() {
                   </div>
                 </div>
                 {/* H3 Title */}
-                <h3 className="text-4xl font-bold mb-2">{item.title}</h3>
+                <h3 className="text-2xl sm:text-4xl md:text-5xl text-start font-semibold mb-2 md:mb-5">{item.title}</h3>
                 {/* P Description */}
-                <p className="text-black font-medium">{item.description}</p>
+                <p className="text-black text-xs sm:text-sm md:text-base text-start font-medium">{item.description}</p>
               </div>
             ))}
           </div>

@@ -23,32 +23,32 @@ const CarouselSection = () => {
   ];
 
   return (
-    <section className="bg-transparent w-full py-8">
+    <section className="bg-transparent w-full mb-20">
       {/* Title with Logo */}
-      <div className="flex items-center justify-center mb-6">
-        <h1 className="text-2xl text-center font-bold mb-2 mr-4">🎓Find out best study destination</h1>
+      <div className="flex items-center justify-center mb-16">
+        <h1 className="text-4xl text-center font-bold mb-2 mr-4">🎓Find out best study destination</h1>
        
       </div>
 
       {/* Horizontal Scrollable Carousel */}
       <div className="w-full overflow-x-auto hide-scrollbar">
-        <div className="flex space-x-0 md:space-x-4">
+        <div className="flex gap-11">
           {carouselItems.map((item, index) => (
             <div
               key={index}
-              className="flex-shrink-0 flex flex-col items-center w-32 lg:w-48"
+              className="flex-shrink-0 flex flex-col items-center w-32 lg:w-44"
             >
               <img
                 src={item.img}
                 alt={`Carousel item ${index + 1}`}
-                className="w-14 h-14 rounded-full  mb-2"
+                className="w-[70px] h-[70px] rounded-full  mb-2"
                 style={{
                   boxShadow: 
           "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
                  
                 }}
               />
-              <p className="text-center text-black font-semibold">{item.text}</p>
+              <p className="text-center text-xl text-black font-semibold">{item.text}</p>
             </div>
           ))}
         </div>
