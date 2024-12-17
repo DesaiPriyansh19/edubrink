@@ -10,7 +10,7 @@ import bgImage from "../../assets/1293242-dual-degree.webp";
 function Discover() {
   return (
     <section
-      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl mb-10 sm:mb-20 h-[60vh] sm:h-[70vh] md:h-[450px] relative overflow-hidden"
+      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[55vh] sm:h-[70vh] md:h-[450px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
@@ -28,11 +28,11 @@ function Discover() {
       ></div>
 
       {/* Content */}
-      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center h-full space-y-4">
-        <h1 className="text-[2.2rem]  sm:text-[30px] md:text-[55px] leading-10 sm:leading-9 md:leading-[78.2px] font-semibold">
+      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center py-7 mt-2 sm:mt-0 h-full space-y-4">
+        <h1 className="text-[28px] px-2 sm:text-[30px] md:text-[55px] leading-10 sm:leading-9 md:leading-[78.2px] font-bold sm:font-semibold">
           Discover your ideal<br></br> University abroad today
         </h1>
-        <p className=" text-[1rem] max-w-sm md:max-w-xl md:text-[1rem] px-2 md:px-4">
+        <p className=" text-[12px] max-w-sm md:max-w-xl md:text-[1rem] px-3 md:px-4">
           Effortlessly explore a wide range of universities, discover the
           perfect courses tailored to your
           goals, and compare study opportunities.

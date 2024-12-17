@@ -20,7 +20,7 @@ export default {
         md: "768px",
         // => @media (min-width: 768px) { ... }
 
-        mmd: "860px",
+        mmd: "816px",
 
         emd: "999px",
 

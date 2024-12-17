@@ -3,21 +3,17 @@ import React from "react";
 const FilterLogo = () => {
   return (
     <div>
-      <svg
-        width="20"
-        height="18"
-        viewBox="0 0 20 18"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 4H8M8 4C8 5.65685 9.34315 7 11 7H12C13.6569 7 15 5.65685 15 4C15 2.34315 13.6569 1 12 1H11C9.34315 1 8 2.34315 8 4ZM14 14H19M18 4H19M1 14H4M4 14C4 15.6569 5.34315 17 7 17H8C9.65685 17 11 15.6569 11 14C11 12.3431 9.65685 11 8 11H7C5.34315 11 4 12.3431 4 14Z"
-          stroke="white"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+   <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="40" height="40" rx="20" fill="url(#paint0_linear_1_4396)"/>
+<path d="M11 15H18M18 15C18 16.6569 19.3431 18 21 18H22C23.6569 18 25 16.6569 25 15C25 13.3431 23.6569 12 22 12H21C19.3431 12 18 13.3431 18 15ZM24 25H29M28 15H29M11 25H14M14 25C14 26.6569 15.3431 28 17 28H18C19.6569 28 21 26.6569 21 25C21 23.3431 19.6569 22 18 22H17C15.3431 22 14 23.3431 14 25Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<defs>
+<linearGradient id="paint0_linear_1_4396" x1="0" y1="20" x2="40" y2="20" gradientUnits="userSpaceOnUse">
+<stop stop-color="#380C95"/>
+<stop offset="1" stop-color="#E15754"/>
+</linearGradient>
+</defs>
+</svg>
+
     </div>
   );
 };
