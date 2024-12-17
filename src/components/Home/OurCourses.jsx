@@ -53,10 +53,10 @@ function OurCourses() {
     <>
       <div className="max-w-[1240px] mb-10 mx-auto ">
         <div className="flex mb-4 items-center">
-          <h1 className="text-start text-3xl sm:text-5xl font-semibold pl-4">Our courses</h1>
+          <h1 className="text-start text-3xl sm:text-4xl font-semibold pl-4">Our courses</h1>
           <img src={Book} alt="Icon" className="w-8 h-8 sm:w-10 sm:h-10 mr-1 ml-3" />{" "}
         </div>
-        <p className="text-start font-normal text-[.9rem] px-0 pl-4 pr-1 md:pr-[39%]">
+        <p className="text-start font-normal text-[.8rem]  pl-4 pr-9 md:pr-[50%]">
           Effortlessly explore diverse courses, find programs tailored to your
           academic goals, compare study opportunities, and make informed
           decisions.

@@ -42,7 +42,7 @@ function HowToApply() {
       <h1 className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-3">
         How to apply<img src={ManSticker}></img>
       </h1>
-      <p className="text-[.9rem] max-w-2xl mx-auto px-12 md:p-0 text-center mb-16">
+      <p className="text-[.9rem] max-w-2xl mx-auto px-2 md:p-0 text-center mb-16">
         Easily explore global universities, discover programs suited to your
         goals, compare study options, and receive guidance throughout the
         application.

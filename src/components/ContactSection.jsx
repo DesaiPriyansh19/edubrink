@@ -4,8 +4,8 @@ import bgImage from "../assets/1293242-dual-degree.webp";
 function ContactSection() {
   return (
     <section
-      className=" max-w-[1240px] w-[97%] 1xl:w-full px-4 mb-10  mt-6 mx-auto rounded-3xl 
-           h-[60vh] sm:h-[70vh] md:h-[400px] relative overflow-hidden"
+      className=" max-w-[1240px] w-[85%] 1xl:w-full px-4  mt-6 mx-auto rounded-3xl 
+           h-[40vh] sm:h-[50vh] md:h-[300px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
@@ -23,8 +23,8 @@ function ContactSection() {
       ></div>
 
       {/* Content */}
-      <div className="relative z-10 text-center p-1 text-white flex flex-col items-center justify-center h-full space-y-4">
-        <h1 className="text-2xl  sm:text-3xl md:text-4xl font-semibold">
+      <div className="relative z-10 text-center p-1 text-white flex flex-col items-center justify-center h-full space-y-2 md:space-y-4">
+        <h1 className="text-xl  sm:text-3xl md:text-4xl font-semibold">
           Take your education to the<br></br> next level abroad
         </h1>
         <p className=" text-[.6rem] md:text-[.8rem] px-4 md:px-[20%]">
