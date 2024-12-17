@@ -13,6 +13,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   });
   const [otpVerification, setOtpVerification] = useState(false);
   const [otp, setOtp] = useState(new Array(4).fill(""));
+  const [otpError, setOtpError] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,17 +31,27 @@ const AuthModal = ({ isOpen, onClose }) => {
 
       try {
         const response = await axios.post(
-          "https://edu-brink-backend.vercel.app/api/users",
+          "https://edu-brink-backend.vercel.app/api/users/login",
           userData
         );
-        console.log("Login successful:", response.data.data);
-        // const eduuserInfo = {
-        //   userId: response.data.data.user._id,
-        //   email: response.data.data.user.Email,
-        //   MobileNumber: response.data.data.user.MobileNumber,
-        //   token: response.data.token,
-        // };
-        // localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
+        console.log("Login successful:", response.data);
+
+        if (response.data.data.status) {
+          setOtpVerification(true);
+          const eduuserInfo = {
+            userId: response.data.data.data.userId,
+            email: response.data.data.data.email,
+          };
+          localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
+        } else {
+          const eduuserInfo = {
+            userId: response.data.data.user._id,
+            email: response.data.data.user.Email,
+            token: response.data.token,
+          };
+          localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
+          onClose();
+        }
       } catch (error) {
         console.error("Error during login:", error);
       } finally {
@@ -65,6 +76,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         setOtpVerification(true);
         const eduuserInfo = {
           userId: response.data.data.data.userId,
+          email: response.data.data.data.email,
         };
         localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
       } catch (error) {
@@ -100,6 +112,8 @@ const AuthModal = ({ isOpen, onClose }) => {
         "https://edu-brink-backend.vercel.app/api/users/verifyotp",
         requestBody
       );
+      console.log(response.data);
+
       const eduuserInfo = {
         userId: response.data.data.user._id,
         email: response.data.data.user.Email,
@@ -107,14 +121,16 @@ const AuthModal = ({ isOpen, onClose }) => {
       };
       localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
       setOtpVerification(false);
+      setOtpError(false);
+      onClose();
     } catch (error) {
       console.error("Error during OTP verification:", error);
+      setOtpError(true);
     } finally {
       setDetails({
         email: "",
         password: "",
       });
-      onClose();
     }
   };
 
@@ -221,6 +237,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           </div>
         ) : (
           <OtpVerificationModal
+            otpError={otpError}
             handleOtpVerification={handleOtpVerification}
             otp={otp}
             setOtp={setOtp}

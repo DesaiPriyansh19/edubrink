@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import image from "../assets/verfication.png";
+import axios from "axios";
 
 export default function OtpVerificationModal({
+  otpError,
   handleOtpVerification,
   otp,
   setOtp,
@@ -65,17 +67,47 @@ export default function OtpVerificationModal({
     inRef.current[lastFilledIndex]?.focus();
   };
 
+  const handleResend = async (e) => {
+    e.preventDefault();
+    const pendingotp = otp.join("");
+    console.log(pendingotp);
+
+    // Retrieve userId from localStorage
+    const userId = JSON.parse(localStorage.getItem("eduuserInfo"))?.userId;
+    const email = JSON.parse(localStorage.getItem("eduuserInfo"))?.email;
+
+    if (!userId) {
+      console.error("User ID not found in localStorage.");
+      return;
+    }
+    try {
+      const requestBody = {
+        userId: userId,
+        email: email,
+      };
+      await axios.post(
+        "https://edu-brink-backend.vercel.app/api/users/resendotp",
+        requestBody
+      );
+    } catch (error) {
+      console.error("Error during OTP verification:", error);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col justify-center items-center gap-6">
       <div className="w-40 h-40">
         <img className="w-full h-full object-cover" src={image} />
       </div>
       <div>
-        <p className="text-xl">Verfiy Email</p>
+        <p className="text-xl">Verify Email</p>
       </div>
-      {/* Timer Display */}
-
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
+        {otpError && (
+          <p className="text-sm text-red-500 mb-4 text-center">
+            Invalid OTP. Please try again.
+          </p>
+        )}
         <div className="flex justify-center mb-4 gap-4">
           {otp.map((value, idx) => (
             <input
@@ -94,11 +126,15 @@ export default function OtpVerificationModal({
             />
           ))}
         </div>
+
+        {/* Show error message if otpError is true */}
+
         <button
-          className=" text-gray-500 mb-4 text-lg hover:text-gray-400 transition-colors ease-in-out duration-300  rounded-lg"
-          onClick={() => {
+          className="text-gray-500 mb-4 text-lg hover:text-gray-400 transition-colors ease-in-out duration-300 rounded-lg"
+          onClick={(e) => {
             setOtp(new Array(4).fill("")); // Clear OTP fields
             setIsDisabled(false); // Re-enable inputs
+            handleResend(e);
             inRef.current[0]?.focus(); // Focus on the first input
           }}
         >
@@ -114,7 +150,6 @@ export default function OtpVerificationModal({
           Verify
         </button>
       </div>
-      {/* Resend OTP Button */}
     </div>
   );
 }

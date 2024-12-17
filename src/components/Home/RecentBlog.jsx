@@ -76,10 +76,10 @@ function RecentBlog() {
             <h4 className="font-semibold text-lg text-black mt-2 mb-1">
               {card.title}
             </h4>
-            <p className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
+            <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
               <Calander />
               {card.date}
-            </p>
+            </div>
           </div>
         ))}
       </div>
