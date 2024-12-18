@@ -12,6 +12,7 @@ import AuthModal from "./components/AuthModal";
 import AboutPage from "./components/AboutUs/About";
 import ContactSection from "./components/ContactSection";
 import ProtectedRoute from "../utils/ProtectedRoute";
+import Footer from "./components/Footer/Footer";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +39,7 @@ function App() {
               <Route path="/contact" element={<ContactSection />} />
             </Route>
           </Routes>
+          <Footer />
         </div>
       </Router>
     </div>

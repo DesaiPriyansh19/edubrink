@@ -10,7 +10,7 @@ import bgImage from "../../assets/1293242-dual-degree.webp";
 function Discover() {
   return (
     <section
-      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl mb-10 sm:mb-20 h-[60vh] sm:h-[70vh] md:h-[600px] relative overflow-hidden"
+      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[55vh] sm:h-[70vh] md:h-[450px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
@@ -28,11 +28,11 @@ function Discover() {
       ></div>
 
       {/* Content */}
-      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center h-full space-y-4">
-        <p className="text-[22px] em:text-[24px] sm:text-[30px] md:text-[62px] leading-8 sm:leading-9 md:leading-[78.2px] font-semibold">
+      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center py-7 mt-2 sm:mt-0 h-full space-y-4">
+        <h1 className="text-[28px] px-2 sm:text-[30px] md:text-[55px] leading-10 sm:leading-9 md:leading-[78.2px] font-bold sm:font-semibold">
           Discover your ideal<br></br> University abroad today
-        </p>
-        <p className=" text-[.6rem] max-w-sm md:max-w-xl md:text-[1rem] px-4">
+        </h1>
+        <p className=" text-[12px] max-w-sm md:max-w-xl md:text-[1rem] px-3 md:px-4">
           Effortlessly explore a wide range of universities, discover the
           perfect courses tailored to your
           goals, and compare study opportunities.
@@ -43,7 +43,7 @@ function Discover() {
       </div>
 
       {/* Rounded flag divs */}
-      <div className="absolute z-10 top-4 left-20 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 top-[8%] left-[12%] w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={usa}
           alt="Flag 1"
@@ -51,7 +51,7 @@ function Discover() {
         />
       </div>
 
-      <div className="absolute z-10 top-40 left-10 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 top-[45%] left-10 w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={germny}
           alt="Flag 1"
@@ -59,7 +59,7 @@ function Discover() {
         />
       </div>
 
-      <div className="absolute z-10 top-4 right-20 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 top-[8%] right-[12%] w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={canada}
           alt="Flag 2"
@@ -67,7 +67,7 @@ function Discover() {
         />
       </div>
 
-      <div className="absolute z-10 top-40 right-10 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 top-[45%] right-10 w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={flag}
           alt="Flag 2"
@@ -75,14 +75,14 @@ function Discover() {
         />
       </div>
 
-      <div className="absolute z-10 bottom-4 left-20 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 bottom-[8%] left-[12%] w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={Unitedarap}
           alt="Flag 3"
           className="w-10 h-10 object-cover rounded-full"
         />
       </div>
-      <div className="absolute z-10 bottom-4 right-20 w-16 h-16 rounded-full border-[8px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
+      <div className="absolute z-10 bottom-[8%] right-[12%] w-16 h-16 rounded-full border-[2px] border-transparent bg-transparent backdrop-blur-3xl hidden lg:flex items-center justify-center">
         <img
           src={swizrland}
           alt="Flag 4"

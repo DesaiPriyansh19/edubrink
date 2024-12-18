@@ -38,11 +38,11 @@ function RecentBlog() {
   return (
     <div className="mt-11 text-black">
       <div className="max-w-[1240px] mx-auto">
-        <h1 className="text-start text-3xl sm:text-5xl mb-4 font-semibold pl-4">
+        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-4">
           📑 Recent blog
         </h1>
 
-        <p className="text-start font-normal text-sm sm:text-[.9rem] px-0 pl-4 pr-1 md:pr-[39%]">
+        <p className="text-start font-normal text-sm sm:text-[.8rem] px-0 pl-4 pr-1 md:pr-[39%]">
           Stay informed with our study abroad blog, featuring expert tips,
           destination guides, student experiences, and the latest updates on
           scholarships, visas.

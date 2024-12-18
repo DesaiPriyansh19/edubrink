@@ -7,4 +7,16 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* For Chrome, Safari, and Opera */
   }
+  body.menu-open {
+    overflow: hidden; /* Prevents scrolling when sidebar is open */
+  }
+  
+  .content {
+    /* Your content styling goes here */
+  }
+  
+  .sticky {
+    overflow-y: auto; /* Allows scrolling within the sidebar */
+    max-height: 80vh;  /* Adjusts the maximum height of the sidebar */
+  }
   
