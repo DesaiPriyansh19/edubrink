@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GoogleWrapper from "../../utils/GoogleWrapper";
 import axios from "axios";
 import OtpVerificationModal from "./OtpVerificationModal";
+import Loader from "./VerifiedModal";
+import VerifiedModal from "./VerifiedModal";
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isSignup, setIsSignup] = useState("login");
@@ -12,7 +14,10 @@ const AuthModal = ({ isOpen, onClose }) => {
     signupPassword: "",
   });
   const [otpVerification, setOtpVerification] = useState(false);
+  const [showVerifiedModal, setShowVerifiedModal] = useState(false);
   const [otp, setOtp] = useState(new Array(4).fill(""));
+  const [loading, setLoading] = useState(false);
+  const [verified, setVerified] = useState(false);
   const [otpError, setOtpError] = useState(false);
 
   const handleChange = (e) => {
@@ -22,6 +27,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loader
 
     if (isSignup === "login") {
       const userData = {
@@ -43,6 +49,11 @@ const AuthModal = ({ isOpen, onClose }) => {
             email: response.data.data.data.email,
           };
           localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
+          setVerified(true);
+          setTimeout(() => {
+            setVerified(false);
+            onClose(); // Close the modal after verification
+          }, 3000); // 5 seconds
         } else {
           const eduuserInfo = {
             userId: response.data.data.user._id,
@@ -50,11 +61,16 @@ const AuthModal = ({ isOpen, onClose }) => {
             token: response.data.token,
           };
           localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
-          onClose();
+          setVerified(true);
+          setTimeout(() => {
+            setVerified(false);
+            onClose(); // Close the modal after verification
+          }, 3000); // 5 seconds
         }
       } catch (error) {
         console.error("Error during login:", error);
       } finally {
+        setLoading(false); // Hide loader
         setDetails({
           email: "",
           password: "",
@@ -82,6 +98,7 @@ const AuthModal = ({ isOpen, onClose }) => {
       } catch (error) {
         console.error("Error during signup:", error);
       } finally {
+        setLoading(false); // Hide loader
         setDetails({
           signupEmail: "",
           signupPassword: "",
@@ -92,6 +109,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
   const handleOtpVerification = async (e) => {
     e.preventDefault();
+    setLoading(true); // Show loader
     const pendingotp = otp.join("");
     console.log(pendingotp);
 
@@ -100,6 +118,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
     if (!userId) {
       console.error("User ID not found in localStorage.");
+      setLoading(false); // Hide loader
       return;
     }
 
@@ -122,11 +141,16 @@ const AuthModal = ({ isOpen, onClose }) => {
       localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
       setOtpVerification(false);
       setOtpError(false);
-      onClose();
+      setVerified(true);
+      setTimeout(() => {
+        setVerified(false);
+        onClose(); // Close the modal after verification
+      }, 5000); // 5 seconds
     } catch (error) {
       console.error("Error during OTP verification:", error);
       setOtpError(true);
     } finally {
+      setLoading(false); // Hide loader
       setDetails({
         email: "",
         password: "",
@@ -134,26 +158,30 @@ const AuthModal = ({ isOpen, onClose }) => {
     }
   };
 
+  useEffect(() => {
+    if (verified) {
+      setShowVerifiedModal(true); // Show the modal when verified is true
+
+      const timeout = setTimeout(() => {
+        setShowVerifiedModal(false); // Hide the modal after animation completes
+      }, 3000); // Match the animation duration
+
+      return () => clearTimeout(timeout); // Cleanup timeout on unmount or state change
+    }
+  }, [verified]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed  inset-0 flex items-center justify-center bg-black bg-transparent backdrop-blur-[2px] bg-opacity-5 z-50">
       <div className="bg-white rounded-3xl w-full max-w-md py-14 md:py-8 p-4 sm:p-6 shadow-lg relative mx-3 sm:mx-0">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute font-medium top-4 right-4 text-gray-600 hover:text-gray-800"
-        >
-          ✕
-        </button>
-
-        {/* Modal Content */}
-        {!otpVerification ? (
+      {showVerifiedModal ? (
+          <VerifiedModal showModal={verified} /> // Show loader when loading
+        ) : !otpVerification ? (
           <div>
             <h2 className="text-xl font-bold mb-4 text-center">
               {isSignup === "signup" ? "Sign Up" : "Login"}
             </h2>
-
             <form>
               <div className="mb-4">
                 <label
@@ -165,10 +193,10 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <input
                   type="email"
                   id="email"
-                  name={isSignup === "signup" ? "signupEmail" : "email"} // Dynamically set name
+                  name={isSignup === "signup" ? "signupEmail" : "email"}
                   value={
                     isSignup === "signup" ? details.signupEmail : details.email
-                  } // Use correct value
+                  }
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#E15754]"
                   placeholder="Enter your email"
@@ -207,7 +235,6 @@ const AuthModal = ({ isOpen, onClose }) => {
                 >
                   {isSignup === "signup" ? "Sign Up" : "Login"}
                 </button>
-                <GoogleWrapper onClose={onClose} />
               </div>
             </form>
 
