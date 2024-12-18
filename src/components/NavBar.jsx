@@ -12,24 +12,35 @@ import FilterLogo from "../../svg/FilterLogo";
 
 import DropdowneCourses from "./DropdowneCourses";
 import DropdownContries from "./DropdownContries";
-import AboutUsLogo from "../../svg/AbotUsLogo";
+
+
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
+  const toggleSidebar = () => {
+    setIsMenuOpen(!isMenuOpen);
+
+    // Add or remove the overflow-hidden class on the body element
+    if (!isMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  };
   return (    <>
  
       <nav className="sticky top-0 z-30 flex py-4 items-center w-[98%] my-3 mx-auto justify-between px-4 text-sm bg-white rounded-3xl shadow-md">
       {/* Logo */}
       
       <div className="flex gap-3 items-center w-auto h-auto justify-center">
-      <span className="flex mmd:hidden "  onClick={() => setIsMenuOpen(!isMenuOpen)}>
+      <span className="flex mmd:hidden "    onClick={toggleSidebar}>
           {isMenuOpen ? <TogelMenuTwo/> : <TogelMenu/>}
         </span>
-       <h2 className="text-2xl font-bold bg-white cursor-pointer pointer text-gray-800">
+       <h2 className=" text-xl mmd:text-2xl font-bold bg-white cursor-pointer pointer text-gray-800">
        <Link to={"/"}>Edubrink</Link></h2> </div>
 
       {/* Search Bar */}
@@ -45,7 +56,7 @@ const NavBar = () => {
       </div>
 
       {/* Contry Dropdown in sm devices */}
-      <div className="flex justify-center gap-4 items-center  mmd:hidden">
+      <div className="flex justify-center gap-1 items-center  mmd:hidden">
           {/* Search Bar */}
       <div className="h-auto bg-[#F8F8F8] rounded-full w-auto p-2"
        onClick={() => setIsSearchOpen(!isSearchOpen)} >
@@ -73,7 +84,7 @@ const NavBar = () => {
           </svg>
         </button>
         {showFlagsDropdown && (
-          <ul className="absolute z-10 right-0 mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
+          <ul className="fixed z-10 right-[8%] mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
             <li>
               <img
                 src={flag}
@@ -244,9 +255,15 @@ const NavBar = () => {
       <button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
         Contact Us
       </button>
-
+ 
+        </nav>
+        
+      {isMenuOpen &&  
+    <SideBar isMenuOpen={isMenuOpen} />
+}
+  
 {isSearchOpen &&  
-    <div className=" w-[95%] mx-auto z-10 flex items-center justify-evenly  bg-white rounded-3xl p-4 absolute top-full ">
+    <div className=" w-[95%] mx-auto  flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[12%]">
        <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
         <div className=" mr-2 " >
           <Search />
@@ -260,13 +277,7 @@ const NavBar = () => {
       <div className="h-auto w-auto"><FilterLogo/></div>
     </div>
 
-}  
-        </nav>
-        
-      {isMenuOpen &&  
-    <SideBar isMenuOpen={isMenuOpen} />
-}
-  
+} 
   </>
   );
 };

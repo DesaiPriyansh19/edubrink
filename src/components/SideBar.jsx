@@ -26,7 +26,7 @@ function SideBar({ isMenuOpen }) {
     
     <> 
          <div
-  className="sticky  mmd:hidden top-10 z-[25] h-[100%] w-full sm:w-1/2 bg-white shadow-lg overflow-y-auto"
+  className="sticky top-10 z-[25] h-full max-h-[85vh] w-full sm:w-1/2R bg-white shadow-lg overflow-y-auto"
   data-aos="fade-right"
   data-aos-delay="0"
   data-aos-duration="400"
@@ -127,7 +127,7 @@ function SideBar({ isMenuOpen }) {
       </div>
    
     </div></Link>
-    <div className="mt-1 gap-3 shadow-md bg-white py-10 px-4 rounded-3xl items-start">
+    <div className="mt-1 pb-10 gap-3 shadow-md bg-white py-10 px-4 rounded-3xl items-start">
       <div className="flex items-center justify-evenly">
    <span className="flex flex-col w-[60%] gap-2">
     <p className="font-medium text-lg">Discover your ideal <br></br>
