@@ -13,7 +13,7 @@ import india from "../assets/Flags/IndiaFlag.png";
 import bangladesh from "../assets/Flags/BangladeshFlag.webp";
 import nigeria from "../assets/Flags/NigeriaFlag.webp";
 import newzealand from "../assets/Flags/NewZealandFlag.webp";
-import denmark from "../assets/Flags/DenMarkFlag.webp";
+import denmark from "../assets/Flags/DenmarkFlag.webp"
 import australia from "../assets/Flags/AustraliaFlag.png";
 
 
