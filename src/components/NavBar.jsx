@@ -20,8 +20,19 @@ const NavBar = () => {
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(true);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const handleClick = () => {
+    
+    setShowCountriesDropdown(!showCountriesDropdown);
+    setShowCoursesDropdown(false)
+  };
+  const handleClickTwo = () => {
+  
+    setShowCoursesDropdown(!showCoursesDropdown)
+    setShowCountriesDropdown(false);
+  };
   const toggleSidebar = () => {
+  
     setIsMenuOpen(!isMenuOpen);
 
     // Add or remove the overflow-hidden class on the body element
@@ -33,7 +44,7 @@ const NavBar = () => {
   };
   return (    <>
  
-      <nav className="sticky top-0 z-30 flex py-4 items-center w-[98%] my-3 mx-auto justify-between px-4 text-sm bg-white rounded-3xl shadow-md">
+      <nav className="sticky mmd:static top-0 z-30 flex py-4 items-center w-[98%] my-3 mx-auto justify-between px-4 text-sm bg-white rounded-3xl shadow-md">
       {/* Logo */}
       
       <div className="flex gap-3 items-center w-auto h-auto justify-center">
@@ -121,7 +132,7 @@ const NavBar = () => {
           <button
            
             className="flex items-center space-x-1 bg-white  text-gray-800"
-            onClick={() => setShowCoursesDropdown(!showCoursesDropdown)}
+            onClick={handleClickTwo}
           >
             <span className="bg-white font-medium">Courses</span>
             <svg
@@ -140,9 +151,7 @@ const NavBar = () => {
               />
             </svg>
           </button>
-          {showCoursesDropdown && (
-          <DropdowneCourses/>
-          )}
+        
         </div>
 
         {/* Countries Dropdown */}
@@ -151,7 +160,7 @@ const NavBar = () => {
             
             
             className="flex items-center space-x-1  bg-white text-gray-800"
-            onClick={() => setShowCountriesDropdown(!showCountriesDropdown)}
+            onClick={handleClick}
           >
             <span className=" font-medium bg-white">Countries</span>
             <svg
@@ -170,10 +179,7 @@ const NavBar = () => {
               />
             </svg>
           </button>
-          {showCountriesDropdown && (
-             
-            <DropdownContries/>
-          )}
+         
         </div>
 
         {/* About Dropdown */}
@@ -205,6 +211,7 @@ const NavBar = () => {
           <button
             
             className="flex items-center space-x-1 text-gray-800"
+             onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
           >
             <img src={flag} alt="flag" className="w-6 h-6 rounded-full" />
             <svg
@@ -214,7 +221,7 @@ const NavBar = () => {
               strokeWidth="1.5"
               stroke="currentColor"
               className="w-4 h-4"
-              onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
+             
             >
               <path
                 strokeLinecap="round"
@@ -223,8 +230,19 @@ const NavBar = () => {
               />
             </svg>
           </button>
-          {showFlagsDropdown && (
-            <ul className="absolute right-0 mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
+        
+        </div>
+      </div>
+
+      {/* Contact Us Button */}
+      <button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
+        Contact Us
+      </button>
+ 
+        </nav>
+
+        {showFlagsDropdown && (
+            <ul className="hidden mmd:fixed z-10 top-[12%] right-[18%]  mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
               <li>
                 <img
                   src="/path-to-flag1.png"
@@ -248,16 +266,13 @@ const NavBar = () => {
               </li>
             </ul>
           )}
-        </div>
-      </div>
-
-      {/* Contact Us Button */}
-      <button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
-        Contact Us
-      </button>
- 
-        </nav>
-        
+        {showCountriesDropdown && (
+             
+             <DropdownContries/>
+           )}
+        {showCoursesDropdown && (
+          <DropdowneCourses/>
+          )}
       {isMenuOpen &&  
     <SideBar isMenuOpen={isMenuOpen} />
 }

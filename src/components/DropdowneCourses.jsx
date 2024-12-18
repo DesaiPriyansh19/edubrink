@@ -16,7 +16,7 @@ function DropdowneCourses() {
   return (
  <>
   <div
-   className="absolute   px-3 py-4 w-[45vw] h-auto z-10 flex gap-3  mt-2 
+   className="absolute right-4 top-[15%]  px-3 py-4 w-[45vw] h-auto z-10 flex gap-3  mt-2 
    bg-[#f8f8f8] rounded-3xl shadow-lg"
    data-aos="fade-out"
    data-aos-delay="0"

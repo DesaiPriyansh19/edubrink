@@ -29,7 +29,7 @@ function DropdownContries() {
     }, []);
   return (
   <>
-   <div className="absolute   px-3 py-3 w-[38vw] h-auto z-10  
+   <div className="absolute right-4 top-[15%]   px-3 py-3 w-[38vw] h-auto z-10  
                 mt-2 bg-white rounded-3xl shadow-lg"
                 data-aos="fade-out"
                 data-aos-delay="0"
