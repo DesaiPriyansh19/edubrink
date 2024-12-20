@@ -34,6 +34,12 @@ function App() {
               >
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactSection />} />
+                <Route
+                  path="/admin"
+                  element={<Navigate to="/admin/dashboard" />}
+                />
+
+                {/* Dynamic slug route */}
                 <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
               </Route>
             </Routes>
