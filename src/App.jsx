@@ -13,6 +13,8 @@ import AboutPage from "./components/AboutUs/About";
 import ContactSection from "./components/ContactSection";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import Footer from "./components/Footer/Footer";
+import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
+import AppLayout from "./components/AppLayout";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,25 +23,21 @@ function App() {
     <div className="max-w-[1440px] w-full mx-auto">
       <Router>
         <div className="h-full m-0 p-0 w-full">
-          {/* Modal Component */}
-          <AuthModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
+          <AppLayout setIsModalOpen={setIsModalOpen}>
+            {/* Routing Configuration */}
+            <Routes>
+              <Route path="/" element={<HomePage />} />
 
-          <NavBar />
-
-          {/* Routing Configuration */}
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}>
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactSection />} />
-            </Route>
-          </Routes>
-          <Footer />
+              {/* Protected Routes */}
+              <Route
+                element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
+              >
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactSection />} />
+                <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
+              </Route>
+            </Routes>
+          </AppLayout>
         </div>
       </Router>
     </div>
