@@ -1,5 +1,5 @@
 import React from "react";
-import University from "../../assets/Countrypage/University.png";
+import University from "../../assets/CountryPage/University.png";
 import KeyLogo from "../../../svg/KeyFact";
 import MillionLogo from "../../../svg/Millions";
 import LanguageLogo from "../../../svg/LanguageLogo";
@@ -131,9 +131,6 @@ const CountryPage = () => {
           </p>
         </div>
       </div>
-      {/* 
-      <PopularCourse /> */}
-      {/* <CountryPopularArticle /> */}
       <CountryPopularCourse />
       <CountryPopularUniversity />
       <CountryBlogs />
