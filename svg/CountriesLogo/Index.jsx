@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 
 function CoountriesLogo() {
   return (
@@ -48,6 +49,9 @@ function CoountriesLogo() {
       </svg>
     </div>
   );
+  );
 }
+
+export default CoountriesLogo;
 
 export default CoountriesLogo;

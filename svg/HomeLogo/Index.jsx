@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 
 function HomeLogo() {
   return (
@@ -27,6 +28,9 @@ function HomeLogo() {
       </svg>
     </div>
   );
+  );
 }
+
+export default HomeLogo;
 
 export default HomeLogo;

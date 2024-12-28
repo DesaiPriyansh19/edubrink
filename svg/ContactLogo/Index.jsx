@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 
 function ContactLogo() {
   return (
@@ -29,6 +30,9 @@ function ContactLogo() {
       </svg>
     </div>
   );
+  );
 }
+
+export default ContactLogo;
 
 export default ContactLogo;

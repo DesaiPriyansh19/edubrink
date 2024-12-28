@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 
 function AboutUsLogo() {
   return (
@@ -55,6 +56,9 @@ function AboutUsLogo() {
       </svg>
     </div>
   );
+  );
 }
+
+export default AboutUsLogo;
 
 export default AboutUsLogo;

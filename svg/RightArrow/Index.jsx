@@ -1,4 +1,5 @@
 import React from "react";
+import React from "react";
 
 function RightArrow() {
   return (
@@ -24,5 +25,7 @@ function RightArrow() {
     </div>
   );
 }
+
+export default RightArrow;
 
 export default RightArrow;
