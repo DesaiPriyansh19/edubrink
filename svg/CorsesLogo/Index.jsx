@@ -1,5 +1,5 @@
 import React from "react";
-import React from "react";
+
 
 function CoursesLogo() {
   return (
@@ -42,9 +42,7 @@ function CoursesLogo() {
       </svg>
     </div>
   );
-  );
-}
 
-export default CoursesLogo;
+}
 
 export default CoursesLogo;

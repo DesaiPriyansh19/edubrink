@@ -9,7 +9,7 @@ import "./App.css";
 import NavBar from "./components/NavBar";
 import HomePage from "./components/Home/HomePage";
 import AppLayout from "./components/AppLayout";
-import AppLayout from "./components/AppLayout";
+
 import AboutPage from "./components/AboutUs/About";
 import ContactSection from "./components/ContactSection";
 import ProtectedRoute from "../utils/ProtectedRoute";
