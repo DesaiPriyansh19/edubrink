@@ -40,7 +40,7 @@ const CountryPage = () => {
   console.log(data);
 
   return (
-    <div className="max-w-[1240px] mx-auto py-8 font-sans">
+    <div className="max-w-[1240px] mx-5 py-8 font-sans">
       {/* <div className="mb-4 flex justify-end">
         <button
           className={`px-4 py-2 rounded ${

@@ -49,7 +49,7 @@ const ContactUs = () => {
             </div>
           </div>
         </div>
-        <ContactUsFooter />
+   
       </div>
     </div>
   );
