@@ -16,6 +16,7 @@ import Footer from "./components/Footer/Footer";
 import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
 import AppLayout from "./components/AppLayout";
 import CountryPage from "./components/CountryPage/CountryPage";
+import Courses from "./components/CoursesPage/Courses";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +35,7 @@ function App() {
                 element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
               >
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/courses" element={<Courses />} />
                 <Route path="/contact" element={<ContactSection />} />
                 <Route path="/country" element={<CountryPage />}></Route>
                 <Route

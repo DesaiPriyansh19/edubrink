@@ -126,7 +126,8 @@ const NavBar = () => {
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
           <div className="relative">
-            <button
+            <Link
+              to={"/courses"}
               className="flex items-center space-x-1 bg-white  text-gray-800"
               onClick={handleClickTwo}
             >
@@ -145,7 +146,7 @@ const NavBar = () => {
                   d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
 
           {/* Countries Dropdown */}
