@@ -24,9 +24,7 @@ export default function SidebarAdmin() {
   return (
     <div
       style={{ maxWidth: `${conMaxWidth}px` }}
-      className={`relative transition-all w-full duration-300 bg-[#161f30] ${
-        conMaxWidth ? "min-h-screen" : "h-auto"
-      }`}
+      className="sticky top-0 w-full min-h-screen bg-[#161f30] transition-all duration-300"
     >
       <div className="w-full mx-auto">
         {/* Header Section */}
@@ -52,10 +50,7 @@ export default function SidebarAdmin() {
         <div className="pb-10">
           {SideBarOption.map((category, index) => (
             <div key={index} className="mb-8">
-              {/* Category Items */}
               <Link to={`/admin${category.path}`}>
-                {" "}
-                {/* Link added here */}
                 <div
                   className={`flex ${
                     conMaxWidth === 288 ? "ml-4 mb-4" : "justify-center mb-8"
@@ -63,7 +58,6 @@ export default function SidebarAdmin() {
                 >
                   <div className="relative group">
                     {category.icon}
-
                     <div
                       className={`absolute top-[-1px] ${
                         conMaxWidth === 72
@@ -83,17 +77,17 @@ export default function SidebarAdmin() {
         <div
           className={`absolute w-full flex ${
             conMaxWidth === 72 ? "justify-center" : "justify-between"
-          }  items-center h-auto bottom-8`}
+          } items-center h-auto bottom-8`}
         >
           <div
             className={`rounded-lg ${
               conMaxWidth === 72 ? "ml-0 w-10 h-10" : "ml-4 w-14 h-14"
-            }  bg-gray-500`}
+            } bg-gray-500`}
           ></div>
           <div
             className={`absolute text-xl text-white  ${
               conMaxWidth === 72 ? "left-full hidden" : "left-14 top-0"
-            } ml-6  text-sm whitespace-nowrap  rounded-md `}
+            } ml-6 text-sm whitespace-nowrap rounded-md`}
           >
             <p className="mb-1 font-medium">Karan Jangde</p>
             <p className="text-xs">jangdekaran4@gmail.com</p>

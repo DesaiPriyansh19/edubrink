@@ -13,20 +13,20 @@ export default function WhiteHamburgerIcon() {
         <path
           d="M3 7H21"
           stroke="white"
-          stroke-width="1.5"
-          stroke-linecap="round"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
         <path
           d="M3 12H21"
           stroke="white"
-          stroke-width="1.5"
-          stroke-linecap="round"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
         <path
           d="M3 17H21"
           stroke="white"
-          stroke-width="1.5"
-          stroke-linecap="round"
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
       </svg>
     </div>

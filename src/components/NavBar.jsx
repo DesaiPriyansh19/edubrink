@@ -1,17 +1,16 @@
 import { useState } from "react";
 import flag from "../assets/Flags/UKFlag.png";
 import usa from "../assets/Flags/USAflag.png";
-
 import Search from "../../svg/caplogo/Logo/Search";
 import { Link } from "react-router-dom";
-import TogelMenu from "../../svg/TogelMenu/Index";
 
-import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
 import SideBar from "./SideBar";
 import FilterLogo from "../../svg/FilterLogo";
-
 import DropdowneCourses from "./DropdowneCourses";
 import DropdownContries from "./DropdownContries";
+import TogelMenu from "../../svg/TogelMenu/Index";
+import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
+import i18n from "../i18n";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
@@ -23,8 +22,10 @@ const NavBar = () => {
   const handleClick = () => {
     setShowCountriesDropdown(!showCountriesDropdown);
     setShowCoursesDropdown(false);
+    setShowCoursesDropdown(false);
   };
   const handleClickTwo = () => {
+    setShowCoursesDropdown(!showCoursesDropdown);
     setShowCoursesDropdown(!showCoursesDropdown);
     setShowCountriesDropdown(false);
   };
@@ -34,7 +35,9 @@ const NavBar = () => {
     // Add or remove the overflow-hidden class on the body element
     if (!isMenuOpen) {
       document.body.classList.add("overflow-hidden");
+      document.body.classList.add("overflow-hidden");
     } else {
+      document.body.classList.remove("overflow-hidden");
       document.body.classList.remove("overflow-hidden");
     }
   };
@@ -151,9 +154,8 @@ const NavBar = () => {
 
           {/* Countries Dropdown */}
           <div className="relative bg-white rounded-full ">
-            <Link
-              to={"/country"}
-              className="flex items-center space-x-1  bg-white text-gray-800"
+            <div
+              className="flex items-center space-x-1 cursor-pointer bg-white text-gray-800"
               onClick={handleClick}
             >
               <span className=" font-medium bg-white">Countries</span>
@@ -171,7 +173,7 @@ const NavBar = () => {
                   d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                 />
               </svg>
-            </Link>
+            </div>
           </div>
 
           {/* About Dropdown */}
@@ -259,7 +261,7 @@ const NavBar = () => {
           </li>
         </ul>
       )}
-      {showCountriesDropdown && <DropdownContries />}
+      {showCountriesDropdown && <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />}
       {showCoursesDropdown && <DropdowneCourses />}
       {isMenuOpen && <SideBar isMenuOpen={isMenuOpen} />}
 

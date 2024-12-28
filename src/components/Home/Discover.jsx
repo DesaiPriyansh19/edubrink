@@ -5,9 +5,11 @@ import germny from "../../assets/Flags/GermnyFlag.png";
 import Unitedarap from "../../assets/Flags/UnitedAraPFlag.png";
 import swizrland from "../../assets/Flags/SwitzerlandFlag.png";
 import canada from "../../assets/Flags/CanadaFlag.png";
-import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import bgImage from "../../assets/1293242-dual-degree.webp";
+import { Trans, useTranslation } from "react-i18next";
+
 function Discover() {
+  const { t } = useTranslation();
   return (
     <section
       className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[55vh] sm:h-[70vh] md:h-[450px] relative overflow-hidden"
@@ -28,17 +30,17 @@ function Discover() {
       ></div>
 
       {/* Content */}
-      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center py-7 mt-2 sm:mt-0 h-full space-y-4">
-        <h1 className="text-[28px] px-2 sm:text-[30px] md:text-[55px] leading-10 sm:leading-9 md:leading-[78.2px] font-bold sm:font-semibold">
-          Discover your ideal<br></br> University abroad today
-        </h1>
-        <p className=" text-[12px] max-w-sm md:max-w-xl md:text-[1rem] px-3 md:px-4">
-          Effortlessly explore a wide range of universities, discover the
-          perfect courses tailored to your
-          goals, and compare study opportunities.
+
+      <div className="relative z-10 text-center text-white flex flex-col items-center justify-center h-full space-y-4">
+        <p className="text-[22px] em:text-[24px] sm:text-[30px] md:text-[62px] leading-8 sm:leading-9 md:leading-[78.2px] font-semibold">
+          <Trans i18nKey={"title"} />
+        </p>
+        <p className=" text-[.6rem] max-w-sm md:max-w-xl md:text-[1rem] px-4">
+          {t("description")}
+
         </p>
         <button className="px-6 rounded-full py-3 bg-gradient-to-r from-[#380C95] to-[#E15754] text-sm text-white   md:text-lg font-normal shadow-lg hover:scale-105 transition-transform">
-          Get Started Now
+          {t("buttonLabel")}
         </button>
       </div>
 

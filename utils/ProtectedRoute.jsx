@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 // Check for userInfo in localStorage to determine authentication status
 const isAuthenticated = () => {
@@ -12,12 +12,11 @@ const ProtectedRoute = ({ setIsModalOpen }) => {
   useEffect(() => {
     // If not authenticated, open the login modal
     if (!isAuthenticated()) {
-      setIsModalOpen(true);
+      setIsModalOpen(true); // Set modal open to true if not authenticated
     }
   }, [setIsModalOpen]);
 
-  // Always render the Outlet, regardless of authentication
-  return <Outlet />;
+  return isAuthenticated() ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;

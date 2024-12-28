@@ -5,6 +5,7 @@ import ManagePeoples from "./ManagePeoples";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
 import LineChart from "./LineChart";
+import UniCRUD from "./UniCRUD";
 
 export default function SlugPage() {
   const { slug } = useParams();
@@ -12,6 +13,7 @@ export default function SlugPage() {
     <div className="w-full h-auto">
       {slug === "dashboard" && <MainDashBoard />}
       {slug === "manage-peoples" && <ManagePeoples />}
+      {slug === "add-universities" && <UniCRUD />}
       {slug === "bar-chart" && <BarChart />}
       {slug === "pie-chart" && <PieChart />}
       {slug === "line-chart" && <LineChart />}

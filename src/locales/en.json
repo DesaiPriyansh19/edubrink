@@ -1,0 +1,23 @@
+{
+  "title": "Discover your ideal <br />University abroad today",
+  "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
+  "buttonLabel": "Get Started Now",
+  "carousalItemTitle": "Find out best study destination",
+  "carouselSectionItems": [
+    { "text": "U.K" },
+    { "text": "U.S.A" },
+    { "text": "Germany" },
+    { "text": "United Arab Emirates" },
+    { "text": "Switzerland" },
+    { "text": "India" },
+    { "text": "Canada" },
+    { "text": "Russia" }
+  ],
+  "descriptionTitle": "Our statistics over year",
+  "descriptions": [
+    "Years of experience",
+    "University partners",
+    "Students required",
+    "Courses we provide"
+  ]
+}

@@ -38,14 +38,14 @@ function CountryBlogs() {
   return (
     <div className="mt-11 text-black">
       <div className="max-w-[1240px] mx-auto">
-        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-4 flex justify-between">
+        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold  flex justify-between">
           Popular Article related Australia
           <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
             View All<span className="mx-2">&gt;</span>
           </button>
         </h1>
       </div>
-      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6 px-4  py-6 ">
+      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6   py-6 ">
         {/* First Slide */}
         {blogCards.map((card) => (
           <div

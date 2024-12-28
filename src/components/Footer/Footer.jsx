@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="relative w-[85%] mx-auto px-1 md:px-4 rounded-2xl overflow-hidden">
+    <div className="relative max-w-[1240px] mx-auto  rounded-2xl overflow-hidden">
       <div className="bg-white py-8 text-gray-800 px-4 mt-[5%] mb-[5%] rounded-2xl ">
         <div className="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left">
           <h2 className="text-2xl font-bold mb-4 sm:mb-0">Edubrink</h2>

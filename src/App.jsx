@@ -8,13 +8,13 @@ import {
 import "./App.css";
 import NavBar from "./components/NavBar";
 import HomePage from "./components/Home/HomePage";
-import AuthModal from "./components/AuthModal";
+import AppLayout from "./components/AppLayout";
 import AboutPage from "./components/AboutUs/About";
 import ContactSection from "./components/ContactSection";
 import ProtectedRoute from "../utils/ProtectedRoute";
-import Footer from "./components/Footer/Footer";
+
 import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
-import AppLayout from "./components/AppLayout";
+
 import CountryPage from "./components/CountryPage/CountryPage";
 import Courses from "./components/CoursesPage/Courses";
 import ContactUs from "./components/ContactUs/ContactUs";
@@ -32,21 +32,19 @@ function App() {
               <Route path="/" element={<HomePage />} />
 
               {/* Protected Routes */}
-              <Route
-                element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
-              >
+              <Route>
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/contact" element={<ContactUs />} />
-                <Route path="/country" element={<CountryPage />}></Route>
+                <Route path="/country/:slug" element={<CountryPage />} />
                 <Route
                   path="/admin"
                   element={<Navigate to="/admin/dashboard" />}
                 />
-
-                {/* Dynamic slug route */}
-                <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
               </Route>
+              {/* Dynamic slug route
+              <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
+              {/* </Route> */}
             </Routes>
           </AppLayout>
         </div>

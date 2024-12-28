@@ -23,8 +23,8 @@ const TickMark = () => {
             y2="11.9999"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#380C95" />
-            <stop offset="1" stop-color="#E15754" />
+            <stop stopColor="#380C95" />
+            <stop offset="1" stopColor="#E15754" />
           </linearGradient>
         </defs>
       </svg>
