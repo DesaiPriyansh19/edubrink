@@ -15,6 +15,7 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 import Footer from "./components/Footer/Footer";
 import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
 import AppLayout from "./components/AppLayout";
+import CountryPage from "./components/CountryPage/CountryPage";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +35,7 @@ function App() {
               >
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactSection />} />
+                <Route path="/country" element={<CountryPage />}></Route>
                 <Route
                   path="/admin"
                   element={<Navigate to="/admin/dashboard" />}

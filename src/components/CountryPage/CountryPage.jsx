@@ -1,18 +1,14 @@
 import React from "react";
-
 import University from "../../assets/Countrypage/University.png";
 import KeyLogo from "../../../svg/KeyFact";
 import MillionLogo from "../../../svg/Millions";
 import LanguageLogo from "../../../svg/LanguageLogo";
 import UniversityLogo from "../../../svg/UniversityLogo";
-import CountryFooter from "./CountryFooter";
 import DollerRounded from "../../../svg/DollerRounded/Index";
-
 import CountryHome from "../../../svg/CountryHome";
 import CountryPopularCourse from "./CountryPopularCourse";
 import CountryPopularUniversity from "./CountryPopularUniversity";
 import CountryBlogs from "./CountryBlogs";
-import ContactSection from "../ContactSection";
 
 const CountryPage = () => {
   return (
