@@ -21,7 +21,9 @@ const CountryPage = () => {
 
   const [language, setLanguage] = useState(i18n.language);
 
-  const { data } = useFetch(`https://edu-brink-backend.vercel.app/api/country/name/${slug}`);
+  const { data } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/country/name/${slug}`
+  );
   function formatPopulation(population) {
     if (!population) return ""; // Return empty string if population is undefined or null
 
@@ -40,7 +42,7 @@ const CountryPage = () => {
   console.log(data);
 
   return (
-    <div className="max-w-[1240px] mx-5 py-8 font-sans">
+    <div className="max-w-7xl mx-auto p-4 md:p-8 font-sans">
       {/* <div className="mb-4 flex justify-end">
         <button
           className={`px-4 py-2 rounded ${
