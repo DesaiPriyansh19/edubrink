@@ -36,8 +36,9 @@ const AboutFQA = () => {
     },
   ];
 
-  return (<>
-   <div className="faq-outer-text max-w-7xl  px-6  ">
+  return (
+    <>
+      <div className="faq-outer-text max-w-7xl ml-[6%] mr-[6%]">
         <h2 className="text-4xl font-bold mb-2 mt-5 ">FAQ</h2>
         <p className="text-gray-600 mb-8 pr-[10%] md:pr-[50%]">
           Our Study Abroad FAQ covers everything you need to know—from choosing
@@ -45,43 +46,42 @@ const AboutFQA = () => {
           requirements.
         </p>
       </div>
-    <div className=" w-[90%] rounded-3xl mb-16 mx-auto bg-white  p-6">
-     
-      <div className="space-y-4  bg-white">
-        {faqItems.map((item) => (
-          <div
-            key={item.id}
-            className={`p-4 rounded-lg shadow-sm bg-gray-100 ${
-              openQuestion === item.id ? "shadow-md" : ""
-            }`}
-          >
+      <div className="w-[90%] rounded-3xl mb-16 mx-auto bg-white p-6">
+        <div className="space-y-4 bg-white">
+          {faqItems.map((item) => (
             <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => toggleQuestion(item.id)}
+              key={item.id}
+              className={`p-4 rounded-lg shadow-sm bg-gray-100 ${
+                openQuestion === item.id ? "shadow-md" : ""
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-semibold">
-                  {item.id}
+              <div
+                className="flex justify-between items-center cursor-pointer"
+                onClick={() => toggleQuestion(item.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-semibold">
+                    {item.id}
+                  </div>
+                  <h3
+                    className={`text-lg font-semibold ${
+                      openQuestion === item.id ? "text-black" : ""
+                    }`}
+                  >
+                    {item.question}
+                  </h3>
                 </div>
-                <h3
-                  className={`text-lg font-semibold ${
-                    openQuestion === item.id ? "text-black" : ""
-                  }`}
-                >
-                  {item.question}
-                </h3>
+                <div className="hidden sm:flex text-black bg-white rounded-full w-8 h-8 items-center justify-center">
+                  {openQuestion === item.id ? "↓" : "→"}
+                </div>
               </div>
-              <div className="text-black bg-white rounded-full w-8 h-8 pl-[0.7rem]">
-                {openQuestion === item.id ? "↓" : "→"}
-              </div>
+              {openQuestion === item.id && item.answer && (
+                <p className="text-gray-600 mt-3">{item.answer}</p>
+              )}
             </div>
-            {openQuestion === item.id && item.answer && (
-              <p className="text-gray-600 mt-3">{item.answer}</p>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
     </>
   );
 };

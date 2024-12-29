@@ -26,39 +26,45 @@ const AboutGlobalJourney = () => {
       <div className="flex flex-wrap justify-center gap-4 py-6 px-4">
         {/* Card 1 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
             1,00,00+
-            <span>
-              <VseuaxPeople />
-            </span>
+            <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
+              <span>
+                <VseuaxPeople />
+              </span>
+            </div>
           </h2>
-          <p className=" font-general-sans font-medium  leading-7">
+          <p className="font-general-sans font-medium text-lg leading-7">
             Total Students
           </p>
         </div>
 
         {/* Card 2 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
             3230+
-            <span>
-              <VuesaxBuilding />
-            </span>
+            <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
+              <span>
+                <VuesaxBuilding />
+              </span>
+            </div>
           </h2>
-          <p className=" font-general-sans font-medium  leading-7">
+          <p className=" font-general-sans font-medium  text-lg leading-7">
             Partners University
           </p>
         </div>
 
         {/* Card 3 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
             160+
-            <span>
-              <VseuaxUser />
-            </span>
+            <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
+              <span>
+                <VseuaxUser />
+              </span>
+            </div>
           </h2>
-          <p className="font-general-sans font-medium  leading-7">
+          <p className="font-general-sans font-medium text-lg leading-7">
             Students Ambassadors
           </p>
         </div>

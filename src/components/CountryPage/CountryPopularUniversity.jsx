@@ -8,7 +8,7 @@ import DiscountLogo from "../../../svg/DiscountLogo/Index";
 import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import TickMark from "../../../svg/TickMark";
 
-const colleges = [
+const Colleges = [
   {
     id: 1,
     name: "Impartial College London",
@@ -31,24 +31,24 @@ const colleges = [
   },
 ];
 
+const features = [
+  {
+    icon: <DollerRounded />,
+    title: "Number of courses",
+    description: "1000+ Courses",
+  },
+  {
+    icon: <ScholerShipLogo />,
+    title: "Scholarship",
+    description: "Available",
+  },
+  {
+    icon: <DiscountLogo />,
+    title: "Discount",
+    description: "31 July 2025",
+  },
+];
 const CountryPopularUniversity = ({ data }) => {
-  const features = [
-    {
-      icon: <DollerRounded />,
-      title: "Number of courses",
-      description: "1000+ Courses",
-    },
-    {
-      icon: <ScholerShipLogo />,
-      title: "Scholarship",
-      description: "Available",
-    },
-    {
-      icon: <DiscountLogo />,
-      title: "Discount",
-      description: "31 July 2025",
-    },
-  ];
   return (
     <>
       <div className="max-w-7xl mx-auto  ">
@@ -66,7 +66,7 @@ const CountryPopularUniversity = ({ data }) => {
 
         <div className="overflow-x-auto scrollbar-hide  whitespace-nowrap ">
           <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-4">
-            {data?.universities?.map((college) => (
+            {Colleges.map((college) => (
               <div className="relative  mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg">
                 {/* Most Popular Badge */}
                 <div className="p-4 sm:p-6">
@@ -85,7 +85,7 @@ const CountryPopularUniversity = ({ data }) => {
                     </div>
                     <div className="flex-1">
                       <h1 className="text-lg font-semibold gap-1 flex">
-                        {college?.uniName?.en}{" "}
+                        {college.name}{" "}
                         <span>
                           <TickMark />
                         </span>
@@ -97,7 +97,7 @@ const CountryPopularUniversity = ({ data }) => {
                           alt="Flag"
                           className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
                         />
-                        {college?.uniLocation?.uniAddress?.en}
+                        {college.location}
                       </p>
                       <div className="flex items-center mt-1">
                         <span className="w-5 h-5 rounded-full mr-2">
