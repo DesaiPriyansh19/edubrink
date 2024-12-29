@@ -73,7 +73,7 @@ const CountryPopularCourse = ({ data }) => {
               <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
                 <div className="w-20 h-20">
                   <img
-                    src={UniversityChicago}
+                    src={course.img}
                     alt="College Logo"
                     className="w-full h-full"
                   />
