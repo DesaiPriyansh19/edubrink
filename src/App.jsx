@@ -26,29 +26,25 @@ function App() {
   return (
     <div className="max-w-[1440px] w-full mx-auto">
       <Router>
-        <div className="h-full m-0 p-0 w-full">
-          <AppLayout setIsModalOpen={setIsModalOpen}>
-            {/* Routing Configuration */}
-            <Routes>
-              <Route path="/" element={<HomePage />} />
+        <AppLayout setIsModalOpen={setIsModalOpen}>
+          {/* Routing Configuration */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-              {/* Protected Routes */}
-              <Route>
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/courses" element={<Courses />} />
-                <Route path="/contact" element={<ContactUs />} />
-                <Route path="/country/:slug" element={<CountryPage />} />
-                <Route
-                  path="/admin"
-                  element={<Navigate to="/admin/dashboard" />}
-                />
-              </Route>
-              {/* Dynamic slug route
+            {/* Protected Routes */}
+            <Route>
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/country/:slug" element={<CountryPage />} />
+              <Route
+                path="/admin"
+                element={<Navigate to="/admin/dashboard" />}
+              />
               <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
-              {/* </Route> */}
-            </Routes>
-          </AppLayout>
-        </div>
+            </Route>
+          </Routes>
+        </AppLayout>
       </Router>
     </div>
   );

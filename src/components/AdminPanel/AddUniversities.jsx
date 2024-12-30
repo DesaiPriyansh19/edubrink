@@ -44,13 +44,6 @@ export default function AddUniversities({
     });
   };
 
-  //   const handleMainPhotoChange = (index, value) => {
-  //     setFormData((prevData) => {
-  //       const updatedPhotos = [...prevData.Photos];
-  //       updatedPhotos[index] = value;
-  //       return { ...prevData, Photos: updatedPhotos };
-  //     });
-  //   };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -89,7 +82,51 @@ export default function AddUniversities({
       <div className="flex justify-center items-center w-full  ">
         <form className="w-full text-white rounded shadow-md">
           {/* University Name and Scholarship Availability */}
-          <div className="flex w-full gap-4 justify-between">
+          <div className="flex w-full gap-4 items-center justify-between">
+            <div className="mb-4 w-auto">
+              <div className="relative w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                {formData.uniSymbol ? (
+                  <>
+                    <div className="relative w-full h-full">
+                      <img
+                        src={formData.uniSymbol}
+                        alt="Profile"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-full">
+                        <button
+                          onClick={() =>
+                            setFormData((prevData) => ({
+                              ...prevData,
+                              uniSymbol: "",
+                            }))
+                          }
+                          className="bg-red-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-red-600 transition-colors duration-200"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <UploadWidget
+                    uwConfig={{
+                      cloudName: "edubrink",
+                      uploadPreset: "EduBrinkImages",
+                      multiple: false,
+                      maxImageFileSize: 2000000,
+                      folder: "university/Logo",
+                    }}
+                    setFormData={setFormData}
+                    field="uniSymbol"
+                    uploadName="Upload Logo"
+                    id="upload_widget_logo"
+                    className="text-xs text-black"
+                  />
+                )}
+              </div>
+            </div>
+
             <div className="mb-4 w-full">
               <InputField
                 label="University Name (English)"
@@ -314,7 +351,7 @@ export default function AddUniversities({
               type="text"
               name="uniLibrary.libraryDescription.en"
               placeholder="Library Description (English)"
-              value={formData.uniLibrary.libraryDescription.en}
+              value={formData?.uniLibrary?.libraryDescription.en}
               onChange={handleInputChange}
               variant={1}
             />
@@ -323,7 +360,7 @@ export default function AddUniversities({
               type="textarea"
               name="uniLibrary.libraryDescription.ar"
               placeholder="وصف المكتبة (عربي)"
-              value={formData.uniLibrary.libraryDescription.ar}
+              value={formData?.uniLibrary?.libraryDescription.ar}
               onChange={handleInputChange}
               variant={1}
             />
@@ -331,7 +368,7 @@ export default function AddUniversities({
               <h2 className="text-sm font-semibold">
                 library Photos (صور المكتبة)
               </h2>
-              {formData.uniLibrary.libraryPhotos.map((photo, index) => (
+              {formData?.uniLibrary?.libraryPhotos.map((photo, index) => (
                 <div key={index} className="flex items-center">
                   <div className="mb-4 w-full">
                     <InputField
@@ -388,7 +425,7 @@ export default function AddUniversities({
                   }}
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
                 >
-                  Add Blank Field 
+                  Add Blank Field
                 </button>
                 <UploadWidget
                   uwConfig={{
@@ -396,12 +433,13 @@ export default function AddUniversities({
                     uploadPreset: "EduBrinkImages",
                     multiple: true,
                     maxImageFileSize: 2000000,
-                    folder: "libraryImages",
+                    folder: "university/libraryImages",
                   }}
                   setFormData={setFormData}
                   field="uniLibrary"
                   fieldName="libraryPhotos"
                   uploadName="Upload Library Photo"
+                  id="upload_widget_library"
                 />
               </div>
             </div>
@@ -487,7 +525,7 @@ export default function AddUniversities({
                   }}
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
                 >
-                  Add Blank Field 
+                  Add Blank Field
                 </button>
                 <UploadWidget
                   uwConfig={{
@@ -495,12 +533,13 @@ export default function AddUniversities({
                     uploadPreset: "EduBrinkImages",
                     multiple: true,
                     maxImageFileSize: 2000000,
-                    folder: "sportsImage",
+                    folder: "university/sportsImage",
                   }}
                   setFormData={setFormData}
                   field="uniSports"
                   fieldName="sportsPhotos"
                   uploadName="Upload Sports Photo"
+                  id="upload_widget_sports"
                 />
               </div>
             </div>
@@ -532,46 +571,48 @@ export default function AddUniversities({
               <h2 className="text-sm font-semibold">
                 Sports Photos (صور رياضية)
               </h2>
-              {formData.studentLifeStyleInUni.lifestylePhotos.map((photo, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="mb-4 w-full">
-                    <InputField
-                      label={`Main Photo URL ${index + 1}`}
-                      type="text"
-                      name={`studentLifeStyleInUni.lifestylePhotos[${index}]`}
-                      value={photo}
-                      onChange={(e) =>
-                        handleMainPhotoChange(
-                          index,
-                          "studentLifeStyleInUni.lifestylePhotos",
-                          e.target.value
-                        )
-                      }
-                      placeholder={`Main Photo URL ${index + 1}`}
-                      variant={1}
-                    />
+              {formData.studentLifeStyleInUni.lifestylePhotos.map(
+                (photo, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="mb-4 w-full">
+                      <InputField
+                        label={`Main Photo URL ${index + 1}`}
+                        type="text"
+                        name={`studentLifeStyleInUni.lifestylePhotos[${index}]`}
+                        value={photo}
+                        onChange={(e) =>
+                          handleMainPhotoChange(
+                            index,
+                            "studentLifeStyleInUni.lifestylePhotos",
+                            e.target.value
+                          )
+                        }
+                        placeholder={`Main Photo URL ${index + 1}`}
+                        variant={1}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updatedPhotos = [
+                          ...formData.studentLifeStyleInUni.lifestylePhotos,
+                        ];
+                        updatedPhotos.splice(index, 1);
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          studentLifeStyleInUni: {
+                            ...prevData.studentLifeStyleInUni,
+                            lifestylePhotos: updatedPhotos,
+                          },
+                        }));
+                      }}
+                      className="text-red-500 ml-2"
+                    >
+                      Remove
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updatedPhotos = [
-                        ...formData.studentLifeStyleInUni.lifestylePhotos,
-                      ];
-                      updatedPhotos.splice(index, 1);
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        studentLifeStyleInUni: {
-                          ...prevData.studentLifeStyleInUni,
-                          lifestylePhotos: updatedPhotos,
-                        },
-                      }));
-                    }}
-                    className="text-red-500 ml-2"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
+                )
+              )}
               <div className="flex items-center gap-4">
                 <button
                   type="button"
@@ -580,13 +621,16 @@ export default function AddUniversities({
                       ...prevData,
                       studentLifeStyleInUni: {
                         ...prevData.studentLifeStyleInUni,
-                        lifestylePhotos: [...prevData.studentLifeStyleInUni.lifestylePhotos, ""],
+                        lifestylePhotos: [
+                          ...prevData.studentLifeStyleInUni.lifestylePhotos,
+                          "",
+                        ],
                       },
                     }));
                   }}
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-2"
                 >
-                  Add Blank Field 
+                  Add Blank Field
                 </button>
                 <UploadWidget
                   uwConfig={{
@@ -594,12 +638,13 @@ export default function AddUniversities({
                     uploadPreset: "EduBrinkImages",
                     multiple: true,
                     maxImageFileSize: 2000000,
-                    folder: "lifestyleImages",
+                    folder: "university/lifestyleImages",
                   }}
                   setFormData={setFormData}
                   field="studentLifeStyleInUni"
                   fieldName="lifestylePhotos"
                   uploadName="Upload Lifestyle Photo"
+                  id="upload_widget_lifestyle"
                 />
               </div>
             </div>

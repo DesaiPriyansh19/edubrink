@@ -1,135 +1,70 @@
 import React, { useEffect, useState } from "react";
-import Studentone from "../../assets/AboutpageImage/Studentone.png";
 import StudentTwo from "../../assets/AboutpageImage/StudentTwo.png";
 import StudentThree from "../../assets/AboutpageImage/StudentThree.png";
 
 const AboutStudentPlacement = () => {
-  const [isSmallDevice, setIsSmallDevice] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallDevice(window.innerWidth < 640); // Small devices are < 640px
-    };
-
-    handleResize(); // Check on initial render
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  const cards = [
+    {
+      id: 1,
+      image: StudentThree,
+      title: "MSc Advanced Computer Science",
+      university: "TH KHONE - Cologne University of Applied Science",
+      tuitionFees: "€3,867.00 / Year",
+      language: "English",
+      deadline: "31 July 2025",
+      buttonWidths: ["w-1/2", "w-1/2"],
+      marginTop: "mt-[0%]",
+      marginBottom: "mb-[8%]",
+      marginLeft: "ml-[0%]",
+    },
+    {
+      id: 2,
+      image: StudentTwo,
+      title: "MSc Advanced Computer Science",
+      university: "TH KHONE - Cologne University of Applied Science",
+      tuitionFees: "€3,867.00 / Year",
+      language: "English",
+      deadline: "31 July 2025",
+      buttonWidths: ["w-[40%]", "w-[40%]"],
+      marginTop: "mt-[10%]",
+      marginBottom: "mb-[6%]",
+      marginLeft: "ml-[5%] mmd:ml-0 lg:ml-[5%]",
+    },
+    {
+      id: 3,
+      image: StudentThree,
+      title: "MSc Advanced Computer Science",
+      university: "TH KHONE - Cologne University of Applied Science",
+      tuitionFees: "€3,867.00 / Year",
+      language: "English",
+      deadline: "31 July 2025",
+      buttonWidths: ["w-[45%]", "w-[45%]"],
+      marginTop: "mt-[20%]",
+      marginBottom: "mb-[6%]",
+      marginLeft: "ml-[10%] mmd:ml-0 lg:ml-[10%]",
+    },
+  ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-6  h-auto md:h-[500px]">
+    <div className="flex mmd:flex-row flex-col justify-between items-start px-4 gap-6 mt-6">
       {/* Left: Card Section */}
-      <div
-        className={`col-span-12 md:col-span-7 space-y-6 ${
-          isSmallDevice ? "h-auto" : "h-full"
-        }`}
-      >
-        <div className={`relative w-full flex flex-col md:flex-row md:h-full`}>
-          {/* Background Cards */}
+      <div className="w-full mmd:w-1/2  relative h-[320px] esm:h-[350px] md:h-[400px]">
+        {cards.map((card, index) => (
           <div
-            className={`bg-white w-[381.59px] md:w-[381.59px] h-auto md:h-[226.11px] rounded-[12.44px] pt-[18.66px] pb-[18.66px] pl-[15.55px] pr-[15.55px] ${
-              isSmallDevice ? "mb-4" : "absolute top-[6.06px]"
-            }`}
-          >
+          key={card.id}
+          className={`absolute top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here
+        >
             <div className="flex items-center gap-2">
-              <img src={StudentThree} alt="" className="h-auto w-auto" />
+              <img
+                src={card.image}
+                alt={card.title}
+                className="h-auto w-auto"
+              />
               <div>
-                <div className="font-semibold text-black text-[1rem]">
-                  MSc Advanced Computer Science
+                <div className="font-semibold text-black text-xs sm:text-[1rem]">
+                  {card.title}
                 </div>
-                <div className="text-sm text-black">
-                  TH KHONE - Cologne University of Applied Science
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex justify-between items-center">
-              <div>
-                <p className="text-black font-normal text-sm">Tuition Fees</p>
-                <p className="text-black">€3,867.00 / Year</p>
-              </div>
-              <div>
-                <p className="text-black font-semibold">Language</p>
-                <p className="text-black">English</p>
-              </div>
-              <div>
-                <p className="text-black font-semibold">Deadline</p>
-                <p className="text-black">31 July 2025</p>
-              </div>
-            </div>
-
-            <div className="border-t-[2px] border-black mt-2 mb-2"></div>
-
-            <div className="mt-6 flex justify-between">
-              <button className="w-1/2 px-1 py-2 text-sm text-white bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] rounded-[1.5rem]">
-                Apply Now
-              </button>
-              <button className=" w-1/2 px-1 py-2 text-sm border border-black rounded-[1.5rem] ">
-                Learn More
-              </button>
-            </div>
-          </div>
-
-          <div
-            className={`bg-white w-[381.59px] md:w-[381.59px] h-auto md:h-[226.11px] rounded-[12.44px] pt-[18.66px] pb-[18.66px] pl-[15.55px] pr-[15.55px] ${
-              isSmallDevice ? "mb-4" : "absolute top-[94.53px] left-[31.33px]"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <img src={StudentTwo} alt="" className="h-auto w-auto" />
-              <div>
-                <div className="font-semibold text-black text-[1rem]">
-                  MSc Advanced Computer Science
-                </div>
-                <div className="text-sm text-black">
-                  TH KHONE - Cologne University of Applied Science
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex justify-between items-center">
-              <div>
-                <p className="text-black font-normal text-sm">Tuition Fees</p>
-                <p className="text-black">€3,867.00 / Year</p>
-              </div>
-              <div>
-                <p className="text-black font-normal text-sm">Language</p>
-                <p className="text-black">English</p>
-              </div>
-              <div>
-                <p className="text-black font-normal text-sm">Deadline</p>
-                <p className="text-black">31 July 2025</p>
-              </div>
-            </div>
-
-            <div className="border-t-[2px] border-black mt-2 mb-2"></div>
-            <div className="mt-6 flex justify-between">
-              <button className="w-[40%] px-1 py-2 text-sm text-white bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] rounded-[1.5rem]">
-                Apply Now
-              </button>
-              <button className="w-[40%] px-1 py-2 text-sm border border-black rounded-[1.5rem] text-black">
-                Learn More
-              </button>
-            </div>
-          </div>
-
-          <div
-            className={`bg-white w-[381.59px] md:w-[381.59px] h-auto md:h-[226.11px] rounded-[12.44px] pt-[18.66px] pb-[18.66px] pl-[15.55px] pr-[15.55px] ${
-              isSmallDevice ? "mb-4" : "absolute top-[161.53px] left-[64.41px]"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <img src={StudentThree} alt="" className="h-auto w-auto" />
-              <div>
-                <div className="font-semibold text-black text-[1rem]">
-                  MSc Advanced Computer Science
-                </div>
-                <div className="text-sm text-black">
-                  TH KHONE - Cologne University of Applied Science
-                </div>
+                <div className="text-xs sm:text-sm  text-black">{card.university}</div>
               </div>
             </div>
 
@@ -139,19 +74,21 @@ const AboutStudentPlacement = () => {
                   Tuition Fees
                 </p>
                 <p className="text-black font-medium text-[.8rem]">
-                  €3,867.00 / Year
+                  {card.tuitionFees}
                 </p>
               </div>
               <div>
                 <p className="text-black font-medium text-[.8rem]">Language</p>
-                <p className="text-black font-medium  text-[.8rem]">English</p>
+                <p className="text-black font-medium text-[.8rem]">
+                  {card.language}
+                </p>
               </div>
               <div>
-                <p className="text-gray-700 font-medium  text-[.8rem]">
+                <p className="text-gray-700 font-medium text-[.8rem]">
                   Deadline
                 </p>
                 <p className="text-gray-900 font-medium text-[.8rem]">
-                  31 July 2025
+                  {card.deadline}
                 </p>
               </div>
             </div>
@@ -159,22 +96,27 @@ const AboutStudentPlacement = () => {
             <div className="border-t-[2px] border-black mt-2 mb-2"></div>
 
             <div className="mt-6 flex justify-between">
-              <button className="w-[45%] px-1 py-2 text-sm text-white bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] rounded-[1.5rem]">
+              <button
+                className={`px-1 py-2 text-sm text-white bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] rounded-[1.5rem] ${card.buttonWidths[0]}`}
+              >
                 Apply Now
               </button>
-              <button className="w-[45%] text-sm border border-black rounded-[1.5rem] px-1 py-2">
+              <button
+                className={`px-1 py-2 text-sm border border-black rounded-[1.5rem] ${card.buttonWidths[1]}`}
+              >
                 Learn More
               </button>
             </div>
           </div>
-        </div>
+        ))}
       </div>
+
       {/* Right: Text Section */}
-      <div className="col-span-12 md:col-span-5 space-y-6">
-        <div className="w-full">
-          <h2 className="text-2xl lg:text-4xl font-semibold text-gray-900">
+      <div className="w-full mmd:w-1/2 h-auto esm:h-[350px] md:h-[400px]">
+        <div className="w-full mmd:max-w-xl">
+          <p className="text-3xl lg:text-4xl font-semibold text-gray-900">
             We make more than 20k+ successful students placement in the world
-          </h2>
+          </p>
           <p className="mt-4 text-gray-600 leading-relaxed">
             Investigate courses, universities and their locations. Look upon the
             teaching modules, research opportunities, campus life and employment

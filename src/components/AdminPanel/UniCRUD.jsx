@@ -5,7 +5,7 @@ import AddUniversities from "./AddUniversities";
 
 export default function UniCRUD() {
   const baseUrl = "https://edu-brink-backend.vercel.app/api/university";
-  const { data, fetchById, updateById, addNew, deleteById } =
+  const { data,loading, fetchById, updateById, addNew, deleteById } =
     useApiData(baseUrl);
 
   console.log(data);
@@ -150,7 +150,7 @@ export default function UniCRUD() {
   return (
     <>
       {editData.type === "View" && (
-        <ViewUniversities handleEdit={handleEdit} data={data} />
+        <ViewUniversities loading={loading} handleEdit={handleEdit} data={data} />
       )}
       {editData.type === "Add" && (
         <AddUniversities

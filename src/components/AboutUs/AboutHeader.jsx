@@ -3,7 +3,7 @@ import muslimgirl from "../../assets/AboutpageImage/girl.png";
 const AboutHeader = () => {
   return (
     <div>
-      <section className="bg-[rgba(248,248,248,1)] py-10 px-5 md:py-20 md:px-10">
+      <section className="bg-[rgba(248,248,248,1)] py-4 px-5 md:py-20 md:px-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center">
           <div className="space-y-6">
             <h1 className="text-4xl font-semibold text-gray-800 md:text-5xl">
@@ -18,7 +18,7 @@ const AboutHeader = () => {
               Start Your Journey Today
             </button>
 
-            <p className="w-[361px] h-[28px]">
+            <p className=" h-[28px]">
               Join 1+ million students who used Edubrink.
             </p>
           </div>

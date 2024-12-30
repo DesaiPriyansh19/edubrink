@@ -10,7 +10,7 @@ export default function AppLayout({ children, setIsModalOpen }) {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
-    <div className="h-full m-0 p-0 w-full">
+    <>
       {/* Modal Component */}
       <AuthModal isOpen={false} onClose={() => setIsModalOpen(false)} />
 
@@ -22,6 +22,6 @@ export default function AppLayout({ children, setIsModalOpen }) {
 
       {/* Conditionally Render Footer */}
       {!isAdminRoute && <Footer />}
-    </div>
+    </>
   );
 }

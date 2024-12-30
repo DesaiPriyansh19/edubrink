@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import GoogleWrapper from "../../utils/GoogleWrapper";
 import axios from "axios";
 import OtpVerificationModal from "./OtpVerificationModal";
-import Loader from "./VerifiedModal";
 import VerifiedModal from "./VerifiedModal";
 
 const AuthModal = ({ isOpen, onClose }) => {

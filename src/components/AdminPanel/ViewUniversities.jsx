@@ -1,6 +1,10 @@
 import React from "react";
+import Loader from "../../../utils/Loader";
 
-export default function ViewUniversities({ data, handleEdit }) {
+export default function ViewUniversities({ data, loading, handleEdit }) {
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <div className="text-white mx-auto p-4">
       <div className="flex items-center mb-6 justify-between">

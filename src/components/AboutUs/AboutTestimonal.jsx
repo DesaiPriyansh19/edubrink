@@ -9,25 +9,20 @@ const AboutTestimonal = () => {
   return (
     <div className="container mx-auto  bg-[rgba(248,248,248,1)] col-md-12 row">
       <div className="testi-wrapper flex flex-col items-center">
-        <div className="header text-center mb-4 max-w-[677px] h-[171px] mx-auto">
-          <div className="flex flex-col items-center gap-5">
-            <div className="flex items-center gap-5">
-              <h1 className="text-[48px] font-[600] leading-[55.2px] font-[\'General Sans\']">
-                Testimonial
-              </h1>
-              <div>
-                <img src={Testimonial} alt="Testimonial Icon" />
-              </div>
-            </div>
-            <p className="text-black font-sans font-normal text-lg mb-6">
-              Hear from students who’ve successfully navigated their study
-              abroad journeys. From cultural immersion to academic growth, our
-              testimonials
-            </p>
-          </div>
+        <div className="header text-center mb-4">
+          <h1 className="text-3xl font-semibold leading-[55.2px] font-[\'General Sans\']">
+            Testimonial
+          </h1>
+        </div>
+        <div className="text text-center mb-6">
+          <p className="text-sm sm:text-base text-gray-600">
+            Hear from students who’ve successfully navigated their study abroad
+            journeys. From cultural immersion to academic growth, our
+            testimonials
+          </p>
         </div>
 
-        <div className="container mx-auto p-4 col-md-4">
+        <div className="container mx-auto p-0 md:p-4 col-md-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 ">
             <div className="flex flex-col gap-4 md:ml-16">
               <div className="border shadow-lg  w-full h-full rounded-[32px] pt-[20px] pb-[20px] text-center">

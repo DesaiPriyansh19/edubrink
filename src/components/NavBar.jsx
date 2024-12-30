@@ -12,7 +12,6 @@ import i18n from "../i18n";
 import TogelMenu from "../../svg/TogelMenu/Index";
 import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
 
-
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
@@ -125,8 +124,6 @@ const NavBar = () => {
             )}
           </div>
         </div>
-         
-
 
         {/* Dropdowns */}
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
@@ -179,7 +176,6 @@ const NavBar = () => {
             </div>
           </div>
 
-         
           {/* About Dropdown */}
           <div className="relative">
             <button
@@ -206,94 +202,88 @@ const NavBar = () => {
             )}
           </div>
 
-        {/* Flags Dropdown */}
-        <div className="relative px-2 rounded-full py-1 bg-[#F8F8F8]">
-          <button
-            
-            className="flex items-center space-x-1 text-gray-800"
-             onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
-          >
-            <img src={flag} alt="flag" className="w-6 h-6 rounded-full" />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-4 h-4"
-             
+          {/* Flags Dropdown */}
+          <div className="relative px-2 rounded-full py-1 bg-[#F8F8F8]">
+            <button
+              className="flex items-center space-x-1 text-gray-800"
+              onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
+              <img src={flag} alt="flag" className="w-6 h-6 rounded-full" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Contact Us Button */}
+        <Link to={"/contact"}>
+          <button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
+            Contact Us
           </button>
-        
+        </Link>
+      </nav>
+
+      {showFlagsDropdown && (
+        <ul className="hidden mmd:fixed z-10 top-[12%] right-[18%]  mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
+          <li>
+            <img
+              src="/path-to-flag1.png"
+              alt="Country 1 Flag"
+              className="w-8 h-8 rounded-full cursor-pointer"
+            />
+          </li>
+          <li>
+            <img
+              src="/path-to-flag2.png"
+              alt="Country 2 Flag"
+              className="w-8 h-8 rounded-full cursor-pointer"
+            />
+          </li>
+          <li>
+            <img
+              src="/path-to-flag3.png"
+              alt="Country 3 Flag"
+              className="w-8 h-8 rounded-full cursor-pointer"
+            />
+          </li>
+        </ul>
+      )}
+      {showCountriesDropdown && (
+        <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />
+      )}
+      {showCoursesDropdown && <DropdowneCourses />}
+      {isMenuOpen && <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />}
+
+      {isSearchOpen && (
+        <div className=" w-[95%] mx-auto  flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[12%]">
+          <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
+            <div className=" mr-2 ">
+              <Search />
+            </div>
+            <input
+              type="text"
+              placeholder="Search for courses"
+              className="bg-transparent  text-start outline-none text-black w-full"
+            />
+          </div>
+          <div className="h-auto w-auto">
+            <FilterLogo />
+          </div>
         </div>
-      </div>
-
-      {/* Contact Us Button */}
-      <Link to={'/contact'}><button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
-        Contact Us
-      </button></Link>
- 
-        </nav>
-
-        {showFlagsDropdown && (
-            <ul className="hidden mmd:fixed z-10 top-[12%] right-[18%]  mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
-              <li>
-                <img
-                  src="/path-to-flag1.png"
-                  alt="Country 1 Flag"
-                  className="w-8 h-8 rounded-full cursor-pointer"
-                />
-              </li>
-              <li>
-                <img
-                  src="/path-to-flag2.png"
-                  alt="Country 2 Flag"
-                  className="w-8 h-8 rounded-full cursor-pointer"
-                />
-              </li>
-              <li>
-                <img
-                  src="/path-to-flag3.png"
-                  alt="Country 3 Flag"
-                  className="w-8 h-8 rounded-full cursor-pointer"
-                />
-              </li>
-            </ul>
-          )}
-        {showCountriesDropdown && (
-             
-             <DropdownContries/>
-           )}
-        {showCoursesDropdown && (
-          <DropdowneCourses/>
-          )}
-      {isMenuOpen &&  
-    <SideBar isMenuOpen={isMenuOpen} />
-}
-  
-{isSearchOpen &&  
-    <div className=" w-[95%] mx-auto  flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[12%]">
-       <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
-        <div className=" mr-2 " >
-          <Search />
-        </div>
-        <input
-          type="text"
-          placeholder="Search for courses"
-          className="bg-transparent  text-start outline-none text-black w-full"
-        /> 
-      </div>
-      <div className="h-auto w-auto"><FilterLogo/></div>
-    </div>
-
-} 
-  </>
+      )}
+    </>
   );
 };
 
