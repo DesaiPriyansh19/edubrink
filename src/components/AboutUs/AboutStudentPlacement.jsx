@@ -49,7 +49,7 @@ const AboutStudentPlacement = () => {
     <div className="flex mmd:flex-row flex-col justify-between items-start px-4 gap-6 mt-6">
       {/* Left: Card Section */}
       <div className="w-full mmd:w-1/2  relative h-[320px] esm:h-[350px] md:h-[400px]">
-        {cards.map((card, index) => (
+        {cards.map((card) => (
           <div
           key={card.id}
           className={`absolute top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here

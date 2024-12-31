@@ -133,8 +133,8 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
                       <li
                         key={country.name}
                         className="flex items-center cursor-pointer gap-2"
-                        data-aos="fade-in"
-                        data-aos-delay={`${index * 45}`}
+                        data-aos="fade-in" // Ensure AOS fade-in animation
+                        data-aos-delay={`${index * 45}`} 
                       >
                         <img
                           className="rounded-full h-5 w-5"

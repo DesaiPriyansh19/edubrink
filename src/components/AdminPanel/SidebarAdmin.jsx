@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link for routing
+import { Link, Links } from "react-router-dom"; // Import Link for routing
 import WhiteHamburgerIcon from "../../../svg/WhiteHamburger";
 import HomeSvg from "../../../svg/HomeSvg";
 
@@ -34,9 +34,12 @@ export default function SidebarAdmin() {
           } pt-4 mb-10 px-4`}
         >
           {conMaxWidth === 288 && (
-            <p className="text-2xl font-bold cursor-pointer text-white">
+            <Link
+              to="/"
+              className="text-2xl font-bold cursor-pointer text-white"
+            >
               EDUBRINK
-            </p>
+            </Link>
           )}
           <div
             onClick={handleMinimise}

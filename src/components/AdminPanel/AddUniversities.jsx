@@ -7,47 +7,75 @@ export default function AddUniversities({
   formData,
   handleEdit,
   setFormData,
+  handleMainPhotoChange,
+  handleInputChange,
+  initialFormData,
 }) {
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const nameParts = name.split(".");
-    setFormData((prevData) => {
-      if (nameParts.length > 1) {
-        const updatedData = { ...prevData };
-        let temp = updatedData;
-
-        // Traverse the nested object path
-        for (let i = 0; i < nameParts.length - 1; i++) {
-          temp = temp[nameParts[i]]; // Navigate to the nested object
-        }
-
-        // Update the final nested value
-        temp[nameParts[nameParts.length - 1]] =
-          type === "checkbox" ? checked : value;
-
-        return updatedData;
-      }
-
-      // Handle non-nested fields
-      return {
-        ...prevData,
-        [name]: type === "checkbox" ? checked : value,
-      };
-    });
-  };
-
-  const handleMainPhotoChange = (index, field, value) => {
-    setFormData((prevData) => {
-      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
-      updatedPhotos[index] = value;
-      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     await addNew(formData);
+    setFormData({
+      uniName: {
+        en: "",
+        ar: "",
+      },
+      uniSymbol: "",
+      courseId: [], // Array to hold selected course IDs
+      scholarshipAvailability: false,
+      spokenLanguage: [],
+      uniType: "",
+      entranceExamRequired: false,
+      studyLevel: "", // Options: "UnderGraduate", "PostGraduate", "Foundation", "Doctorate"
+      uniLocation: {
+        uniAddress: {
+          en: "",
+          ar: "",
+        },
+        uniPincode: "",
+        uniCity: {
+          en: "",
+          ar: "",
+        },
+        uniState: {
+          en: "",
+          ar: "",
+        },
+        uniCountry: {
+          en: "",
+          ar: "",
+        },
+      },
+      uniTutionFees: "",
+      uniOverview: {
+        en: "",
+        ar: "",
+      },
+      uniAccomodation: {
+        en: "",
+        ar: "",
+      },
+      uniLibrary: {
+        libraryPhotos: [],
+        libraryDescription: {
+          en: "",
+          ar: "",
+        },
+      },
+      uniSports: {
+        sportsPhotos: [],
+        sportsDescription: {
+          en: "",
+          ar: "",
+        },
+      },
+      studentLifeStyleInUni: {
+        lifestylePhotos: [],
+        lifestyleDescription: {
+          en: "",
+          ar: "",
+        },
+      },
+    });
     handleEdit("View");
   };
 
@@ -57,9 +85,9 @@ export default function AddUniversities({
       <div className="flex mb-6 justify-between">
         <div>
           {" "}
-          <p className="text-xl font-semibold uppercase ">Add Property</p>
+          <p className="text-xl font-semibold uppercase ">Add Universities</p>
           <p className=" text-sm text-gray-200">
-            Add New Real Estate To Your Portfolio
+            Add New Real Universities To Your App
           </p>
         </div>
         <div className="flex gap-4">
@@ -72,6 +100,7 @@ export default function AddUniversities({
           <button
             onClick={() => {
               handleEdit("View");
+              setFormData(initialFormData);
             }}
             className=" bg-red-500 text-white h-10 px-3 rounded"
           >
@@ -149,6 +178,26 @@ export default function AddUniversities({
                 onChange={handleInputChange}
                 autoComplete="uniName"
                 variant={1}
+              />
+            </div>
+            <div className="mb-4 w-full">
+              <InputField
+                label="University type (نوع الجامعة)"
+                type="select"
+                name="uniType"
+                value={formData.uniType}
+                onChange={handleInputChange}
+                variant={1}
+                options={[
+                  {
+                    value: "public",
+                    label: "Public (عام)",
+                  },
+                  {
+                    value: "private",
+                    label: "Private (خاص)",
+                  },
+                ]}
               />
             </div>
           </div>
@@ -247,17 +296,25 @@ export default function AddUniversities({
                 onChange={handleInputChange}
                 variant={1}
               />
-              <div className="col-span-2">
-                <InputField
-                  label="Pincode (الرمز السري)"
-                  type="text"
-                  name="uniLocation.uniPincode"
-                  placeholder="Pincode (الرمز السري)"
-                  value={formData.uniLocation.uniPincode}
-                  onChange={handleInputChange}
-                  variant={1}
-                />
-              </div>
+              <InputField
+                label="State (English)"
+                type="text"
+                name="uniLocation.uniState.en"
+                placeholder="State (English)"
+                value={formData.uniLocation.uniState.en}
+                onChange={handleInputChange}
+                variant={1}
+              />
+              <InputField
+                label="الدولة (عربي)"
+                type="text"
+                name="uniLocation.uniState.ar"
+                placeholder="الدولة (عربي)"
+                value={formData.uniLocation.uniState.ar}
+                onChange={handleInputChange}
+                variant={1}
+              />
+
               <InputField
                 label="Country (English)"
                 type="text"
@@ -276,6 +333,17 @@ export default function AddUniversities({
                 onChange={handleInputChange}
                 variant={1}
               />
+              <div className="col-span-2">
+                <InputField
+                  label="Pincode (الرمز السري)"
+                  type="text"
+                  name="uniLocation.uniPincode"
+                  placeholder="Pincode (الرمز السري)"
+                  value={formData.uniLocation.uniPincode}
+                  onChange={handleInputChange}
+                  variant={1}
+                />
+              </div>
             </div>
           </div>
 
@@ -351,7 +419,7 @@ export default function AddUniversities({
               type="text"
               name="uniLibrary.libraryDescription.en"
               placeholder="Library Description (English)"
-              value={formData?.uniLibrary?.libraryDescription.en}
+              value={formData?.uniLibrary?.libraryDescription?.en}
               onChange={handleInputChange}
               variant={1}
             />
@@ -360,7 +428,7 @@ export default function AddUniversities({
               type="textarea"
               name="uniLibrary.libraryDescription.ar"
               placeholder="وصف المكتبة (عربي)"
-              value={formData?.uniLibrary?.libraryDescription.ar}
+              value={formData?.uniLibrary?.libraryDescription?.ar}
               onChange={handleInputChange}
               variant={1}
             />
@@ -368,7 +436,7 @@ export default function AddUniversities({
               <h2 className="text-sm font-semibold">
                 library Photos (صور المكتبة)
               </h2>
-              {formData?.uniLibrary?.libraryPhotos.map((photo, index) => (
+              {formData?.uniLibrary?.libraryPhotos?.map((photo, index) => (
                 <div key={index} className="flex items-center">
                   <div className="mb-4 w-full">
                     <InputField
@@ -454,7 +522,7 @@ export default function AddUniversities({
               type="text"
               name="uniSports.sportsDescription.en"
               placeholder="Sports Description (English)"
-              value={formData.uniSports.sportsDescription.en}
+              value={formData?.uniSports?.sportsDescription?.en}
               onChange={handleInputChange}
               variant={1}
             />
@@ -463,7 +531,7 @@ export default function AddUniversities({
               type="text"
               name="uniSports.sportsDescription.ar"
               placeholder="وصف الرياضة (عربي)"
-              value={formData.uniSports.sportsDescription.ar}
+              value={formData?.uniSports?.sportsDescription?.ar}
               onChange={handleInputChange}
               variant={1}
             />
@@ -471,7 +539,7 @@ export default function AddUniversities({
               <h2 className="text-sm font-semibold">
                 Sports Photos (صور رياضية)
               </h2>
-              {formData.uniSports.sportsPhotos.map((photo, index) => (
+              {formData?.uniSports?.sportsPhotos?.map((photo, index) => (
                 <div key={index} className="flex items-center">
                   <div className="mb-4 w-full">
                     <InputField
@@ -554,7 +622,7 @@ export default function AddUniversities({
               type="text"
               name="studentLifeStyleInUni.lifestyleDescription.en"
               placeholder="Lifestyle Description (English)"
-              value={formData.studentLifeStyleInUni.lifestyleDescription.en}
+              value={formData?.studentLifeStyleInUni?.lifestyleDescription?.en}
               onChange={handleInputChange}
               variant={1}
             />
@@ -563,7 +631,7 @@ export default function AddUniversities({
               type="text"
               name="studentLifeStyleInUni.lifestyleDescription.ar"
               placeholder="وصف أسلوب الحياة (عربي)"
-              value={formData.studentLifeStyleInUni.lifestyleDescription.ar}
+              value={formData?.studentLifeStyleInUni?.lifestyleDescription?.ar}
               onChange={handleInputChange}
               variant={1}
             />
@@ -571,7 +639,7 @@ export default function AddUniversities({
               <h2 className="text-sm font-semibold">
                 Sports Photos (صور رياضية)
               </h2>
-              {formData.studentLifeStyleInUni.lifestylePhotos.map(
+              {formData?.studentLifeStyleInUni?.lifestylePhotos?.map(
                 (photo, index) => (
                   <div key={index} className="flex items-center">
                     <div className="mb-4 w-full">

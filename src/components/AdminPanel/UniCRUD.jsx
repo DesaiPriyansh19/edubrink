@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import useApiData from "../../../hooks/useApiData";
 import ViewUniversities from "./ViewUniversities";
 import AddUniversities from "./AddUniversities";
+import EditUniversities from "./EditUniversities";
 
 export default function UniCRUD() {
   const baseUrl = "https://edu-brink-backend.vercel.app/api/university";
-  const { data,loading, fetchById, updateById, addNew, deleteById } =
+  const { data, loading, fetchById, updateById, addNew, deleteById } =
     useApiData(baseUrl);
-
-  console.log(data);
-
-  const [editData, setEditData] = useState({ type: "View", id: null });
-  const [formData, setFormData] = useState({
+  const initialFormData = {
+    id: "",
     uniName: {
       en: "",
       ar: "",
@@ -20,6 +18,7 @@ export default function UniCRUD() {
     courseId: [], // Array to hold selected course IDs
     scholarshipAvailability: false,
     spokenLanguage: [],
+    uniType: "",
     entranceExamRequired: false,
     studyLevel: "", // Options: "UnderGraduate", "PostGraduate", "Foundation", "Doctorate"
     uniLocation: {
@@ -71,12 +70,16 @@ export default function UniCRUD() {
         ar: "",
       },
     },
-  });
+  };
+
+  const [editData, setEditData] = useState({ type: "View", id: null });
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleEdit = (type, id) => {
     const selectedProperty = data.find((property) => property._id === id); // Filter data by ID
     if (selectedProperty) {
       setFormData({
+        id: selectedProperty._id || "",
         uniName: {
           en: selectedProperty?.uniName?.en || "",
           ar: selectedProperty?.uniName?.ar || "",
@@ -86,6 +89,7 @@ export default function UniCRUD() {
         scholarshipAvailability:
           selectedProperty?.scholarshipAvailability || false,
         spokenLanguage: selectedProperty?.spokenLanguage || [],
+        uniType: selectedProperty?.uniType || "public",
         entranceExamRequired: selectedProperty?.entranceExamRequired || false,
         studyLevel: selectedProperty?.studyLevel || "",
         uniLocation: {
@@ -147,10 +151,50 @@ export default function UniCRUD() {
     setEditData({ type, id });
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const nameParts = name.split(".");
+    setFormData((prevData) => {
+      if (nameParts.length > 1) {
+        const updatedData = { ...prevData };
+        let temp = updatedData;
+
+        // Traverse the nested object path
+        for (let i = 0; i < nameParts.length - 1; i++) {
+          temp = temp[nameParts[i]]; // Navigate to the nested object
+        }
+
+        // Update the final nested value
+        temp[nameParts[nameParts.length - 1]] =
+          type === "checkbox" ? checked : value;
+
+        return updatedData;
+      }
+
+      // Handle non-nested fields
+      return {
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      };
+    });
+  };
+
+  const handleMainPhotoChange = (index, field, value) => {
+    setFormData((prevData) => {
+      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
+      updatedPhotos[index] = value;
+      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
+    });
+  };
+
   return (
     <>
       {editData.type === "View" && (
-        <ViewUniversities loading={loading} handleEdit={handleEdit} data={data} />
+        <ViewUniversities
+          loading={loading}
+          handleEdit={handleEdit}
+          data={data}
+        />
       )}
       {editData.type === "Add" && (
         <AddUniversities
@@ -158,6 +202,22 @@ export default function UniCRUD() {
           addNew={addNew}
           setFormData={setFormData}
           formData={formData}
+          handleInputChange={handleInputChange}
+          handleMainPhotoChange={handleMainPhotoChange}
+          initialFormData={initialFormData}
+        />
+      )}
+      {editData.type === "Edit" && (
+        <EditUniversities
+          formData={formData}
+          handleEdit={handleEdit}
+          setFormData={setFormData}
+          updateById={updateById}
+          editData={editData}
+          initialFormData={initialFormData}
+          deleteById={deleteById}
+          handleInputChange={handleInputChange}
+          handleMainPhotoChange={handleMainPhotoChange}
         />
       )}
     </>

@@ -32,7 +32,7 @@ const InputField = ({
 
   if (type === "select") {
     return (
-      <div className="h-full relative">
+      <div className="h-full mb-2 relative">
         <label htmlFor={name} className={labelClassName}>
           {label}
         </label>

@@ -38,17 +38,27 @@ function UploadWidget({
             console.log("Upload success:", result.info);
 
             // Update both single and array-based field in formData
-            setFormData((prevData) => ({
-              ...prevData,
-              [field]: result.info.secure_url, // For single upload field
-              [fieldName]: {
-                ...(prevData[fieldName] || {}), // Ensure fieldName exists as an object
-                photos: [
-                  ...(prevData[fieldName]?.photos || []), // Ensure photos exists as an array
-                  result.info.secure_url, // Append the new URL
-                ],
-              },
-            }));
+            setFormData((prevData) => {
+              if (field && fieldName) {
+                // If both field and fieldName exist, handle the combined structure
+                return {
+                  ...prevData,
+                  [field]: {
+                    ...(prevData[field] || {}), // Ensure field exists as an object
+                    [fieldName]: [
+                      ...(prevData[field]?.[fieldName] || []), // Ensure fieldName exists as an array
+                      result.info.secure_url, // Append the new URL
+                    ],
+                  },
+                };
+              } else {
+                // If only the field exists, handle as a single upload
+                return {
+                  ...prevData,
+                  [field]: result.info.secure_url, // For single field
+                };
+              }
+            });
           }
         }
       );
