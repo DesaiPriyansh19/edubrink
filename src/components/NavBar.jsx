@@ -56,17 +56,17 @@ const NavBar = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4">
-          <div className="md:w-6  md:h-6 mr-2 ">
+          <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4">
+          <Link to={"/searchresults"}>  <div className="md:w-6  md:h-6 mr-2 ">
             <Search />
-          </div>
+          </div></Link>  
           <input
             type="text"
             placeholder="Search for courses"
             className="bg-transparent outline-none placeholder:text-black text-black w-full"
           />
         </div>
-
+      
         {/* Contry Dropdown in sm devices */}
         <div className="flex justify-center gap-1 items-center  mmd:hidden">
           {/* Search Bar */}

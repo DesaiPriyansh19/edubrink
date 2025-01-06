@@ -19,6 +19,7 @@ import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
 import CountryPage from "./components/CountryPage/CountryPage";
 import Courses from "./components/CoursesPage/Courses";
 import ContactUs from "./components/ContactUs/ContactUs";
+import SearchResults from "./components/Search/SearchResults";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,6 +43,7 @@ function App() {
                 element={<Navigate to="/admin/dashboard" />}
               />
               <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
+              <Route path="/searchresults" element={<SearchResults/>} />
             </Route>
           </Routes>
         </AppLayout>
