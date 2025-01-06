@@ -15,6 +15,8 @@ import useFetch from "../../../hooks/useFetch";
 import { useTranslation } from "react-i18next";
 import Text from "../../../utils/Text";
 import Loader from "../../../utils/Loader";
+import SkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
+import CountrySkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
 
 const CountryPage = () => {
   const { slug } = useParams();
@@ -41,11 +43,11 @@ const CountryPage = () => {
   };
 
   if (loading) {
-    return <Loader />;
+    return <CountrySkeletonLoader/>;
   }
 
   return (
-    <div className="max-w-[1240px]  mx-auto py-8 font-sans">
+    <div className="max-w-[1240px] px-10  mx-auto py-8 font-sans">
       {/* <div className="mb-4 flex justify-end">
         <button
           className={`px-4 py-2 rounded ${

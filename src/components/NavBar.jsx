@@ -130,18 +130,18 @@ const NavBar = () => {
           {/* Courses Dropdown */}
           <div className="relative">
             <Link
-              to={"/"}
+          
               className="flex items-center space-x-1 bg-white  text-gray-800"
-              onClick={handleClickTwo}
+              
             >
-              <span className="bg-white font-medium">Courses</span>
+            <Link to={'/courses'}> <span className="bg-white font-medium">Courses</span></Link> 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-4 h-4 bg-white "
+                className="w-4 h-4 bg-white "onClick={handleClickTwo}
               >
                 <path
                   strokeLinecap="round"
