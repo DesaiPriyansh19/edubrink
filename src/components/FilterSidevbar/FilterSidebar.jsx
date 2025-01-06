@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import uk from '../../assets/Flags/UKFlag.png'
 import usa from '../../assets/Flags/UKFlag.png'
 import canada from '../../assets/Flags/CanadaFlag.png'
@@ -19,6 +21,15 @@ import TogelMenu from "../../../svg/TogelMenu/Index";
 import BookLogo from "../../../svg/BookLogo/Index";
 import CourseBook from "../../../svg/CourseBook";
 const FilterSidebar = ({ showFilter, setShowFilter }) => {
+  // Initialize AOS
+    useEffect(() => {
+      AOS.init({
+        duration: 800, // Default animation duration
+        offset: 100, // Trigger animations 100px before the element is visible
+        easing: "ease-in-out", // Easing for animations
+        once: true, // Run animation only once
+      });
+    }, []);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedStudyLevel, setSelectedStudyLevel] = useState("");
   const [selectedEntranceExam, setSelectedEntranceExam] = useState("");
@@ -68,7 +79,14 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
   };
 
   return (
-    <div className="fixed text-sm right-0 top-0 h-full w-[100%] sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto">
+    <div
+    data-aos="fade-left"
+        data-aos-delay="50"
+        data-aos-duration="300"
+        data-aos-easing="ease-in-out"
+    
+    className="fixed text-sm right-0 top-0 h-full w-[100%] 
+    sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Filters</h2>
@@ -158,24 +176,48 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
             </button>
           ))}
         </div>
-           {/* University Type */}
-           <p className="font-medium mb-2">University Type</p>
+        
+        {/* Privet or not */}
+        <p className="font-medium mb-2">University Type</p>
         <div className="flex space-x-4 mb-4">
-          {["Public", "Private"].map((type) => (
+          {["Public", "Private"].map((option) => (
             <button
-              key={type}
-              onClick={() => setSelectedUniversityType(type)}
-              className={`px-4 py-2 rounded-full text-sm ${
-                selectedUniversityType === type
+              key={option}
+              onClick={() => setSelectedUniversityType(option)}
+              className={`px-4 py-2 rounded-full text-sm text-black ${
+                selectedUniversityType === option
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
             >
-              {type}
+              {option}
             </button>
           ))}
         </div>
-         
+        {/* intect year */}
+        <p className="font-medium mb-2">Intake Year</p>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {[
+            "2024",
+            "2025",
+            "2026",
+            "2027",
+            
+          
+          ].map((year) => (
+            <button
+              key={year}
+              onClick={() => setSelectedIntakeYear(year)}
+              className={`px-4 py-2 rounded-full text-sm ${
+                selectedIntakeYear ===year
+                  ? "bg-[#EDE9FE] "
+                  : "bg-[#F3F4F6]  hover:bg-gray-200"
+              }`}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
         
      
    {/* Intake Month */}
@@ -248,9 +290,9 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
           ].map((month) => (
             <button
               key={month}
-              onClick={() => setSelectedIntakeMonth(month)}
+              onClick={() =>  setSelectedCourseDuration(month)}
               className={`px-4 py-2 rounded-full text-sm ${
-                selectedIntakeMonth === month
+                selectedCourseDuration === month
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}

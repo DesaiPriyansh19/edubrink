@@ -1,22 +1,24 @@
 import React from "react";
+import RightArrow from "../../../svg/RightArrow/Index";
+import RightArrowWhite from "../../../svg/RightArrowWhite";
 
 const Footer = () => {
   return (
-    <div className="relative  max-w-[1240px] w-[86%] mx-auto  rounded-2xl overflow-hidden">
-      <div className="bg-white mx-auto  py-8 text-gray-800 px-4 mt-[5%] mb-[5%] rounded-2xl ">
+    <div className="relative  max-w-[1240px] w-[95%]  my-3 mx-auto  ">
+      <div className="bg-white rounded-[40px] w-full py-8 text-gray-800 px-10 mt-[5%] mb-[5%]  ">
         <div className="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left">
           <h2 className="text-2xl font-bold mb-4 sm:mb-0">Edubrink</h2>
           <div className="relative w-full max-w-md">
             <input
               type="email"
               placeholder="Your Email Here"
-              className="w-full h-12 pl-4 pr-12 rounded-full bg-gray-100 text-black border border-gray-300"
+              className="w-full h-12 pl-4 pr-12 rounded-full bg-[#F8F8F8] text-black placeholder:text-black"
             />
             <button
-              className="absolute right-1 top-1 w-10 h-10 flex items-center justify-center bg-gradient-to-r from-purple-500 to-red-500 rounded-full shadow-md hover:scale-105 transition-transform"
+              className="absolute right-1 top-1 w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#380C95] to-[#E15754] rounded-full shadow-md hover:scale-105 transition-transform"
               aria-label="Submit"
             >
-              <span className="text-white text-xl">&#8594;</span>
+              <span className="text-white text-xl"><RightArrowWhite/></span>
             </button>
           </div>
         </div>
