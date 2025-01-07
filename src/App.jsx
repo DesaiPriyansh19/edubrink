@@ -20,6 +20,8 @@ import CountryPage from "./components/CountryPage/CountryPage";
 import Courses from "./components/CoursesPage/Courses";
 import ContactUs from "./components/ContactUs/ContactUs";
 import SearchResults from "./components/Search/SearchResults";
+import UniversityPage from "./components/UniversityPage/UniversityPage";
+import CoursePage from "./components/CoursesPage/Courses";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +40,8 @@ function App() {
               <Route path="/courses" element={<Courses />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/country/:slug" element={<CountryPage />} />
+              <Route path="/university" element={<UniversityPage />} />
+              <Route path="/courses" element={<CoursePage/>} />
               <Route
                 path="/admin"
                 element={<Navigate to="/admin/dashboard" />}

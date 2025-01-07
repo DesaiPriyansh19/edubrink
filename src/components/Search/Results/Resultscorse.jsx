@@ -5,6 +5,7 @@ import Master from "../../../../svg/AboutStudent/Master";
 import UniversityChicago from "../../../assets/CountryPage/UniversityChicago.png";
 import ColongeUniversity from "../../../assets/CountryPage/ColongeUniversity.png";
 import LanguageLogo from "../../../../svg/LanguageLogo";
+import { Link } from 'react-router-dom';
 
 // Course Data
 const courses = [
@@ -59,9 +60,9 @@ function ResultsCorses({ data }) {
           </h1>
           <p className='text-sm mt-3 font-medium'>Effortlessly explore diverse courses, find programs tailored to your academic goals,<br></br> compare study opportunities, and make informed decisions</p>
           </div> 
-          <button className="hidden sm:block  shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
+       <Link to={'/courses'}>  <button className="hidden sm:block  shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
             View All 
-          </button>
+          </button></Link> 
         </div>
         <div className="w-full hidden sm:flex justify-end items-center px-4"></div>
       </div>

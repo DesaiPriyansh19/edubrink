@@ -9,9 +9,11 @@ import Article from "./Article";
 import ResultUnivrsiry from "./Results/University";
 import ContactSection from "../ContactSection";
 import Univrsiry from "./Results/University";
+import DefaultSearchResults from "./DefaultSearchResults";
 
 function SearchResults() {
     const [activeTab, setActiveTab] = useState("Results"); // Default active tab
+    const [activecorses, setcorses] = useState(""); // Default active tab
     const [showFilter, setShowFilter] = useState(false); // Toggle filter sidebar
     {/* Dynamic Text Mapping */}
 const additionalText = {
@@ -20,20 +22,22 @@ const additionalText = {
   Universities: "100",
   Articles: "200",
 };
-    const renderContent = () => {
-        switch (activeTab) {
-          default:
-              return <Results/>;
-            case "Courses":
-              return <Courses/>;
-            case "Universities":
-              return <Univrsiry/>;
-            case "Articles":
-              return <Article/>;
-           
-             
-          }
-        };
+const renderContent = () => {
+  switch (activeTab) {
+   
+    case "Courses":
+      return <Courses />;
+    case "Universities":
+      return <Univrsiry />;
+    case "Articles":
+      return <Article />;
+    case "Results":
+      return <Results />; // Make sure to return this component
+      default:
+        return <DefaultSearchResults />;
+  }
+};
+
       
         return (<>
             <div className="relative p-4 px-5 sm:px-9 lg:px-16">

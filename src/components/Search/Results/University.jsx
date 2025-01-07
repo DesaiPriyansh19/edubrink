@@ -12,6 +12,8 @@ import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../../svg/DiscountLogo/Index";
 import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
+import { Link } from 'react-router-dom';
+import UniversityPage from '../../UniversityPage/UniversityPage';
 const colleges = [
   {
     id: 1,
