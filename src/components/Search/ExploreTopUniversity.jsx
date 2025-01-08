@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function DefaultSearchResults() {
+function ExploreTopUniversity() {
   // Array of buttons and corresponding content
   const items = [
     { id:1, label: "Button", content: "Content for Button" },
@@ -21,12 +21,12 @@ function DefaultSearchResults() {
   return (
     <div className="p-4">
       {/* Heading */}
-      <h1 className="text-5xl text-center font-semibold mb-2">Explore top course with<br></br>
-      favourite destination</h1>
+      <h1 className="text-5xl text-center font-semibold mb-2">Explore university with
+      worldwide destination</h1>
 
       {/* Description */}
       <p className="text-black font-medium text-sm text-center mb-24">
-      Effortlessly explore a wide range of universities, discover the perfect <br></br> courses tailored to your goals, and compare study opportunities
+      Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities
       </p>
 
       {/* Dynamic Buttons */}
@@ -65,4 +65,4 @@ function DefaultSearchResults() {
   );
 }
 
-export default DefaultSearchResults;
+export default ExploreTopUniversity;

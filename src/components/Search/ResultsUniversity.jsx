@@ -1,16 +1,16 @@
 import React from 'react'
 
 
-import uniLogo from "../../../assets/UniversityBoston.png";
+import uniLogo from "../../assets/UniversityBoston.png";
 
-import BookLogo from "../../../../svg/BookLogo/Index";
-import Book from "../../../assets/Book.png";
-import uk from "../../../assets/Flags/UKFlag.png";
-import DollerRounded from "../../../../svg/DollerRounded/Index";
+import BookLogo from "../../../svg/BookLogo/Index";
+import Book from "../../assets/Book.png";
+import uk from "../../assets/Flags/UKFlag.png";
+import DollerRounded from "../../../svg/DollerRounded/Index";
 
-import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
-import DiscountLogo from "../../../../svg/DiscountLogo/Index";
-import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
+import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
+import DiscountLogo from "../../../svg/DiscountLogo/Index";
+import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
 const colleges = [
   {

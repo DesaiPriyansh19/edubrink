@@ -60,7 +60,7 @@ function ResultsCorses({ data }) {
           </h1>
           <p className='text-sm mt-3 font-medium'>Effortlessly explore diverse courses, find programs tailored to your academic goals,<br></br> compare study opportunities, and make informed decisions</p>
           </div> 
-       <Link to={'/courses'}>  <button className="hidden sm:block  shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
+       <Link to={'/searchresults/viewcorse'}>  <button className="hidden sm:block  shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
             View All 
           </button></Link> 
         </div>

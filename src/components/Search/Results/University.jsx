@@ -168,9 +168,9 @@ function Univrsiry() {
        </div>
      
        <div className="w-full hidden sm:flex justify-end items-center px-4">
-         <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+       <Link to={'Allwcorse'}>  <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
            View All
-         </button>
+         </button></Link>
        </div>
      </div>
  

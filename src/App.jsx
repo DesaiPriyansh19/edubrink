@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -22,6 +23,10 @@ import ContactUs from "./components/ContactUs/ContactUs";
 import SearchResults from "./components/Search/SearchResults";
 import UniversityPage from "./components/UniversityPage/UniversityPage";
 import CoursePage from "./components/CoursesPage/Courses";
+import DefaultSearchResults from "./components/Search/ExploreTopCorse";
+import ResultsCorses from "./components/Search/Results/Resultscorse";
+import Results from "./components/Search/Results/Results";
+import Univrsiry from "./components/Search/Results/University";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,7 +52,8 @@ function App() {
                 element={<Navigate to="/admin/dashboard" />}
               />
               <Route path="/admin/:slug" element={<AdminPanelDashBoard />} />
-              <Route path="/searchresults" element={<SearchResults/>} />
+              <Route path="/searchresults/*" element={<SearchResults/>} />
+        
             </Route>
           </Routes>
         </AppLayout>
