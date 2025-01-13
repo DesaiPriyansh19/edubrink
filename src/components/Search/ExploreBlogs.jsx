@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ExploreTopUniversity() {
+function ExploreBlogs() {
   // Array of buttons and corresponding content
   const items = [
     { id:1, label: "Button", content: "Content for Button" },
@@ -21,16 +21,15 @@ function ExploreTopUniversity() {
   return (
     <div className="p-4">
       {/* Heading */}
-      <h1 className="text-5xl text-center font-semibold mb-2">Explore university with
-      worldwide destination</h1>
+      <h1 className="text-5xl text-center font-semibold mb-2">📑 Blog and resources</h1>
 
       {/* Description */}
       <p className="text-black font-medium text-sm text-center mb-24">
-      Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities
+      Effortlessly explore a wide range of universities, discover the perfect <br></br> courses tailored to your goals, and compare study opportunities
       </p>
 
       {/* Dynamic Buttons */}
-      <h3 className="text-4xl font-semibold mb-11">🌎 Top University</h3>
+      <h3 className="text-4xl font-semibold mb-11">📑 Recent blog</h3>
       <div className="flex w-full overflow-x-auto space-x-4 scrollbar-hide">
   {items.map((item) => (
     <button
@@ -39,7 +38,7 @@ function ExploreTopUniversity() {
       className={`px-5 py-2 rounded ${
         activeItem === item.id
           ? "text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
-          : "border-[#818181] border-[1.5px] text-black rounded-full"
+          : "border-gray-300 border-2 text-black rounded-full"
       }`}
     >
       {item.label}
@@ -65,4 +64,4 @@ function ExploreTopUniversity() {
   );
 }
 
-export default ExploreTopUniversity;
+export default ExploreBlogs;

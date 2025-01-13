@@ -14,6 +14,7 @@ import Univrsiry from "./Results/University";
 import ResultsCorses from "./Results/Resultscorse";
 import ExploreTopCorse from "./ExploreTopCorse";
 import ExploreTopUniversity from "./ExploreTopUniversity";
+import ExploreBlogs from "./ExploreBlogs";
 
 function SearchResults() {
  
@@ -106,8 +107,9 @@ function SearchResults() {
          <Route path="courses" element={<ResultsCorses/>} />
                 <Route path="university" element={<ResultUnivrsiry/>} />
                 <Route path="article" element={<Article/>} />
-                <Route path="Allwcorse" element={<ExploreTopCorse/>} />
+                <Route path="Allcorse" element={<ExploreTopCorse/>} />
                 <Route path="AllUniversity" element={<ExploreTopUniversity/>} />
+                <Route path="AllBlogs" element={<ExploreBlogs/>} />
               
             </Routes>
             </div>

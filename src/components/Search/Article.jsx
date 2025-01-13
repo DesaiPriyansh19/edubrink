@@ -3,6 +3,7 @@ import blogImage from "../../assets/Blog1.png";
 import blogImage2 from "../../assets/Blog2.png";
 import blogImage3 from "../../assets/Blog3.png";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
+import { Link } from 'react-router-dom';
 function Article() {
    const blogCards = [
       {
@@ -48,9 +49,10 @@ function Article() {
           scholarships, visas.
         </p>
         <div className="w-full hidden sm:flex justify-end items-center px-4">
-          <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+       <Link to={'/searchresults/AllBlogs'}>
+         <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
             View All
-          </button>{" "}
+          </button></Link> {" "}
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4  py-6 ">
