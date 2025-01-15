@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import ConfirmationModal from "../../../utils/ConfirmationModal";
-import UploadWidget from "../../../utils/UploadWidget";
-import InputField from "../../../utils/InputField";
+import ConfirmationModal from "../../../../utils/ConfirmationModal";
+import UploadWidget from "../../../../utils/UploadWidget";
+import InputField from "../../../../utils/InputField";
 
 export default function EditUniversities({
   formData,

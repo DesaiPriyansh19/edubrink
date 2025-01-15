@@ -1,6 +1,6 @@
 import React from "react";
-import UploadWidget from "../../../utils/UploadWidget";
-import InputField from "../../../utils/InputField";
+import UploadWidget from "../../../../utils/UploadWidget";
+import InputField from "../../../../utils/InputField";
 
 export default function AddUniversities({
   addNew,

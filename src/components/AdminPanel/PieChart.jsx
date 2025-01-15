@@ -1,23 +1,8 @@
 import { ResponsivePie } from "@nivo/pie";
 import React from "react";
+import { commonProperties } from "./data";
 
 export default function PieChart() {
-  const commonProperties = {
-    margin: { top: 40, right: 80, bottom: 80, left: 80 },
-    innerRadius: 0.5,
-    padAngle: 0.7,
-    cornerRadius: 3,
-    activeOuterRadiusOffset: 8,
-    colors: { scheme: "tableau10" },
-    borderWidth: 1,
-    borderColor: "#000000",
-    arcLinkLabelsSkipAngle: 3,
-    arcLinkLabelsTextColor: "#ffffff",
-    arcLinkLabelsThickness: 2,
-    arcLinkLabelsColor: { from: "color" },
-    arcLabelsSkipAngle: 10,
-    arcLabelsTextColor: "#000000",
-  };
 
   const data = [
     { id: "java", label: "Java", value: 176, color: "hsl(197, 70%, 50%)" },

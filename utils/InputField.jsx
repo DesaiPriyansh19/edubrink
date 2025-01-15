@@ -8,11 +8,15 @@ const InputField = ({
   value,
   onChange,
   autoComplete,
+  onFocus,
+  onBlur,
   required = false,
+  disabled = false,
   variant = 0, // Default input style
   options = [],
   checked,
   multiple = false,
+  rows = 4, // Default rows for textarea
 }) => {
   const variants = [
     {
@@ -119,6 +123,25 @@ const InputField = ({
       </div>
     );
   }
+  if (type === "textarea") {
+    return (
+      <div>
+        <label htmlFor={name} className={labelClassName}>
+          {label}
+        </label>
+        <textarea
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          disabled={disabled}
+          onChange={onChange}
+          rows={rows}
+          className={`${inputClassName} resize-none`} // Prevent resize for consistent UI
+          required={required}
+        ></textarea>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-2">
@@ -128,6 +151,8 @@ const InputField = ({
       <input
         type={type}
         name={name}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

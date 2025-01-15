@@ -1,5 +1,5 @@
 import React from "react";
-import Loader from "../../../utils/Loader";
+import Loader from "../../../../utils/Loader";
 
 export default function ViewUniversities({ data, loading, handleEdit }) {
   if (loading) {

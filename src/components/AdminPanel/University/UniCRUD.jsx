@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useApiData from "../../../hooks/useApiData";
+import useApiData from "../../../../hooks/useApiData";
 import ViewUniversities from "./ViewUniversities";
 import AddUniversities from "./AddUniversities";
 import EditUniversities from "./EditUniversities";

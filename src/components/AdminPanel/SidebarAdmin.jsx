@@ -10,11 +10,12 @@ export default function SidebarAdmin() {
     { name: "Dashboard", icon: <HomeSvg />, path: "/dashboard" },
     { name: "Manage Peoples", icon: <HomeSvg />, path: "/manage-peoples" },
     { name: "Contact Information", icon: <HomeSvg />, path: "/contact-info" },
-    { name: "Profile Form", icon: <HomeSvg />, path: "/profile-form" },
+    // { name: "Profile Form", icon: <HomeSvg />, path: "/profile-form" },
+    { name: "Add Country", icon: <HomeSvg />, path: "/add-country" },
     { name: "Add Universities", icon: <HomeSvg />, path: "/add-universities" },
-    { name: "Bar Chart", icon: <HomeSvg />, path: "/bar-chart" },
-    { name: "Pie Chart", icon: <HomeSvg />, path: "/pie-chart" },
-    { name: "Line Chart", icon: <HomeSvg />, path: "/line-chart" },
+    // { name: "Bar Chart", icon: <HomeSvg />, path: "/bar-chart" },
+    // { name: "Pie Chart", icon: <HomeSvg />, path: "/pie-chart" },
+    // { name: "Line Chart", icon: <HomeSvg />, path: "/line-chart" },
   ];
 
   const handleMinimise = () => {
@@ -92,8 +93,8 @@ export default function SidebarAdmin() {
               conMaxWidth === 72 ? "left-full hidden" : "left-14 top-0"
             } ml-6 text-sm whitespace-nowrap rounded-md`}
           >
-            <p className="mb-1 font-medium">Karan Jangde</p>
-            <p className="text-xs">jangdekaran4@gmail.com</p>
+            <p className="mb-1 font-medium">test gmail</p>
+            <p className="text-xs">test@gmail.com</p>
           </div>
         </div>
       </div>
