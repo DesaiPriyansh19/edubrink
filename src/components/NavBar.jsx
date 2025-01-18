@@ -56,17 +56,20 @@ const NavBar = () => {
         </div>
 
         {/* Search Bar */}
-          <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4">
-          <Link to={"/searchresults"}>  <div className="md:w-6  md:h-6 mr-2 ">
-            <Search />
-          </div></Link>  
+        <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4">
+          <Link to={"/searchresults"}>
+            {" "}
+            <div className="md:w-6  md:h-6 mr-2 ">
+              <Search />
+            </div>
+          </Link>
           <input
             type="text"
             placeholder="Search for courses"
             className="bg-transparent outline-none placeholder:text-black text-black w-full"
           />
         </div>
-      
+
         {/* Contry Dropdown in sm devices */}
         <div className="flex justify-center gap-1 items-center  mmd:hidden">
           {/* Search Bar */}
@@ -129,19 +132,19 @@ const NavBar = () => {
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
           <div className="relative">
-            <Link
-          
-              className="flex items-center space-x-1 bg-white  text-gray-800"
-              
-            >
-            <Link to={'/courses'}> <span className="bg-white font-medium">Courses</span></Link> 
+            <div className="flex items-center space-x-1 bg-white  text-gray-800">
+              <Link to={"/courses"}>
+                {" "}
+                <span className="bg-white font-medium">Courses</span>
+              </Link>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-4 h-4 bg-white "onClick={handleClickTwo}
+                className="w-4 h-4 bg-white "
+                onClick={handleClickTwo}
               >
                 <path
                   strokeLinecap="round"
@@ -149,7 +152,7 @@ const NavBar = () => {
                   d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                 />
               </svg>
-            </Link>
+            </div>
           </div>
 
           {/* Countries Dropdown */}
@@ -264,7 +267,9 @@ const NavBar = () => {
         <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />
       )}
       {showCoursesDropdown && <DropdowneCourses />}
-      {isMenuOpen && <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />}
+      {isMenuOpen && (
+        <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
+      )}
 
       {isSearchOpen && (
         <div className=" w-[95%] mx-auto  flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[12%]">

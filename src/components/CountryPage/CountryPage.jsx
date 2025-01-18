@@ -47,24 +47,6 @@ const CountryPage = () => {
 
   return (
     <div className="max-w-[1240px] px-10  mx-auto py-8 font-sans">
-      {/* <div className="mb-4 flex justify-end">
-        <button
-          className={`px-4 py-2 rounded ${
-            language === "en" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => handleLanguageChange("en")}
-        >
-          English
-        </button>
-        <button
-          className={`px-4 py-2 ml-2 rounded ${
-            language === "ar" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => handleLanguageChange("ar")}
-        >
-          Arabic
-        </button>
-      </div> */}
       <div className="text-sm mb-4 flex items-center">
         <div className="flex items-center">
           <CountryHome />
@@ -191,7 +173,7 @@ const CountryPage = () => {
       </div>
       <CountryPopularCourse data={data} />
       <CountryPopularUniversity data={data} />
-      <CountryBlogs />
+      <CountryBlogs  data={data} />
     </div>
   );
 };

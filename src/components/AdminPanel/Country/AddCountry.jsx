@@ -41,7 +41,7 @@ export default function AddCountry({
 
     const handleBlog = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/blog");
+        const res = await axios.get("https://edu-brink-backend.vercel.app/api/blog");
         if (res) {
           setAddBlog(res.data.data);
         }

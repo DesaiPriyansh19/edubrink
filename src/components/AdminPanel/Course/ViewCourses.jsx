@@ -35,18 +35,18 @@ export default function ViewCourses({ loading, handleEdit, data }) {
             {
               icon: <DollerRounded width={20} height={20} color={"#ffffff"} />,
               title: "Tuition Fees",
-              description: course.CourseFees, // Use course-specific data
+              description: course?.CourseFees, // Use course-specific data
             },
             {
               icon: <LanguageLogo width={20} height={20} color={"#ffffff"} />,
               title: "Language",
-              description: course.Language || "English", // Fallback to "English" if not available
+              description: course?.Language || "English", // Fallback to "English" if not available
             },
             {
               icon: <DollerRounded width={20} height={20} color={"#ffffff"} />,
               title: "Deadline",
-              description: course.DeadLine
-                ? new Date(course.DeadLine).toLocaleDateString("en-US", {
+              description: course?.DeadLine
+                ? new Date(course?.DeadLine).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -72,12 +72,12 @@ export default function ViewCourses({ loading, handleEdit, data }) {
                       />
                     </div>
                     <p className="text-lg leading-6 font-semibold">
-                      {course.CourseName.en}
+                      {course?.CourseName?.en}
                     </p>
                   </div>
                   <div className="px-4 mb-2">
                     <p className="text-[.8rem] max-w-52 font-medium text-white flex items-center my-1">
-                      {course.Institution || "Unknown Institution"}
+                      {course?.Institution || "Unknown Institution"}
                     </p>
                     <div className="flex items-center mt-1">
                       <span className="w-5 h-5 rounded-full mr-1">
