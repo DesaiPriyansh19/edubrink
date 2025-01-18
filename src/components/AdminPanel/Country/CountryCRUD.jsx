@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import ViewCountry from "../ViewCountry";
+
 import AddCountry from "./AddCountry";
 import useApiData from "../../../../hooks/useApiData";
 import EditCountry from "./EditCountry";
+import ViewCountry from "./ViewCountry";
 
 export default function CountryCRUD() {
   const baseUrl = "https://edu-brink-backend.vercel.app/api/country";
-  const { data, loading, updateById, addNew, deleteById } =
-    useApiData(baseUrl);
+  const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     countryName: {
       en: "",
@@ -25,6 +25,7 @@ export default function CountryCRUD() {
       ar: "",
     },
     universities: [], // Array to hold references to university IDs
+    blog: [],
   };
 
   const [editData, setEditData] = useState({ type: "View", id: null });
@@ -52,11 +53,11 @@ export default function CountryCRUD() {
           ar: selectedProperty?.countryOverview?.ar || "",
         },
         universities: selectedProperty?.universities || [], // Default to empty array
+        blog: selectedProperty?.blog || [],
       });
     }
     setEditData({ type, id });
   };
-  
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -94,8 +95,6 @@ export default function CountryCRUD() {
     });
   };
 
-  console.log(formData)
-
   return (
     <>
       {editData.type === "View" && (
@@ -108,7 +107,6 @@ export default function CountryCRUD() {
           setFormData={setFormData}
           formData={formData}
           handleInputChange={handleInputChange}
-          handleMainPhotoChange={handleMainPhotoChange}
           initialFormData={initialFormData}
         />
       )}

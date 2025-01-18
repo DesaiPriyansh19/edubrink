@@ -13,6 +13,8 @@ export default function SidebarAdmin() {
     // { name: "Profile Form", icon: <HomeSvg />, path: "/profile-form" },
     { name: "Add Country", icon: <HomeSvg />, path: "/add-country" },
     { name: "Add Universities", icon: <HomeSvg />, path: "/add-universities" },
+    { name: "Add Courses", icon: <HomeSvg />, path: "/add-courses" },
+    { name: "Add Blogs", icon: <HomeSvg />, path: "/add-blogs" },
     // { name: "Bar Chart", icon: <HomeSvg />, path: "/bar-chart" },
     // { name: "Pie Chart", icon: <HomeSvg />, path: "/pie-chart" },
     // { name: "Line Chart", icon: <HomeSvg />, path: "/line-chart" },

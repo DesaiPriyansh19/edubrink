@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UploadWidget from "../../../../utils/UploadWidget";
 import InputField from "../../../../utils/InputField";
 import ConfirmationModal from "../../../../utils/ConfirmationModal";
@@ -15,12 +15,16 @@ export default function EditCountry({
   handleInputChange,
   handleMainPhotoChange,
 }) {
+  const blogRef = useRef(null);
+  const uniRef = useRef(null);
   const [modal, setModal] = useState(null);
   const [addUniversity, setAddUniversity] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [addBlog, setAddBlog] = useState([]);
+  const [showDropdown, setShowDropdown] = useState("");
   const [searchInput, setSearchInput] = useState({
     id: "",
     univername: "",
+    blogname: "",
   });
 
   useEffect(() => {
@@ -36,6 +40,18 @@ export default function EditCountry({
         console.log(error);
       }
     };
+
+    const handleBlog = async () => {
+      try {
+        const res = await axios.get("http://localhost:4000/api/blog");
+        if (res) {
+          setAddBlog(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleBlog();
     handleUniversity();
   }, []);
 
@@ -47,6 +63,16 @@ export default function EditCountry({
       university.uniName.ar
         .toLowerCase()
         .includes(searchInput.univername.toLowerCase())
+  );
+
+  const filteredBlogs = addBlog?.filter(
+    (university) =>
+      university.blogTitle.en
+        .toLowerCase()
+        .includes(searchInput?.blogname?.toLowerCase()) ||
+      university?.blogTitle?.ar
+        .toLowerCase()
+        .includes(searchInput?.blogname?.toLowerCase())
   );
 
   const handleDelete = (id, name) => {
@@ -74,6 +100,7 @@ export default function EditCountry({
           : formData.countryPhotos.mainPagePhoto,
       },
       universities: formData.universities.map((university) => university._id),
+      blog: formData.blog.map((blog) => blog._id),
     };
 
     console.log(updatedFormData);
@@ -81,34 +108,61 @@ export default function EditCountry({
 
     handleEdit("View");
   };
-
-  const handleAddUniversity = () => {
-    if (searchInput.univername !== "" && searchInput.id !== "") {
-      const selectedUniversity = filteredUniversities.find(
-        (university) => university._id === searchInput.id
+  const handleAddItem = (itemType, filteredItems) => {
+    if (searchInput[itemType] !== "" && searchInput.id !== "") {
+      const selectedItem = filteredItems.find(
+        (item) => item._id === searchInput.id
       );
 
-      if (selectedUniversity) {
+      if (selectedItem) {
+        // Determine the plural name for the itemType
+        const itemPlural = itemType === "univername" ? "universities" : "blog";
+
         setFormData((prevData) => ({
           ...prevData,
-          universities: [...(prevData.universities || []), selectedUniversity],
+          [itemPlural]: [...(prevData[itemPlural] || []), selectedItem],
         }));
+
         setSearchInput({
           id: "",
-          univername: "",
+          [itemType]: "",
         });
       }
     }
   };
 
-  const handleRemoveUniversity = (index) => {
+  const handleRemoveItem = (itemType, index) => {
     setFormData((prevData) => ({
       ...prevData,
-      universities: prevData.universities.filter((_, i) => i !== index),
+      [itemType + "s"]: prevData[itemType + "s"].filter((_, i) => i !== index),
     }));
   };
 
-  console.log(formData);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        blogRef.current &&
+        !blogRef.current.contains(event.target) &&
+        showDropdown === "Blog"
+      ) {
+        setShowDropdown("");
+      }
+      if (
+        uniRef.current &&
+        !uniRef.current.contains(event.target) &&
+        showDropdown === "Uni"
+      ) {
+        setShowDropdown("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup listener on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   return (
     <>
@@ -413,63 +467,68 @@ export default function EditCountry({
             </div>
 
             {/* Add University */}
-            <div className={`pb-20 ${showDropdown ? "mb-24" : "mb-8"}`}>
+            <div
+              className={`pb-20 ${showDropdown === "Uni" ? "mb-24" : "mb-8"}`}
+            >
               <h2 className="text-lg font-semibold mb-2">
                 Manage Universities
               </h2>
               <div className="flex items-center gap-4 mb-4 w-full">
-                <div className="w-full relative">
+                <div className="w-full relative" ref={uniRef}>
                   <InputField
                     label="Enroll University (التسجيل في الجامعة)"
                     type="text"
                     placeholder="Enter University Name (أدخل اسم الجامعة)"
                     value={searchInput.univername}
                     onChange={(e) => {
-                      setSearchInput({
-                        ...searchInput,
+                      setSearchInput((prev) => ({
+                        ...prev,
                         univername: e.target.value,
-                      }),
-                        setShowDropdown(true);
+                      }));
+                      setShowDropdown("Uni");
                     }}
                     autoComplete="enrollUniversity"
-                    onFocus={() => setShowDropdown(true)}
-                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                    onFocus={() => setShowDropdown("Uni")}
                     variant={1}
                   />
-                  {showDropdown && filteredUniversities.length > 0 && (
-                    <div className="absolute text-black bg-white border max-h-40  mt-1 w-full rounded shadow-lg  overflow-auto z-10">
-                      <ul>
-                        {filteredUniversities.map((university, index) => (
-                          <li
-                            key={index}
-                            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 px-4 py-3 hover:bg-gray-200 cursor-pointer"
-                            onClick={() => {
-                              setSearchInput(() => ({
-                                ...searchInput,
-                                id: university._id,
-                                univername: university.uniName.en,
-                              }));
-                              setShowDropdown(false);
-                            }}
-                          >
-                            {/* University Name */}
-                            <span className="font-medium text-sm text-gray-800">
-                              {`${university?.uniName?.en} - ${university?.uniName?.ar}`}
-                            </span>
+                  {showDropdown === "Uni" &&
+                    filteredUniversities.length > 0 && (
+                      <div className="absolute text-black bg-white border max-h-40  mt-1 w-full rounded shadow-lg  overflow-auto z-10">
+                        <ul>
+                          {filteredUniversities.map((university, index) => (
+                            <li
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 px-4 py-3 hover:bg-gray-200 cursor-pointer"
+                              onClick={() => {
+                                console.log("Selected University:", university);
+                                setSearchInput((prev) => ({
+                                  ...prev,
+                                  id: university._id,
+                                  univername: university.uniName.en,
+                                }));
+                                setShowDropdown("");
+                              }}
+                            >
+                              {/* University Name */}
+                              <span className="font-medium text-sm text-gray-800">
+                                {`${university?.uniName?.en} - ${university?.uniName?.ar}`}
+                              </span>
 
-                            {/* Country Name */}
-                            <span className="text-xs text-gray-500">
-                              {`${university?.uniLocation?.uniCountry?.en} - ${university?.uniLocation?.uniCountry?.ar}`}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                              {/* Country Name */}
+                              <span className="text-xs text-gray-500">
+                                {`${university?.uniLocation?.uniCountry?.en} - ${university?.uniLocation?.uniCountry?.ar}`}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                 </div>
                 <button
                   type="button"
-                  onClick={handleAddUniversity}
+                  onClick={() =>
+                    handleAddItem("univername", filteredUniversities)
+                  }
                   className="bg-transparent border-b-0 border hover:text-black hover:border-black hover:bg-white active:scale-95 transition-all ease-in-out duration-300 text-white px-4 py-2 "
                 >
                   Add
@@ -486,7 +545,90 @@ export default function EditCountry({
                     <span>{`${university?.uniName?.en} - ${university?.uniName?.ar} `}</span>
                     <button
                       type="button"
-                      onClick={() => handleRemoveUniversity(index)}
+                      onClick={() => handleRemoveItem("univername", index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Add Blog */}
+            <div
+              className={`pb-20 ${showDropdown === "Blog" ? "mb-24" : "mb-8"}`}
+            >
+              <h2 className="text-lg font-semibold mb-2">Manage Blogs</h2>
+              <div className="flex items-center gap-4 mb-4 w-full">
+                <div className="w-full relative" ref={blogRef}>
+                  <InputField
+                    label="Search Blog (ابحث عن مدونة)"
+                    type="text"
+                    placeholder="Enter Blog Name (أدخل اسم المدونة)"
+                    value={searchInput.blogname}
+                    onChange={(e) => {
+                      setSearchInput({
+                        ...searchInput,
+                        blogname: e.target.value,
+                      });
+                      setShowDropdown("Blog");
+                    }}
+                    autoComplete="searchBlog"
+                    onFocus={() => setShowDropdown("Blog")}
+                    variant={1}
+                  />
+                  {showDropdown === "Blog" && filteredBlogs.length > 0 && (
+                    <div className="absolute text-black bg-white border max-h-40 mt-1 w-full rounded shadow-lg overflow-auto z-10">
+                      <ul>
+                        {filteredBlogs.map((blog, index) => (
+                          <li
+                            key={index}
+                            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 px-4 py-3 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              setSearchInput((prev) => ({
+                                ...prev,
+                                id: blog._id,
+                                blogname: blog.blogTitle.en,
+                              }));
+                              setShowDropdown("");
+                            }}
+                          >
+                            {/* Blog Name */}
+                            <span className="font-medium text-sm text-gray-800">
+                              {`${blog?.blogTitle?.en} - ${blog?.blogTitle?.ar}`}
+                            </span>
+
+                            {/* Blog Subtitle */}
+                            <span className="text-xs text-gray-500">
+                              {`${blog?.blogSubtitle?.en} - ${blog?.blogSubtitle?.ar}`}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAddItem("blogname", filteredBlogs)}
+                  className="bg-transparent border-b-0 border hover:text-black hover:border-black hover:bg-white active:scale-95 transition-all ease-in-out duration-300 text-white px-4 py-2"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* List of Blogs */}
+              <ul className="list-disc">
+                {formData?.blog?.map((blog, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center justify-between mb-2"
+                  >
+                    <span>{`${blog?.blogTitle?.en} - ${blog?.blogTitle?.ar} `}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveItem("blogname", index)}
                       className="text-red-500 hover:text-red-700"
                     >
                       Remove

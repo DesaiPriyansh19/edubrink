@@ -29,20 +29,20 @@ function DropdownCountries({ setShowCountriesDropdown }) {
 
   // Country data
   const countries = [
-    { name: "United State of America", flag: usa },
-    { name: "Germany", flag: germny },
-    { name: "United Arab Emirates", flag: Unitedarap },
-    { name: "Canada", flag: canada },
-    { name: "United Arab Emirates", flag: uae },
-    { name: "Switzerland", flag: swizrland },
-    { name: "India", flag: india },
-    { name: "Bangladesh", flag: bangladesh },
-    { name: "Nigeria", flag: nigeria },
-    { name: "New Zealand", flag: newzealand },
-    { name: "Denmark", flag: denmark },
-    { name: "Australia", flag: australia },
+    { label: "United States of America", name: "United States", flag: usa },
+    { label: "Germany", name: "Germany", flag: germny },
+    { label: "United Arab Emirates", name: "United Arab Emirates", flag: Unitedarap },
+    { label: "Canada", name: "Canada", flag: canada },
+    { label: "United Arab Emirates", name: "United Arab Emirates", flag: uae },
+    { label: "Switzerland", name: "Switzerland", flag: swizrland },
+    { label: "India", name: "India", flag: india },
+    { label: "Bangladesh", name: "Bangladesh", flag: bangladesh },
+    { label: "Nigeria", name: "Nigeria", flag: nigeria },
+    { label: "New Zealand", name: "New Zealand", flag: newzealand },
+    { label: "Denmark", name: "Denmark", flag: denmark },
+    { label: "Australia", name: "Australia", flag: australia },
   ];
-
+  
   const handleNavigate = (name) => {
     navigate(`/country/${name}`);
     setShowCountriesDropdown(false);

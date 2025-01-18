@@ -14,8 +14,6 @@ import { useParams } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
 import { useTranslation } from "react-i18next";
 import Text from "../../../utils/Text";
-import Loader from "../../../utils/Loader";
-import SkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
 import CountrySkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
 
 const CountryPage = () => {
@@ -27,6 +25,7 @@ const CountryPage = () => {
   const { data, loading } = useFetch(
     `https://edu-brink-backend.vercel.app/api/country/name/${slug}`
   );
+
   function formatPopulation(population) {
     if (!population) return ""; // Return empty string if population is undefined or null
 
@@ -43,7 +42,7 @@ const CountryPage = () => {
   };
 
   if (loading) {
-    return <CountrySkeletonLoader/>;
+    return <CountrySkeletonLoader />;
   }
 
   return (

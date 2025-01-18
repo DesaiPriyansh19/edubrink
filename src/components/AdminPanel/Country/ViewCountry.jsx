@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import Loader from "../../../utils/Loader";
+
 import { FiEdit } from "react-icons/fi";
+import Loader from "../../../../utils/Loader";
 
 export default function ViewCountry({ loading, handleEdit, data }) {
   const [selectedPeople, setSelectedPeople] = useState([]);
