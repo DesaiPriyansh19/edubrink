@@ -3,7 +3,6 @@ import CountryHome from "../../../svg/CountryHome";
 import Phone from "../../../svg/Phone";
 import VuesaxDocumentText from "../../../svg/VuesaxDocumentText";
 import JhonSmith from "../../assets/CoursePage/JhonSmith.png";
-import UniversityBoston from "../../assets/UniversityBoston.png";
 import Watch from "../../../svg/Watch";
 import DatePicker from "../../../svg/DatePicker";
 import Seconds from "../../../svg/Seconds";
@@ -11,13 +10,20 @@ import CourseBook from "../../../svg/CourseBook";
 import TicketDiscount from "../../../svg/TicketDiscount";
 import CourseDiscount from "../../../svg/CourseDiscount";
 import Consolidation from "../../../svg/Consolidation";
+import { useParams } from "react-router-dom";
+import useFetch from "../../../hooks/useFetch";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const { id } = useParams();
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
   };
+
+  const { data, loading, error } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/course/${id}`
+  );
+
   return (
     <div className="bg-gray-50 p-6 md:p-10 rounded-lg shadow-lg max-w-5xl mx-auto">
       <div className="text-sm mb-4 flex items-center">
@@ -28,22 +34,20 @@ const CoursePage = () => {
         <div className="flex items-center font-medium">
           <span>Country</span>
           <span className="mx-2">&gt;</span>
-          <span className="font-medium">
-            MSc Advanced Computer Science with Business
-          </span>
+          <span className="font-medium">{data?.CourseName?.en}</span>
         </div>
       </div>
       <div className="">
         <h1 className="text-2xl font-bold text-black mb-4">
-          📚 MSc Advanced Computer Science with Business
+          📚 {data?.CourseName?.en}
           <div className="flex me-4 items-center mt-4">
             <img
-              src={UniversityBoston}
+              src={"https://placehold.co/24x24" || data?.uniSymbol}
               alt="University Logo"
-              className="w-[28px] h-[28px] relative"
+              className="w-[28px] h-[28px] rounded-full relative"
             />
             <p className="text-lg font-sans font-normal ms-2">
-              University of Exeter
+              {data?.uniName?.en}
             </p>
           </div>
         </h1>
@@ -57,7 +61,7 @@ const CoursePage = () => {
                 <TicketDiscount />
               </span>
               <h4 className="text-white font-sans font-medium text-base leading-5">
-                $27,500 Per Year
+                {data?.CourseFees} Per Year
               </h4>
             </div>
             <p className="text-white font-sans font-normal text-sm mt-2">
@@ -70,7 +74,9 @@ const CoursePage = () => {
                 <Watch />
               </div>
               <div>
-                <p className="text-lg font-bold leading-5">1 Year</p>
+                <p className="text-lg font-bold leading-5">
+                  {data?.CourseDuration || "N/A"}
+                </p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Duration
                 </p>
@@ -82,7 +88,7 @@ const CoursePage = () => {
                 <DatePicker />
               </div>
               <div>
-                <p className="text-lg font-bold leading-5">Sep 2025</p>
+                <p className="text-lg font-bold leading-5">N/A</p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Start Month
                 </p>
@@ -94,7 +100,12 @@ const CoursePage = () => {
                 <Seconds />
               </div>
               <div>
-                <p className="text-lg font-bold leading-5">Aug 2025</p>
+                <p className="text-lg font-bold leading-5">
+                  {new Date(data?.DeadLine).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                  }) || "N/A"}
+                </p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Application Deadline
                 </p>
@@ -105,7 +116,9 @@ const CoursePage = () => {
                 <CourseBook />
               </div>
               <div>
-                <p className="text-lg font-bold leading-5">Full Time</p>
+                <p className="text-lg font-bold leading-5">
+                  {data?.ModeOfStudy[0]?.en || "N/A"}
+                </p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Mode Of Study
                 </p>
@@ -131,53 +144,25 @@ const CoursePage = () => {
         <div className="order-2 md:order-1 flex-1">
           <div className="ml-[4%] mr-[4%]">
             <ul className="list-disc space-y-3">
-              <li>Taught in partnership with the Business School</li>
-              {isExpanded ? (
-                <>
-                  <li>
-                    Combine core Computer Science modules with modules in
-                    Management, Strategy, Marketing, and Accounting to prepare
-                    you for working with data in a leadership or management
-                    role.
-                  </li>
-                  <li>
-                    Learn from teaching that draws directly from our research
-                    strengths in AI, machine learning, data science,
-                    high-performance computing, and cybersecurity.
-                  </li>
-                  <li>
-                    Explore the latest techniques and technologies, and how to
-                    apply these to complex contemporary problems across the
-                    breadth of society.
-                  </li>
-                  <li>
-                    Your project, which forms a major part of your Masters, will
-                    be business-focused as you explore data science in a
-                    commercial environment.
-                  </li>
-                </>
+              {data?.CourseDescription?.en ? (
+                data.CourseDescription.en
+                  .split(".")
+                  .filter((desc) => desc.trim()) // Filter out empty strings from splitting
+                  .map((desc, index) => <li key={index}>{desc.trim()}.</li>)
               ) : (
-                <>
-                  <li>
-                    Combine core Computer Science modules with modules in
-                    Management, Strategy, Marketing, and Accounting to prepare
-                    you for working with data in a leadership or management
-                    role.
-                  </li>
-                  <li>
-                    Learn from teaching that draws directly from our research
-                    strengths in AI, machine learning, data science,
-                    high-performance computing, and cybersecurity.
-                  </li>
-                </>
+                <li>No description available.</li>
               )}
             </ul>
-            <button
-              onClick={toggleReadMore}
-              className="mt-3 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              {isExpanded ? "Read Less" : "Read More"}
-            </button>
+            {data?.CourseDescription?.en &&
+              data.CourseDescription.en.split(".").filter((desc) => desc.trim())
+                .length > 1 && (
+                <button
+                  onClick={toggleReadMore}
+                  className="mt-3 px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  {isExpanded ? "Read Less" : "Read More"}
+                </button>
+              )}
           </div>
         </div>
       </div>
@@ -190,54 +175,17 @@ const CoursePage = () => {
             Requirements
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Consolidated Marksheets
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              I20
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Undergraduate Semester Marksheet
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              CV/Resume
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Provisional Certificate
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Passport
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Experience Letter
-            </div>
-            <div className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5">
-              <span>
-                <Consolidation />
-              </span>
-              Experience Letter
-            </div>
+            {data?.Requirements?.length > 0
+              ? data.Requirements.map((req, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5"
+                  >
+                    <Consolidation />
+                    {req?.en || "Requirement not specified."}
+                  </div>
+                ))
+              : "No requirements available."}
           </div>
         </div>
         {/* md:w-[55.33%]

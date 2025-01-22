@@ -18,7 +18,7 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 import AdminPanelDashBoard from "./components/AdminPanel/AdminPanelDashBoard";
 
 import CountryPage from "./components/CountryPage/CountryPage";
-import Courses from "./components/CoursesPage/Courses";
+// import Courses from "./components/CoursesPage/Courses";
 import ContactUs from "./components/ContactUs/ContactUs";
 import SearchResults from "./components/Search/SearchResults";
 import UniversityPage from "./components/UniversityPage/UniversityPage";
@@ -42,11 +42,11 @@ function App() {
             {/* Protected Routes */}
             <Route>
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/courses" element={<Courses />} />
+              {/* <Route path="/courses/:slug" element={<Courses />} /> */}
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/country/:slug" element={<CountryPage />} />
               <Route path="/university" element={<UniversityPage />} />
-              <Route path="/courses" element={<CoursePage/>} />
+              <Route path="/courses/:id" element={<CoursePage/>} />
               <Route
                 path="/admin"
                 element={<Navigate to="/admin/dashboard" />}

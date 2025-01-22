@@ -131,12 +131,12 @@ const NavBar = () => {
         {/* Dropdowns */}
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
-          <div className="relative">
+          <div onClick={handleClickTwo} className="relative cursor-pointer">
             <div className="flex items-center space-x-1 bg-white  text-gray-800">
-              <Link to={"/courses"}>
+              <p>
                 {" "}
                 <span className="bg-white font-medium">Courses</span>
-              </Link>
+              </p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -144,7 +144,6 @@ const NavBar = () => {
                 strokeWidth="1.5"
                 stroke="currentColor"
                 className="w-4 h-4 bg-white "
-                onClick={handleClickTwo}
               >
                 <path
                   strokeLinecap="round"
@@ -266,7 +265,7 @@ const NavBar = () => {
       {showCountriesDropdown && (
         <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />
       )}
-      {showCoursesDropdown && <DropdowneCourses />}
+      {showCoursesDropdown && <DropdowneCourses setShowCoursesDropdown={setShowCoursesDropdown} />}
       {isMenuOpen && (
         <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
       )}

@@ -60,7 +60,7 @@ function SearchResults() {
           ? "bg-black text-white"
           : " text-black"
   }`}>
-         <span className="font-thin">42551</span>42294 Courses  
+         <span className="font-thin">42551</span> Courses  
       </button></Link>
       
       <Link to="/searchresults/university">

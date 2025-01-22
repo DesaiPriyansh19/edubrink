@@ -4,37 +4,16 @@ import blogImage2 from "../../assets/Blog2.png";
 import blogImage3 from "../../assets/Blog3.png";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { Link } from "react-router-dom";
+import useFetch from "../../../hooks/useFetch";
+import Loader from "../../../utils/Loader";
 function RecentBlog() {
-  const blogCards = [
-    {
-      id: 1,
-      image: blogImage2,
-      category: "STUDY IN AUSTRALIA",
-      title: "Different University types in Australia - ...",
-      date: "17 March 2023",
-    },
-    {
-      id: 2,
-      image: blogImage3,
-      category: "STUDY IN AUSTRALIA",
-      title: "Different University types in Australia - ...",
-      date: "17 March 2023",
-    },
-    {
-      id: 3,
-      image: blogImage,
-      category: "STUDY IN AUSTRALIA",
-      title: "Different University types in Australia - ...",
-      date: "17 March 2023",
-    },
-    {
-      id: 4,
-      image: blogImage2,
-      category: "STUDY IN AUSTRALIA",
-      title: "Different University types in Australia - ...",
-      date: "17 March 2023",
-    },
-  ];
+  const { data, loading } = useFetch(
+    "https://edu-brink-backend.vercel.app/api/blog/"
+  );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div className="mt-11 text-black">
@@ -49,37 +28,41 @@ function RecentBlog() {
           scholarships, visas.
         </p>
         <div className="w-full hidden sm:flex justify-end items-center px-4">
-      <Link to={'AllBlogs'}> <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-            View All
-          </button></Link>   {" "}
+          <Link to={"AllBlogs"}>
+            {" "}
+            <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+              View All
+            </button>
+          </Link>{" "}
         </div>
       </div>
-      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto 1xl:pl-[100px] gap-6 px-4  py-6 ">
-        {/* First Slide */}
-        {blogCards.map((card) => (
+      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto  gap-6   py-6 ">
+        {data?.map((card, idx) => (
           <div
-            key={card.id}
+            key={idx}
             className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
           >
             {/* SVG and Image */}
             <div className="h-[55%] w-[100%]">
               <img
-                src={card.image}
-                alt={`Slide ${card.id}`}
+                src={"https://placehold.co/260x220" || card?.blogPhoto}
+                alt={`Slide ${idx + 1}`}
                 className="w-[100%] h-[100%] rounded-2xl object-cover"
               />
             </div>
 
             <p className="text-[#E82448] text-sm font-semibold mt-4 ">
-              {card.category}
+              Study in {card?.countryName?.en}
             </p>
 
             <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-              {card.title}
+              {card?.blogTitle?.en}
             </h4>
             <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
               <Calander />
-              {card.date}
+              {card.blogAdded
+                ? new Date(card.blogAdded).toLocaleDateString()
+                : "Date not available"}
             </div>
           </div>
         ))}
