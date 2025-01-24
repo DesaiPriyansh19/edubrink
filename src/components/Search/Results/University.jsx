@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import uniLogo from "../../../assets/UniversityBoston.png";
 import uk from "../../../assets/Flags/UKFlag.png";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
@@ -10,9 +10,64 @@ import { Link } from "react-router-dom";
 import useFetch from "../../../../hooks/useFetch";
 import TickMark from "../../../../svg/TickMark";
 
-const CollegeCard = ({ data }) => {
+const CollegeCard = ({ data, loading }) => {
   const { i18n } = useTranslation();
 
+  // Skeleton loader
+  if (loading) {
+    return (
+      <div className="flex gap-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          
+          <div
+            key={index}
+            className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg animate-pulse"
+          >
+            <div className="p-4 sm:p-6">
+              <div className="absolute top-0 right-0 bg-red-500 text-white text-xs sm:text-sm px-2 py-1 rounded-bl-md rounded-tr-xl">
+                Most Popular
+              </div>
+
+              <div className="flex gap-3 sm:gap-4 items-center mb-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="w-32 h-5 bg-gray-300 rounded-md"></div>
+                  <div className="w-24 h-4 bg-gray-300 rounded-md mt-2"></div>
+                  <div className="w-16 h-4 bg-gray-300 rounded-md mt-1"></div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 justify-center"
+                  >
+                    <div className="rounded-full w-10 h-10 bg-gray-300"></div>
+                    <div>
+                      <div className="w-20 h-4 bg-gray-300 rounded-md"></div>
+                      <div className="w-16 h-4 bg-gray-300 rounded-md mt-1"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full h-[1px] bg-gray-300"></div>
+
+            <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
+              <div className="w-full h-10 bg-gray-300 rounded-md"></div>
+              <div className="w-full h-10 bg-gray-300 rounded-md"></div>
+            </div>
+      
+          </div>
+        ))}
+      </div>
+      
+    );
+  }
+
+  // Actual Content
   return (
     <div className="flex gap-4">
       {data?.map((university, idx) => {
@@ -28,16 +83,16 @@ const CollegeCard = ({ data }) => {
             description:
               university?.scholarshipAvailability === true
                 ? "Available"
-                : "Not-Available", // Assuming language is not dynamic
+                : "Not-Available",
           },
           {
             icon: <DiscountLogo />,
             title: "Discount",
             description: university?.DeadLine
               ? new Date(university?.DeadLine).toLocaleDateString("en-US", {
-                  year: "numeric", // Full year (optional)
-                  month: "short", // Abbreviated month name
-                  day: "numeric", // Day of the month
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
                 })
               : "N/A",
           },
@@ -125,19 +180,20 @@ const CollegeCard = ({ data }) => {
     </div>
   );
 };
+
 function Univrsiry() {
-  const { data } = useFetch(
+  const { data, loading } = useFetch(
     "https://edu-brink-backend.vercel.app/api/university"
   );
 
   return (
     <>
-      <div className="max-w-[1240px]  mt-20 ">
-        <div className="  mt-6 mb-1">
-          <h1 className="text-start text-3xl sm:text-4xl font-semibold ">
+      <div className="max-w-[1240px] mt-20">
+        <div className="mt-6 mb-1">
+          <h1 className="text-start text-3xl sm:text-4xl font-semibold">
             🏫 Favourite Universities
           </h1>
-          <p className="text-sm mt-3 font-medium ">
+          <p className="text-sm mt-3 font-medium">
             Discover top study abroad destinations, each offering unique
             cultural <br></br> experiences, academic excellence, and career
             opportunities. From vibrant cities.
@@ -146,8 +202,7 @@ function Univrsiry() {
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
           <Link to={"/searchresults/AllUniversity"}>
-            {" "}
-            <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+            <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4 rounded-full">
               View All
             </button>
           </Link>
@@ -155,7 +210,7 @@ function Univrsiry() {
       </div>
 
       <div className="overflow-x-auto scrollbar-hide whitespace-nowrap">
-        <CollegeCard data={data} />
+        <CollegeCard data={data} loading={loading} />
       </div>
     </>
   );
