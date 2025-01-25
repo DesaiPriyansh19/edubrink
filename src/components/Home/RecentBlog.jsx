@@ -6,14 +6,39 @@ import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { Link } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
 import Loader from "../../../utils/Loader";
+import Skeleton from "react-loading-skeleton"; // Import Skeleton component
+import "react-loading-skeleton/dist/skeleton.css"; // Import CSS for Skeleton
+
 function RecentBlog() {
   const { data, loading } = useFetch(
     "https://edu-brink-backend.vercel.app/api/blog/"
   );
+  const SkeletonLoader = () => {
+    return ( <div className="flex gap-2 ">
+      <div className="min-w-[300px] h-[50vh] sm:v-[40vh] md:h-[30vh] lg:h-[70vh] bg-white p-5 pb-0  rounded-3xl shadow-md animate-pulse">
+        {/* Skeleton for Image */}
+        <div className="h-[55%] w-[100%] bg-gray-300 rounded-2xl"></div>
+  
+        {/* Skeleton for 'Study in <Country Name>' Text */}
+        <p className="text-[#E82448] text-sm font-semibold mt-4 bg-gray-300 h-4 w-[70%] rounded"></p>
+  
+        {/* Skeleton for Blog Title */}
+        <h4 className="font-semibold text-lg text-black mt-2 mb-1 bg-gray-300 h-5 w-[60%] rounded"></h4>
+  
+        {/* Skeleton for Date and Calendar */}
+        <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start">
+          {/* Skeleton for Calendar Icon */}
+          <div className="h-5 w-5 bg-gray-300 rounded-full mr-2"></div>
+          {/* Skeleton for Date */}
+          <div className="bg-gray-300 h-4 w-[50%] rounded"></div>
+        </div>
+      </div>
+      </div>
+    );
+  };
+  
+  
 
-  if (loading) {
-    return <Loader />;
-  }
 
   return (
     <div className="mt-11 text-black">
@@ -36,37 +61,46 @@ function RecentBlog() {
           </Link>{" "}
         </div>
       </div>
-      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto  gap-6   py-6 ">
-        {data?.map((card, idx) => (
-          <div
-            key={idx}
-            className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
-          >
-            {/* SVG and Image */}
-            <div className="h-[55%] w-[100%]">
-              <img
-                src={"https://placehold.co/260x220" || card?.blogPhoto}
-                alt={`Slide ${idx + 1}`}
-                className="w-[100%] h-[100%] rounded-2xl object-cover"
-              />
-            </div>
+      {loading ? (
+  <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6 py-6">
+    {Array.from({ length: 5 }).map((_, idx) => (
+      <SkeletonLoader key={idx} />
+    ))}
+  </div>
+) : (
+  <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6 py-6">
+    {data?.map((card, idx) => (
+      <div
+        key={idx}
+        className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
+      >
+        <div className="h-[55%] w-[100%]">
+          <img
+            src={"https://placehold.co/260x220" || card?.blogPhoto}
+            alt={`Slide ${idx + 1}`}
+            className="w-[100%] h-[100%] rounded-2xl object-cover"
+          />
+        </div>
 
-            <p className="text-[#E82448] text-sm font-semibold mt-4 ">
-              Study in {card?.countryName?.en}
-            </p>
+        <p className="text-[#E82448] text-sm font-semibold mt-4 ">
+          Study in {card?.countryName?.en}
+        </p>
 
-            <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-              {card?.blogTitle?.en}
-            </h4>
-            <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-              <Calander />
-              {card.blogAdded
-                ? new Date(card.blogAdded).toLocaleDateString()
-                : "Date not available"}
-            </div>
-          </div>
-        ))}
+        <h4 className="font-semibold text-lg text-black mt-2 mb-1">
+          {card?.blogTitle?.en}
+        </h4>
+        <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
+          <Calander />
+          {card.blogAdded
+            ? new Date(card.blogAdded).toLocaleDateString()
+            : "Date not available"}
+        </div>
       </div>
+    ))}
+  </div>
+
+)}
+
     </div>
   );
 }
