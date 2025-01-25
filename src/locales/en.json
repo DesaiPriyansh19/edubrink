@@ -2,7 +2,7 @@
   "title": "Discover your ideal <br />University abroad today",
   "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
   "buttonLabel": "Get Started Now",
-  "carousalItemTitle": "Find out best study destination",
+  "carouselItemTitle": "Find out the best study destination",
   "carouselSectionItems": [
     { "text": "U.K" },
     { "text": "U.S.A" },
@@ -13,11 +13,45 @@
     { "text": "Canada" },
     { "text": "Russia" }
   ],
-  "descriptionTitle": "Our statistics over year",
+  "descriptionTitle": "Our statistics over the years",
   "descriptions": [
     "Years of experience",
     "University partners",
-    "Students required",
+    "Students enrolled",
     "Courses we provide"
-  ]
+  ],
+  "global_education": "Global education one course away",
+  "explore_universities": "Effortlessly explore a wide range of universities, discover the perfect course tailored to your goals, and compare study opportunities.",
+  "start_journey": "Start Your Journey Today",
+  "join_students": "Join 1+ million students who used Edubrink.",
+  "global_coverage": "Global Coverage",
+  "global_coverage_description": "Easily explore global universities, discover programs suited to your goals, compare study options, and receive guidance throughout the application process.",
+  "total_students": "Total Students",
+  "partner_universities": "Partner Universities",
+  "student_ambassadors": "Student Ambassadors",
+
+  "faq_title": "FAQ",
+  "faq_description": "Our Study Abroad FAQ covers everything you need to know—from choosing the right destination and applying to universities, to visa requirements.",
+  "questions": {
+    "q1": {
+      "question": "How do I choose the best study destination?",
+      "answer": "Our customization process is designed to be seamless. Simply reach out to us with your requirements, and our dedicated team will work closely with you to understand your brand, objectives, and preferences."
+    },
+    "q2": {
+      "question": "What are the basic application requirements?",
+      "answer": ""
+    },
+    "q3": {
+      "question": "How do I adapt to a new culture?",
+      "answer": ""
+    },
+    "q4": {
+      "question": "Can I work part-time while studying abroad?",
+      "answer": ""
+    },
+    "q5": {
+      "question": "Can I work part-time while studying abroad?",
+      "answer": ""
+    }
+  }
 }

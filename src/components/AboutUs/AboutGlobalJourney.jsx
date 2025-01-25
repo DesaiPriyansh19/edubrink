@@ -3,16 +3,18 @@ import global from "../../assets/AboutpageImage/global.png";
 import VseuaxPeople from "../../../svg/AboutGlobalCOne";
 import VuesaxBuilding from "../../../svg/AboutGlobalCTwo";
 import VseuaxUser from "../../../svg/AboutGlobalCThree";
+import { useTranslation } from "react-i18next";
 
 const AboutGlobalJourney = () => {
+  const { t } = useTranslation();
   return (
     <div className="container mx-auto px-4 py-0 md:py-16 bg-[rgba(248,248,248,1)]">
       <div className="jour-layout-wrapper flex flex-col items-center justify-center max-w-[677px] h-[131px] gap-5 mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center">Global Coverage</h2>
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center">
+          {t("global_coverage")}
+        </h2>
         <p className="font-sans text-xs sm:text-[14px] font-medium leading-[21.7px] text-center">
-          Easily explore global universities, discover programs suited to your
-          goals, compare study options, and receive guidance throughout the
-          apply.
+          {t("global_coverage_description")}
         </p>
       </div>
 
@@ -35,7 +37,7 @@ const AboutGlobalJourney = () => {
             </div>
           </h2>
           <p className="font-general-sans font-medium text-lg leading-7">
-            Total Students
+            {t("total_students")}
           </p>
         </div>
 
@@ -50,7 +52,7 @@ const AboutGlobalJourney = () => {
             </div>
           </h2>
           <p className=" font-general-sans font-medium  text-lg leading-7">
-            Partners University
+            {t("partner_universities")}
           </p>
         </div>
 
@@ -65,7 +67,7 @@ const AboutGlobalJourney = () => {
             </div>
           </h2>
           <p className="font-general-sans font-medium text-lg leading-7">
-            Students Ambassadors
+            {t("student_ambassadors")}
           </p>
         </div>
       </div>

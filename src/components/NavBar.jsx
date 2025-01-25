@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import flag from "../assets/Flags/UKFlag.png";
 import usa from "../assets/Flags/USAflag.png";
 import Search from "../../svg/caplogo/Logo/Search";
@@ -11,6 +11,8 @@ import DropdownContries from "./DropdownContries";
 import i18n from "../i18n";
 import TogelMenu from "../../svg/TogelMenu/Index";
 import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
+import { useTranslation } from "react-i18next";
+import { LanguageContext } from "./LanguageContext";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
@@ -19,6 +21,8 @@ const NavBar = () => {
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { t } = useTranslation();
+  const { language, setLanguage } = useContext(LanguageContext);
   const handleClick = () => {
     setShowCountriesDropdown(!showCountriesDropdown);
     setShowCoursesDropdown(false);
@@ -153,7 +157,6 @@ const NavBar = () => {
               </svg>
             </div>
           </div>
-
           {/* Countries Dropdown */}
           <div className="relative bg-white rounded-full ">
             <div
@@ -177,7 +180,6 @@ const NavBar = () => {
               </svg>
             </div>
           </div>
-
           {/* About Dropdown */}
           <div className="relative">
             <button
@@ -203,10 +205,9 @@ const NavBar = () => {
               // </ul>
             )}
           </div>
-
           {/* Flags Dropdown */}
           <div className="relative px-2 rounded-full py-1 bg-[#F8F8F8]">
-            <button
+            {/* <button
               className="flex items-center space-x-1 text-gray-800"
               onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
             >
@@ -225,8 +226,25 @@ const NavBar = () => {
                   d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                 />
               </svg>
+            </button> */}
+            <button>
+              <ul className="absolute right-0 mt-2 bg-white shadow-md p-2 rounded-md">
+                <li
+                  className="cursor-pointer flex items-center p-2"
+                  onClick={() => setLanguage("en")}
+                >
+                  English
+                </li>
+                <li
+                  className="cursor-pointer flex items-center p-2"
+                  onClick={() => setLanguage("ar")}
+                >
+                  العربية
+                </li>
+              </ul>
             </button>
           </div>
+          <div className="language-dropdown relative"></div>{" "}
         </div>
 
         {/* Contact Us Button */}
@@ -265,7 +283,9 @@ const NavBar = () => {
       {showCountriesDropdown && (
         <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />
       )}
-      {showCoursesDropdown && <DropdowneCourses setShowCoursesDropdown={setShowCoursesDropdown} />}
+      {showCoursesDropdown && (
+        <DropdowneCourses setShowCoursesDropdown={setShowCoursesDropdown} />
+      )}
       {isMenuOpen && (
         <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
       )}

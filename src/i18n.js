@@ -1,28 +1,22 @@
-// src/i18n.js
-
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import en from "../src/locales/en.json";
-import ar from "../src/locales/ar.json"; // For Spanish language (example)
+import HttpApi from "i18next-http-backend";
+import enTranslation from "./locales/en.json";
+import arTranslation from "./locales/ar.json";
 
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
+  .use(LanguageDetector)
+  .use(HttpApi)
   .init({
     resources: {
-      en: {
-        translation: en,
-      },
-      ar: {
-        translation: ar,
-      },
+      en: { translation: enTranslation },
+      ar: { translation: arTranslation },
     },
-
-    fallbackLng: "en", // Default language if the detected language is not available
-    interpolation: {
-      escapeValue: false, // React already escapes variables
-    },
+    lng: localStorage.getItem("language") || "en", // default language
+    fallbackLng: "en",
+    interpolation: { escapeValue: false },
   });
 
 export default i18n;
