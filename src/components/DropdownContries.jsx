@@ -15,7 +15,8 @@ import denmark from "../assets/Flags/DenmarkFlag.webp";
 import australia from "../assets/Flags/AustraliaFlag.png";
 import { useNavigate } from "react-router-dom";
 
-function DropdownCountries({ setShowCountriesDropdown }) {
+function DropdownCountries({ setShowCountriesDropdown, navbarHeight
+ }) {
   const navigate = useNavigate();
   // Initialize AOS
   useEffect(() => {
@@ -48,9 +49,11 @@ function DropdownCountries({ setShowCountriesDropdown }) {
     setShowCountriesDropdown(false);
   };
 
-  return (
+    return (
     <div
-      className="absolute right-4 top-[15%] px-3 py-3 w-[38vw] h-auto z-10 mt-2 bg-white rounded-3xl shadow-lg"
+    id="divshadow" 
+    style={{ top: `${navbarHeight}px` }} // Dynamically set top value
+      className="absolute right-[10%]  px-3 py-3 mmd:w-[38vw]  2xl:w-[28%] 2xl:right-[15%] h-auto z-10 mt-2 bg-white rounded-3xl shadow-lg"
       data-aos="fade-out"
       data-aos-delay="0"
       data-aos-duration="300"

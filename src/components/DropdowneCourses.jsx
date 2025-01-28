@@ -4,7 +4,7 @@ import "aos/dist/aos.css";
 import uninav from "../assets/UniNav.png";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
-function DropdowneCourses({ setShowCoursesDropdown }) {
+function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
   const navigate = useNavigate();
   // Initialize AOS
   useEffect(() => {
@@ -26,8 +26,8 @@ function DropdowneCourses({ setShowCoursesDropdown }) {
   };
   return (
     <>
-      <div
-        className="absolute right-4 top-[15%]  px-3 py-4 w-[45vw] h-auto z-10 flex gap-3  mt-2 
+      <div    id="divshadow"     style={{ top: `${navbarHeight}px` }} // Dynamically set top value
+        className="absolute mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%] md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[45vw]  h-auto z-10 flex gap-3  mt-2 
    bg-[#f8f8f8] rounded-3xl shadow-lg"
         data-aos="fade-out"
         data-aos-delay="0"

@@ -61,7 +61,7 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
   return (
     <>
       <div
-        className="sticky top-10 z-[25] h-full min-h-screen w-full sm:w-1/2R bg-white shadow-lg overflow-y-auto"
+        className="sticky top-10 z-[25] pb-60 pt-2 h-full min-h-screen w-full sm:w-1/2R bg-white shadow-lg overflow-y-auto"
         data-aos="fade-right"
         data-aos-delay="0"
         data-aos-duration="400"
@@ -159,41 +159,47 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
           {/* Repeat the same structure for additional content */}
           <p className="font-medium">SUPPORT</p>
 
-          <Link to="/about">
+        
             <div
               className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start"
               onClick={isMenuOpen}
             >
-              <div className="cursor-pointer flex items-center justify-start">
+              <Link to="/about">
+               <div className="cursor-pointer flex items-center justify-start">
                 <AboutUsLogo />
                 <p className="ml-4 font-medium">About Us</p>
-              </div>
+              </div></Link> 
+              <Link  to={"/searchresults/AllBlogs"} onClick={isMenuOpen}>
               <div className="flex items-center cursor-pointer">
                 <div className="flex items-center justify-start">
                   <BlogLogo />
                   <p className="ml-4 font-medium">Blog</p>
                 </div>
-              </div>
+              </div></Link>
 
-              <div className="flex items-center cursor-pointer">
+              <Link  to={"/contact"} onClick={isMenuOpen}>
+             <div className="flex items-center cursor-pointer">
                 <div className="flex items-center justify-start">
                   <ContactLogo />
                   <p className="ml-4 font-medium">Contact</p>
                 </div>
-              </div>
+              </div>  </Link> 
             </div>
-          </Link>
+        
           <div className="mt-1 relative gap-3 shadow-md bg-white py-8 esm:py-6 px-4 rounded-3xl items-start">
             <span className="flex flex-col gap-2">
               <p className="font-medium max-w-56 leading-7 text-lg">
                 Discover your ideal University abroad today
               </p>
+              
+              <Link  to={"/contact"} onClick={isMenuOpen}> 
               <button
                 className=" text-white w-28 text-sm mt-4 py-2 rounded-full
      bg-gradient-to-r from-[#380C95] to-[#E15754] "
               >
                 Contact Us{" "}
               </button>
+              </Link> 
             </span>
             <span className=" absolute bottom-0 right-0">
               {" "}

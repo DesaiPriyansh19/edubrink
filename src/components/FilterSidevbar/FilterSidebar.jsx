@@ -85,7 +85,7 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
         data-aos-duration="300"
         data-aos-easing="ease-in-out"
     
-    className="fixed text-sm right-0 top-0 h-full w-[100%] 
+    className="fixed text-sm right-0 top-0 pb-48 mmd:pb-5 h-full w-[100%] 
     sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">

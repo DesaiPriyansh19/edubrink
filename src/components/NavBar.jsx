@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import flag from "../assets/Flags/UKFlag.png";
 import usa from "../assets/Flags/USAflag.png";
 import Search from "../../svg/caplogo/Logo/Search";
@@ -13,6 +13,7 @@ import TogelMenu from "../../svg/TogelMenu/Index";
 import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
 import { useTranslation } from "react-i18next";
 import { LanguageContext } from "./LanguageContext";
+import FilterSidebar from "./FilterSidevbar/FilterSidebar";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
@@ -23,15 +24,45 @@ const NavBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { t } = useTranslation();
   const { language, setLanguage } = useContext(LanguageContext);
+  const [navbarHeight, setNavbarHeight] = useState(0);
+     const [showFilter, setShowFilter] = useState(false); // Toggle filter sidebar
+  // Map language codes to their display labels
+  const languageLabels = {
+    en: "English",
+    ar: "العربية",
+  };
+  // Dynamically measure navbar height on mount and resize
+
+  useEffect(() => {
+    const updateNavbarHeight = () => {
+      const navbar = document.getElementById("navbar");
+      if (navbar) {
+        setNavbarHeight(navbar.offsetHeight);
+      }
+    };
+
+    updateNavbarHeight(); // Initial calculation
+    window.addEventListener("resize", updateNavbarHeight); // Recalculate on window resize
+
+    return () => {
+      window.removeEventListener("resize", updateNavbarHeight); // Cleanup event listener
+    };
+  }, []);
   const handleClick = () => {
     setShowCountriesDropdown(!showCountriesDropdown);
     setShowCoursesDropdown(false);
-    setShowCoursesDropdown(false);
+    setShowFlagsDropdown(false)
   };
   const handleClickTwo = () => {
     setShowCoursesDropdown(!showCoursesDropdown);
-    setShowCoursesDropdown(!showCoursesDropdown);
     setShowCountriesDropdown(false);
+    setShowFlagsDropdown(false)
+  };
+  const handleClickThree = () => {
+    setShowCoursesDropdown(false);
+    
+    setShowCountriesDropdown(false);
+    setShowFlagsDropdown(!showFlagsDropdown)
   };
   const toggleSidebar = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,7 +78,9 @@ const NavBar = () => {
   };
   return (
     <>
-      <nav className="sticky mmd:static top-0 z-30 flex py-4 items-center w-[98%] my-3 mx-auto justify-between px-4 text-sm bg-white rounded-3xl shadow-md">
+    <div className="w-full  my-3 h-auto sticky mmd:static top-0 z-30  bg-[#F8F8F8] mmd:bg-transparent">
+      <nav   id="navbar"
+      className="sticky mmd:static top-0 z-30 flex py-4 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-3xl shadow-md">
         {/* Logo */}
 
         <div className="flex gap-3 items-center w-auto h-auto justify-center">
@@ -75,64 +108,41 @@ const NavBar = () => {
         </div>
 
         {/* Contry Dropdown in sm devices */}
-        <div className="flex justify-center gap-1 items-center  mmd:hidden">
+        <div className="absolute right-1 flex justify-end gap-1 items-center  mmd:hidden">
           {/* Search Bar */}
           <div
             className="h-auto bg-[#F8F8F8] rounded-full w-auto p-2"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            onClick={() => {setIsSearchOpen(!isSearchOpen)} }
           >
             <Search />
           </div>
-          <div className=" relative  rounded-3xl px-4 py-2 bg-[#F8F8F8]">
-            <button
-              onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
-              className="flex items-center space-x-1 text-gray-800"
-            >
-              <img src={usa} alt="flag" className="w-9 h-6 rounded-md" />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            </button>
-            {showFlagsDropdown && (
-              <ul className="fixed z-10 right-[8%] mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
-                <li>
-                  <img
-                    src={flag}
-                    alt="Country 1 Flag"
-                    className="w-8 h-8 rounded-full cursor-pointer"
-                  />
-                </li>
-                <li>
-                  <img
-                    src={flag}
-                    alt="Country 2 Flag"
-                    className="w-8 h-8 rounded-full cursor-pointer"
-                  />
-                </li>
-                <li>
-                  <img
-                    src={flag}
-                    alt="Country 3 Flag"
-                    className="w-8 h-8 rounded-full cursor-pointer"
-                  />
-                </li>
-              </ul>
-            )}
-          </div>
+          <div className="relative inline-block">
+      <button
+        className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
+        onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
+      >
+        <span>Select Language</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="w-4 h-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+          />
+        </svg>
+      </button>
+
+    
+    </div>
         </div>
 
-        {/* Dropdowns */}
+        {/* All Dropdowns Btns*/}
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
           <div onClick={handleClickTwo} className="relative cursor-pointer">
@@ -205,46 +215,32 @@ const NavBar = () => {
               // </ul>
             )}
           </div>
-          {/* Flags Dropdown */}
-          <div className="relative px-2 rounded-full py-1 bg-[#F8F8F8]">
-            {/* <button
-              className="flex items-center space-x-1 text-gray-800"
-              onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
-            >
-              <img src={flag} alt="flag" className="w-6 h-6 rounded-full" />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-4 h-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            </button> */}
-            <button>
-              <ul className="absolute right-0 mt-2 bg-white shadow-md p-2 rounded-md">
-                <li
-                  className="cursor-pointer flex items-center p-2"
-                  onClick={() => setLanguage("en")}
-                >
-                  English
-                </li>
-                <li
-                  className="cursor-pointer flex items-center p-2"
-                  onClick={() => setLanguage("ar")}
-                >
-                  العربية
-                </li>
-              </ul>
-            </button>
-          </div>
-          <div className="language-dropdown relative"></div>{" "}
+          {/* language Dropdown */}
+          <div className="relative inline-block">
+      <button
+        className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
+        onClick={handleClickThree}
+      >
+          <span>{languageLabels[language]}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="w-4 h-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+          />
+        </svg>
+      </button>
+
+    
+    </div>
+  
         </div>
 
         {/* Contact Us Button */}
@@ -254,44 +250,46 @@ const NavBar = () => {
           </button>
         </Link>
       </nav>
+      </div> 
 
+
+{/*   All Dropdown Divs  */}
       {showFlagsDropdown && (
-        <ul className="hidden mmd:fixed z-10 top-[12%] right-[18%]  mt-2 bg-white rounded-md shadow-lg p-4 space-y-2">
-          <li>
-            <img
-              src="/path-to-flag1.png"
-              alt="Country 1 Flag"
-              className="w-8 h-8 rounded-full cursor-pointer"
-            />
+        <ul id="divshadow"    style={{ top: `${navbarHeight}px` }} // Dynamically set top value
+         className="fixed mmd:absolute z-10 right-[3%] mmd:right-[15%]  mt-2 w-40 bg-white border rounded-2xl shadow-lg">
+          <li
+            className="cursor-pointer flex items-center mt-4 px-4 py-2 hover:bg-gray-100"
+            onClick={() => {
+              setLanguage("en");
+              setShowFlagsDropdown(false); // Close dropdown after selection
+            }}
+          >
+            English
           </li>
-          <li>
-            <img
-              src="/path-to-flag2.png"
-              alt="Country 2 Flag"
-              className="w-8 h-8 rounded-full cursor-pointer"
-            />
-          </li>
-          <li>
-            <img
-              src="/path-to-flag3.png"
-              alt="Country 3 Flag"
-              className="w-8 h-8 rounded-full cursor-pointer"
-            />
+          <li
+            className="cursor-pointer flex items-center px-4 py-2 hover:bg-gray-100"
+            onClick={() => {
+              setLanguage("ar");
+              setShowFlagsDropdown(false); // Close dropdown after selection
+            }}
+          >
+            العربية
           </li>
         </ul>
       )}
+  
       {showCountriesDropdown && (
-        <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} />
+        <DropdownContries setShowCountriesDropdown={setShowCountriesDropdown} navbarHeight={navbarHeight}/>
       )}
       {showCoursesDropdown && (
-        <DropdowneCourses setShowCoursesDropdown={setShowCoursesDropdown} />
+        <DropdowneCourses setShowCoursesDropdown={setShowCoursesDropdown} navbarHeight={navbarHeight} />
       )}
       {isMenuOpen && (
         <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
       )}
 
       {isSearchOpen && (
-        <div className=" w-[95%] mx-auto  flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[12%]">
+        <div id="divshadow" className=" w-[95%] mx-auto mb-5   flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[36%]">
           <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
             <div className=" mr-2 ">
               <Search />
@@ -302,10 +300,13 @@ const NavBar = () => {
               className="bg-transparent  text-start outline-none text-black w-full"
             />
           </div>
-          <div className="h-auto w-auto">
+          <div className="h-auto w-auto" onClick={() => setShowFilter(!showFilter)}>
             <FilterLogo />
           </div>
         </div>
+      )}
+      {showFilter && (
+        <FilterSidebar showFilter={showFilter} setShowFilter={setShowFilter} />
       )}
     </>
   );
