@@ -147,7 +147,7 @@ const NavBar = () => {
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
           <div onClick={handleClickTwo} className="relative cursor-pointer">
-            <div className="flex items-center space-x-1 bg-white  text-gray-800">
+            <div className="flex items-center space-x-1 bg-white hover:scale-105 hover:text-gray-950 text-gray-800">
               <p>
                 {" "}
                 <span className="bg-white font-medium">Courses</span>
@@ -246,15 +246,18 @@ const NavBar = () => {
 
         {/* Contact Us Button */}
         <Link to={"/contact"}>
-          <button className="hidden  mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]">
-            Contact Us
-          </button>
+        <button className="hidden mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-[#E15754] hover:to-[#380C95] hover:shadow-lg hover:ring-2 hover:ring-white">
+  Contact Us
+</button>
+
         </Link>
+
       </nav>
       </div> 
 
 
 {/*   All Dropdown Divs  */}
+
       {showFlagsDropdown && (
         <ul id="divshadow"    style={{ top: `${navbarHeight}px` }} // Dynamically set top value
          className="fixed mmd:absolute z-10 right-[3%] mmd:right-[15%]  mt-2 w-40 bg-white border rounded-2xl shadow-lg">
