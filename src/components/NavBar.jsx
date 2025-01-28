@@ -116,12 +116,13 @@ const NavBar = () => {
           >
             <Search />
           </div>
-          <div className="relative inline-block">
+       {/* language Dropdown */}
+       <div className="relative inline-block">
       <button
         className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
-        onClick={() => setShowFlagsDropdown(!showFlagsDropdown)}
+        onClick={handleClickThree}
       >
-        <span>Select Language</span>
+          <span>{languageLabels[language]}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
