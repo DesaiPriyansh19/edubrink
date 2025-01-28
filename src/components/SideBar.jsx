@@ -36,7 +36,11 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
   }, []);
 
   const navigate = useNavigate();
-
+  const handleClose = (Link) => {
+    navigate(`${Link}`); // Correct string interpolation
+    setIsMenuOpen(false);
+    console.log("Navigating to:", Link); // Debug log
+  };
   const countries = [
     { name: "United State of America", flag: usa },
     { name: "Germany", flag: germny },
@@ -70,12 +74,13 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
         <div className="flex w-full mt-1 flex-col space-y-4 px-4 py-2">
           <p className="font-medium">QUICK MENU</p>
           <div className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start">
-            <Link to={"/"} onClick={isMenuOpen}>
-              <div className="cursor-pointer flex items-center justify-start">
+        
+              <div onClick={() => handleClose("/")}
+               className="cursor-pointer flex items-center justify-start">
                 <HomeLogo />
                 <p className="ml-4 font-medium">Home</p>
               </div>
-            </Link>
+       
             <div
               className="flex items-center cursor-pointer"
               onClick={() => setOpenDropdown(openDropdown === 1 ? null : 1)}
@@ -164,26 +169,31 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
               className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start"
               onClick={isMenuOpen}
             >
-              <Link to="/about">
-               <div className="cursor-pointer flex items-center justify-start">
-                <AboutUsLogo />
-                <p className="ml-4 font-medium">About Us</p>
-              </div></Link> 
-              <Link  to={"/searchresults/AllBlogs"} onClick={isMenuOpen}>
-              <div className="flex items-center cursor-pointer">
+              
+              <div 
+  className="cursor-pointer flex items-center justify-start"
+  onClick={() => handleClose("/about")} // Ensure it's a function
+>
+  <AboutUsLogo />
+  <p className="ml-4 font-medium">About Us</p>
+</div>
+          
+              <div onClick={() => handleClose("/searchresults/AllBlogs")}
+               className="flex items-center cursor-pointer">
                 <div className="flex items-center justify-start">
                   <BlogLogo />
                   <p className="ml-4 font-medium">Blog</p>
                 </div>
-              </div></Link>
+              </div>
 
-              <Link  to={"/contact"} onClick={isMenuOpen}>
-             <div className="flex items-center cursor-pointer">
+         
+             <div onClick={() => handleClose("/contact")}
+             className="flex items-center cursor-pointer">
                 <div className="flex items-center justify-start">
                   <ContactLogo />
                   <p className="ml-4 font-medium">Contact</p>
                 </div>
-              </div>  </Link> 
+              </div>  
             </div>
         
           <div className="mt-1 relative gap-3 shadow-md bg-white py-8 esm:py-6 px-4 rounded-3xl items-start">
