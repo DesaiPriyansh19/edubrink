@@ -147,7 +147,7 @@ const NavBar = () => {
         <div className=" hidden  mmd:flex items-center bg-white space-x-6">
           {/* Courses Dropdown */}
           <div onClick={handleClickTwo} className="relative cursor-pointer">
-            <div className="flex items-center space-x-1 bg-white hover:scale-105 hover:text-gray-950 text-gray-800">
+            <div className="flex items-center space-x-1 bg-white  hover:text-black hover:font-[20rem] text-gray-800">
               <p>
                 {" "}
                 <span className="bg-white font-medium">Courses</span>

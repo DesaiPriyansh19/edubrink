@@ -26,7 +26,7 @@ const CarouselSection = () => {
       {/* Title with Logo */}
       <div className="flex items-center justify-center mb-8 sm:mb-16">
         <h1 className="text-3xl sm:text-5xl text-center font-semibold mr-4">
-          🎓 {t("carousalItemTitle")}
+          🎓 {t("carouselItemTitle")}
         </h1>
       </div>
 
