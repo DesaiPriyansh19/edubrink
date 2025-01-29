@@ -63,7 +63,7 @@ export default function ViewCourses({ loading, handleEdit, data }) {
             >
               <div>
                 <div className="flex flex-col items-start justify-between mt-6 sm:mt-2 mb-6 md:mb-3">
-                  <div className="flex gap-4 px-4 pt-4 w-full items-start">
+                  <div className="flex gap-4 px-4 pt-4 pb-2 w-full items-start">
                     <div className="w-11 h-11 border p-1 rounded-full">
                       <img
                         src={UniversityChicago} // Update with course-specific image if available
@@ -71,15 +71,15 @@ export default function ViewCourses({ loading, handleEdit, data }) {
                         className="w-full h-full"
                       />
                     </div>
-                    <p className="text-lg leading-6 font-semibold">
+                    <p className="text-lg max-w-60 leading-6 font-semibold">
                       {course?.CourseName?.en}
                     </p>
                   </div>
                   <div className="px-4 mb-2">
-                    <p className="text-[.8rem] max-w-52 font-medium text-white flex items-center my-1">
+                    <p className="text-[.8rem] max-w-52 font-medium text-white flex items-center ">
                       {course?.Institution || "Unknown Institution"}
                     </p>
-                    <div className="flex items-center mt-1">
+                    <div className="flex items-center">
                       <span className="w-5 h-5 rounded-full mr-1">
                         <Master color={"#ffffff"} />
                       </span>
@@ -94,11 +94,18 @@ export default function ViewCourses({ loading, handleEdit, data }) {
                         <span className="rounded-full w-8 h-8 flex items-center justify-center border">
                           {feature.icon}
                         </span>
+
                         <div className="ml-2">
                           <p className="text-xs font-medium">{feature.title}</p>
-                          <p className="text-xs font-medium">
-                            {feature.description}
-                          </p>
+                          {feature.title === "Tuition Fees" ? (
+                            <p className="text-xs font-medium">
+                              {feature.description} USD/-
+                            </p>
+                          ) : (
+                            <p className="text-xs font-medium">
+                              {feature.description}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}

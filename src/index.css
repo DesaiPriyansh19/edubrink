@@ -1,9 +1,15 @@
-
-@import url('https://fonts.cdnfonts.com/css/general-sans');
+@import url("https://fonts.cdnfonts.com/css/general-sans");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #f8f8f8;
+  font-family: "General Sans", sans-serif;
+}
 
 .loader {
   @apply relative rounded-full w-40 h-40 text-black; /* Tailwind for sizing and color */
@@ -52,10 +58,64 @@
     box-shadow: 0.6em -0.6em 0 0 currentcolor;
   }
 }
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: #f8f8f8;
-  font-family: 'General Sans', sans-serif;
+
+
+.range-slider-container {
+  position: relative;
+  height: 4px;
+  background: #d1d5db; 
+  border-radius: 4px;
+  margin-bottom: 3rem;
+}
+
+
+.active-range {
+  position: absolute;
+  height: 4px;
+  background: #801cc1;
+  border-radius: 4px;
+}
+
+
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #801cc1;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.range-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #801cc1;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.range-slider::-ms-thumb {
+  width: 24px;
+  height: 24px;
+  background: #801cc1;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }

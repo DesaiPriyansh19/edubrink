@@ -26,14 +26,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 function SideBar({ isMenuOpen, setIsMenuOpen }) {
   // Initialize AOS
-  useEffect(() => {
-    AOS.init({
-      duration: 800, // Default animation duration
-      offset: 100, // Trigger animations 100px before the element is visible
-      easing: "ease-in-out", // Easing for animations
-      once: true, // Run animation only once
-    });
-  }, []);
 
   const navigate = useNavigate();
   const handleClose = (Link) => {
@@ -62,6 +54,15 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
     navigate(`/country/${name}`);
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800, // Default animation duration
+      offset: 100, // Trigger animations 100px before the element is visible
+      easing: "ease-in-out", // Easing for animations
+      once: true, // Run animation only once
+    });
+  }, []);
   return (
     <>
       <div
@@ -139,7 +140,7 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
                         key={country.name}
                         className="flex items-center cursor-pointer gap-2"
                         data-aos="fade-in" // Ensure AOS fade-in animation
-                        data-aos-delay={`${index * 45}`} 
+                        data-aos-delay={`${index * 45}`}
                       >
                         <img
                           className="rounded-full h-5 w-5"

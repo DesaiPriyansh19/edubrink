@@ -138,7 +138,7 @@ export default function AddCourses({
               <div className="mb-4 w-full">
                 <InputField
                   label="Course Fees"
-                  type="text"
+                  type="number"
                   name="CourseFees"
                   placeholder="Enter Course Fees"
                   value={formData?.CourseFees}

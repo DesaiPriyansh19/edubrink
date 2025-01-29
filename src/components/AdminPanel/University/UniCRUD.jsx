@@ -6,8 +6,7 @@ import EditUniversities from "./EditUniversities";
 
 export default function UniCRUD() {
   const baseUrl = "https://edu-brink-backend.vercel.app/api/university";
-  const { data, loading, fetchById, updateById, addNew, deleteById } =
-    useApiData(baseUrl);
+  const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     id: "",
     uniName: {
@@ -19,6 +18,8 @@ export default function UniCRUD() {
     scholarshipAvailability: false,
     spokenLanguage: [],
     uniType: "",
+    inTakeMonth: "",
+    inTakeYear: null,
     entranceExamRequired: false,
     studyLevel: "", // Options: "UnderGraduate", "PostGraduate", "Foundation", "Doctorate"
     uniLocation: {
@@ -74,6 +75,7 @@ export default function UniCRUD() {
 
   const [editData, setEditData] = useState({ type: "View", id: null });
   const [formData, setFormData] = useState(initialFormData);
+  const [filteredData, setFilteredData] = useState([]);
 
   const handleEdit = (type, id) => {
     const selectedProperty = data.find((property) => property._id === id); // Filter data by ID
@@ -90,6 +92,8 @@ export default function UniCRUD() {
           selectedProperty?.scholarshipAvailability || false,
         spokenLanguage: selectedProperty?.spokenLanguage || [],
         uniType: selectedProperty?.uniType || "public",
+        inTakeMonth: selectedProperty?.inTakeMonth || "",
+        inTakeYear: selectedProperty?.inTakeYear || "",
         entranceExamRequired: selectedProperty?.entranceExamRequired || false,
         studyLevel: selectedProperty?.studyLevel || "",
         uniLocation: {
@@ -187,13 +191,23 @@ export default function UniCRUD() {
     });
   };
 
+  useEffect(() => {
+    if (data) {
+      const uniqueData = data.filter(
+        (item, index, self) =>
+          index === self.findIndex((t) => t._id === item._id) // Replace "id" with your unique property
+      );
+      setFilteredData(uniqueData);
+    }
+  }, [data]);
+
   return (
     <>
       {editData.type === "View" && (
         <ViewUniversities
           loading={loading}
           handleEdit={handleEdit}
-          data={data}
+          data={filteredData}
         />
       )}
       {editData.type === "Add" && (

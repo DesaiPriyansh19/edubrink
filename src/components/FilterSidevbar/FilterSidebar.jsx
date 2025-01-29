@@ -1,83 +1,82 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import uk from '../../assets/Flags/UKFlag.png'
-import usa from '../../assets/Flags/UKFlag.png'
-import canada from '../../assets/Flags/CanadaFlag.png'
-import australia from '../../assets/Flags/AustraliaFlag.png'
-import germany from '../../assets/Flags/GermnyFlag.png'
-import newzealland from '../../assets/Flags/NewZealandFlag.webp'
-import ireland from '../../assets/Flags/UKFlag.png'
-import netherland from '../../assets/Flags/UKFlag.png'
-import france from '../../assets/Flags/UKFlag.png'
-import switherland from '../../assets/Flags/SwitzerlandFlag.png'
-import unitedarab from '../../assets/Flags/UKFlag.png'
-import poland from '../../assets/Flags/SwitzerlandFlag.png'
-import solvia  from '../../assets/Flags/UKFlag.png'
-import spain from '../../assets/Flags/UKFlag.png'
-import russia from '../../assets/Flags/RusiaFlag.png'
-import india from '../../assets/Flags/IndiaFlag.png'
-import TogelMenu from "../../../svg/TogelMenu/Index";
-import BookLogo from "../../../svg/BookLogo/Index";
+import uk from "../../assets/Flags/UKFlag.png";
+import usa from "../../assets/Flags/UKFlag.png";
+import canada from "../../assets/Flags/CanadaFlag.png";
+import australia from "../../assets/Flags/AustraliaFlag.png";
+import germany from "../../assets/Flags/GermnyFlag.png";
+import newzealland from "../../assets/Flags/NewZealandFlag.webp";
+import ireland from "../../assets/Flags/UKFlag.png";
+import netherland from "../../assets/Flags/UKFlag.png";
+import france from "../../assets/Flags/UKFlag.png";
+import switherland from "../../assets/Flags/SwitzerlandFlag.png";
+import unitedarab from "../../assets/Flags/UKFlag.png";
+import poland from "../../assets/Flags/SwitzerlandFlag.png";
+import solvia from "../../assets/Flags/UKFlag.png";
+import spain from "../../assets/Flags/UKFlag.png";
+import russia from "../../assets/Flags/RusiaFlag.png";
+import india from "../../assets/Flags/IndiaFlag.png";
 import CourseBook from "../../../svg/CourseBook";
+import { useSearch } from "../../../context/SearchContext";
 const FilterSidebar = ({ showFilter, setShowFilter }) => {
   // Initialize AOS
-    useEffect(() => {
-      AOS.init({
-        duration: 800, // Default animation duration
-        offset: 100, // Trigger animations 100px before the element is visible
-        easing: "ease-in-out", // Easing for animations
-        once: true, // Run animation only once
-      });
-    }, []);
-  const [selectedCountries, setSelectedCountries] = useState([]);
-  const [selectedStudyLevel, setSelectedStudyLevel] = useState("");
-  const [selectedEntranceExam, setSelectedEntranceExam] = useState("");
-  const [selectedUniversityType, setSelectedUniversityType] = useState("");
-  const [selectedIntakeYear, setSelectedIntakeYear] = useState("");
-  const [selectedIntakeMonth, setSelectedIntakeMonth] = useState("");
-  const [selectedModeOfStudy, setSelectedModeOfStudy] = useState("");
-  const [selectedCourseDuration, setSelectedCourseDuration] = useState("");
+  useEffect(() => {
+    AOS.init({
+      duration: 800, // Default animation duration
+      offset: 100, // Trigger animations 100px before the element is visible
+      easing: "ease-in-out", // Easing for animations
+      once: true, // Run animation only once
+    });
+  }, []);
   const [minValue, setMinValue] = useState(0); // Initial minimum range value
-  const [maxValue, setMaxValue] = useState(200000); // Initial maximum range value
+  const [maxValue, setMaxValue] = useState(100000); // Initial maximum range value
   const sliderMin = 0; // Slider minimum value
-  const sliderMax = 600000; // Slider maximum value
+  const sliderMax = 100000; // Slider maximum value
 
   // Set maximum value limit
   const maxSliderLimit = sliderMax - 1;
 
+  const { filterProp, setFilterProp, initialState } = useSearch();
+
   // Update Min Value via Slider
   const handleMinSliderChange = (e) => {
-    const value = Math.min(Number(e.target.value), maxValue - 1); // Ensure min < max
-    setMinValue(value);
+    const value = Number(e.target.value);
+    if (value < maxValue) {
+      // Allow movement as long as it's less than max
+      setMinValue(value);
+    }
   };
 
   // Update Max Value via Slider
   const handleMaxSliderChange = (e) => {
-    const value = Math.min(Number(e.target.value), maxSliderLimit); // Ensure max < sliderMax
-    setMaxValue(value);
+    const value = Number(e.target.value);
+    if (value > minValue) {
+      setMaxValue(value);
+    }
   };
 
-
   const toggleCountrySelection = (country) => {
-    setSelectedCountries((prev) =>
-      prev.includes(country)
-        ? prev.filter((item) => item !== country)
-        : [...prev, country]
-    );
+    setFilterProp((prev) => ({
+      ...prev, // Spread the previous state to preserve other properties
+      Destination: prev.Destination.includes(country)
+        ? prev.Destination.filter((item) => item !== country) // Remove the country if already selected
+        : [...prev.Destination, country], // Add the country if not already selected
+    }));
+  };
+
+  const handleToggleSelection = (filterKey, value) => {
+    setFilterProp((prev) => ({
+      ...prev,
+      [filterKey]: prev[filterKey] === value ? null : value, // Toggle between the selected value and null
+    }));
   };
 
   const resetFilters = () => {
-    setSelectedCountries([]);
-    setSelectedStudyLevel("");
-    setSelectedEntranceExam("");
-    setSelectedUniversityType("");
-    setSelectedIntakeYear("");
-    setSelectedIntakeMonth("");
-    setSelectedModeOfStudy("");
-    setSelectedCourseDuration("");
+    setFilterProp(initialState);
   };
 
+  console.log(filterProp);
   return (
     <div
     data-aos="fade-left"
@@ -94,46 +93,50 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
           onClick={() => setShowFilter(false)}
           className="text-gray-500 text-2xl hover:text-gray-700"
         >
-         x
+          x
         </button>
       </div>
 
       {/* Filter Content */}
       <div>
         {/* Study Preference */}
-        <p className="font-medium flex items-center justify-start pl-5 mb-2">Study Preference</p>
+        <p className="font-medium flex items-center justify-start pl-5 mb-2">
+          Study Preference
+        </p>
         <p className="font-medium text-sm mb-2">Destination</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {[
-            { name: "United Kingdom", logo:uk},
-            { name: "United States", logo:usa },
-            { name: "Canada", logo:canada },
-            { name: "Australia", logo:australia },
-            { name: "Germany", logo:germany },
-            { name: "New Zealand", logo:newzealland },
-            { name: "Ireland", logo:ireland },
-            { name: "Netherlands", logo:netherland},
-            { name: "France", logo:france},
-            { name: "Switzerland", logo:switherland },
-            { name: "United Arab Emirates", logo:unitedarab },
-            { name: "Poland", logo:poland },
-            { name: "Slovenia", logo:solvia },
-            { name: "Spain", logo:spain },
-            { name: "russia", logo:russia},
-            { name: "India", logo:india },
-            
-
+            { name: "United Kingdom", logo: uk },
+            { name: "United States", logo: usa },
+            { name: "Canada", logo: canada },
+            { name: "Australia", logo: australia },
+            { name: "Germany", logo: germany },
+            { name: "New Zealand", logo: newzealland },
+            { name: "Ireland", logo: ireland },
+            { name: "Netherlands", logo: netherland },
+            { name: "France", logo: france },
+            { name: "Switzerland", logo: switherland },
+            { name: "United Arab Emirates", logo: unitedarab },
+            { name: "Poland", logo: poland },
+            { name: "Slovenia", logo: solvia },
+            { name: "Spain", logo: spain },
+            { name: "russia", logo: russia },
+            { name: "India", logo: india },
           ].map((country) => (
             <div
               key={country.name}
               className={`flex items-center cursor-pointer  text-black justify-center py-2 text-sm px-3  rounded-full ${
-                selectedCountries.includes(country.name)
+                filterProp?.Destination?.includes(country.name)
                   ? "bg-[#EDE9FE]  "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
               onClick={() => toggleCountrySelection(country.name)}
             >
-              <img src={country.logo} alt={country.name} className="w-4 h-3 mr-2" />
+              <img
+                src={country.logo}
+                alt={country.name}
+                className="w-4 h-3 mr-2"
+              />
               {country.name}
             </div>
           ))}
@@ -142,21 +145,27 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
         {/* Study Level */}
         <p className="font-medium mb-2">Study Level</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {["Undergraduate", "Postgraduate", "Foundation", "Doctorate"].map(
-            (level) => (
-              <button
-                key={level}
-                onClick={() => setSelectedStudyLevel(level)}
-                className={`px-4 py-2 rounded-full text-sm text-black ${
-                  selectedStudyLevel === level
-                    ? "bg-[#EDE9FE] "
-                    : "bg-[#F3F4F6]  hover:bg-gray-200"
-                }`}
-              >
-                {level}
-              </button>
-            )
-          )}
+          {[
+            "All",
+            "UnderGraduate",
+            "PostGraduate",
+            "Foundation",
+            "Doctorate",
+          ].map((level) => (
+            <button
+              key={level}
+              onClick={() =>
+                setFilterProp((prev) => ({ ...prev, StudyLevel: level }))
+              }
+              className={`px-4 py-2 rounded-full text-sm text-black ${
+                filterProp.StudyLevel === level
+                  ? "bg-[#EDE9FE] "
+                  : "bg-[#F3F4F6]  hover:bg-gray-200"
+              }`}
+            >
+              {level}
+            </button>
+          ))}
         </div>
 
         {/* Entrance Exam */}
@@ -165,27 +174,33 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
           {["Yes", "No"].map((option) => (
             <button
               key={option}
-              onClick={() => setSelectedEntranceExam(option)}
+              onClick={() =>
+                setFilterProp((prev) => ({
+                  ...prev,
+                  EntranceExam: option === "Yes", // This implicitly handles the "else" case by setting it to false
+                }))
+              }
               className={`px-4 py-2 rounded-full text-sm text-black ${
-                selectedEntranceExam === option
-                  ? "bg-[#EDE9FE] "
-                  : "bg-[#F3F4F6]  hover:bg-gray-200"
+                (filterProp.EntranceExam && option === "Yes") ||
+                (!filterProp.EntranceExam && option === "No")
+                  ? "bg-[#EDE9FE]" // Highlight selected option
+                  : "bg-[#F3F4F6] hover:bg-gray-200" // Default style
               }`}
             >
               {option}
             </button>
           ))}
         </div>
-        
+
         {/* Privet or not */}
         <p className="font-medium mb-2">University Type</p>
         <div className="flex space-x-4 mb-4">
           {["Public", "Private"].map((option) => (
             <button
               key={option}
-              onClick={() => setSelectedUniversityType(option)}
+              onClick={() => handleToggleSelection("UniType", option)}
               className={`px-4 py-2 rounded-full text-sm text-black ${
-                selectedUniversityType === option
+                filterProp.UniType === option
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -197,19 +212,15 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
         {/* intect year */}
         <p className="font-medium mb-2">Intake Year</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {[
-            "2024",
-            "2025",
-            "2026",
-            "2027",
-            
-          
-          ].map((year) => (
+          {Array.from(
+            { length: 9 },
+            (_, index) => new Date().getFullYear() + index
+          ).map((year) => (
             <button
               key={year}
-              onClick={() => setSelectedIntakeYear(year)}
+              onClick={() => handleToggleSelection("IntakeYear", year)}
               className={`px-4 py-2 rounded-full text-sm ${
-                selectedIntakeYear ===year
+                filterProp.IntakeYear === year
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -218,157 +229,162 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
             </button>
           ))}
         </div>
-        
-     
-   {/* Intake Month */}
-   <p className="font-medium mb-2">Intake Month</p>
+
+        {/* Intake Month */}
+        <p className="font-medium mb-2">Intake Month</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {[
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ].map((month) => (
+            { short: "Jan", full: "January" },
+            { short: "Feb", full: "February" },
+            { short: "Mar", full: "March" },
+            { short: "Apr", full: "April" },
+            { short: "May", full: "May" },
+            { short: "Jun", full: "June" },
+            { short: "Jul", full: "July" },
+            { short: "Aug", full: "August" },
+            { short: "Sep", full: "September" },
+            { short: "Oct", full: "October" },
+            { short: "Nov", full: "November" },
+            { short: "Dec", full: "December" },
+          ].map(({ short, full }) => (
             <button
-              key={month}
-              onClick={() => setSelectedIntakeMonth(month)}
+              key={short}
+              onClick={() => handleToggleSelection("IntakeMonth", full)}
               className={`px-4 py-2 rounded-full text-sm ${
-                selectedIntakeMonth === month
+                filterProp.IntakeMonth === full
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
             >
-              {month}
+              {short} {/* Using the full name inline */}
             </button>
           ))}
         </div>
 
-     <div className="h-[1px] w-[100%] my-10 bg-gray-300"></div>
+        <div className="h-[1px] w-[100%] my-10 bg-gray-300"></div>
 
-     {/* Course Options */}
-     <p className="font-medium mb-3 flex items-center gap-2 justify-start">
-        <CourseBook/>Course Options</p>
+        {/* Course Options */}
+        <div className="font-medium mb-3 flex items-center gap-2 justify-start">
+          <CourseBook />
+          Course Options
+        </div>
         <p className="font-medium mb-3">Courses with</p>
         <p className="">✔ Express offer</p>
         <p className="mb-3 pl-4">Pre-conditional offer in just a few hours</p>
- {/* Mode of Study */}
+        {/* Mode of Study */}
         <p className="font-medium mb-2 ">Mode of Study</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {["Full Time", "Distance Learning", "Online", "Blended"].map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setSelectedModeOfStudy(mode)}
-              className={`px-4 py-2 rounded-full text-sm ${
-                selectedModeOfStudy === mode
-                  ? "bg-[#EDE9FE] "
-                  : "bg-[#F3F4F6]  hover:bg-gray-200"
-              }`}
-            >
-              {mode}
-            </button>
-          ))}
+          {["Full Time", "Distance Learning", "Online", "Blended"].map(
+            (mode) => (
+              <button
+                key={mode}
+                onClick={() => handleToggleSelection("ModeOfStudy", mode)}
+                className={`px-4 py-2 rounded-full text-sm ${
+                  filterProp.ModeOfStudy === mode
+                    ? "bg-[#EDE9FE] "
+                    : "bg-[#F3F4F6]  hover:bg-gray-200"
+                }`}
+              >
+                {mode}
+              </button>
+            )
+          )}
         </div>
-                {/* Course Duration */}
-   <p className="font-medium mb-2">Course Duration</p>
+        {/* Course Duration */}
+        <p className="font-medium mb-2">Course Duration</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {[
-            "Less than 1 year",
-            "1 - 2 years",
-            "2 - 3 years",
-            "3 - 4 years",
-            "4 - 5 years",
-            "More than 5 years",
-          
-          ].map((month) => (
+            { label: "Less than 1 year", value: "1-12" },
+            { label: "1 - 2 years", value: "12-24" },
+            { label: "2 - 3 years", value: "24-36" },
+            { label: "3 - 4 years", value: "36-48" },
+            { label: "4 - 5 years", value: "48-60" },
+            { label: "More than 5 years", value: "60+" },
+          ].map(({ label, value }) => (
             <button
-              key={month}
-              onClick={() =>  setSelectedCourseDuration(month)}
+              key={label}
+              onClick={() =>
+                setFilterProp((prev) => ({
+                  ...prev,
+                  CourseDuration: value, // Setting the corresponding value for the selected label
+                }))
+              }
               className={`px-4 py-2 rounded-full text-sm ${
-                selectedCourseDuration === month
-                  ? "bg-[#EDE9FE] "
-                  : "bg-[#F3F4F6]  hover:bg-gray-200"
+                filterProp.CourseDuration === value
+                  ? "bg-[#EDE9FE]"
+                  : "bg-[#F3F4F6] hover:bg-gray-200"
               }`}
             >
-              {month}
+              {label}
             </button>
           ))}
         </div>
- <div className="h-[1px] w-[100%] my-10 bg-gray-300 "></div>
-        <div className="mt-6 ">
-      <p className="font-medium mb-2">Budget</p>
-      <label className="text-sm font-semibold mb-2 block">Fees Range</label>
-      <div className="flex w-full mx-auto space-x-4 mb-4">
-        <input
-          type="number"
-          value={minValue}
-          onChange={(e) => setMinValue(Math.min(Number(e.target.value), maxValue - 1))}
-          className="w-[40%] p-2  border-[1.5px] rounded text-center"
-          min={sliderMin}
-          max={sliderMax}
-        />
-        <input
-          type="number"
-          value={maxValue}
-          onChange={(e) => setMaxValue(Math.min(Number(e.target.value), maxSliderLimit))}
-          className="w-[40%] p-2 border-[1.5px] rounded text-center"
-          min={sliderMin}
-          max={sliderMax}
-        />
-      </div>
-      {/* Price Range Slider */}
-      <div className="relative h-1 mb-12 bg-gray-300 rounded-full">
-        {/* Active Range */}
-        <div
-          className="absolute h-1 bg-gray-400 rounded-full"
-          style={{
-            left: `${((minValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`,
-            right: `${100 - ((maxValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`,
-          }}
-        ></div>
-        {/* Min Slider Knob */}
-        <input
-          type="range"
-          min={sliderMin}
-          max={sliderMax}
-          value={minValue}
-          onChange={handleMinSliderChange}
-          className="absolute w-full h-1 opacity-0 pointer-events-none"
-        />
-        <div
-          className="absolute top-[-7px] w-6 h-6 bg-[#801CC1] rounded-full cursor-pointer"
-          style={{
-            left: `${((minValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`,
-            transform: "translateX(-50%)",
-          }}
-        ></div>
-        {/* Max Slider Knob */}
-        <input
-          type="range"
-          min={sliderMin}
-          max={sliderMax}
-          value={maxValue}
-          onChange={handleMaxSliderChange}
-          className="absolute w-full h-1 opacity-0 pointer-events-none"
-        />
-        <div
-          className="absolute top-[-7px]  w-6 h-6 bg-[#801CC1] rounded-full cursor-pointer"
-          style={{
-            left: `${((maxValue - sliderMin) / (sliderMax - sliderMin)) * 100}%`,
-            transform: "translateX(-50%)",
-          }}
-        ></div>
 
-      </div>
-    </div>
- 
+        <div className="h-[1px] w-[100%] my-10 bg-gray-300 "></div>
+        <div className="mt-6 ">
+          <p className="font-medium mb-2">Budget</p>
+          <label className="text-sm font-semibold mb-2 block">Fees Range</label>
+          <div className="flex w-full mx-auto space-x-4 mb-4">
+            <input
+              type="number"
+              value={minValue}
+              onChange={(e) =>
+                setMinValue(Math.min(Number(e.target.value), maxValue - 1))
+              }
+              className="w-[40%] p-2  border-[1.5px] rounded text-center"
+              min={sliderMin}
+              max={sliderMax}
+            />
+            <input
+              type="number"
+              value={maxValue}
+              onChange={(e) =>
+                setMaxValue(Math.min(Number(e.target.value), maxSliderLimit))
+              }
+              className="w-[40%] p-2 border-[1.5px] rounded text-center"
+              min={sliderMin}
+              max={sliderMax}
+            />
+          </div>
+          {/* Price Range Slider */}
+          <div className="range-slider-container">
+            {/* Active Range (Purple in between color) */}
+            <div
+              className="active-range"
+              style={{
+                left: `${
+                  ((minValue - sliderMin) / (sliderMax - sliderMin)) * 100
+                }%`,
+                right: `${
+                  100 - ((maxValue - sliderMin) / (sliderMax - sliderMin)) * 100
+                }%`,
+              }}
+            ></div>
+
+            {/* Min Slider */}
+            <input
+              id="MinSliderButton"
+              type="range"
+              min={sliderMin}
+              max={sliderMax}
+              value={minValue}
+              onChange={handleMinSliderChange}
+              className="range-slider"
+            />
+
+            {/* Max Slider */}
+            <input
+              id="MaxSliderButton"
+              type="range"
+              min={sliderMin}
+              max={sliderMax}
+              value={maxValue}
+              onChange={handleMaxSliderChange}
+              className="range-slider"
+            />
+          </div>
+        </div>
+
         {/* Reset and Show Buttons */}
         <div className="flex justify-between gap-2 mt-4">
           <button
@@ -381,7 +397,6 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
             Show All Courses
           </button>
         </div>
-
       </div>
     </div>
   );

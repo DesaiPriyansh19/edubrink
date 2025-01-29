@@ -43,7 +43,9 @@ export default function EditCountry({
 
     const handleBlog = async () => {
       try {
-        const res = await axios.get("https://edu-brink-backend.vercel.app/api/blog");
+        const res = await axios.get(
+          "https://edu-brink-backend.vercel.app/api/blog"
+        );
         if (res) {
           setAddBlog(res.data.data);
         }
@@ -57,12 +59,12 @@ export default function EditCountry({
 
   const filteredUniversities = addUniversity?.filter(
     (university) =>
-      university.uniName.en
+      university?.uniName?.en
         .toLowerCase()
-        .includes(searchInput.univername.toLowerCase()) ||
-      university.uniName.ar
+        .includes(searchInput?.univername?.toLowerCase()) ||
+      university?.uniName?.ar
         .toLowerCase()
-        .includes(searchInput.univername.toLowerCase())
+        .includes(searchInput?.univername?.toLowerCase())
   );
 
   const filteredBlogs = addBlog?.filter(
@@ -132,9 +134,10 @@ export default function EditCountry({
   };
 
   const handleRemoveItem = (itemType, index) => {
+    const itemPlural = itemType === "univername" ? "universities" : "blog";
     setFormData((prevData) => ({
       ...prevData,
-      [itemType + "s"]: prevData[itemType + "s"].filter((_, i) => i !== index),
+      [itemPlural]: prevData[itemPlural].filter((_, i) => i !== index),
     }));
   };
 

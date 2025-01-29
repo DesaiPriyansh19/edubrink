@@ -40,6 +40,12 @@ export default function EditUniversities({
     handleCourses();
   }, []);
 
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 11 }, (_, i) => ({
+    value: `${currentYear + i}`,
+    label: `${currentYear + i}`,
+  }));
+
   const filteredCourses = addCourses?.filter(
     (course) =>
       course?.CourseName?.en
@@ -285,6 +291,44 @@ export default function EditUniversities({
                 />
               </div>
             </div>
+
+          <div className="flex w-full gap-4 justify-between">
+            <div className="mb-4 w-full">
+              <InputField
+                label="Intake Month (شهر التناول)"
+                type="select"
+                name="inTakeMonth"
+                value={formData.inTakeMonth}
+                onChange={handleInputChange}
+                variant={1}
+                options={[
+                  { value: "January", label: "January (يناير)" },
+                  { value: "February", label: "February (فبراير)" },
+                  { value: "March", label: "March (مارس)" },
+                  { value: "April", label: "April (أبريل)" },
+                  { value: "May", label: "May (مايو)" },
+                  { value: "June", label: "June (يونيو)" },
+                  { value: "July", label: "July (يوليو)" },
+                  { value: "August", label: "August (أغسطس)" },
+                  { value: "September", label: "September (سبتمبر)" },
+                  { value: "October", label: "October (أكتوبر)" },
+                  { value: "November", label: "November (نوفمبر)" },
+                  { value: "December", label: "December (ديسمبر)" },
+                ]}
+              />
+            </div>
+            <div className="mb-4 w-full">
+              <InputField
+                label="Intake Year  (سنة القبول)"
+                type="select"
+                name="inTakeYear"
+                value={formData.inTakeYear}
+                onChange={handleInputChange}
+                variant={1}
+                options={yearOptions}
+              />
+            </div>
+          </div>
 
             {/* University Location */}
             <div className="mb-4">

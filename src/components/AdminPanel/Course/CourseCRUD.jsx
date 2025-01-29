@@ -18,7 +18,7 @@ export default function CourseCRUD() {
     },
     CourseDuration: "",
     DeadLine: null,
-    CourseFees: "",
+    CourseFees: null,
     ModeOfStudy: [
       {
         en: "",
@@ -52,7 +52,7 @@ export default function CourseCRUD() {
         },
         CourseDuration: selectedCourse?.CourseDuration || "", // Default to empty string if not available
         DeadLine: selectedCourse?.DeadLine || null, // Default to null if not available
-        CourseFees: selectedCourse?.CourseFees || "", // Default to empty string
+        CourseFees: selectedCourse?.CourseFees || null, // Default to empty string
         ModeOfStudy: selectedCourse?.ModeOfStudy || [
           { en: "", ar: "" }, // Default structure for ModeOfStudy
         ],
@@ -68,9 +68,9 @@ export default function CourseCRUD() {
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
     const nameParts = name.split(/[\[\].]+/); // Split name into parts (e.g., Requirements[0].en)
-  
+
     let temp = { ...formData }; // Clone the form data to avoid direct mutation
-  
+
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
@@ -82,7 +82,7 @@ export default function CourseCRUD() {
       }
       return acc[part];
     }, temp);
-  
+
     // Update formData state with the new temp object
     setFormData(temp);
   };
@@ -104,7 +104,6 @@ export default function CourseCRUD() {
       [arrayName]: prevState[arrayName].filter((_, i) => i !== index),
     }));
   };
-  
 
   return (
     <>

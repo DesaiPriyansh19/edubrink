@@ -4,18 +4,19 @@ import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
 import { Link } from "react-router-dom";
 import useFetch from "../../../../hooks/useFetch";
+import { useSearch } from "../../../../context/SearchContext";
 
-function ResultsCorses() {
-  const { data, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse"
-  );
+// Course Data
 
+function ResultsCorses({ loading, filteredData }) {
   return (
     <>
       <div className="max-w-full mx-auto">
         <div className="flex items-center justify-between mt-6 mb-4">
           <div className="">
-            <h1 className="text-2xl sm:text-4xl font-semibold">📚Our courses</h1>
+            <h1 className="text-2xl sm:text-4xl font-semibold">
+              📚Our courses
+            </h1>
             <p className="text-sm mt-3 font-medium">
               Effortlessly explore diverse courses, find programs tailored to
               your academic goals,<br></br> compare study opportunities, and
@@ -68,7 +69,7 @@ function ResultsCorses() {
                 </div>
               </div>
             ))
-          : data?.map((university, index) => {
+          : filteredData?.map((university, index) => {
               const dynamicFeatures = [
                 {
                   icon: <DollerRounded />,
@@ -84,11 +85,14 @@ function ResultsCorses() {
                   icon: <DollerRounded />,
                   title: "Deadline",
                   description: university?.DeadLine
-                    ? new Date(university?.DeadLine).toLocaleDateString("en-US", {
-                        year: "numeric", // Full year (optional)
-                        month: "short", // Abbreviated month name
-                        day: "numeric", // Day of the month
-                      })
+                    ? new Date(university?.DeadLine).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric", // Full year (optional)
+                          month: "short", // Abbreviated month name
+                          day: "numeric", // Day of the month
+                        }
+                      )
                     : "N/A",
                 },
               ];
@@ -103,8 +107,7 @@ function ResultsCorses() {
                       <div className="w-20 h-20">
                         <img
                           src={
-                            "https://placehold.co/80x80" ||
-                            university.uniSymbol
+                            "https://placehold.co/80x80" || university.uniSymbol
                           }
                           alt="College Logo"
                           className="w-full h-full rounded-full"

@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useFetch from "../../../../hooks/useFetch";
 import TickMark from "../../../../svg/TickMark";
+import { useSearch } from "../../../../context/SearchContext";
 
 const CollegeCard = ({ data, loading }) => {
   const { i18n } = useTranslation();
@@ -18,7 +19,6 @@ const CollegeCard = ({ data, loading }) => {
     return (
       <div className="flex gap-2">
         {Array.from({ length: 4 }).map((_, index) => (
-          
           <div
             key={index}
             className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg animate-pulse"
@@ -59,11 +59,9 @@ const CollegeCard = ({ data, loading }) => {
               <div className="w-full h-10 bg-gray-300 rounded-md"></div>
               <div className="w-full h-10 bg-gray-300 rounded-md"></div>
             </div>
-      
           </div>
         ))}
       </div>
-      
     );
   }
 
@@ -129,7 +127,7 @@ const CollegeCard = ({ data, loading }) => {
                       alt="Flag"
                       className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
                     />
-                    {data?.countryName?.en || "N/A"}
+                    {university?.countryName?.en || "N/A"}
                   </p>
 
                   <div className="flex items-center mt-1">
@@ -181,11 +179,7 @@ const CollegeCard = ({ data, loading }) => {
   );
 };
 
-function Univrsiry() {
-  const { data, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/university"
-  );
-
+function Univrsiry({ filteredData, loading }) {
   return (
     <>
       <div className="max-w-[1240px] mt-20">
@@ -210,7 +204,7 @@ function Univrsiry() {
       </div>
 
       <div className="overflow-x-auto scrollbar-hide whitespace-nowrap">
-        <CollegeCard data={data} loading={loading} />
+        <CollegeCard data={filteredData?.flat()} loading={loading} />
       </div>
     </>
   );
