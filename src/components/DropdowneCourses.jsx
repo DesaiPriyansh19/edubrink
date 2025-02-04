@@ -4,8 +4,10 @@ import "aos/dist/aos.css";
 import uninav from "../assets/UniNav.png";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -21,12 +23,14 @@ function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
   );
 
   const handleNavigate = (link) => {
-    navigate(`/courses/${link}`);
+    navigate(`${language}/courses/${link}`);
     setShowCoursesDropdown(false);
   };
   return (
     <>
-      <div    id="divshadow"     style={{ top: `${navbarHeight}px` }} // Dynamically set top value
+      <div
+        id="divshadow"
+        style={{ top: `${navbarHeight}px` }} // Dynamically set top value
         className="absolute mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%] md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[45vw]  h-auto z-10 flex gap-3  mt-2 
    bg-[#f8f8f8] rounded-3xl shadow-lg"
         data-aos="fade-out"
@@ -51,10 +55,10 @@ function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
                 </span>
                 <span className="">
                   <p className="text-[.7rem] font-medium">
-                    {course?.CourseName?.en}
+                    {language==="ar"?course?.CourseName?.ar:course?.CourseName?.en}
                   </p>
                   <p className="text-[.6rem] font-light">
-                    {course?.uniName?.en}
+                    {language==="ar"?course?.uniName?.ar:course?.uniName?.en}
                   </p>
                 </span>
               </div>

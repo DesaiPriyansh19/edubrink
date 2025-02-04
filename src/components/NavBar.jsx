@@ -12,7 +12,7 @@ import i18n from "../i18n";
 import TogelMenu from "../../svg/TogelMenu/Index";
 import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
 import { useTranslation } from "react-i18next";
-import { LanguageContext } from "./LanguageContext";
+import { useLanguage } from "../../context/LanguageContext";
 import FilterSidebar from "./FilterSidevbar/FilterSidebar";
 import useFetch from "../../hooks/useFetch";
 import { useSearch } from "../../context/SearchContext";
@@ -26,14 +26,13 @@ const NavBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const inputRef = useRef(null);
   const { t } = useTranslation();
-  const { language, setLanguage } = useContext(LanguageContext);
+  const { language, setLanguage } = useLanguage();
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
   const { data, loading } = useFetch(
     "https://edu-brink-backend.vercel.app/api/keyword"
   );
-  const navigate = useNavigate(); // To programmatically navigate
-  const { filterProp, setFilterProp } = useSearch();
+  const navigate = useNavigate();
   const [searchState, setSearchState] = useState({
     searchTerm: "",
     filteredResults: [],
@@ -100,9 +99,9 @@ const NavBar = () => {
     });
 
     if (term.type === "country") {
-      navigate(`/country/${term.keyword}`);
+      navigate(`/${language}/country/${term.keyword}`);
     } else {
-      navigate(`/searchresults`);
+      navigate(`/${language}/searchresults`);
     }
 
     if (inputRef.current) {
@@ -172,6 +171,12 @@ const NavBar = () => {
       : "hover:bg-gray-200";
   };
 
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    navigate(`/${lang}${location.pathname.substring(3)}`); // Update URL while keeping the existing path
+    setShowFlagsDropdown(false); // Close dropdown
+  };
+
   useEffect(() => {
     if (
       searchState.filteredResults.length > 0 &&
@@ -198,12 +203,12 @@ const NavBar = () => {
               {isMenuOpen ? <TogelMenuTwo /> : <TogelMenu />}
             </span>
             <h2 className=" text-xl mmd:text-2xl font-bold bg-white cursor-pointer pointer text-gray-800">
-              <Link to={"/"}>Edubrink</Link>
+              <Link to={`/${language}`}>Edubrink</Link>
             </h2>{" "}
           </div>
 
           <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative">
-            <Link to="/searchresults">
+            <Link to={`/${language}/searchresults`}>
               <div className="md:w-6 md:h-6 mr-2">
                 <Search />
               </div>
@@ -339,7 +344,7 @@ const NavBar = () => {
                 className="flex items-center space-x-1 bg-white text-gray-800"
               >
                 <span className=" bg-white font-medium ">
-                  <Link to="/about">About</Link>
+                  <Link to={`/${language}/about`}>About</Link>
                 </span>
               </button>
               {showAboutDropdown && (
@@ -385,7 +390,7 @@ const NavBar = () => {
           {/* Contact Us Button */}
           <Link to={"/contact"}>
             <button className="hidden mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-[#E15754] hover:to-[#380C95] hover:shadow-lg hover:ring-2 hover:ring-white">
-              Contact Us
+              {t("contactUs")}
             </button>
           </Link>
         </nav>
@@ -402,8 +407,7 @@ const NavBar = () => {
           <li
             className="cursor-pointer flex items-center mt-4 px-4 py-2 hover:bg-gray-100"
             onClick={() => {
-              setLanguage("en");
-              setShowFlagsDropdown(false); // Close dropdown after selection
+              changeLanguage("en");
             }}
           >
             English
@@ -411,8 +415,7 @@ const NavBar = () => {
           <li
             className="cursor-pointer flex items-center px-4 py-2 hover:bg-gray-100"
             onClick={() => {
-              setLanguage("ar");
-              setShowFlagsDropdown(false); // Close dropdown after selection
+              changeLanguage("ar");
             }}
           >
             العربية

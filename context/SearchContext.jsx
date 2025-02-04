@@ -12,6 +12,8 @@ export const SearchProvider = ({ children }) => {
     IntakeMonth: "",
     ModeOfStudy: "",
     CourseDuration: "",
+    minBudget: 0,
+    maxBudget: 100000,
   };
   const [filterProp, setFilterProp] = useState(initialState);
   const [sumData, setSumData] = useState({

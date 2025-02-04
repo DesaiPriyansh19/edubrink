@@ -23,8 +23,6 @@ export const commonProperties = {
 };
 
 export default function MainDashBoard() {
-
-
   const [cardsData, setCardsData] = useState([
     {
       title: "Post Property",
@@ -92,10 +90,7 @@ export default function MainDashBoard() {
       <p className="mb-6 text-sm text-gray-200">Welcome to your Dashboard</p>
       <div className="flex justify-between gap-4 w-full">
         {cardsData.map((card, i) => (
-          <div
-            key={i}
-            className="bg-gray-800  shadow-md w-full relative"
-          >
+          <div key={i} className="bg-gray-800  shadow-md w-full relative">
             <div className="p-5 flex justify-between ">
               <div>
                 <div className="mb-2">
@@ -127,7 +122,7 @@ export default function MainDashBoard() {
         ))}
       </div>
       <div className="grid grid-cols-6 mt-4 gap-4">
-        <div className="h-[330px] relative bg-gray-800  w-full col-span-4">
+        <div className="h-[560px] relative bg-gray-800  w-full col-span-4">
           <ResponsiveLine
             data={data}
             margin={{ top: 55, right: 100, bottom: 60, left: 50 }}

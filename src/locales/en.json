@@ -3,6 +3,12 @@
   "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
   "buttonLabel": "Get Started Now",
   "carouselItemTitle": "Find out the best study destination",
+  "viewAll": "View All",
+
+  "takeEducationTitle": "Take your education to the<br>next level abroad",
+  "takeEducationDescription": "Get more insights and reports for your startup and improve the customer relationships",
+  "contactUs": "Contact Us",
+
   "carouselSectionItems": [
     { "text": "U.K" },
     { "text": "U.S.A" },
@@ -53,5 +59,81 @@
       "question": "Can I work part-time while studying abroad?",
       "answer": ""
     }
+  },
+  "uniTypes": {
+    "Private": "Private University",
+    "Public": "Public University"
+  },
+  "mostPopular": "Most Popular",
+  "applyNow": "Apply Now",
+  "learnMore": "Learn More",
+
+  "howToApplySection": {
+    "title": "How to apply",
+    "description": "Easily explore global universities, discover programs suited to your goals, compare study options, and receive guidance throughout the application.",
+    "items": [
+      {
+        "title": "Study planner",
+        "description": "Develop and implement who effective with the business.",
+        "color": "#fbf9ff",
+        "info": "01"
+      },
+      {
+        "title": "Document tracker",
+        "description": "Develop and implement who effective with the business.",
+        "color": "#f5fcff",
+        "info": "02"
+      },
+      {
+        "title": "Test preparation",
+        "description": "Develop and implement who effective with the business.",
+        "color": "#fef8ff",
+        "info": "03"
+      },
+      {
+        "title": "Advisor chat",
+        "description": "Develop and implement who effective with the business.",
+        "color": "#f7fef8",
+        "info": "04"
+      }
+    ]
+  },
+
+  "featuredUniversities": {
+    "title": "Featured Universities",
+    "description": "Effortlessly explore diverse courses, find programs tailored to your academic goals, compare study opportunities, and make informed decisions."
+  },
+
+  "HowWeWorkSection": {
+    "title": "How we work",
+    "description": "Effortlessly explore diverse courses, find programs tailored to your academic goals, compare study opportunities, and make informed decisions.",
+    "cards": [
+      {
+        "title": "Discover your future",
+        "description": "Discover the art of ad production, where creativity meets strategy."
+      },
+      {
+        "title": "Find skilled courses",
+        "description": "Discover the art of ad production, where creativity meets strategy."
+      },
+      {
+        "title": "Study abroad university",
+        "description": "Discover the art of ad production, where creativity meets strategy."
+      },
+      {
+        "title": "Enrolment courses",
+        "description": "Discover the art of ad production, where creativity meets strategy."
+      }
+    ]
+  },
+
+  "ourCourseSection": {
+    "title": "Our courses",
+    "description": "Effortlessly explore diverse courses, find programs tailored to your academic goals, compare study opportunities, and make informed decisions."
+  },
+
+  "recentBlog": {
+    "title": "📑 Recent blog",
+    "description": "Stay informed with our study abroad blog, featuring expert tips, destination guides, student experiences, and the latest updates on scholarships, visas."
   }
 }

@@ -13,6 +13,13 @@ export default function EditCourses({
   handleInputChange,
   addArray,
   removeArray,
+  filteredTags,
+  handleAddItem,
+  handleRemoveItem,
+  showDropdown,
+  setShowDropdown,
+  searchInput,
+  setSearchInput,
 }) {
   const [modal, setModal] = useState(null);
 
@@ -31,7 +38,14 @@ export default function EditCourses({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateById(editData.id, formData);
+
+    const tagsIds = formData?.Tags?.map((tag) => tag._id);
+    const dataToSubmit = {
+      ...formData,
+      Tags: tagsIds,
+    };
+
+    await updateById(editData.id, dataToSubmit);
 
     handleEdit("View");
   };
@@ -161,7 +175,9 @@ export default function EditCourses({
                   label="Deadline"
                   type="date"
                   name="DeadLine"
-                  value={formData?.DeadLine || ""}
+                  value={
+                    formData?.DeadLine ? formData?.DeadLine.slice(0, 10) : ""
+                  }
                   onChange={handleInputChange}
                   autoComplete="deadLine"
                   variant={1}
@@ -282,6 +298,90 @@ export default function EditCourses({
               >
                 Add Requirement
               </button>
+            </div>
+
+            {/* Add Tags */}
+            <div className={`pb-20 ${showDropdown ? "mb-24" : "mb-8"}`}>
+              <h2 className="text-lg font-semibold mb-2">Manage Tags</h2>
+              <div className="flex items-center gap-4 mb-4 w-full">
+                <div className="w-full relative">
+                  <InputField
+                    label="Enroll Tag (التسجيل في الوسم)"
+                    type="text"
+                    placeholder="Enter Tag Name (أدخل اسم الوسم)"
+                    value={searchInput.TagName}
+                    onChange={(e) => {
+                      setSearchInput((prev) => ({
+                        ...prev,
+                        TagName: e.target.value,
+                      }));
+                      setShowDropdown(true);
+                    }}
+                    autoComplete="enrollTags"
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                    variant={1}
+                  />
+                  {showDropdown && filteredTags.length > 0 && (
+                    <div className="absolute text-black bg-white border max-h-40 mt-1 w-full rounded shadow-lg overflow-auto z-10">
+                      <ul>
+                        {filteredTags.map((tag, index) => (
+                          <li
+                            key={index}
+                            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 px-4 py-3 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              setSearchInput((prev) => ({
+                                ...prev,
+                                id: tag._id,
+                                TagName: tag?.TagName?.en,
+                              }));
+                              setShowDropdown(false);
+                            }}
+                          >
+                            {/* Course Name */}
+                            <span className="font-medium text-sm text-gray-800">
+                              {`${tag?.TagName?.en} - ${tag?.TagName?.ar}`}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAddItem(filteredTags)}
+                  className="bg-transparent border-b-0 border hover:text-black hover:border-black hover:bg-white active:scale-95 transition-all ease-in-out duration-300 text-white px-4 py-2 "
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* List of Courses */}
+              {formData?.Tags && formData.Tags.length > 0 ? (
+                <ul className="list-disc">
+                  {formData.Tags.map(
+                    (tag, index) =>
+                      tag?.TagName?.en && tag?.TagName?.ar ? (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between mb-2"
+                        >
+                          <span>{`${tag?.TagName?.en} - ${tag?.TagName?.ar}`}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveItem(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            Remove
+                          </button>
+                        </li>
+                      ) : null // Avoid rendering undefined or incomplete tags
+                  )}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No tags added yet.</p>
+              )}
             </div>
           </form>
         </div>

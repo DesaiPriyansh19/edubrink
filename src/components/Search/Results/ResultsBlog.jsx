@@ -12,8 +12,8 @@ function ResultsBlog({ filteredData, loading }) {
 
   return (
     <div className="mt-11 text-black">
-      <div className="max-w-[1240px] mx-auto">
-        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-4">
+      <div>
+        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-1">
           📑 Recent blog
         </h1>
 

@@ -1,121 +1,104 @@
 import React from "react";
-import uniLogo from "../../assets/UniversityBoston.png";
-
-import BookLogo from "../../../svg/BookLogo/Index";
 import Book from "../../assets/Book.png";
-import uk from "../../assets/Flags/UKFlag.png";
 import DollerRounded from "../../../svg/DollerRounded/Index";
-
 import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../svg/DiscountLogo/Index";
 import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
+import useFetch from "../../../hooks/useFetch";
+import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
-const colleges = [
-  {
-    id: 1,
-    name: "Impartial College London",
-    location: "United Kingdom, London",
-    description: "A leading institution for advanced studies.",
-    logo: uniLogo,
-    flag: uk,
-    svgIcon: uk,
-    ptivetLogo: <PrivetUniLogo />,
-  },
-  {
-    id: 2,
-    name: "Impartial College London",
-    location: "United Kingdom, London",
-    description: "A leading institution for advanced studies.",
-    logo: uniLogo,
-    flag: uk,
-    svgIcon: uk,
-    ptivetLogo: <PrivetUniLogo />,
-  },
-  {
-    id: 3,
-    name: "Impartial College London",
-    location: "United Kingdom, London",
-    description: "A leading institution for advanced studies.",
-    logo: uniLogo,
-    flag: uk,
-    svgIcon: uk,
-    ptivetLogo: <PrivetUniLogo />,
-  },
-  {
-    id: 4,
-    name: "Impartial College London",
-    location: "United Kingdom, London",
-    description: "A leading institution for advanced studies.",
-    logo: uniLogo,
-    flag: uk,
-    svgIcon: uk,
-    ptivetLogo: <PrivetUniLogo />,
-  },
-  // Add more colleges here...
-];
-
-const features = [
-  {
-    icon: <DollerRounded />,
-    title: "Number of courses",
-    description: "1000+ Courses",
-  },
-  {
-    icon: <ScholerShipLogo />,
-    title: "Scholarship",
-    description: "Available",
-  },
-  {
-    icon: <DiscountLogo />,
-    title: "Discount",
-    description: "31 July 2025",
-  },
-];
 
 const CollegeCard = ({ college }) => {
-  const { i18n } = useTranslation();
-
-  // You can change the padding dynamically based on the language
+  const { language } = useLanguage();
+  const { t } = useTranslation();
+  const features = [
+    {
+      icon: <DollerRounded />,
+      title: language === "ar" ? "عدد الدورات" : "Number of courses",
+      description: college.courseId.length,
+    },
+    {
+      icon: <ScholerShipLogo />,
+      title: language === "ar" ? "المنح الدراسية" : "Scholarship",
+      description:
+        college.scholarshipAvailability === true
+          ? language === "ar"
+            ? "متاح"
+            : "Available"
+          : language === "ar"
+          ? "غير متاح"
+          : "Not Available",
+    },
+    {
+      icon: <DiscountLogo />,
+      title: language === "ar" ? "الخصم" : "Discount",
+      description: "N/A",
+    },
+  ];
 
   return (
-    <div className="relative  1xl:ml-24   mt-3 border rounded-xl shadow-md bg-white">
+    <div
+      className={`relative  mt-3 border rounded-xl shadow-md bg-white ${
+        language === "ar" ? "text-right 1xl:mr-24 ml-4" : "text-left 1xl:ml-24"
+      }`}
+      dir={language === "ar" ? "rtl" : "ltr"}
+    >
       {/* Most Popular Badge */}
       <div
         className={`px-3 ${
-          i18n.language === "ar"
+          language === "ar"
             ? "pl-3 sm:pl-8 md:pl-9  lg:pl-16"
             : "pr-3 sm:pr-8 md:pr-9  lg:pr-16"
         }  p-4`}
       >
-        <div className="absolute top-0 right-0 bg-red-500 text-white text-sm px-2 py-1 rounded-bl-[4px] rounded-tr-xl">
-          Most Popular
+        <div
+          className={`absolute top-0
+          
+          ${
+            language === "ar"
+              ? "left-0 rounded-br-[4px]  rounded-tl-xl"
+              : "right-0 rounded-bl-[4px] rounded-tr-xl"
+          } 
+           bg-red-500 text-white text-sm px-2 py-1  `}
+        >
+          {t("mostPopular")}
         </div>
 
         {/* College Info */}
         <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
-          <div className="w-20 h-20">
-            <img src={college.logo} alt="Logo" className="w-full h-full" />
+          <div className="w-20 h-20 ">
+            <img
+              src={"https://placehold.co/80x80" || college.uniSymbol}
+              alt="Logo"
+              className="w-full h-full rounded-full object-cover"
+            />
           </div>
           <div>
             <h1 className="text-lg font-semibold flex items-center">
-              {college.name}
+              {language === "ar" ? college?.uniName?.ar : college?.uniName?.en}
               {/* <img src={college.svgIcon} alt="SVG Icon" className="w-4 h-4 ml-2" /> */}
             </h1>
             <p className="text-[.8rem] font-medium text-black  flex items-center mt-1">
               <img
-                src={college.flag}
+                src={"https://placehold.co/20x20" || college?.countryFlag}
                 alt="Flag"
                 className="w-5 h-5 rounded-full mr-1"
               />
-              {college.location}
+              {language === "ar"
+                ? college?.countryName?.ar
+                : college?.countryName?.en}
             </p>
             <div className="flex items-center mt-1">
               <span className="w-5 h-5 rounded-full mr-1">
-                {college.ptivetLogo}{" "}
+                <PrivetUniLogo />
               </span>
-              <p className="text-[.8rem] font-medium text-black  ">
+              <p className="text-[.8rem] capitalize font-medium text-black  ">
                 {" "}
-                Private University
+                {t(
+                  `uniTypes.${
+                    college.uniType === "public" ? "Public" : "Private"
+                  }`
+                )}
               </p>
             </div>
           </div>
@@ -143,44 +126,71 @@ const CollegeCard = ({ college }) => {
           className="bg-gradient-to-r  from-[#380C95] to-[#E15754] hover:bg-gradient-to-l
        text-white text-sm py-2 px-3  rounded-full"
         >
-          Apply Now
+          {t("applyNow")}
         </button>
         <button className="  text-black text-sm px-3 py-2 hover:font-medium  rounded-full border-2 border-gray-800">
-          Learn More
+          {t("learnMore")}
         </button>
       </div>
     </div>
   );
 };
 
-const CollegeCarousel = () => (
-  <>
-    <div className="max-w-[1240px] mx-auto ">
-      <div className=" flex items-center mt-6 mb-4 justify-start">
-        <h1 className="text-start text-3xl sm:text-5xl font-semibold pl-4">
-          Featured Universites
-        </h1>
-        <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" />{" "}
+const CollegeCarousel = () => {
+  const { data } = useFetch(
+    "https://edu-brink-backend.vercel.app/api/university"
+  );
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+  return (
+    <>
+      <div className="max-w-[1240px] mx-auto ">
+        <div
+          className={`text-start text-3xl sm:text-4xl flex ${
+            language === "ar" ? "justify-end" : "justify-start"
+          } mb-4 font-semibold pl-4`}
+        >
+          <h1 className="text-start text-3xl sm:text-5xl font-semibold ">
+            {t("featuredUniversities.title")}
+          </h1>
+          <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" />{" "}
+        </div>
+        <p
+          className={` font-normal w-full text-sm ${
+            language === "ar" ? "text-right" : "text-left"
+          } sm:text-[.8rem] px-0 pl-4 pr-1 `}
+        >
+          {t("featuredUniversities.description")}
+        </p>
+        <div
+          className={`w-full hidden sm:flex  ${
+            language === "ar" ? "justify-start" : "justify-end "
+          } items-center px-4`}
+        >
+          <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+            {t("viewAll")}
+          </button>
+        </div>
       </div>
-      <p className="text-start font-normal text-[.9rem] pl-4 max-w-2xl">
-        Effortlessly explore diverse courses, find programs tailored to your
-        academic goals, compare study opportunities, and make informed decisions
-      </p>
-      <div className="w-full hidden sm:flex justify-end items-center px-4">
-        <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-          View All
-        </button>
-      </div>
-    </div>
 
-    <div className="overflow-x-auto scrollbar-hide mx-2 mb-24 md:mx-4 my-3 whitespace-nowrap py-2  sm:py-8">
-      <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-4">
-        {colleges.map((college) => (
-          <CollegeCard key={college.id} college={college} />
-        ))}
+      <div
+        className={`overflow-x-auto scrollbar-hide mx-2 mb-24 md:mx-4 my-3 whitespace-nowrap py-2 sm:py-8`}
+        dir={language === "ar" ? "rtl" : "ltr"}
+      >
+        <div
+          className={`flex flex-col sm:flex-row ${
+            language === "ar"
+              ? "space-x-0 sm:space-x-4"
+              : "space-x-0 sm:space-x-4"
+          }`}
+        >
+          {data?.map((college) => (
+            <CollegeCard key={college._id} college={college} />
+          ))}
+        </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 export default CollegeCarousel;

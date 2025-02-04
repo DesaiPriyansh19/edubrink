@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useApiData from "../../../../hooks/useApiData";
 import ViewCourses from "./ViewCourses";
 import AddCourses from "./AddCourses";
 import EditCourses from "./EditCourses";
+import axios from "axios";
 
 export default function CourseCRUD() {
   const baseUrl = "https://edu-brink-backend.vercel.app/api/course";
@@ -31,10 +32,17 @@ export default function CourseCRUD() {
         ar: "",
       },
     ],
+    Tags: [],
   };
 
   const [editData, setEditData] = useState({ type: "View", id: null });
   const [formData, setFormData] = useState(initialFormData);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [addTags, setAddtags] = useState([]);
+  const [searchInput, setSearchInput] = useState({
+    id: "",
+    TagName: "",
+  });
 
   const handleEdit = (type, id) => {
     const selectedCourse = data.find((course) => course._id === id); // Filter data by ID
@@ -57,6 +65,9 @@ export default function CourseCRUD() {
           { en: "", ar: "" }, // Default structure for ModeOfStudy
         ],
         Requirements: selectedCourse?.Requirements || [
+          { en: "", ar: "" }, // Default structure for Requirements
+        ],
+        Tags: selectedCourse?.Tags || [
           { en: "", ar: "" }, // Default structure for Requirements
         ],
       });
@@ -97,11 +108,64 @@ export default function CourseCRUD() {
     }));
   };
 
-  // Remove an item from the Requirements array by index
   const removeArray = (arrayName, index) => {
     setFormData((prevState) => ({
       ...prevState,
       [arrayName]: prevState[arrayName].filter((_, i) => i !== index),
+    }));
+  };
+
+  const filteredTags = addTags?.filter(
+    (tag) =>
+      tag?.TagName?.en
+        .toLowerCase()
+        .includes(searchInput?.TagName?.toLowerCase()) ||
+      tag?.TagName?.ar
+        .toLowerCase()
+        .includes(searchInput?.TagName?.toLowerCase())
+  );
+
+  useEffect(() => {
+    const handleTags = async () => {
+      try {
+        const res = await axios.get(
+          "https://edu-brink-backend.vercel.app/api/tags"
+        );
+        if (res) {
+          setAddtags(res.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    handleTags();
+  }, []);
+
+  const handleAddItem = (filteredItems) => {
+    if (searchInput.TagName !== "" && searchInput.id !== "") {
+      const selectedItem = filteredItems.find(
+        (item) => item._id === searchInput.id
+      );
+
+      if (selectedItem) {
+        setFormData((prevData) => ({
+          ...prevData,
+          Tags: [...(prevData.Tags || []), selectedItem],
+        }));
+
+        setSearchInput({
+          id: "",
+          TagName: "",
+        });
+      }
+    }
+  };
+
+  const handleRemoveItem = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      Tags: prevData.Tags.filter((_, i) => i !== index),
     }));
   };
 
@@ -120,6 +184,13 @@ export default function CourseCRUD() {
           initialFormData={initialFormData}
           addArray={addArray}
           removeArray={removeArray}
+          handleRemoveItem={handleRemoveItem}
+          handleAddItem={handleAddItem}
+          filteredTags={filteredTags}
+          setShowDropdown={setShowDropdown}
+          showDropdown={showDropdown}
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
         />
       )}
       {editData.type === "Edit" && (
@@ -134,6 +205,13 @@ export default function CourseCRUD() {
           addArray={addArray}
           removeArray={removeArray}
           handleInputChange={handleInputChange}
+          handleRemoveItem={handleRemoveItem}
+          handleAddItem={handleAddItem}
+          filteredTags={filteredTags}
+          setShowDropdown={setShowDropdown}
+          showDropdown={showDropdown}
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
         />
       )}
     </>

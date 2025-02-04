@@ -19,7 +19,8 @@ import russia from "../../assets/Flags/RusiaFlag.png";
 import india from "../../assets/Flags/IndiaFlag.png";
 import CourseBook from "../../../svg/CourseBook";
 import { useSearch } from "../../../context/SearchContext";
-const FilterSidebar = ({ showFilter, setShowFilter }) => {
+import ReactSlider from "react-slider";
+const FilterSidebar = ({ setShowFilter }) => {
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -29,32 +30,10 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
       once: true, // Run animation only once
     });
   }, []);
-  const [minValue, setMinValue] = useState(0); // Initial minimum range value
-  const [maxValue, setMaxValue] = useState(100000); // Initial maximum range value
-  const sliderMin = 0; // Slider minimum value
-  const sliderMax = 100000; // Slider maximum value
-
-  // Set maximum value limit
-  const maxSliderLimit = sliderMax - 1;
-
   const { filterProp, setFilterProp, initialState } = useSearch();
 
-  // Update Min Value via Slider
-  const handleMinSliderChange = (e) => {
-    const value = Number(e.target.value);
-    if (value < maxValue) {
-      // Allow movement as long as it's less than max
-      setMinValue(value);
-    }
-  };
-
-  // Update Max Value via Slider
-  const handleMaxSliderChange = (e) => {
-    const value = Number(e.target.value);
-    if (value > minValue) {
-      setMaxValue(value);
-    }
-  };
+  const sliderMin = 0; // Slider minimum value
+  const sliderMax = 100000; // Slider maximum value
 
   const toggleCountrySelection = (country) => {
     setFilterProp((prev) => ({
@@ -72,20 +51,35 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
     }));
   };
 
+  const handleSliderChange = ([newMin, newMax]) => {
+    if (newMax - newMin >= 100) {
+      setFilterProp((prev) => ({
+        ...prev,
+        minBudget: newMin,
+        maxBudget: newMax,
+      }));
+    } else {
+      setFilterProp((prev) => ({
+        ...prev,
+        minBudget: newMin,
+        maxBudget: newMin + 100 > sliderMax ? sliderMax : newMin + 100,
+      }));
+    }
+  };
+
   const resetFilters = () => {
     setFilterProp(initialState);
   };
 
-  console.log(filterProp);
   return (
     <div
-    data-aos="fade-left"
-        data-aos-delay="50"
-        data-aos-duration="300"
-        data-aos-easing="ease-in-out"
-    
-    className="fixed text-sm right-0 top-0 pb-48 mmd:pb-5 h-full w-[100%] 
-    sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto">
+      data-aos="fade-left"
+      data-aos-delay="50"
+      data-aos-duration="300"
+      data-aos-easing="ease-in-out"
+      className="fixed text-sm right-0 top-0 pb-48 mmd:pb-5 h-full w-[100%] 
+    sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto"
+    >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Filters</h2>
@@ -306,7 +300,7 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
               onClick={() =>
                 setFilterProp((prev) => ({
                   ...prev,
-                  CourseDuration: value, // Setting the corresponding value for the selected label
+                  CourseDuration: prev.CourseDuration === value ? "" : value, // Toggle between value and empty
                 }))
               }
               className={`px-4 py-2 rounded-full text-sm ${
@@ -321,68 +315,75 @@ const FilterSidebar = ({ showFilter, setShowFilter }) => {
         </div>
 
         <div className="h-[1px] w-[100%] my-10 bg-gray-300 "></div>
-        <div className="mt-6 ">
-          <p className="font-medium mb-2">Budget</p>
-          <label className="text-sm font-semibold mb-2 block">Fees Range</label>
-          <div className="flex w-full mx-auto space-x-4 mb-4">
-            <input
-              type="number"
-              value={minValue}
-              onChange={(e) =>
-                setMinValue(Math.min(Number(e.target.value), maxValue - 1))
-              }
-              className="w-[40%] p-2  border-[1.5px] rounded text-center"
-              min={sliderMin}
-              max={sliderMax}
-            />
-            <input
-              type="number"
-              value={maxValue}
-              onChange={(e) =>
-                setMaxValue(Math.min(Number(e.target.value), maxSliderLimit))
-              }
-              className="w-[40%] p-2 border-[1.5px] rounded text-center"
-              min={sliderMin}
-              max={sliderMax}
-            />
+        <div className="slider-container">
+          <div className="font-medium mb-3 flex items-center gap-2 justify-start">
+            <CourseBook />
+            Budget
           </div>
-          {/* Price Range Slider */}
-          <div className="range-slider-container">
-            {/* Active Range (Purple in between color) */}
-            <div
-              className="active-range"
-              style={{
-                left: `${
-                  ((minValue - sliderMin) / (sliderMax - sliderMin)) * 100
-                }%`,
-                right: `${
-                  100 - ((maxValue - sliderMin) / (sliderMax - sliderMin)) * 100
-                }%`,
+          <p className="font-medium mb-2">Fee Range</p>
+          <div className="range-inputs">
+            <input
+              type="number"
+              value={filterProp.minBudget}
+              onChange={(e) => {
+                let newValue = Math.min(
+                  Number(e.target.value),
+                  filterProp.maxBudget - 1
+                );
+                setFilterProp((prev) => ({ ...prev, minBudget: newValue }));
               }}
-            ></div>
-
-            {/* Min Slider */}
-            <input
-              id="MinSliderButton"
-              type="range"
               min={sliderMin}
               max={sliderMax}
-              value={minValue}
-              onChange={handleMinSliderChange}
-              className="range-slider"
             />
-
-            {/* Max Slider */}
             <input
-              id="MaxSliderButton"
-              type="range"
+              type="number"
+              value={filterProp.maxBudget}
+              onChange={(e) => {
+                let newValue = Math.max(
+                  Number(e.target.value),
+                  filterProp.minBudget + 1
+                );
+                setFilterProp((prev) => ({ ...prev, maxBudget: newValue }));
+              }}
               min={sliderMin}
               max={sliderMax}
-              value={maxValue}
-              onChange={handleMaxSliderChange}
-              className="range-slider"
             />
           </div>
+
+          {/* React Slider (Range) */}
+          <ReactSlider
+            min={sliderMin}
+            max={sliderMax}
+            value={[filterProp.minBudget, filterProp.maxBudget]}
+            onChange={handleSliderChange}
+            className="react-slider"
+            thumbClassName="thumb"
+            trackClassName="track"
+            renderThumb={(props, state) => <div {...props} key={state.index} />}
+            renderTrack={(props, state) => {
+              const { key, ...rest } = props;
+              return (
+                <React.Fragment key={`track-${state.index}`}>
+                  <div {...rest} className="track" />
+                  <div
+                    className="active-range"
+                    style={{
+                      left: `${
+                        ((filterProp.minBudget - sliderMin) /
+                          (sliderMax - sliderMin)) *
+                        100
+                      }%`,
+                      width: `${
+                        ((filterProp.maxBudget - filterProp.minBudget) /
+                          (sliderMax - sliderMin)) *
+                        100
+                      }%`,
+                    }}
+                  />
+                </React.Fragment>
+              );
+            }}
+          />
         </div>
 
         {/* Reset and Show Buttons */}

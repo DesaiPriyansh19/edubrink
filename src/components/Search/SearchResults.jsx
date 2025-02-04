@@ -25,76 +25,147 @@ function SearchResults() {
   );
 
   const { filterProp, setSumData, sumData } = useSearch();
-
   const filteredData = useMemo(() => {
-    return data?.filter((course) => {
-      const matchesDestination =
-        filterProp.Destination.length > 0
-          ? filterProp.Destination.includes(course?.countryName?.en)
-          : true;
+    return data
+      ?.map((course) => {
+        const minBudget = Number(filterProp.minBudget) || 0;
+        const maxBudget =
+          filterProp.maxBudget !== undefined && filterProp.maxBudget !== ""
+            ? Number(filterProp.maxBudget)
+            : Infinity;
 
-      const matchesModeOfStudy = filterProp.ModeOfStudy
-        ? course?.universities?.some((university) =>
-            university?.courseId?.some((courseItem) =>
-              courseItem?.ModeOfStudy?.some((mode) =>
-                mode?.en
-                  .toLowerCase()
-                  .includes(filterProp.ModeOfStudy.toLowerCase())
+        const matchesDestination =
+          filterProp.Destination.length > 0
+            ? filterProp.Destination.includes(course?.countryName?.en)
+            : true;
+
+        const matchesModeOfStudy = filterProp.ModeOfStudy
+          ? course?.universities?.some((university) =>
+              university?.courseId?.some((courseItem) =>
+                courseItem?.ModeOfStudy?.some((mode) =>
+                  mode?.en
+                    .toLowerCase()
+                    .includes(filterProp.ModeOfStudy.toLowerCase())
+                )
               )
             )
-          )
-        : true;
+          : true;
 
-      const matchesEntranceExam = filterProp.EntranceExam
-        ? course?.universities?.some(
-            (university) =>
-              university?.entranceExamRequired === filterProp.EntranceExam
-          )
-        : true;
-
-      const matchesStudyLevel =
-        filterProp.StudyLevel && filterProp.StudyLevel !== "All"
+        const matchesEntranceExam = filterProp.EntranceExam
           ? course?.universities?.some(
               (university) =>
-                university?.studyLevel?.toLowerCase() ===
-                filterProp.StudyLevel.toLowerCase()
+                university?.entranceExamRequired === filterProp.EntranceExam
             )
           : true;
 
-      const matchesUniType = filterProp.UniType
-        ? course?.universities?.some(
-            (university) =>
-              university?.uniType?.toLowerCase() ===
-              filterProp.UniType.toLowerCase()
-          )
-        : true;
+        const matchesStudyLevel =
+          filterProp.StudyLevel && filterProp.StudyLevel !== "All"
+            ? course?.universities?.some(
+                (university) =>
+                  university?.studyLevel?.toLowerCase() ===
+                  filterProp.StudyLevel.toLowerCase()
+              )
+            : true;
 
-      const matchesIntakeYear = filterProp.IntakeYear
-        ? course?.universities?.some(
-            (university) =>
-              university?.inTakeYear?.toString() ===
-              filterProp.IntakeYear.toString()
-          )
-        : true;
+        const matchesUniType = filterProp.UniType
+          ? course?.universities?.some(
+              (university) =>
+                university?.uniType?.toLowerCase() ===
+                filterProp.UniType.toLowerCase()
+            )
+          : true;
 
-      const matchesIntakeMonth = filterProp.IntakeMonth
-        ? course?.universities?.some(
-            (university) =>
-              university?.inTakeMonth?.toString() ===
-              filterProp.IntakeMonth.toString()
-          )
-        : true;
+        const matchesIntakeYear = filterProp.IntakeYear
+          ? course?.universities?.some(
+              (university) =>
+                university?.inTakeYear?.toString() ===
+                filterProp.IntakeYear.toString()
+            )
+          : true;
 
-      return (
-        matchesDestination &&
-        matchesModeOfStudy &&
-        matchesEntranceExam &&
-        matchesStudyLevel &&
-        matchesUniType &&
-        matchesIntakeYear &&
-        matchesIntakeMonth
-      );
-    });
+        const matchesIntakeMonth = filterProp.IntakeMonth
+          ? course?.universities?.some(
+              (university) =>
+                university?.inTakeMonth?.toString() ===
+                filterProp.IntakeMonth.toString()
+            )
+          : true;
+
+        const matchesBudget = course?.universities
+          ?.map((university) => {
+            const validCourses = university?.courseId?.filter((courseItem) => {
+              const courseFees = Number(courseItem?.CourseFees);
+              if (isNaN(courseFees)) {
+                return false;
+              }
+              return courseFees >= minBudget && courseFees <= maxBudget;
+            });
+
+            return validCourses.length > 0
+              ? { ...university, courseId: validCourses }
+              : null;
+          })
+          .filter(Boolean);
+
+        const parseCourseDuration = (courseDuration) => {
+          // Regular expressions to capture durations in months or years
+          const monthsRegex = /(\d+(\.\d+)?)\s*month/i; // Matches "1 month", "1.5 month", "6 months", etc.
+          const yearsRegex = /(\d+(\.\d+)?)\s*year/i; // Matches "1 year", "1.5 year", "2 years", etc.
+
+          const monthsMatch = courseDuration.match(monthsRegex);
+          const yearsMatch = courseDuration.match(yearsRegex);
+
+          // If the duration is in months (e.g., "6 months" or "1.5 month")
+          if (monthsMatch) {
+            return Number(monthsMatch[1]); // Return number of months
+          }
+
+          // If the duration is in years (e.g., "1 year" or "1.5 year")
+          if (yearsMatch) {
+            return Number(yearsMatch[1]) * 12; // Convert years (including decimals) to months
+          }
+
+          return 0; // Default if no match
+        };
+
+        const matchesCourseDuration = filterProp.CourseDuration
+          ? course?.universities?.some((university) =>
+              university?.courseId?.some((courseItem) => {
+                const courseDurationInMonths = parseCourseDuration(
+                  courseItem?.CourseDuration
+                );
+
+                // Handle "More than 5 years" (60+)
+                if (filterProp.CourseDuration === "60+") {
+                  return courseDurationInMonths >= 60; // Matches any course duration 60 months (5 years) or more
+                }
+
+                // Get the min and max duration from the filter range (e.g., "1-12")
+                const [minDuration, maxDuration] =
+                  filterProp.CourseDuration.split("-").map(Number);
+
+                // Check if the parsed course duration falls within the range
+                return (
+                  courseDurationInMonths >= minDuration &&
+                  courseDurationInMonths <= maxDuration
+                );
+              })
+            )
+          : true;
+
+        return matchesDestination &&
+          matchesModeOfStudy &&
+          matchesEntranceExam &&
+          matchesStudyLevel &&
+          matchesUniType &&
+          matchesIntakeYear &&
+          matchesIntakeMonth &&
+          matchesCourseDuration &&
+          matchesBudget.length > 0
+          ? { ...course, universities: matchesBudget }
+          : null;
+      })
+      .filter(Boolean);
   }, [data, filterProp]);
 
   const getTotalCounts = (data) => {

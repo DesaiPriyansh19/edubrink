@@ -3,18 +3,46 @@ import { Link, Links } from "react-router-dom"; // Import Link for routing
 import WhiteHamburgerIcon from "../../../svg/WhiteHamburger";
 import HomeSvg from "../../../svg/HomeSvg";
 
+import { FaUsers, FaUniversity, FaBookOpen, FaBlog } from "react-icons/fa";
+import { IoIosGlobe } from "react-icons/io";
+import { MdContactMail } from "react-icons/md";
+
 export default function SidebarAdmin() {
   const [conMaxWidth, setConMaxWidth] = useState(288);
 
   const SideBarOption = [
     { name: "Dashboard", icon: <HomeSvg />, path: "/dashboard" },
-    { name: "Manage Peoples", icon: <HomeSvg />, path: "/manage-peoples" },
-    { name: "Contact Information", icon: <HomeSvg />, path: "/contact-info" },
-    // { name: "Profile Form", icon: <HomeSvg />, path: "/profile-form" },
-    { name: "Add Country", icon: <HomeSvg />, path: "/add-country" },
-    { name: "Add Universities", icon: <HomeSvg />, path: "/add-universities" },
-    { name: "Add Courses", icon: <HomeSvg />, path: "/add-courses" },
-    { name: "Add Blogs", icon: <HomeSvg />, path: "/add-blogs" },
+    {
+      name: "Manage Peoples",
+      icon: <FaUsers className="text-white" />,
+      path: "/manage-peoples",
+    },
+    {
+      name: "Contact Information",
+      icon: <MdContactMail className="text-white" />,
+      path: "/contact-info",
+    },
+    // { name: "Profile Form", icon: <HiOutlineUserCircle />, path: "/profile-form" },
+    {
+      name: "Add Country",
+      icon: <IoIosGlobe className="text-white" />,
+      path: "/add-country",
+    },
+    {
+      name: "Add Universities",
+      icon: <FaUniversity className="text-white" />,
+      path: "/add-universities",
+    },
+    {
+      name: "Add Courses",
+      icon: <FaBookOpen className="text-white" />,
+      path: "/add-courses",
+    },
+    {
+      name: "Add Blogs",
+      icon: <FaBlog className="text-white" />,
+      path: "/add-blogs",
+    },
     // { name: "Bar Chart", icon: <HomeSvg />, path: "/bar-chart" },
     // { name: "Pie Chart", icon: <HomeSvg />, path: "/pie-chart" },
     // { name: "Line Chart", icon: <HomeSvg />, path: "/line-chart" },

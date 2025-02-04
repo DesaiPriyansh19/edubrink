@@ -75,13 +75,14 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
         <div className="flex w-full mt-1 flex-col space-y-4 px-4 py-2">
           <p className="font-medium">QUICK MENU</p>
           <div className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start">
-        
-              <div onClick={() => handleClose("/")}
-               className="cursor-pointer flex items-center justify-start">
-                <HomeLogo />
-                <p className="ml-4 font-medium">Home</p>
-              </div>
-       
+            <div
+              onClick={() => handleClose("/")}
+              className="cursor-pointer flex items-center justify-start"
+            >
+              <HomeLogo />
+              <p className="ml-4 font-medium">Home</p>
+            </div>
+
             <div
               className="flex items-center cursor-pointer"
               onClick={() => setOpenDropdown(openDropdown === 1 ? null : 1)}
@@ -165,52 +166,53 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
           {/* Repeat the same structure for additional content */}
           <p className="font-medium">SUPPORT</p>
 
-        
+          <div
+            className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start"
+            onClick={isMenuOpen}
+          >
             <div
-              className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start"
-              onClick={isMenuOpen}
+              className="cursor-pointer flex items-center justify-start"
+              onClick={() => handleClose("/about")} // Ensure it's a function
             >
-              
-              <div 
-  className="cursor-pointer flex items-center justify-start"
-  onClick={() => handleClose("/about")} // Ensure it's a function
->
-  <AboutUsLogo />
-  <p className="ml-4 font-medium">About Us</p>
-</div>
-          
-              <div onClick={() => handleClose("/searchresults/AllBlogs")}
-               className="flex items-center cursor-pointer">
-                <div className="flex items-center justify-start">
-                  <BlogLogo />
-                  <p className="ml-4 font-medium">Blog</p>
-                </div>
-              </div>
-
-         
-             <div onClick={() => handleClose("/contact")}
-             className="flex items-center cursor-pointer">
-                <div className="flex items-center justify-start">
-                  <ContactLogo />
-                  <p className="ml-4 font-medium">Contact</p>
-                </div>
-              </div>  
+              <AboutUsLogo />
+              <p className="ml-4 font-medium">About Us</p>
             </div>
-        
+
+            <div
+              onClick={() => handleClose("/searchresults/AllBlogs")}
+              className="flex items-center cursor-pointer"
+            >
+              <div className="flex items-center justify-start">
+                <BlogLogo />
+                <p className="ml-4 font-medium">Blog</p>
+              </div>
+            </div>
+
+            <div
+              onClick={() => handleClose("/contact")}
+              className="flex items-center cursor-pointer"
+            >
+              <div className="flex items-center justify-start">
+                <ContactLogo />
+                <p className="ml-4 font-medium">Contact</p>
+              </div>
+            </div>
+          </div>
+
           <div className="mt-1 relative gap-3 shadow-md bg-white py-8 esm:py-6 px-4 rounded-3xl items-start">
             <span className="flex flex-col gap-2">
               <p className="font-medium max-w-56 leading-7 text-lg">
                 Discover your ideal University abroad today
               </p>
-              
-              <Link  to={"/contact"} onClick={isMenuOpen}> 
-              <button
-                className=" text-white w-28 text-sm mt-4 py-2 rounded-full
+
+              <Link to={"/contact"} onClick={isMenuOpen}>
+                <button
+                  className=" text-white w-28 text-sm mt-4 py-2 rounded-full
      bg-gradient-to-r from-[#380C95] to-[#E15754] "
-              >
-                Contact Us{" "}
-              </button>
-              </Link> 
+                >
+                  Contact Us{" "}
+                </button>
+              </Link>
             </span>
             <span className=" absolute bottom-0 right-0">
               {" "}

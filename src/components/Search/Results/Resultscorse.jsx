@@ -3,12 +3,18 @@ import DollerRounded from "../../../../svg/DollerRounded/Index";
 import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
 import { Link } from "react-router-dom";
-import useFetch from "../../../../hooks/useFetch";
-import { useSearch } from "../../../../context/SearchContext";
+import { useAnalysis } from "../../../../context/AnalysisContext";
 
 // Course Data
 
 function ResultsCorses({ loading, filteredData }) {
+  const { addClickData, clicksData } = useAnalysis();
+
+  console.log(clicksData);
+
+  const handleApplyClick = (uniId) => {
+    addClickData(uniId, "University", 1); // Add click data
+  };
   return (
     <>
       <div className="max-w-full mx-auto">
@@ -150,7 +156,10 @@ function ResultsCorses({ loading, filteredData }) {
                     </div>
                   </div>
                   <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                    <button className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full">
+                    <button
+                      onClick={() => handleApplyClick(university._id)}
+                      className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
+                    >
                       Apply Now
                     </button>
                     <button className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800">

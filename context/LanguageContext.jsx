@@ -1,9 +1,10 @@
-import { createContext, useState, useEffect } from "react";
-import i18n from "../i18n";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import i18n from "../src/i18n";
+import { useNavigate } from "react-router-dom";
 
-export const LanguageContext = createContext();
+const LanguageContext = createContext();
 
-const LanguageProvider = ({ children }) => {
+export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(
     localStorage.getItem("language") || "en"
   );
@@ -13,6 +14,7 @@ const LanguageProvider = ({ children }) => {
     localStorage.setItem("language", language);
   }, [language]);
 
+  console.log(language);
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}
@@ -20,4 +22,4 @@ const LanguageProvider = ({ children }) => {
   );
 };
 
-export default LanguageProvider;
+export const useLanguage = () => useContext(LanguageContext);

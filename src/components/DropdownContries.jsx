@@ -14,10 +14,11 @@ import newzealand from "../assets/Flags/NewZealandFlag.webp";
 import denmark from "../assets/Flags/DenmarkFlag.webp";
 import australia from "../assets/Flags/AustraliaFlag.png";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
-function DropdownCountries({ setShowCountriesDropdown, navbarHeight
- }) {
+function DropdownCountries({ setShowCountriesDropdown, navbarHeight }) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -32,7 +33,11 @@ function DropdownCountries({ setShowCountriesDropdown, navbarHeight
   const countries = [
     { label: "United States of America", name: "United States", flag: usa },
     { label: "Germany", name: "Germany", flag: germny },
-    { label: "United Arab Emirates", name: "United Arab Emirates", flag: Unitedarap },
+    {
+      label: "United Arab Emirates",
+      name: "United Arab Emirates",
+      flag: Unitedarap,
+    },
     { label: "Canada", name: "Canada", flag: canada },
     { label: "United Arab Emirates", name: "United Arab Emirates", flag: uae },
     { label: "Switzerland", name: "Switzerland", flag: swizrland },
@@ -43,16 +48,16 @@ function DropdownCountries({ setShowCountriesDropdown, navbarHeight
     { label: "Denmark", name: "Denmark", flag: denmark },
     { label: "Australia", name: "Australia", flag: australia },
   ];
-  
+
   const handleNavigate = (name) => {
-    navigate(`/country/${name}`);
+    navigate(`${language}/country/${name}`);
     setShowCountriesDropdown(false);
   };
 
-    return (
+  return (
     <div
-    id="divshadow" 
-    style={{ top: `${navbarHeight}px` }} // Dynamically set top value
+      id="divshadow"
+      style={{ top: `${navbarHeight}px` }} // Dynamically set top value
       className="absolute right-[10%]  px-3 py-3 mmd:w-[38vw]  2xl:w-[28%] 2xl:right-[15%] h-auto z-10 mt-2 bg-white rounded-3xl shadow-lg"
       data-aos="fade-out"
       data-aos-delay="0"
