@@ -21,7 +21,7 @@ import CoursePage from "./components/CoursesPage/Courses";
 import { SearchProvider } from "../context/SearchContext";
 import { AnalysisProvider } from "../context/AnalysisContext";
 import { LanguageProvider, useLanguage } from "../context/LanguageContext";
-import  LanguageRedirect  from "./components/LanguageRedirect";
+import LanguageRedirect from "./components/LanguageRedirect";
 
 function App() {
   return (
@@ -34,6 +34,8 @@ function App() {
                 <LanguageRedirect />
                 <Routes>
                   {/* Redirect to default language */}
+
+                  <Route path="/" element={<Navigate to="/en" replace />} />
 
                   {/* Define routes with language support */}
                   <Route path="/:lang" element={<HomePage />} />
