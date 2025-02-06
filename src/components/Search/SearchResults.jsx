@@ -18,13 +18,16 @@ import { useSearch } from "../../../context/SearchContext";
 import useFetch from "../../../hooks/useFetch";
 
 function SearchResults() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [showFilter, setShowFilter] = useState(false);
   const location = useLocation();
   const { data, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/country/getAll/DepthData"
+    `https://edu-brink-backend.vercel.app/api/country/getAll/DepthData`
   );
 
   const { filterProp, setSumData, sumData } = useSearch();
+
+  console.log(filterProp);
   const filteredData = useMemo(() => {
     return data
       ?.map((course) => {
@@ -46,6 +49,18 @@ function SearchResults() {
                   mode?.en
                     .toLowerCase()
                     .includes(filterProp.ModeOfStudy.toLowerCase())
+                )
+              )
+            )
+          : true;
+
+        const matchesKeywords = filterProp.searchQuery?.en
+          ? course?.universities?.some((university) =>
+              university?.courseId?.some((courseItem) =>
+                courseItem?.Tags?.some(
+                  (tag) =>
+                    tag?.TagName?.en?.toLowerCase() ===
+                    filterProp.searchQuery.en.toLowerCase()
                 )
               )
             )
@@ -155,6 +170,7 @@ function SearchResults() {
 
         return matchesDestination &&
           matchesModeOfStudy &&
+          matchesKeywords &&
           matchesEntranceExam &&
           matchesStudyLevel &&
           matchesUniType &&

@@ -15,14 +15,23 @@ import useFetch from "../../../hooks/useFetch";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const { data, loading, error } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/course/${id}`
-  );
+  const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+
+  const apiUrl = isObjectId
+    ? `https://edu-brink-backend.vercel.app/api/course/${id}`
+    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
+        id
+      )}`;
+
+  console.log("Fetching from:", apiUrl);
+
+  const { data, loading, error } = useFetch(apiUrl);
 
   return (
     <div className="bg-gray-50 p-6 md:p-10 rounded-lg shadow-lg max-w-5xl mx-auto">

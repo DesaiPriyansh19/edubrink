@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import OtpVerificationModal from "./OtpVerificationModal";
 import VerifiedModal from "./VerifiedModal";
+import GoogleWrapper from "../../utils/GoogleWrapper";
 
 const AuthModal = ({ isOpen, onClose }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [isSignup, setIsSignup] = useState("login");
   const [details, setDetails] = useState({
     email: "",
@@ -35,7 +37,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
       try {
         const response = await axios.post(
-          "https://edu-brink-backend.vercel.app/api/users/login",
+          `https://edu-brink-backend.vercel.app/api/users/login`,
           userData
         );
         console.log("Login successful:", response.data);
@@ -83,7 +85,7 @@ const AuthModal = ({ isOpen, onClose }) => {
 
       try {
         const response = await axios.post(
-          "https://edu-brink-backend.vercel.app/api/users",
+          `https://edu-brink-backend.vercel.app/api/users`,
           userData
         );
         console.log("Signup successful:", response.data.data.data);
@@ -126,7 +128,7 @@ const AuthModal = ({ isOpen, onClose }) => {
         otp: pendingotp,
       };
       const response = await axios.post(
-        "https://edu-brink-backend.vercel.app/api/users/verifyotp",
+        `https://edu-brink-backend.vercel.app/api/users/verifyotp`,
         requestBody
       );
       console.log(response.data);
@@ -173,7 +175,7 @@ const AuthModal = ({ isOpen, onClose }) => {
   return (
     <div className="fixed  inset-0 flex items-center justify-center bg-black bg-transparent backdrop-blur-[2px] bg-opacity-5 z-50">
       <div className="bg-white rounded-3xl w-full max-w-md py-14 md:py-8 p-4 sm:p-6 shadow-lg relative mx-3 sm:mx-0">
-      {showVerifiedModal ? (
+        {showVerifiedModal ? (
           <VerifiedModal showModal={verified} /> // Show loader when loading
         ) : !otpVerification ? (
           <div>
@@ -233,6 +235,9 @@ const AuthModal = ({ isOpen, onClose }) => {
                 >
                   {isSignup === "signup" ? "Sign Up" : "Login"}
                 </button>
+              </div>
+              <div className="h-full w-full mt-4">
+                <GoogleWrapper onClose={onClose} setVerified={setVerified} />
               </div>
             </form>
 

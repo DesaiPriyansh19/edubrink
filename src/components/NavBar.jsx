@@ -16,29 +16,28 @@ import { useLanguage } from "../../context/LanguageContext";
 import FilterSidebar from "./FilterSidevbar/FilterSidebar";
 import useFetch from "../../hooks/useFetch";
 import { useSearch } from "../../context/SearchContext";
+import { filter } from "framer-motion/client";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
+  const { setFilterProp, filterProp, setSearchState, searchState } =
+    useSearch();
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null); // Ref for the dropdown list
+  const API_URL = import.meta.env.VITE_API_URL;
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguage();
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
   const { data, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/keyword"
+    `https://edu-brink-backend.vercel.app/api/keyword`
   );
   const navigate = useNavigate();
-  const [searchState, setSearchState] = useState({
-    searchTerm: "",
-    filteredResults: [],
-    selectedIndex: null,
-  });
-
   const keywords = data || [];
 
   const languageLabels = {
@@ -100,6 +99,18 @@ const NavBar = () => {
 
     if (term.type === "country") {
       navigate(`/${language}/country/${term.keyword}`);
+    } else if (term.type === "tag") {
+      setFilterProp((prev) => ({
+        ...prev,
+        searchQuery: {
+          ...prev.searchQuery,
+          en: term.tagName.en,
+          ar: term.tagName.ar,
+        },
+      }));
+      navigate(`/${language}/searchresults`);
+    } else if (term.type === "course") {
+      navigate(`/${language}/courses/${term.keyword}`);
     } else {
       navigate(`/${language}/searchresults`);
     }
@@ -110,29 +121,47 @@ const NavBar = () => {
   };
 
   const handleSearchInput = (e) => {
-    const value = e.target.value;
+    const value = e.target.value.toLowerCase();
     setSearchState((prevState) => ({
       ...prevState,
       searchTerm: value,
     }));
 
-    // Filter keywords based on the search input, keeping the type/category information
+    // Process keywords for standard structures (blog, country, university, course)
     const matchedKeywords = keywords
+      .filter((item) => item.type !== "tag") // Exclude "tag" for now
       .map((item) => ({
         type: item.type,
         keywords: item.keywords.filter((keyword) =>
-          keyword.toLowerCase().includes(value.toLowerCase())
+          keyword.toLowerCase().includes(value)
         ),
       }))
-      .filter((item) => item.keywords.length > 0); // Only keep categories that have matching keywords
+      .filter((item) => item.keywords.length > 0);
 
-    // Flatten the filtered results to pass only matched keywords with their types
-    const filteredResults = matchedKeywords.flatMap((item) =>
-      item.keywords.map((keyword) => ({
-        keyword,
-        type: item.type,
-      }))
-    );
+    // Process keywords for "tag" structure (inside `data`)
+    const tagData = keywords.find((item) => item.type === "tag");
+    const tagKeywords = tagData
+      ? tagData.data.flatMap((tag) =>
+          tag.keywords
+            .filter((keyword) => keyword.toLowerCase().includes(value))
+            .map((keyword) => ({
+              keyword,
+              type: "tag",
+              tagName: tag.TagName, // Include the tag name for reference
+            }))
+        )
+      : [];
+
+    // Flatten and merge both standard and tag-based results
+    const filteredResults = [
+      ...matchedKeywords.flatMap((item) =>
+        item.keywords.map((keyword) => ({
+          keyword,
+          type: item.type,
+        }))
+      ),
+      ...tagKeywords, // Add processed tag keywords
+    ];
 
     setSearchState((prevState) => ({
       ...prevState,
@@ -153,15 +182,33 @@ const NavBar = () => {
       e.key === "ArrowDown" &&
       searchState.selectedIndex < searchState.filteredResults.length - 1
     ) {
-      setSearchState((prevState) => ({
-        ...prevState,
-        selectedIndex: prevState.selectedIndex + 1, // Move down
-      }));
+      setSearchState((prevState) => {
+        const newIndex = prevState.selectedIndex + 1;
+
+        // Scroll into view
+        if (dropdownRef.current) {
+          const item = dropdownRef.current.children[newIndex];
+          if (item) {
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }
+
+        return { ...prevState, selectedIndex: newIndex };
+      });
     } else if (e.key === "ArrowUp" && searchState.selectedIndex > 0) {
-      setSearchState((prevState) => ({
-        ...prevState,
-        selectedIndex: prevState.selectedIndex - 1, // Move up
-      }));
+      setSearchState((prevState) => {
+        const newIndex = prevState.selectedIndex - 1;
+
+        // Scroll into view
+        if (dropdownRef.current) {
+          const item = dropdownRef.current.children[newIndex];
+          if (item) {
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }
+
+        return { ...prevState, selectedIndex: newIndex };
+      });
     }
   };
 
@@ -226,15 +273,16 @@ const NavBar = () => {
             {/* Show suggestions */}
             {searchState.searchTerm &&
               searchState.filteredResults.length > 0 && (
-                <div className="fixed bg-white shadow-md text-left top-[72px] rounded-md mt-2 max-h-60 w-1/4 overflow-y-auto z-10">
+                <div
+                  ref={dropdownRef}
+                  className="fixed bg-white shadow-md text-left top-[72px] rounded-md mt-2 max-h-60 w-1/4 overflow-y-auto z-10"
+                >
                   {searchState.filteredResults.map((item, index) => {
                     // Function to highlight and bold the keystroke in the keyword
                     const highlightedKeyword = item.keyword.replace(
                       new RegExp(`(${searchState.searchTerm})`, "gi"),
                       (match) => `<span class="font-bold">${match}</span>` // Bold and highlighted
                     );
-
-                    console.log(item);
 
                     return (
                       <div
@@ -243,9 +291,7 @@ const NavBar = () => {
                           index
                         )}`}
                         dangerouslySetInnerHTML={{ __html: highlightedKeyword }} // Render the HTML with highlighted keyword
-                        onClick={() =>
-                          handleSelectTerm(item.keyword, item.type)
-                        } // Pass both keyword and type to handleSelectTerm
+                        onClick={() => handleSelectTerm(item)} // Pass both keyword and type to handleSelectTerm
                       />
                     );
                   })}

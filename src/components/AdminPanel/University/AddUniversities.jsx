@@ -12,6 +12,7 @@ export default function AddUniversities({
   handleInputChange,
   initialFormData,
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [showDropdown, setShowDropdown] = useState(false);
   const [addCourses, setAddCourses] = useState([]);
   const [searchInput, setSearchInput] = useState({
@@ -20,7 +21,7 @@ export default function AddUniversities({
   });
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length:11 }, (_, i) => ({
+  const yearOptions = Array.from({ length: 11 }, (_, i) => ({
     value: `${currentYear + i}`,
     label: `${currentYear + i}`,
   }));
@@ -28,7 +29,7 @@ export default function AddUniversities({
     const handleCourses = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/course"
+          `https://edu-brink-backend.vercel.app/api/course`
         );
         if (res) {
           setAddCourses(res.data.data);

@@ -5,35 +5,43 @@ const AnalysisContext = createContext();
 
 export const AnalysisProvider = ({ children }) => {
   const [clicksData, setClicksData] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Batch the clicks data after 30 seconds
   useEffect(() => {
     if (clicksData.length > 0) {
       const timer = setTimeout(() => {
         batchSendClicksData(clicksData);
-        setClicksData([]); // Clear the array after sending the data
-      }, 5000); // 5 seconds for demo, change it to 30000 (30 seconds) as needed
+        setClicksData([]);
+      }, 5000);
 
-      return () => clearTimeout(timer); // Cleanup timer on component unmount
+      return () => clearTimeout(timer);
     }
   }, [clicksData]);
 
-  const addClickData = (itemId, category, clicks) => {
+  const addClickData = (itemId, category, clicks, countryName) => {
+    console.log(countryName);
     setClicksData((prevData) => {
-      // Check if the itemId and category already exist in the array
-      const existingDataIndex = prevData.findIndex(
-        (data) => data.itemId === itemId && data.category === category
-      );
-
-      if (existingDataIndex >= 0) {
-        // If the itemId and category exist, increment the clicks
-        const updatedData = [...prevData];
-        updatedData[existingDataIndex].clicks += clicks;
-        return updatedData;
-      } else {
-        // If the itemId and category don't exist, add a new entry
-        return [...prevData, { itemId, category, clicks }];
-      }
+      return prevData
+        .map((data) => {
+          if (data.itemId === itemId && data.category === category) {
+            return { ...data, clicks: data.clicks + 1 }; // Ensure proper incrementing
+          }
+          return data;
+        })
+        .concat(
+          prevData.some(
+            (data) => data.itemId === itemId && data.category === category
+          )
+            ? [] // If already exists, do not add a new entry
+            : [
+                {
+                  itemId,
+                  category,
+                  clicks,
+                  country: countryName ?? null,
+                },
+              ]
+        );
     });
   };
 
@@ -41,7 +49,7 @@ export const AnalysisProvider = ({ children }) => {
   const batchSendClicksData = async (data) => {
     try {
       await axios.post(
-        "https://edu-brink-backend.vercel.app/api/analysis/batch",
+        `https://edu-brink-backend.vercel.app/api/analysis/batch`,
         data
       );
     } catch (error) {

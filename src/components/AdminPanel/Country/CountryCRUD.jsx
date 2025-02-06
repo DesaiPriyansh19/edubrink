@@ -6,7 +6,8 @@ import EditCountry from "./EditCountry";
 import ViewCountry from "./ViewCountry";
 
 export default function CountryCRUD() {
-  const baseUrl = "https://edu-brink-backend.vercel.app/api/country";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/country`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     countryName: {

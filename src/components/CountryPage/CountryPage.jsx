@@ -19,6 +19,7 @@ import CountrySkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
 const CountryPage = () => {
   const { slug } = useParams();
   const { t, i18n } = useTranslation();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [language, setLanguage] = useState(i18n.language);
 
@@ -173,7 +174,7 @@ const CountryPage = () => {
       </div>
       <CountryPopularCourse data={data} />
       <CountryPopularUniversity data={data} />
-      <CountryBlogs  data={data} />
+      <CountryBlogs data={data} />
     </div>
   );
 };

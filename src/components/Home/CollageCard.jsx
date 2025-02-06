@@ -137,8 +137,9 @@ const CollegeCard = ({ college }) => {
 };
 
 const CollegeCarousel = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { data } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/university"
+    `https://edu-brink-backend.vercel.app/api/university`
   );
   const { t } = useTranslation();
   const { language } = useLanguage();

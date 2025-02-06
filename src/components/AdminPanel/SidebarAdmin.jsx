@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Links } from "react-router-dom"; // Import Link for routing
+import { Link, Links, useLocation, useParams } from "react-router-dom"; // Import Link for routing
 import WhiteHamburgerIcon from "../../../svg/WhiteHamburger";
 import HomeSvg from "../../../svg/HomeSvg";
 
@@ -9,6 +9,8 @@ import { MdContactMail } from "react-icons/md";
 
 export default function SidebarAdmin() {
   const [conMaxWidth, setConMaxWidth] = useState(288);
+  const location = useLocation();
+  const lang = location.pathname.split("/")[1];
 
   const SideBarOption = [
     { name: "Dashboard", icon: <HomeSvg />, path: "/dashboard" },
@@ -84,7 +86,7 @@ export default function SidebarAdmin() {
         <div className="pb-10">
           {SideBarOption.map((category, index) => (
             <div key={index} className="mb-8">
-              <Link to={`/admin${category.path}`}>
+              <Link to={`/${lang}/admin${category.path}`}>
                 <div
                   className={`flex ${
                     conMaxWidth === 288 ? "ml-4 mb-4" : "justify-center mb-8"

@@ -1,9 +1,13 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
   const initialState = {
+    searchQuery: {
+      en: "",
+      ar: "",
+    },
     Destination: [],
     StudyLevel: "All",
     EntranceExam: undefined,
@@ -15,6 +19,11 @@ export const SearchProvider = ({ children }) => {
     minBudget: 0,
     maxBudget: 100000,
   };
+  const [searchState, setSearchState] = useState({
+    searchTerm: "",
+    filteredResults: [],
+    selectedIndex: null,
+  });
   const [filterProp, setFilterProp] = useState(initialState);
   const [sumData, setSumData] = useState({
     sumResult: 0,
@@ -22,6 +31,15 @@ export const SearchProvider = ({ children }) => {
     sumCourses: 0,
     sumBlogs: 0,
   });
+
+  useEffect(() => {
+    if (searchState.searchTerm === "") {
+      setFilterProp((prev) => ({
+        ...prev,
+        searchQuery: { en: "", ar: "" },
+      }));
+    }
+  }, [searchState.searchTerm]);
 
   return (
     <SearchContext.Provider
@@ -31,6 +49,8 @@ export const SearchProvider = ({ children }) => {
         initialState,
         setSumData,
         sumData,
+        searchState,
+        setSearchState,
       }}
     >
       {children}

@@ -6,7 +6,8 @@ import EditCourses from "./EditCourses";
 import axios from "axios";
 
 export default function CourseCRUD() {
-  const baseUrl = "https://edu-brink-backend.vercel.app/api/course";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/course`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     CourseName: {
@@ -67,9 +68,7 @@ export default function CourseCRUD() {
         Requirements: selectedCourse?.Requirements || [
           { en: "", ar: "" }, // Default structure for Requirements
         ],
-        Tags: selectedCourse?.Tags || [
-          { en: "", ar: "" }, // Default structure for Requirements
-        ],
+        Tags: selectedCourse?.Tags || [],
       });
     }
 
@@ -129,7 +128,7 @@ export default function CourseCRUD() {
     const handleTags = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/tags"
+          `https://edu-brink-backend.vercel.app/api/tags`
         );
         if (res) {
           setAddtags(res.data.data);
@@ -151,7 +150,10 @@ export default function CourseCRUD() {
       if (selectedItem) {
         setFormData((prevData) => ({
           ...prevData,
-          Tags: [...(prevData.Tags || []), selectedItem],
+          Tags: [
+            ...(prevData.Tags || []),
+            selectedItem, // Add selected tag directly, not inside an object
+          ],
         }));
 
         setSearchInput({

@@ -5,9 +5,8 @@ import Footer from "./Footer/Footer";
 
 export default function AppLayout({ children, setIsModalOpen }) {
   const location = useLocation();
-
-  // Check if the current route starts with `/admin`
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const lang = location.pathname.split("/")[1];
+  const isAdminRoute = location.pathname.startsWith(`/${lang}/admin`);
 
   return (
     <>

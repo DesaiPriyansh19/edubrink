@@ -1,9 +1,10 @@
-import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import GoogleIconSvg from "../svg/GoogleIconSvg";
 
-export default function GoogleButton({onClose}) {
+export default function GoogleButton({ onClose, setVerified }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const googleRespone = async (authResult) => {
     try {
       const response = await axios.get(
@@ -18,7 +19,11 @@ export default function GoogleButton({onClose}) {
           token: response.data.token,
         };
         localStorage.setItem("eduuserInfo", JSON.stringify(eduuserInfo));
-        onClose();
+        setVerified(true);
+        setTimeout(() => {
+          setVerified(false);
+          onClose(); // Close the modal after verification
+        }, 3000);
         console.log("User Data:", response.data);
       } else if (response.data && response.data.message) {
         console.warn("Message from backend:", response.data.message);

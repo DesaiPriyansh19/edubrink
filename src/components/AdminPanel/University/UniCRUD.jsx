@@ -5,7 +5,8 @@ import AddUniversities from "./AddUniversities";
 import EditUniversities from "./EditUniversities";
 
 export default function UniCRUD() {
-  const baseUrl = "https://edu-brink-backend.vercel.app/api/university";
+  const API_URL = import.meta.env.VITE_API_URL;
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/university`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     id: "",

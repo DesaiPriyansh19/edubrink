@@ -10,11 +10,10 @@ import { useAnalysis } from "../../../../context/AnalysisContext";
 function ResultsCorses({ loading, filteredData }) {
   const { addClickData, clicksData } = useAnalysis();
 
-  console.log(clicksData);
-
-  const handleApplyClick = (uniId) => {
-    addClickData(uniId, "University", 1); // Add click data
+  const handleApplyClick = (uniId, countryName) => {
+    addClickData(uniId, "Course", 1, countryName); // Add click data with countryName
   };
+
   return (
     <>
       <div className="max-w-full mx-auto">
@@ -157,7 +156,9 @@ function ResultsCorses({ loading, filteredData }) {
                   </div>
                   <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                     <button
-                      onClick={() => handleApplyClick(university._id)}
+                      onClick={() =>
+                        handleApplyClick(university._id, university.countryName)
+                      }
                       className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
                     >
                       Apply Now

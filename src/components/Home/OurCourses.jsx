@@ -7,10 +7,10 @@ import ArrowTopRight from "../../../svg/ArrowTopRight/Index";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
-import TextBlock from "../../../utils/TextBlock";
 function OurCourses() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { data } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse/?limit=5"
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse/?limit=5`
   );
 
   const { language } = useLanguage();
@@ -56,7 +56,12 @@ function OurCourses() {
         </div>
       </div>
 
-      <div className="flex sm:flex-row mb-20 flex-col px-4 1xl:pl-28 gap-6 scrollbar-hide overflow-x-auto">
+      <div
+        dir={language === "ar" ? "rtl" : "ltr"}
+        className={`flex sm:flex-row mb-20 flex-col px-4  ${
+          language === "ar" ? "1xl:pr-28" : "1xl:pl-28 "
+        }  gap-6 scrollbar-hide overflow-x-auto`}
+      >
         {data?.map((course, index) => {
           const bgColorIndex = index % bgColors.length;
           // Cycle images based on the index

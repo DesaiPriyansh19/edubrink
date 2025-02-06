@@ -15,6 +15,7 @@ export default function EditCountry({
   handleInputChange,
   handleMainPhotoChange,
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const blogRef = useRef(null);
   const uniRef = useRef(null);
   const [modal, setModal] = useState(null);
@@ -31,7 +32,7 @@ export default function EditCountry({
     const handleUniversity = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/university"
+          `https://edu-brink-backend.vercel.app/api/university`
         );
         if (res) {
           setAddUniversity(res.data.data);
@@ -44,7 +45,7 @@ export default function EditCountry({
     const handleBlog = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/blog"
+          `https://edu-brink-backend.vercel.app/api/blog`
         );
         if (res) {
           setAddBlog(res.data.data);

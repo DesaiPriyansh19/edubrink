@@ -9,6 +9,7 @@ export default function OtpVerificationModal({
   setOtp,
 }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
   const inRef = useRef([]);
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function OtpVerificationModal({
         email: email,
       };
       await axios.post(
-        "https://edu-brink-backend.vercel.app/api/users/resendotp",
+        `https://edu-brink-backend.vercel.app/api/users/resendotp`,
         requestBody
       );
     } catch (error) {

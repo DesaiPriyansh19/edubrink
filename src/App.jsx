@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-  useLocation,
-  useNavigate,
 } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import "./App.css";
 import HomePage from "./components/Home/HomePage";
 import AppLayout from "./components/AppLayout";
@@ -20,10 +17,15 @@ import UniversityPage from "./components/UniversityPage/UniversityPage";
 import CoursePage from "./components/CoursesPage/Courses";
 import { SearchProvider } from "../context/SearchContext";
 import { AnalysisProvider } from "../context/AnalysisContext";
-import { LanguageProvider, useLanguage } from "../context/LanguageContext";
+import { LanguageProvider } from "../context/LanguageContext";
 import LanguageRedirect from "./components/LanguageRedirect";
+import ProtectedRoute from "../utils/ProtectedRoute";
+import AuthModal from "./components/AuthModal";
+import { NavigateToAdminDashboard } from "../utils/NavigateToAdminDashboard";
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <LanguageProvider>
       <AnalysisProvider>
@@ -33,38 +35,45 @@ function App() {
               <AppLayout>
                 <LanguageRedirect />
                 <Routes>
-                  {/* Redirect to default language */}
-
+                  {/* Public Routes */}
                   <Route path="/" element={<Navigate to="/en" replace />} />
-
-                  {/* Define routes with language support */}
                   <Route path="/:lang" element={<HomePage />} />
-                  <Route path="/:lang/about" element={<AboutPage />} />
-                  <Route path="/:lang/contact" element={<ContactUs />} />
+
+                  {/* Protected Routes (All except HomePage) */}
                   <Route
-                    path="/:lang/country/:slug"
-                    element={<CountryPage />}
-                  />
-                  <Route
-                    path="/:lang/university"
-                    element={<UniversityPage />}
-                  />
-                  <Route path="/:lang/courses/:id" element={<CoursePage />} />
-                  <Route
-                    path="/:lang/admin"
-                    element={<Navigate to="/:lang/admin/dashboard" />}
-                  />
-                  <Route
-                    path="/:lang/admin/:slug"
-                    element={<AdminPanelDashBoard />}
-                  />
-                  <Route
-                    path="/:lang/searchresults/*"
-                    element={<SearchResults />}
-                  />
+                    element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
+                  >
+                    <Route path="/:lang/about" element={<AboutPage />} />
+                    <Route path="/:lang/contact" element={<ContactUs />} />
+                    <Route
+                      path="/:lang/country/:slug"
+                      element={<CountryPage />}
+                    />
+                    <Route
+                      path="/:lang/university"
+                      element={<UniversityPage />}
+                    />
+                    <Route path="/:lang/courses/:id" element={<CoursePage />} />
+                    <Route
+                      path="/:lang/searchresults/*"
+                      element={<SearchResults />}
+                    />
+                    <Route
+                      path="/:lang/admin"
+                      element={<NavigateToAdminDashboard />}
+                    />
+                    <Route
+                      path="/:lang/admin/:slug"
+                      element={<AdminPanelDashBoard />}
+                    />
+                  </Route>
                 </Routes>
               </AppLayout>
             </Router>
+            <AuthModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
           </div>
         </SearchProvider>
       </AnalysisProvider>

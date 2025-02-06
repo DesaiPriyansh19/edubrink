@@ -6,11 +6,11 @@ import Skeleton from "react-loading-skeleton"; // Import Skeleton component
 import "react-loading-skeleton/dist/skeleton.css"; // Import CSS for Skeleton
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
-import TextBlock from "../../../utils/TextBlock";
 
 function RecentBlog() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { data, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/blog/"
+    `https://edu-brink-backend.vercel.app/api/blog/`
   );
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -65,7 +65,7 @@ function RecentBlog() {
           <Link to={"AllBlogs"}>
             {" "}
             <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-            {t("viewAll")}
+              {t("viewAll")}
             </button>
           </Link>{" "}
         </div>

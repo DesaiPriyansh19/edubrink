@@ -14,6 +14,7 @@ export default function AddCountry({
   initialFormData,
 }) {
   const blogRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL;
   const uniRef = useRef(null);
   const [addUniversity, setAddUniversity] = useState([]);
   const [addBlog, setAddBlog] = useState([]);
@@ -24,12 +25,11 @@ export default function AddCountry({
     blogname: "",
   });
 
-
   useEffect(() => {
     const handleUniversity = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/university"
+          `https://edu-brink-backend.vercel.app/api/university`
         );
         if (res) {
           setAddUniversity(res.data.data);
@@ -41,7 +41,9 @@ export default function AddCountry({
 
     const handleBlog = async () => {
       try {
-        const res = await axios.get("https://edu-brink-backend.vercel.app/api/blog");
+        const res = await axios.get(
+          `https://edu-brink-backend.vercel.app/api/blog`
+        );
         if (res) {
           setAddBlog(res.data.data);
         }

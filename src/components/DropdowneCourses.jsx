@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
   const { language } = useLanguage();
   // Initialize AOS
   useEffect(() => {
@@ -19,7 +20,7 @@ function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
   }, []);
 
   const { data, loading, error } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse"
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
   );
 
   const handleNavigate = (link) => {
@@ -55,10 +56,14 @@ function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
                 </span>
                 <span className="">
                   <p className="text-[.7rem] font-medium">
-                    {language==="ar"?course?.CourseName?.ar:course?.CourseName?.en}
+                    {language === "ar"
+                      ? course?.CourseName?.ar
+                      : course?.CourseName?.en}
                   </p>
                   <p className="text-[.6rem] font-light">
-                    {language==="ar"?course?.uniName?.ar:course?.uniName?.en}
+                    {language === "ar"
+                      ? course?.uniName?.ar
+                      : course?.uniName?.en}
                   </p>
                 </span>
               </div>

@@ -253,7 +253,7 @@ export default function EditCourses({
             </div>
 
             {/* Requirements */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap mb-8 gap-4">
               {formData?.Requirements?.map((requirement, index) => (
                 <div key={index} className="w-full relative flex gap-4 ">
                   <div className="w-full">

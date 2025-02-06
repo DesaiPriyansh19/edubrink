@@ -15,6 +15,7 @@ export default function EditUniversities({
   handleEdit,
   initialFormData,
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [modal, setModal] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [addCourses, setAddCourses] = useState([]);
@@ -27,7 +28,7 @@ export default function EditUniversities({
     const handleCourses = async () => {
       try {
         const res = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/course"
+          `https://edu-brink-backend.vercel.app/api/course`
         );
         if (res) {
           setAddCourses(res.data.data);
@@ -292,43 +293,43 @@ export default function EditUniversities({
               </div>
             </div>
 
-          <div className="flex w-full gap-4 justify-between">
-            <div className="mb-4 w-full">
-              <InputField
-                label="Intake Month (شهر التناول)"
-                type="select"
-                name="inTakeMonth"
-                value={formData.inTakeMonth}
-                onChange={handleInputChange}
-                variant={1}
-                options={[
-                  { value: "January", label: "January (يناير)" },
-                  { value: "February", label: "February (فبراير)" },
-                  { value: "March", label: "March (مارس)" },
-                  { value: "April", label: "April (أبريل)" },
-                  { value: "May", label: "May (مايو)" },
-                  { value: "June", label: "June (يونيو)" },
-                  { value: "July", label: "July (يوليو)" },
-                  { value: "August", label: "August (أغسطس)" },
-                  { value: "September", label: "September (سبتمبر)" },
-                  { value: "October", label: "October (أكتوبر)" },
-                  { value: "November", label: "November (نوفمبر)" },
-                  { value: "December", label: "December (ديسمبر)" },
-                ]}
-              />
+            <div className="flex w-full gap-4 justify-between">
+              <div className="mb-4 w-full">
+                <InputField
+                  label="Intake Month (شهر التناول)"
+                  type="select"
+                  name="inTakeMonth"
+                  value={formData.inTakeMonth}
+                  onChange={handleInputChange}
+                  variant={1}
+                  options={[
+                    { value: "January", label: "January (يناير)" },
+                    { value: "February", label: "February (فبراير)" },
+                    { value: "March", label: "March (مارس)" },
+                    { value: "April", label: "April (أبريل)" },
+                    { value: "May", label: "May (مايو)" },
+                    { value: "June", label: "June (يونيو)" },
+                    { value: "July", label: "July (يوليو)" },
+                    { value: "August", label: "August (أغسطس)" },
+                    { value: "September", label: "September (سبتمبر)" },
+                    { value: "October", label: "October (أكتوبر)" },
+                    { value: "November", label: "November (نوفمبر)" },
+                    { value: "December", label: "December (ديسمبر)" },
+                  ]}
+                />
+              </div>
+              <div className="mb-4 w-full">
+                <InputField
+                  label="Intake Year  (سنة القبول)"
+                  type="select"
+                  name="inTakeYear"
+                  value={formData.inTakeYear}
+                  onChange={handleInputChange}
+                  variant={1}
+                  options={yearOptions}
+                />
+              </div>
             </div>
-            <div className="mb-4 w-full">
-              <InputField
-                label="Intake Year  (سنة القبول)"
-                type="select"
-                name="inTakeYear"
-                value={formData.inTakeYear}
-                onChange={handleInputChange}
-                variant={1}
-                options={yearOptions}
-              />
-            </div>
-          </div>
 
             {/* University Location */}
             <div className="mb-4">

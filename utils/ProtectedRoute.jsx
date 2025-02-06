@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-// Check for userInfo in localStorage to determine authentication status
+// Check authentication status
 const isAuthenticated = () => {
   const eduuserInfo = localStorage.getItem("eduuserInfo");
-  return eduuserInfo && JSON.parse(eduuserInfo); // Returns true if eduuserInfo exists
+  return eduuserInfo && JSON.parse(eduuserInfo);
 };
 
-// ProtectedRoute component that wraps children
+// ProtectedRoute component
 const ProtectedRoute = ({ setIsModalOpen }) => {
   useEffect(() => {
-    // If not authenticated, open the login modal
     if (!isAuthenticated()) {
-      setIsModalOpen(true); // Set modal open to true if not authenticated
+      setIsModalOpen(true); // Open authentication modal if the user isn't logged in
     }
   }, [setIsModalOpen]);
 
