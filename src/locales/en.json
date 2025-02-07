@@ -135,5 +135,24 @@
   "recentBlog": {
     "title": "📑 Recent blog",
     "description": "Stay informed with our study abroad blog, featuring expert tips, destination guides, student experiences, and the latest updates on scholarships, visas."
-  }
+  },
+
+  "findCourses": {
+    "title": "Find courses to study in all destinations",
+    "studyLevel": "Study Level",
+    "subjectPreference": "Subject Preference",
+    "duration": "Duration",
+    "select": "Select",
+    "shortTerm": "Short Term",
+    "longTerm": "Long Term",
+    "findCoursesBtn": "Find Courses"
+  },
+  "studyLevels": [
+    { "value": "", "label": "Select" },
+    { "value": "All", "label": "All" },
+    { "value": "UnderGraduate", "label": "Undergraduate" },
+    { "value": "PostGraduate", "label": "Postgraduate" },
+    { "value": "Foundation", "label": "Foundation" },
+    { "value": "Doctorate", "label": "Doctorate" }
+  ]
 }

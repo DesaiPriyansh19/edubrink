@@ -6,18 +6,26 @@ import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../../svg/DiscountLogo/Index";
 import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useFetch from "../../../../hooks/useFetch";
 import TickMark from "../../../../svg/TickMark";
 import { useSearch } from "../../../../context/SearchContext";
 
 const CollegeCard = ({ data, loading }) => {
   const { i18n } = useTranslation();
+  const location = useLocation();
+  const path = location.pathname;
 
   // Skeleton loader
   if (loading) {
     return (
-      <div className="flex gap-2">
+      <div
+        className={`${
+          path === "/en/searchresults/university"
+            ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+            : "flex gap-2"
+        }`}
+      >
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
@@ -67,7 +75,13 @@ const CollegeCard = ({ data, loading }) => {
 
   // Actual Content
   return (
-    <div className="flex gap-4">
+    <div
+      className={`${
+        path === "/en/searchresults/university"
+          ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+          : "flex gap-2"
+      }`}
+    >
       {data?.map((university, idx) => {
         const dynamicFeatures = [
           {
@@ -98,7 +112,11 @@ const CollegeCard = ({ data, loading }) => {
         return (
           <div
             key={idx}
-            className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg"
+            className={`relative mt-6 border rounded-xl shadow-md bg-white ${
+              path === "/en/searchresults/university"
+                ? ""
+                : "max-w-sm sm:max-w-md md:max-w-lg"
+            } `}
           >
             <div className="p-4 sm:p-6">
               <div className="absolute top-0 right-0 bg-red-500 text-white text-xs sm:text-sm px-2 py-1 rounded-bl-md rounded-tr-xl">
@@ -203,7 +221,7 @@ function Univrsiry({ filteredData, loading }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto scrollbar-hide whitespace-nowrap">
+      <div className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}>
         <CollegeCard data={filteredData?.flat()} loading={loading} />
       </div>
     </>

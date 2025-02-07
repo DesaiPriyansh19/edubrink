@@ -1,21 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import FilterSidebar from "../FilterSidevbar/FilterSidebar";
-import FilterLogo from "../../../svg/FilterLogo";
 import FilterLogo2 from "../../../svg/FilterLogo2";
 import Results from "./Results/Results";
-import Courses from "./Courses";
-
 import Article from "./Article";
 import ContactSection from "../ContactSection";
 import Univrsiry from "./Results/University";
-
 import ResultsCorses from "./Results/Resultscorse";
 import ExploreTopCorse from "./ExploreTopCorse";
 import ExploreTopUniversity from "./ExploreTopUniversity";
 import ExploreBlogs from "./ExploreBlogs";
 import { useSearch } from "../../../context/SearchContext";
 import useFetch from "../../../hooks/useFetch";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function SearchResults() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -26,8 +23,8 @@ function SearchResults() {
   );
 
   const { filterProp, setSumData, sumData } = useSearch();
+  const { language } = useLanguage();
 
-  console.log(filterProp);
   const filteredData = useMemo(() => {
     return data
       ?.map((course) => {
@@ -208,6 +205,7 @@ function SearchResults() {
   };
 
   useEffect(() => {
+    console.log(filterProp);
     if (!filteredData || filteredData.length === 0) {
       setSumData({
         sumResult: 0,
@@ -221,7 +219,6 @@ function SearchResults() {
     const sum = getTotalCounts(filteredData);
 
     const newSumResult =
-      (sum?.totalCountries || 0) +
       (sum?.totalBlogs || 0) +
       (sum?.totalCourses || 0) +
       (sum?.totalUniversities || 0);
@@ -251,10 +248,10 @@ function SearchResults() {
         {/* Buttons */}
         <div className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar">
           <div className="flex  space-x-4">
-            <Link to="/searchresults">
+            <Link to={`/${language}/searchresults`}>
               <button
                 className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
-                  location.pathname === "/searchresults"
+                  location.pathname === `/${language}/searchresults`
                     ? "bg-black text-white"
                     : " text-black"
                 }`}
@@ -264,10 +261,10 @@ function SearchResults() {
               </button>
             </Link>
 
-            <Link to="/searchresults/courses">
+            <Link to={`/${language}/searchresults/courses`}>
               <button
                 className={`text-sm font-medium flex rounded-full  justify-center items-center px-4 py-2 ${
-                  location.pathname === "/searchresults/courses"
+                  location.pathname === `/${language}/searchresults/courses`
                     ? "bg-black text-white"
                     : " text-black"
                 }`}
@@ -277,10 +274,10 @@ function SearchResults() {
               </button>
             </Link>
 
-            <Link to="/searchresults/university">
+            <Link to={`/${language}/searchresults/university`}>
               <button
                 className={`text-sm font-medium flex justify-center rounded-full  items-center px-4 py-2 ${
-                  location.pathname === "/searchresults/university"
+                  location.pathname === `/${language}/searchresults/university`
                     ? "bg-black text-white"
                     : " text-black"
                 }`}
@@ -292,10 +289,10 @@ function SearchResults() {
               </button>
             </Link>
 
-            <Link to="/searchresults/article">
+            <Link to={`/${language}/searchresults/article`}>
               <button
                 className={`text-sm font-medium rounded-full  flex justify-center items-center px-4 py-2 ${
-                  location.pathname === "/searchresults/article"
+                  location.pathname === `/${language}/searchresults/article`
                     ? "bg-black text-white"
                     : " text-black"
                 }`}

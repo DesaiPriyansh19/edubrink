@@ -109,6 +109,8 @@ const NavBar = () => {
         },
       }));
       navigate(`/${language}/searchresults`);
+    } else if (term.type === "university") {
+      navigate(`/${language}/university/${term.keyword}`);
     } else if (term.type === "course") {
       navigate(`/${language}/courses/${term.keyword}`);
     } else {

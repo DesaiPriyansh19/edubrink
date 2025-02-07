@@ -2,7 +2,7 @@ import React from "react";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
 import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAnalysis } from "../../../../context/AnalysisContext";
 
 // Course Data
@@ -13,6 +13,9 @@ function ResultsCorses({ loading, filteredData }) {
   const handleApplyClick = (uniId, countryName) => {
     addClickData(uniId, "Course", 1, countryName); // Add click data with countryName
   };
+
+  const location = useLocation();
+  const path = location.pathname;
 
   return (
     <>
@@ -36,7 +39,13 @@ function ResultsCorses({ loading, filteredData }) {
         </div>
       </div>
 
-      <div className="flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row">
+      <div
+        className={`${
+          path === "/en/searchresults/courses"
+            ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+            : "flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row"
+        }`}
+      >
         {loading
           ? Array.from({ length: 4 }).map((_, index) => (
               <div

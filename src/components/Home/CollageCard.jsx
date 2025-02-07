@@ -7,10 +7,12 @@ import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const CollegeCard = ({ college }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const features = [
     {
       icon: <DollerRounded />,
@@ -35,6 +37,10 @@ const CollegeCard = ({ college }) => {
       description: "N/A",
     },
   ];
+
+  const handleLearnMore = (uniName) => {
+    navigate(`/${language}/university/${uniName}`);
+  };
 
   return (
     <div
@@ -128,7 +134,10 @@ const CollegeCard = ({ college }) => {
         >
           {t("applyNow")}
         </button>
-        <button className="  text-black text-sm px-3 py-2 hover:font-medium  rounded-full border-2 border-gray-800">
+        <button
+          onClick={() => handleLearnMore(college?.uniName?.en)}
+          className="  text-black text-sm px-3 py-2 hover:font-medium  rounded-full border-2 border-gray-800"
+        >
           {t("learnMore")}
         </button>
       </div>

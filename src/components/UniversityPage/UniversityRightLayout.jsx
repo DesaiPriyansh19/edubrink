@@ -8,7 +8,7 @@ import TicketDiscount from "../../../svg/TicketDiscount";
 import Watch from "../../../svg/Watch";
 import UniversityRightLayoutCard from "./UniversityRightLayoutCard";
 
-const UniversityRightLayout = () => {
+const UniversityRightLayout = ({ data }) => {
   return (
     <>
       <div className="mt-5">
@@ -32,7 +32,7 @@ const UniversityRightLayout = () => {
                       </div>
                       <div>
                         <p className="text-lg font-bold leading-5">
-                          $27.500 Per Year
+                          ${data?.uniTutionFees} Per Year
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
                           International Student tutition fee
@@ -69,7 +69,7 @@ const UniversityRightLayout = () => {
                         <Seconds />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">Aug 2025</p>
+                        <p className="text-lg font-bold leading-5">{data?.inTakeMonth} {data?.inTakeYear}</p>
                         <p className="text-sm font-sans font-normal leading-5">
                           Application Deadline
                         </p>
@@ -80,7 +80,7 @@ const UniversityRightLayout = () => {
                         <CourseBook />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">Full Time</p>
+                        <p className="text-lg font-bold leading-5">{data?.courses[0]?.ModeOfStudy[0]?.en}</p>
                         <p className="text-sm font-sans font-normal leading-5">
                           Mode Of Study
                         </p>

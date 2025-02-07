@@ -22,6 +22,7 @@ import LanguageRedirect from "./components/LanguageRedirect";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import AuthModal from "./components/AuthModal";
 import { NavigateToAdminDashboard } from "../utils/NavigateToAdminDashboard";
+import UniversityLeftLayout from "./components/UniversityPage/UniversityLeftLayout";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,8 +50,9 @@ function App() {
                       path="/:lang/country/:slug"
                       element={<CountryPage />}
                     />
+
                     <Route
-                      path="/:lang/university"
+                      path="/:lang/university/:slug"
                       element={<UniversityPage />}
                     />
                     <Route path="/:lang/courses/:id" element={<CoursePage />} />
