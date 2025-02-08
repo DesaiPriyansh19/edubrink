@@ -6,15 +6,26 @@ import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../../svg/DiscountLogo/Index";
 import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
-import useFetch from "../../../../hooks/useFetch";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import TickMark from "../../../../svg/TickMark";
-import { useSearch } from "../../../../context/SearchContext";
+import { useAnalysis } from "../../../../context/AnalysisContext";
+import { useLanguage } from "../../../../context/LanguageContext";
 
 const CollegeCard = ({ data, loading }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
   const path = location.pathname;
+  const { addClickData } = useAnalysis();
+
+  const handleApplyClick = (uniId, countryName) => {
+    addClickData(uniId, "University", countryName); // Add click data with countryName
+  };
+
+  const handleNavigate = (uniname) => {
+    navigate(`/${language}/university/${uniname}`);
+  };
 
   // Skeleton loader
   if (loading) {
@@ -183,10 +194,20 @@ const CollegeCard = ({ data, loading }) => {
             <div className="w-full h-[1px] bg-gray-300"></div>
 
             <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-              <button className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full">
+              <button
+                onClick={() =>
+                  handleApplyClick(university._id, university.countryName)
+                }
+                className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
+              >
                 Apply Now
               </button>
-              <button className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800">
+              <button
+                onClick={() => {
+                  handleNavigate(university.uniName.en);
+                }}
+                className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
+              >
                 Learn More
               </button>
             </div>

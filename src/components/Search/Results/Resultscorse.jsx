@@ -2,16 +2,23 @@ import React from "react";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
 import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAnalysis } from "../../../../context/AnalysisContext";
+import { useLanguage } from "../../../../context/LanguageContext";
 
 // Course Data
 
 function ResultsCorses({ loading, filteredData }) {
   const { addClickData, clicksData } = useAnalysis();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
 
-  const handleApplyClick = (uniId, countryName) => {
-    addClickData(uniId, "Course", 1, countryName); // Add click data with countryName
+  const handleApplyClick = (courseId, countryName) => {
+    addClickData(courseId, "Course", countryName); // Add click data with countryName
+  };
+
+  const handleNavigate = (course) => {
+    navigate(`/${language}/courses/${course}`);
   };
 
   const location = useLocation();
@@ -172,7 +179,12 @@ function ResultsCorses({ loading, filteredData }) {
                     >
                       Apply Now
                     </button>
-                    <button className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800">
+                    <button
+                      onClick={() => {
+                        handleNavigate(university.CourseName.en);
+                      }}
+                      className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
+                    >
                       Learn More
                     </button>
                   </div>

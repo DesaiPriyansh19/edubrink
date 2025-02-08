@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import HomeSvg from "../../../svg/HomeSvg";
 import { ResponsiveLine } from "@nivo/line";
-import { data, pieData } from "./data";
 import { ResponsivePie } from "@nivo/pie";
 import useFetch from "../../../hooks/useFetch";
 export const commonProperties = {
-  margin: { top: 80, right: 80, bottom: 60, left: 80 },
+  margin: { top: 100, right: 80, bottom: 60, left: 80 },
   innerRadius: 0.5,
   padAngle: 0.7,
   cornerRadius: 3,
@@ -49,6 +48,59 @@ export default function MainDashBoard() {
       percentage: 0,
     },
   ]);
+
+  const { data: Resp } = useFetch(
+    "https://edu-brink-backend.vercel.app/api/analysis"
+  );
+
+  const transformedData = React.useMemo(() => {
+    if (!Resp) return [];
+
+    // Filter only courses and take the top 5 based on total clicks
+    const topCourses = Resp.filter((item) => item.category === "Course")
+      .sort((a, b) => b.clicks - a.clicks) // Sort by total clicks (descending)
+      .slice(0, 5); // Take top 5 courses
+
+    // Get a unique set of all dates to ensure proper x-axis alignment
+    const allDates = [
+      ...new Set(
+        topCourses.flatMap((course) =>
+          course.clickHistory.map((entry) => entry.date)
+        )
+      ),
+    ].sort(); // Sorting ensures chronological order
+
+    return topCourses.map((course) => ({
+      id: course.itemId.CourseName.en,
+      color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
+      data: allDates.map((date) => {
+        // Find the entry for this specific date
+        const entry = course.clickHistory.find((e) => e.date === date);
+        return {
+          x: date,
+          y: entry ? entry.clicks : 0, // If no data for this date, default to 0
+        };
+      }),
+    }));
+  }, [Resp]);
+
+  const pieData = React.useMemo(() => {
+    if (!Resp) return [];
+
+    // Filter only university data and sort by clicks in descending order
+    const topUniversities = Resp.filter(
+      (item) => item.category === "University"
+    )
+      .sort((a, b) => b.clicks - a.clicks) // Sort by total clicks (highest first)
+      .slice(0, 7); // Take the top 7 universities
+
+    return topUniversities.map((university) => ({
+      id: university.itemId.uniName.en, // University name as ID
+      label: university.itemId.uniName.en, // University name as label
+      value: university.clicks, // Total clicks
+      color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
+    }));
+  }, [Resp]);
 
   // useEffect(() => {
   //   if (data) {
@@ -122,19 +174,18 @@ export default function MainDashBoard() {
         ))}
       </div>
       <div className="grid grid-cols-6 mt-4 gap-4">
-        <div className="h-[560px] relative bg-gray-800  w-full col-span-4">
+        <div className="h-[600px] relative bg-gray-800  w-full col-span-3">
           <ResponsiveLine
-            data={data}
+            data={transformedData}
             margin={{ top: 55, right: 100, bottom: 60, left: 50 }}
             xScale={{ type: "point" }}
             yScale={{
               type: "linear",
-              min: "auto",
+              min: 0, // Ensures Y-axis starts at zero
               max: "auto",
-              stacked: true,
+              stacked: false, // Set to false if stacking is not required
               reverse: false,
             }}
-            yFormat=" >-.2f"
             axisTop={null}
             axisRight={null}
             axisBottom={{
@@ -167,13 +218,12 @@ export default function MainDashBoard() {
                   },
                 },
               },
-
               legends: {
                 text: {
-                  fill: "#ffffff", // Set legend text color to white
+                  fill: "#ffffff", // Legend text color
                 },
                 symbol: {
-                  fill: "#ffffff", // Set legend symbol color to white
+                  fill: "#ffffff", // Legend symbol color
                 },
               },
             }}
@@ -186,7 +236,7 @@ export default function MainDashBoard() {
             pointColor={{ theme: "background" }}
             pointBorderWidth={2}
             pointBorderColor={{ from: "serieColor" }}
-            pointLabel="data.yFormatted"
+            pointLabel={(point) => `${point.data.y}`} // ✅ Show actual clicks
             pointLabelYOffset={-12}
             areaOpacity={0.15}
             enableTouchCrosshair={true}
@@ -207,18 +257,18 @@ export default function MainDashBoard() {
                   className="w-4 h-4 rounded-full"
                 ></div>
                 <span className="uppercase ml-2">
-                  {point.serieId}: {point.data.xFormatted},{" "}
-                  {point.data.yFormatted}
+                  {point.serieId}: {point.data.y}{" "}
+                  {/* ✅ Show correct click value */}
                 </span>
               </div>
             )}
             legends={[
               {
-                anchor: "bottom-right",
+                anchor: "top-left",
                 direction: "column",
                 justify: false,
-                translateX: 100,
-                translateY: 0,
+                translateX: 30,
+                translateY: 30,
                 itemsSpacing: 0,
                 itemDirection: "left-to-right",
                 itemWidth: 80,
@@ -231,7 +281,7 @@ export default function MainDashBoard() {
                   {
                     on: "hover",
                     style: {
-                      itemBackground: "white",
+                      itemBackground: "black",
                       itemOpacity: 1,
                     },
                   },
@@ -239,13 +289,12 @@ export default function MainDashBoard() {
               },
             ]}
           />
+
           <div className="absolute top-3 left-3">
-            <p className="text-xl font-semibold uppercase ">
-              Enquires Generated
-            </p>
+            <p className="text-xl font-semibold uppercase ">POPULAR Courses</p>
           </div>
         </div>
-        <div className="h-[330px] bg-gray-800 col-span-2 w-full">
+        <div className="h-[330px] bg-gray-800 col-span-3 w-full">
           <div className="h-full relative bg-gray-800  w-full col-span-4">
             <ResponsivePie
               data={pieData}
@@ -276,7 +325,7 @@ export default function MainDashBoard() {
               //     direction: "row",
               //     justify: false,
               //     translateX: 10,
-              //     translateY: 70,
+              //     translateY: 0,
               //     itemsSpacing: 0,
               //     itemWidth: 100,
               //     itemHeight: 18,
@@ -296,6 +345,32 @@ export default function MainDashBoard() {
               //     ],
               //   },
               // ]}
+              legends={[
+                {
+                  anchor: "top-right",
+                  direction: "column",
+                  justify: false,
+                  translateX: 0,
+                  translateY: -80,
+                  itemsSpacing: 0,
+                  itemDirection: "left-to-right",
+                  itemWidth: 80,
+                  itemHeight: 20,
+                  itemOpacity: 0.75,
+                  symbolSize: 12,
+                  symbolShape: "circle",
+                  symbolBorderColor: "rgba(0, 0, 0, .5)",
+                  effects: [
+                    {
+                      on: "hover",
+                      style: {
+                        itemBackground: "black",
+                        itemOpacity: 1,
+                      },
+                    },
+                  ],
+                },
+              ]}
               theme={{
                 tooltip: {
                   container: {
@@ -303,6 +378,11 @@ export default function MainDashBoard() {
                     color: "#fff", // Tooltip text color
                     borderRadius: "8px",
                     padding: "8px 12px",
+                  },
+                },
+                legends: {
+                  text: {
+                    fill: "#ffffff", // ✅ Set legend text color to white
                   },
                 },
               }}

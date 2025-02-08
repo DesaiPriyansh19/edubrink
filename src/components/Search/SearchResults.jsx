@@ -205,7 +205,6 @@ function SearchResults() {
   };
 
   useEffect(() => {
-    console.log(filterProp);
     if (!filteredData || filteredData.length === 0) {
       setSumData({
         sumResult: 0,
