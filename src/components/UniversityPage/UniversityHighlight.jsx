@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Star from "../../../svg/StarLogo";
 import UniversityLogo from "../../../svg/UniversityLogo";
 
-const UniversityHighlight = ({ data }) => {
+const UniversityHighlight = ({ data, language }) => {
   const [expandedSection, setExpandedSection] = useState(null); // Single state
 
   const toggleContent = (section) => {
@@ -50,7 +50,9 @@ const UniversityHighlight = ({ data }) => {
             onClick={() => toggleContent("overview")}
             className="inline-flex justify-between items-center text-left font-semibold text-purple-700 text-lg py-2"
           >
-            <span>{expandedSection === "overview" ? "Read less" : "Read more"}</span>
+            <span>
+              {expandedSection === "overview" ? "Read less" : "Read more"}
+            </span>
           </button>
         </div>
       </div>
@@ -65,7 +67,9 @@ const UniversityHighlight = ({ data }) => {
         </div>
         <div className="flex gap-4 mt-[1.5rem]">
           <button className="bg-[rgba(243,244,246,1)] px-3 py-1 rounded-full text-sm">
-            {data?.uniLocation?.uniState?.en}
+            {language === "ar"
+              ? data?.uniLocation?.uniState?.ar
+              : data?.uniLocation?.uniState?.en}
           </button>
         </div>
 
@@ -75,15 +79,29 @@ const UniversityHighlight = ({ data }) => {
               expandedSection === "campus" ? "max-h-[1000px]" : "max-h-10"
             }`}
           >
-            <p className="mt-4 mb-4">{data?.uniAccomodation?.en}</p>
-            <p className="mt-4 mb-4">{data?.uniSports?.sportsDescription?.en}</p>
-            <p className="mt-4 mb-4">{data?.uniLibrary?.libraryDescription?.en}</p>
+            <p className="mt-4 mb-4">
+              {language === "ar"
+                ? data?.uniAccomodation?.ar
+                : data?.uniAccomodation?.en}
+            </p>
+            <p className="mt-4 mb-4">
+              {language === "ar"
+                ? data?.uniSports?.sportsDescription?.ar
+                : data?.uniSports?.sportsDescription?.en}
+            </p>
+            <p className="mt-4 mb-4">
+              {language === "ar"
+                ? data?.uniLibrary?.libraryDescription?.ar
+                : data?.uniLibrary?.libraryDescription?.en}
+            </p>
           </div>
           <button
             onClick={() => toggleContent("campus")}
             className="inline-flex justify-between items-center text-left font-semibold text-purple-700 text-lg py-2"
           >
-            <span>{expandedSection === "campus" ? "Read less" : "Read more"}</span>
+            <span>
+              {expandedSection === "campus" ? "Read less" : "Read more"}
+            </span>
           </button>
         </div>
       </div>

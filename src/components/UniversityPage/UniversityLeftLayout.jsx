@@ -1,16 +1,15 @@
 import React from "react";
 import CoursesLogo from "../../../svg/CorsesLogo/Index";
 
-const UniversityLeftLayout = ({ data }) => {
-
+const UniversityLeftLayout = ({ data, language }) => {
   return (
     <div className="container mx-auto py-4 mt-5">
       <div className="px-4">
         <h2 className="text-3xl sm:text-4xl font-semibold">
-          {data?.uniName?.en}
+          {language === "ar" ? data?.uniName?.ar : data?.uniName?.en}
         </h2>
         <p className="text-lg sm:text-xl font-semibold text-purple-800 mt-2">
-          {data?.countryName?.en}
+          {language === "ar" ? data?.countryName?.ar : data?.countryName?.en}
         </p>
       </div>
       <div className="px-4 mt-6">
@@ -40,7 +39,9 @@ const UniversityLeftLayout = ({ data }) => {
                 key={subject._id}
                 className="bg-[rgba(243,244,246,1)] px-3 py-1 rounded-full text-sm"
               >
-                {subject?.TagName?.en}
+                {language === "ar"
+                  ? subject?.TagName?.ar
+                  : subject?.TagName?.en}
               </span>
             ))}
           </div>

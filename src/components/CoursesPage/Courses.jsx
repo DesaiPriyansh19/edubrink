@@ -12,9 +12,11 @@ import CourseDiscount from "../../../svg/CourseDiscount";
 import Consolidation from "../../../svg/Consolidation";
 import { useParams } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { language } = useLanguage();
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const toggleReadMore = () => {
@@ -25,16 +27,17 @@ const CoursePage = () => {
 
   const apiUrl = isObjectId
     ? `https://edu-brink-backend.vercel.app/api/course/${id}`
-    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
-        id
-      )}`;
+    : `http://localhost:4000/api/course/name/${encodeURIComponent(id)}`;
 
   console.log("Fetching from:", apiUrl);
 
-  const { data, loading, error } = useFetch(apiUrl);
+  const { data } = useFetch(apiUrl);
 
   return (
-    <div className="bg-gray-50 p-6 md:p-10 rounded-lg shadow-lg max-w-5xl mx-auto">
+    <div
+      dir={language === "ar" ? "rtl" : "ltl"}
+      className="bg-gray-50 p-6 md:p-10 rounded-lg shadow-lg max-w-5xl mx-auto"
+    >
       <div className="text-sm mb-4 flex items-center">
         <div className="flex items-center">
           <CountryHome />
@@ -43,12 +46,14 @@ const CoursePage = () => {
         <div className="flex items-center font-medium">
           <span>Country</span>
           <span className="mx-2">&gt;</span>
-          <span className="font-medium">{data?.CourseName?.en}</span>
+          <span className="font-medium">
+            {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
+          </span>
         </div>
       </div>
       <div className="">
         <h1 className="text-2xl font-bold text-black mb-4">
-          📚 {data?.CourseName?.en}
+          📚 {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
           <div className="flex me-4 items-center mt-4">
             <img
               src={"https://placehold.co/24x24" || data?.uniSymbol}
@@ -56,7 +61,7 @@ const CoursePage = () => {
               className="w-[28px] h-[28px] rounded-full relative"
             />
             <p className="text-lg font-sans font-normal ms-2">
-              {data?.uniName?.en}
+              {language === "ar" ? data?.uniName?.ar : data?.uniName?.en}
             </p>
           </div>
         </h1>
@@ -126,7 +131,9 @@ const CoursePage = () => {
               </div>
               <div>
                 <p className="text-lg font-bold leading-5">
-                  {data?.ModeOfStudy[0]?.en || "N/A"}
+                  {language === "ar"
+                    ? data?.ModeOfStudy?.[0]?.ar
+                    : data?.ModeOfStudy?.[0]?.en || "N/A"}
                 </p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Mode Of Study
@@ -153,14 +160,12 @@ const CoursePage = () => {
         <div className="order-2 md:order-1 flex-1">
           <div className="ml-[4%] mr-[4%]">
             <ul className="list-disc space-y-3">
-              {data?.CourseDescription?.en ? (
-                data.CourseDescription.en
-                  .split(".")
-                  .filter((desc) => desc.trim()) // Filter out empty strings from splitting
-                  .map((desc, index) => <li key={index}>{desc.trim()}.</li>)
-              ) : (
-                <li>No description available.</li>
-              )}
+              {data?.CourseDescription?.[language]
+                ? data.CourseDescription[language]
+                    .split(".")
+                    .filter((desc) => desc.trim())
+                    .map((desc, index) => <li key={index}>{desc.trim()}.</li>)
+                : "No description available."}
             </ul>
             {data?.CourseDescription?.en &&
               data.CourseDescription.en.split(".").filter((desc) => desc.trim())
@@ -191,7 +196,7 @@ const CoursePage = () => {
                     className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5"
                   >
                     <Consolidation />
-                    {req?.en || "Requirement not specified."}
+                    {req?.[language] || "Requirement not specified."}
                   </div>
                 ))
               : "No requirements available."}
@@ -199,39 +204,43 @@ const CoursePage = () => {
         </div>
         {/* md:w-[55.33%]
         p-6 */}
-        <div className="w-full md:w-[45.33%] bg-white  rounded-[1.5rem] ">
-          <p className="text-black  text-center font-sans font-medium text-lg leading-7  bg-[rgba(248,248,248,1)] px-4 py-2 rounded-full mt-[8%] mb-[8%] p-l[13%] pr-[13%]">
-            Dedicated Counsellor
-          </p>
-
-          <div className="flex items-start gap-4">
-            <img
-              src={JhonSmith}
-              alt="Jhon Smith"
-              className="w-16 h-16 rounded-full object-cover"
-            />
-            <div className="w-[376px] h-[406px] gap-[16px]">
-              <h6 className="font-sans font-semibold text-2xl leading-7">
-                Jhon Smith
-              </h6>
-              <p className="font-sans font-medium text-lg leading-7 mt-2">
-                Thanks for connecting! I’m excited to connect with professionals
-                in the [industry/field]. I look forward to sharing insights and
-                learning from each other. If there's anything I can assist with,
-                feel free to reach out.
-              </p>
+        <div className=" max-w-full md:max-w-[40%]  mb-[10%]">
+          <div className="bg-white shadow-lg rounded-lg p-6 w-full">
+            <div className="w-full flex md:justify-start justify-center">
+              {" "}
+              <div className="inline-flex  mt-4 bg-gray-200   font-sans font-medium text-lg leading-7 px-3 py-1 rounded-full">
+                Dedicated Counsellor
+              </div>
             </div>
-          </div>
-          <div className="btn mt-5 flex gap-4 mb-5">
-            <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white rounded-full flex items-center justify-center gap-2  py-[0.5rem]">
-              <span>
-                <Phone />
-              </span>
-              Call Now
-            </button>
-            <button className="w-full bg-white border border-gray-300 text-black rounded-full flex items-center justify-center gap-2  py-[0.5rem]">
-              Chat Now
-            </button>
+
+            <div className="flex lg:flex-row flex-col md:items-start items-center mt-2 md:mt-[8%]">
+              <img
+                src={JhonSmith}
+                alt="Profile"
+                className="w-[4rem] h-[4rem] rounded-full mr-4 mt-[3%] mb-[3%]"
+              />
+              <div className=" md:mt-[5%] md:text-start text-center mb-[5%]">
+                <div className="font-sans font-semibold text-2xl leading-7 text-black">
+                  Jhon Smith
+                </div>
+                <p className="font-sans font-medium text-lg leading-7 mt-2">
+                  Thanks for connecting! I’m excited to connect with
+                  professionals in the [industry/field]. I look forward to
+                  sharing insights and learning from each other. If there's
+                  anything I can assist with, feel free to reach out.
+                </p>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-4 mt-4 justify-between">
+              <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white rounded-full">
+                Call Now
+              </button>
+              <button className="w-full bg-white border border-gray-300 text-black rounded-full flex items-center justify-center gap-2  py-[0.5rem]">
+                Chat Now
+              </button>
+            </div>
           </div>
         </div>
       </div>

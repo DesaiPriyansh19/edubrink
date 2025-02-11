@@ -28,7 +28,7 @@ function HowToApply() {
         {items.map((item, index) => (
           <div
             key={index}
-            className={` p-1  ${language==="ar"?"xl:p-12 sm:p-10":"sm:p-4"} pb-2  sm:pb-9 rounded-3xl  bg-white w-auto text-center`}
+            className={` p-1 box ${language==="ar"?"xl:p-12 sm:p-10":"sm:p-4"} pb-2  sm:pb-9 rounded-3xl  bg-white w-auto text-center`}
           >
             {/* P tag and round div in one line */}
             <div className="mt-4 mb-5 md:mt-14 md:mb-9">

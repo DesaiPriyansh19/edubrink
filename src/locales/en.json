@@ -4,11 +4,16 @@
   "buttonLabel": "Get Started Now",
   "carouselItemTitle": "Find out the best study destination",
   "viewAll": "View All",
-
+  "loginVerfiedText": "User Approved",
+  "loginVerifiedTitle": "Explore your Journey",
   "takeEducationTitle": "Take your education to the<br>next level abroad",
   "takeEducationDescription": "Get more insights and reports for your startup and improve the customer relationships",
   "contactUs": "Contact Us",
-
+  "results": "Results",
+  "courses": "Courses",
+  "universities": "Universities",
+  "articles": "Articles",
+  "filters": "Filters",
   "carouselSectionItems": [
     { "text": "U.K" },
     { "text": "U.S.A" },
@@ -154,5 +159,10 @@
     { "value": "PostGraduate", "label": "Postgraduate" },
     { "value": "Foundation", "label": "Foundation" },
     { "value": "Doctorate", "label": "Doctorate" }
-  ]
+  ],
+
+  "searchResult": {
+    "uniTitle": "Favourite Universities",
+    "uniDesc": "Discover top study abroad destinations, each offering unique cultural experiences, academic excellence, and career opportunities. From vibrant cities."
+  }
 }

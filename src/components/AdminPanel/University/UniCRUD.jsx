@@ -6,7 +6,7 @@ import EditUniversities from "./EditUniversities";
 
 export default function UniCRUD() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const baseUrl = `https://edu-brink-backend.vercel.app/api/university`;
+  const baseUrl = `http://localhost:4000/api/university`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
   const initialFormData = {
     id: "",
@@ -16,6 +16,14 @@ export default function UniCRUD() {
     },
     uniSymbol: "",
     courseId: [], // Array to hold selected course IDs
+    uniMainImage: "",
+    uniStartDate: "",
+    uniDeadline: "",
+    uniDuration: "",
+    uniDiscount: {
+      en: "",
+      ar: "",
+    },
     scholarshipAvailability: false,
     spokenLanguage: [],
     uniType: "",
@@ -89,6 +97,15 @@ export default function UniCRUD() {
         },
         uniSymbol: selectedProperty?.uniSymbol || "",
         courseId: selectedProperty?.courseId || [], // Array of course IDs
+        courseId: selectedProperty?.courseId ?? [], // Ensure it's an array
+        uniMainImage: selectedProperty?.uniMainImage ?? "", // Default to an empty string
+        uniStartDate: selectedProperty?.uniStartDate ?? "", // Default to an empty string
+        uniDeadline: selectedProperty?.uniDeadline ?? "", // Default to an empty string
+        uniDuration: selectedProperty?.uniDuration ?? "",
+        uniDiscount: {
+          en: selectedProperty?.uniDiscount?.en || "",
+          ar: selectedProperty?.uniDiscount?.ar || "",
+        },
         scholarshipAvailability:
           selectedProperty?.scholarshipAvailability || false,
         spokenLanguage: selectedProperty?.spokenLanguage || [],

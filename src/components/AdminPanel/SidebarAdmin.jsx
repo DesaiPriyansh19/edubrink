@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Links, useLocation, useParams } from "react-router-dom"; // Import Link for routing
+import { Link, useLocation } from "react-router-dom"; 
 import WhiteHamburgerIcon from "../../../svg/WhiteHamburger";
 import HomeSvg from "../../../svg/HomeSvg";
 
@@ -19,11 +19,11 @@ export default function SidebarAdmin() {
       icon: <FaUsers className="text-white" />,
       path: "/manage-peoples",
     },
-    {
-      name: "Contact Information",
-      icon: <MdContactMail className="text-white" />,
-      path: "/contact-info",
-    },
+    // {
+    //   name: "Contact Information",
+    //   icon: <MdContactMail className="text-white" />,
+    //   path: "/contact-info",
+    // },
     // { name: "Profile Form", icon: <HiOutlineUserCircle />, path: "/profile-form" },
     {
       name: "Add Country",

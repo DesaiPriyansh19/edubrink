@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import uniLogo from "../../../assets/UniversityBoston.png";
-import uk from "../../../assets/Flags/UKFlag.png";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
 import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../../svg/DiscountLogo/Index";
@@ -12,7 +10,7 @@ import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
 
 const CollegeCard = ({ data, loading }) => {
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation();
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -88,7 +86,7 @@ const CollegeCard = ({ data, loading }) => {
   return (
     <div
       className={`${
-        path === "/en/searchresults/university"
+        path === `/${language}/searchresults/university`
           ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
           : "flex gap-2"
       }`}
@@ -97,41 +95,53 @@ const CollegeCard = ({ data, loading }) => {
         const dynamicFeatures = [
           {
             icon: <DollerRounded />,
-            title: "Tuition Fees",
+            title: language === "ar" ? "الرسوم الدراسية" : "Tuition Fees",
             description: university?.uniTutionFees || "N/A",
           },
+
           {
             icon: <ScholerShipLogo />,
-            title: "Scholarship Available",
+            title: language === "ar" ? "المنح الدراسية" : "Scholarship",
             description:
-              university?.scholarshipAvailability === true
-                ? "Available"
-                : "Not-Available",
+              university.scholarshipAvailability === true
+                ? language === "ar"
+                  ? "متاح"
+                  : "Available"
+                : language === "ar"
+                ? "غير متاح"
+                : "Not Available",
           },
           {
             icon: <DiscountLogo />,
-            title: "Discount",
-            description: university?.DeadLine
-              ? new Date(university?.DeadLine).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })
-              : "N/A",
+            title: language === "ar" ? "الخصم" : "Discount",
+            description: university.uniDiscount
+              ? language === "ar"
+                ? "متاح"
+                : "Available"
+              : language === "ar"
+              ? "غير متاح"
+              : "Not Available",
           },
         ];
         return (
           <div
             key={idx}
+            dir={language === "ar" ? "rtl" : "ltr"}
             className={`relative mt-6 border rounded-xl shadow-md bg-white ${
-              path === "/en/searchresults/university"
+              path === `/${language}/searchresults/university`
                 ? ""
                 : "max-w-sm sm:max-w-md md:max-w-lg"
             } `}
           >
             <div className="p-4 sm:p-6">
-              <div className="absolute top-0 right-0 bg-red-500 text-white text-xs sm:text-sm px-2 py-1 rounded-bl-md rounded-tr-xl">
-                Most Popular
+              <div
+                className={`absolute top-0 ${
+                  language === "ar"
+                    ? "left-0 rounded-br-[4px]  rounded-tl-xl"
+                    : "right-0 rounded-bl-[4px] rounded-tr-xl"
+                }  bg-red-500 text-white text-xs sm:text-sm px-2 py-1 `}
+              >
+                {t("mostPopular")}
               </div>
 
               <div className="flex gap-3 sm:gap-4 items-center mb-6">
@@ -144,7 +154,9 @@ const CollegeCard = ({ data, loading }) => {
                 </div>
                 <div className="flex-1">
                   <h1 className="text-lg font-semibold gap-1 flex">
-                    {university?.uniName?.en || "N/A"}{" "}
+                    {language === "ar"
+                      ? university?.uniName?.ar
+                      : university?.uniName?.en || "N/A"}
                     <span>
                       <TickMark />
                     </span>
@@ -156,7 +168,9 @@ const CollegeCard = ({ data, loading }) => {
                       alt="Flag"
                       className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
                     />
-                    {university?.countryName?.en || "N/A"}
+                    {language === "ar"
+                      ? university?.countryName?.ar
+                      : university?.countryName?.en || "N/A"}
                   </p>
 
                   <div className="flex items-center mt-1">
@@ -164,8 +178,16 @@ const CollegeCard = ({ data, loading }) => {
                       <PrivetUniLogo />
                     </span>
 
-                    <p className="text-sm font-medium text-gray-700">
-                      Private University
+                    <p className="text-sm capitalize font-medium text-gray-700">
+                      <p className="text-sm capitalize font-medium text-gray-700">
+                        {language === "ar"
+                          ? university?.uniType === "Private"
+                            ? "جامعة خاصة"
+                            : "جامعة حكومية"
+                          : university?.uniType === "Private"
+                          ? "Private University"
+                          : "Public University"}
+                      </p>
                     </p>
                   </div>
                 </div>
@@ -200,15 +222,19 @@ const CollegeCard = ({ data, loading }) => {
                 }
                 className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
               >
-                Apply Now
+                {t("applyNow")}
               </button>
               <button
                 onClick={() => {
-                  handleNavigate(university.uniName.en);
+                  handleNavigate(
+                    language === "ar"
+                      ? university.uniName.ar
+                      : university.uniName.en
+                  );
                 }}
                 className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
               >
-                Learn More
+                {t("learnMore")}
               </button>
             </div>
           </div>
@@ -219,30 +245,33 @@ const CollegeCard = ({ data, loading }) => {
 };
 
 function Univrsiry({ filteredData, loading }) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   return (
     <>
-      <div className="max-w-[1240px] mt-20">
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-20">
         <div className="mt-6 mb-1">
           <h1 className="text-start text-3xl sm:text-4xl font-semibold">
-            🏫 Favourite Universities
+            🏫 {t("searchResult.uniTitle")}
           </h1>
-          <p className="text-sm mt-3 font-medium">
-            Discover top study abroad destinations, each offering unique
-            cultural <br></br> experiences, academic excellence, and career
-            opportunities. From vibrant cities.
+          <p className="text-sm mt-3 max-w-xl font-medium">
+            {t("searchResult.uniDesc")}
           </p>
         </div>
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
           <Link to={"/searchresults/AllUniversity"}>
             <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4 rounded-full">
-              View All
+              {t("viewAll")}
             </button>
           </Link>
         </div>
       </div>
 
-      <div className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}>
+      <div
+        dir={language === "ar" ? "rtl" : "ltr"}
+        className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}
+      >
         <CollegeCard data={filteredData?.flat()} loading={loading} />
       </div>
     </>

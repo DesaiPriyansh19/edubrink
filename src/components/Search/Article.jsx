@@ -7,7 +7,11 @@ import { Link } from "react-router-dom";
 import Loader from "../../../utils/Loader";
 import useFetch from "../../../hooks/useFetch";
 import { useSearch } from "../../../context/SearchContext";
+import { useLanguage } from "../../../context/LanguageContext";
+import { useTranslation } from "react-i18next";
 function Article({ filteredData, loading }) {
+  const { language } = useLanguage();
+  const { t } = useTranslation();
   const SkeletonLoader = () => {
     return (
       <div className="flex gap-2 ">
@@ -35,21 +39,25 @@ function Article({ filteredData, loading }) {
 
   return (
     <>
-      <div className="mt-11 text-black">
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-11 text-black">
         <div className="max-w-[1240px] mx-auto">
           <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-4">
-            📑 Recent blog
+            {t("recentBlog.title")}
           </h1>
 
-          <p className="text-start font-normal text-sm sm:text-[.8rem] px-0 pl-4 pr-1 md:pr-[39%]">
-            Stay informed with our study abroad blog, featuring expert tips,
-            destination guides, student experiences, and the latest updates on
-            scholarships, visas.
+          <p
+            className={`${
+              language === "ar"
+                ? " px-0 pl-1 md:pl-[39%]"
+                : " px-0 pl-4 pr-1 md:pr-[39%]"
+            } text-start font-normal text-sm sm:text-[.8rem] `}
+          >
+            {t("recentBlog.description")}
           </p>
           <div className="w-full hidden sm:flex justify-end items-center px-4">
             <Link to={"/searchresults/AllBlogs"}>
               <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-                View All
+                {t("viewAll")}
               </button>
             </Link>{" "}
           </div>
@@ -79,11 +87,15 @@ function Article({ filteredData, loading }) {
                 </div>
 
                 <p className="text-[#E82448] text-sm font-semibold mt-4 ">
-                  Study in {card?.countryName?.en}
+                  {language === "ar"
+                    ? `الدراسة في ${card?.countryName?.ar || "غير متوفر"}`
+                    : `Study in ${card?.countryName?.en || "N/A"}`}
                 </p>
 
                 <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-                  {card?.blogTitle?.en}
+                  {language === "ar"
+                    ? card?.blogTitle?.ar
+                    : card?.blogTitle?.en}
                 </h4>
                 <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
                   <Calander />

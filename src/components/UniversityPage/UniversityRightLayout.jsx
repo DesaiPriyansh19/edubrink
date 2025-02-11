@@ -7,31 +7,37 @@ import CourseDiscount from "../../../svg/CourseDiscount";
 import TicketDiscount from "../../../svg/TicketDiscount";
 import Watch from "../../../svg/Watch";
 import UniversityRightLayoutCard from "./UniversityRightLayoutCard";
+import { useTranslation } from "react-i18next";
 
-const UniversityRightLayout = ({ data }) => {
+const UniversityRightLayout = ({ data, language }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="mt-5">
         <div className="container">
-          <div className="flex gap-[22px]">
-            <div className="w-[52px] h-[52px] rounded-full border-[1.5px] border-black pt-[14px] pr-[28px] pl-[14px] pb-[20px] gap-[10px]">
+          <div className="flex gap-[22px] items-center">
+            {/* Download Button - Fixed Size */}
+            <div className="w-[52px] h-[52px] rounded-full border-[1.5px] flex items-center justify-center border-black">
               <Download />
             </div>
-            <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-2 rounded-full">
-              Apply Now
+
+            {/* Apply Now Button - Takes Remaining Space */}
+            <button className="flex-1 bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-3 rounded-full">
+              {t("applyNow")}
             </button>
           </div>
-          <div className="bg-white shadow rounded-lg p-4 mt-5">
+
+          <div className="bg-white shadow rounded-lg mt-5">
             <div className="mt-6">
               <div>
-                <div className="order-1  w-full p-6 rounded-lg">
-                  <div className="gap-4 bg-white pl-[4%] pr-[4%] rounded-b-[1.5rem]">
-                    <div className="flex items-center gap-4">
+                <div className="order-1  w-full py-4 rounded-lg">
+                  <div className="gap-4 bg-white  rounded-b-[1.5rem]">
+                    <div className="flex items-center px-[10%] py-[1%] gap-4">
                       <div className="flex items-center justify-center">
                         <TicketDiscount />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">
+                        <p className="text-lg font-medium leading-5">
                           ${data?.uniTutionFees} Per Year
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
@@ -39,67 +45,97 @@ const UniversityRightLayout = ({ data }) => {
                         </p>
                       </div>
                     </div>
-                    <div className="border-t-2 mt-4"></div>
-                    <div className="flex items-center gap-4 mt-[4%]">
+                    <div className="border-t mt-4"></div>
+                    <div className="flex items-center px-[10%] py-[1%] gap-4 mt-[4%]">
                       <div className="flex items-center justify-center">
                         <Watch />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">1 Year</p>
+                        <p className="text-lg font-medium leading-5">
+                          {data?.uniDuration}
+                        </p>
                         <p className="text-sm font-sans font-normal leading-5">
                           Duration
                         </p>
                       </div>
                     </div>
-                    <div className="border-t-2 mt-4"></div>
-                    <div className="flex items-center gap-4 mt-5 mb-5">
+                    <div className="border-t mt-4"></div>
+                    <div className="flex items-center gap-4 px-[10%] py-[1%] mt-5 mb-5">
                       <div className="flex items-center justify-center">
                         <DatePicker />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">Sep 2025</p>
+                        <p className="text-lg font-medium leading-5">
+                          {data?.uniStartDate
+                            ? new Date(data.uniStartDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  year: "numeric",
+                                }
+                              )
+                            : ""}
+                        </p>
                         <p className="text-sm font-sans font-normal leading-5">
                           Start Month
                         </p>
                       </div>
                     </div>
-                    <div className="border-t-2 mt-4"></div>
-                    <div className="flex items-center gap-4 mt-5 mb-5">
+                    <div className="border-t mt-4"></div>
+                    <div className="flex items-center gap-4 px-[10%] py-[1%] mt-5 mb-5">
                       <div className="flex items-center justify-center">
                         <Seconds />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">{data?.inTakeMonth} {data?.inTakeYear}</p>
+                        <p className="text-lg font-medium leading-5">
+                          {data?.uniDeadline
+                            ? new Date(data.uniDeadline).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  year: "numeric",
+                                }
+                              )
+                            : ""}
+                        </p>
                         <p className="text-sm font-sans font-normal leading-5">
                           Application Deadline
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 mt-5">
+                    <div className="border-t mt-4"></div>
+                    <div className="flex items-center gap-4 px-[10%] py-[1%] mt-5">
                       <div className="flex items-center justify-center">
                         <CourseBook />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">{data?.courses[0]?.ModeOfStudy[0]?.en}</p>
+                        <p className="text-lg font-medium leading-5">
+                          {language === "ar"
+                            ? data?.courses[0]?.ModeOfStudy[0]?.ar
+                            : data?.courses[0]?.ModeOfStudy[0]?.en}
+                        </p>
+
                         <p className="text-sm font-sans font-normal leading-5">
                           Mode Of Study
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 mt-5">
+                    <div className="border-t mt-4"></div>
+                    <div className="flex items-center px-[10%] py-[1%] gap-4 mt-5">
                       <div className="flex items-center justify-center">
                         <CourseDiscount />
                       </div>
                       <div>
-                        <p className="text-lg font-bold leading-5">Discount</p>
+                        <p className="text-lg font-medium leading-5">
+                          Discount
+                        </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          Free Scholarship
+                          {language === "ar"
+                            ? data?.uniDiscount?.ar
+                            : data?.uniDiscount?.en}
                         </p>
                       </div>
                     </div>
-                    <button className="mt-6 w-full bg-gradient-to-r from-red-500 to-purple-500 text-white py-3 rounded-full font-semibold text-lg mb-5">
-                      Apply Now
-                    </button>
                   </div>
                 </div>
               </div>

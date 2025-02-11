@@ -5,18 +5,21 @@ const UniversityRightLayoutCard = () => {
   return (
     <>
       <div className="container mt-[10%] mb-[10%]">
-        <div className="relative bg-white shadow-lg rounded-lg p-6 w-full">
-          <div className="absolute top-2 left-2 bg-gray-200  font-sans font-medium text-lg leading-7 px-3 py-1 rounded-full">
-            Dedicated Counsellor
+        <div className="bg-white shadow-lg rounded-lg p-6 w-full">
+          <div className="w-full flex md:justify-start justify-center">
+            {" "}
+            <div className="inline-flex  mt-4 bg-gray-200   font-sans font-medium text-lg leading-7 px-3 py-1 rounded-full">
+              Dedicated Counsellor
+            </div>
           </div>
 
-          <div className="flex mt-[8%]">
+          <div className="flex lg:flex-row flex-col md:items-start items-center mt-2 md:mt-[8%]">
             <img
               src={JhonSmith}
               alt="Profile"
               className="w-[4rem] h-[4rem] rounded-full mr-4 mt-[3%] mb-[3%]"
             />
-            <div className="mt-[5%] mb-[5%]">
+            <div className=" md:mt-[5%] md:text-start text-center mb-[5%]">
               <div className="font-sans font-semibold text-2xl leading-7 text-black">
                 Jhon Smith
               </div>

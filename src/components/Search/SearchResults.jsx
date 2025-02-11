@@ -13,6 +13,7 @@ import ExploreBlogs from "./ExploreBlogs";
 import { useSearch } from "../../../context/SearchContext";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 function SearchResults() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -24,6 +25,7 @@ function SearchResults() {
 
   const { filterProp, setSumData, sumData } = useSearch();
   const { language } = useLanguage();
+  const { t } = useTranslation();
 
   const filteredData = useMemo(() => {
     return data
@@ -245,59 +247,62 @@ function SearchResults() {
     <>
       <div className="relative p-4 px-5 sm:px-9 lg:px-16">
         {/* Buttons */}
-        <div className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar">
-          <div className="flex  space-x-4">
+        <div
+          dir={language === "ar" ? "rtl" : "ltl"}
+          className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar"
+        >
+          <div className="flex space-x-4">
             <Link to={`/${language}/searchresults`}>
               <button
                 className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
                   location.pathname === `/${language}/searchresults`
                     ? "bg-black text-white"
-                    : " text-black"
+                    : "text-black"
                 }`}
               >
-                <span className="font-thin  mr-1">{sumData?.sumResult}</span>
-                Results
+                <span className="font-thin mr-1">{sumData?.sumResult}</span>
+                {t("results")}
               </button>
             </Link>
 
             <Link to={`/${language}/searchresults/courses`}>
               <button
-                className={`text-sm font-medium flex rounded-full  justify-center items-center px-4 py-2 ${
+                className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
                   location.pathname === `/${language}/searchresults/courses`
                     ? "bg-black text-white"
-                    : " text-black"
+                    : "text-black"
                 }`}
               >
-                <span className="font-thin mr-1">{sumData?.sumCourses}</span>{" "}
-                Courses
+                <span className="font-thin mr-1">{sumData?.sumCourses}</span>
+                {t("courses")}
               </button>
             </Link>
 
             <Link to={`/${language}/searchresults/university`}>
               <button
-                className={`text-sm font-medium flex justify-center rounded-full  items-center px-4 py-2 ${
+                className={`text-sm font-medium flex justify-center rounded-full items-center px-4 py-2 ${
                   location.pathname === `/${language}/searchresults/university`
                     ? "bg-black text-white"
-                    : " text-black"
+                    : "text-black"
                 }`}
               >
-                <span className="font-thin  mr-1">
+                <span className="font-thin mr-1">
                   {sumData?.sumUniversities}
-                </span>{" "}
-                Universities
+                </span>
+                {t("universities")}
               </button>
             </Link>
 
             <Link to={`/${language}/searchresults/article`}>
               <button
-                className={`text-sm font-medium rounded-full  flex justify-center items-center px-4 py-2 ${
+                className={`text-sm font-medium rounded-full flex justify-center items-center px-4 py-2 ${
                   location.pathname === `/${language}/searchresults/article`
                     ? "bg-black text-white"
-                    : " text-black"
+                    : "text-black"
                 }`}
               >
-                <span className="font-thin  mr-1">{sumData?.sumBlogs}</span>{" "}
-                Articles
+                <span className="font-thin mr-1">{sumData?.sumBlogs}</span>
+                {t("articles")}
               </button>
             </Link>
           </div>
@@ -305,16 +310,17 @@ function SearchResults() {
           {/* Filter Button (Hidden on Small Screens) */}
           <button
             className="hidden sm:flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
-            onClick={() => setShowFilter(!showFilter)} // Toggle filter sidebar
+            onClick={() => setShowFilter(!showFilter)}
           >
             <FilterLogo2 />
-            Filters
+            {t("filters")}
           </button>
         </div>
 
         {/* Filter Sidebar */}
         {showFilter && (
           <FilterSidebar
+            language={language}
             showFilter={showFilter}
             setShowFilter={setShowFilter}
           />
@@ -329,6 +335,7 @@ function SearchResults() {
             path="courses"
             element={
               <ResultsCorses
+                language={language}
                 loading={loading}
                 filteredData={filteredData?.flatMap((item) =>
                   item.universities.flatMap((university) =>

@@ -5,10 +5,12 @@ import LanguageLogo from "../../../../svg/LanguageLogo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 // Course Data
 
 function ResultsCorses({ loading, filteredData }) {
+  const { t } = useTranslation();
   const { addClickData, clicksData } = useAnalysis();
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -27,28 +29,30 @@ function ResultsCorses({ loading, filteredData }) {
   return (
     <>
       <div className="max-w-full mx-auto">
-        <div className="flex items-center justify-between mt-6 mb-4">
+        <div
+          dir={language === "ar" ? "rtl" : "ltr"}
+          className="flex items-center justify-between mt-6 mb-4"
+        >
           <div className="">
             <h1 className="text-2xl sm:text-4xl font-semibold">
-              📚Our courses
+              📚{t("ourCourseSection.title")}
             </h1>
-            <p className="text-sm mt-3 font-medium">
-              Effortlessly explore diverse courses, find programs tailored to
-              your academic goals,<br></br> compare study opportunities, and
-              make informed decisions
+            <p className="text-sm mt-3 max-w-xl font-medium">
+              {t("ourCourseSection.description")}
             </p>
           </div>
           <Link to={"/searchresults/Allcorse"}>
             <button className="hidden sm:block shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
-              View All
+              {t("viewAll")}
             </button>
           </Link>
         </div>
       </div>
 
       <div
+        dir={language === "ar" ? "rtl" : "ltr"}
         className={`${
-          path === "/en/searchresults/courses"
+          path === `/${language}/searchresults/courses`
             ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
             : "flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row"
         }`}
@@ -94,24 +98,24 @@ function ResultsCorses({ loading, filteredData }) {
               const dynamicFeatures = [
                 {
                   icon: <DollerRounded />,
-                  title: "Tuition Fees",
+                  title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
                   description: university?.CourseFees || "N/A",
                 },
                 {
                   icon: <LanguageLogo />,
-                  title: "Language",
-                  description: "English", // Assuming language is not dynamic
+                  title: language === "ar" ? "اللغة" : "Language",
+                  description: language === "ar" ? "الإنجليزية" : "English", // Assuming English is default
                 },
                 {
                   icon: <DollerRounded />,
-                  title: "Deadline",
+                  title: language === "ar" ? "الموعد النهائي" : "Deadline",
                   description: university?.DeadLine
                     ? new Date(university?.DeadLine).toLocaleDateString(
                         "en-US",
                         {
-                          year: "numeric", // Full year (optional)
-                          month: "short", // Abbreviated month name
-                          day: "numeric", // Day of the month
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
                         }
                       )
                     : "N/A",
@@ -123,7 +127,13 @@ function ResultsCorses({ loading, filteredData }) {
                   key={index}
                   className="relative mt-3 border rounded-xl shadow-md bg-white"
                 >
-                  <div className="px-3 pr-3 sm:pr-8 md:pr-9 lg:pr-16 p-4">
+                  <div
+                    className={`px-3 ${
+                      language === "ar"
+                        ? "pl-3 sm:pl-8 md:pl-9  lg:pl-16"
+                        : "pr-3 sm:pr-8 md:pr-9  lg:pr-16"
+                    }  p-4`}
+                  >
                     <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
                       <div className="w-20 h-20">
                         <img
@@ -136,10 +146,14 @@ function ResultsCorses({ loading, filteredData }) {
                       </div>
                       <div>
                         <h1 className="text-lg font-semibold flex items-center">
-                          {university?.CourseName?.en || "N/A"}
+                          {language === "ar"
+                            ? university?.CourseName?.ar
+                            : university?.CourseName?.en || "N/A"}
                         </h1>
                         <p className="text-[.8rem] font-medium text-black flex items-center mt-1">
-                          {university?.uniName?.en || "N/A"}
+                          {language === "ar"
+                            ? university?.uniName?.ar
+                            : university?.uniName?.en || "N/A"}
                         </p>
                         <div className="flex items-center mt-1">
                           <span className="w-5 h-5 rounded-full mr-1">
@@ -177,7 +191,7 @@ function ResultsCorses({ loading, filteredData }) {
                       }
                       className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
                     >
-                      Apply Now
+                      {t("applyNow")}
                     </button>
                     <button
                       onClick={() => {
@@ -185,7 +199,7 @@ function ResultsCorses({ loading, filteredData }) {
                       }}
                       className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
                     >
-                      Learn More
+                      {t("learnMore")}
                     </button>
                   </div>
                 </div>

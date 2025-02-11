@@ -4,6 +4,7 @@ import HomeSvg from "../../../svg/HomeSvg";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsivePie } from "@nivo/pie";
 import useFetch from "../../../hooks/useFetch";
+import { ResponsiveBar } from "@nivo/bar";
 export const commonProperties = {
   margin: { top: 100, right: 80, bottom: 60, left: 80 },
   innerRadius: 0.5,
@@ -70,37 +71,78 @@ export default function MainDashBoard() {
       ),
     ].sort(); // Sorting ensures chronological order
 
-    return topCourses.map((course) => ({
-      id: course.itemId.CourseName.en,
-      color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
-      data: allDates.map((date) => {
-        // Find the entry for this specific date
-        const entry = course.clickHistory.find((e) => e.date === date);
-        return {
-          x: date,
-          y: entry ? entry.clicks : 0, // If no data for this date, default to 0
-        };
-      }),
-    }));
+    // Transform data into a format suitable for the bar chart
+    return allDates.map((date) => {
+      const entry = { date }; // Date is the x-axis label
+
+      topCourses.forEach((course) => {
+        const courseEntry = course.clickHistory.find((e) => e.date === date);
+        entry[course.itemId.CourseName.en] = courseEntry
+          ? courseEntry.clicks
+          : 0;
+      });
+
+      return entry;
+    });
   }, [Resp]);
 
-  const pieData = React.useMemo(() => {
-    if (!Resp) return [];
+  const courseNames = React.useMemo(() => {
+    if (!Resp || !Array.isArray(Resp)) return [];
 
-    // Filter only university data and sort by clicks in descending order
-    const topUniversities = Resp.filter(
-      (item) => item.category === "University"
-    )
-      .sort((a, b) => b.clicks - a.clicks) // Sort by total clicks (highest first)
-      .slice(0, 7); // Take the top 7 universities
-
-    return topUniversities.map((university) => ({
-      id: university.itemId.uniName.en, // University name as ID
-      label: university.itemId.uniName.en, // University name as label
-      value: university.clicks, // Total clicks
-      color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
-    }));
+    return Resp.filter((item) => item.category === "Course")
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 5) // Take the top 5 courses
+      .map((course) => course.itemId?.CourseName?.en || "Unknown Course");
   }, [Resp]);
+
+  // const transformedData = React.useMemo(() => {
+  //   if (!Resp) return [];
+
+  //   // Filter only courses and take the top 5 based on total clicks
+  //   const topCourses = Resp.filter((item) => item.category === "Course")
+  //     .sort((a, b) => b.clicks - a.clicks) // Sort by total clicks (descending)
+  //     .slice(0, 5); // Take top 5 courses
+
+  //   // Get a unique set of all dates to ensure proper x-axis alignment
+  //   const allDates = [
+  //     ...new Set(
+  //       topCourses.flatMap((course) =>
+  //         course.clickHistory.map((entry) => entry.date)
+  //       )
+  //     ),
+  //   ].sort(); // Sorting ensures chronological order
+
+  //   return topCourses.map((course) => ({
+  //     id: course.itemId.CourseName.en,
+  //     color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
+  //     data: allDates.map((date) => {
+  //       // Find the entry for this specific date
+  //       const entry = course.clickHistory.find((e) => e.date === date);
+  //       return {
+  //         x: date,
+  //         y: entry ? entry.clicks : 0, // If no data for this date, default to 0
+  //       };
+  //     }),
+  //   }));
+  // }, [Resp]);
+
+  // const pieData = React.useMemo(() => {
+  //   if (!Resp) return [];
+
+  //   // Filter only university data and sort by clicks in descending order
+  //   const topUniversities = Resp.filter(
+  //     (item) => item.category === "University"
+  //   )
+  //     .sort((a, b) => b.clicks - a.clicks) // Sort by total clicks (highest first)
+  //     .slice(0, 7); // Take the top 7 universities
+
+  //   return topUniversities.map((university) => ({
+  //     id: university.itemId.uniName.en, // University name as ID
+  //     label: university.itemId.uniName.en, // University name as label
+  //     value: university.clicks, // Total clicks
+  //     color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`, // Random color
+  //   }));
+  // }, [Resp]);
 
   // useEffect(() => {
   //   if (data) {
@@ -174,16 +216,18 @@ export default function MainDashBoard() {
         ))}
       </div>
       <div className="grid grid-cols-6 mt-4 gap-4">
-        <div className="h-[600px] relative bg-gray-800  w-full col-span-3">
+        {/* line Graph */}
+
+        {/* <div className="h-[600px] relative bg-gray-800  w-full col-span-6">
           <ResponsiveLine
             data={transformedData}
             margin={{ top: 55, right: 100, bottom: 60, left: 50 }}
             xScale={{ type: "point" }}
             yScale={{
               type: "linear",
-              min: 0, // Ensures Y-axis starts at zero
+              min: 0, 
               max: "auto",
-              stacked: false, // Set to false if stacking is not required
+              stacked: false, 
               reverse: false,
             }}
             axisTop={null}
@@ -258,7 +302,7 @@ export default function MainDashBoard() {
                 ></div>
                 <span className="uppercase ml-2">
                   {point.serieId}: {point.data.y}{" "}
-                  {/* ✅ Show correct click value */}
+
                 </span>
               </div>
             )}
@@ -293,8 +337,11 @@ export default function MainDashBoard() {
           <div className="absolute top-3 left-3">
             <p className="text-xl font-semibold uppercase ">POPULAR Courses</p>
           </div>
-        </div>
-        <div className="h-[330px] bg-gray-800 col-span-3 w-full">
+        </div> */}
+
+        {/* Pie Graph */}
+
+        {/* <div className="h-[330px] bg-gray-800 col-span-3 w-full">
           <div className="h-full relative bg-gray-800  w-full col-span-4">
             <ResponsivePie
               data={pieData}
@@ -393,7 +440,88 @@ export default function MainDashBoard() {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        {/* <div className="h-[600px] relative bg-gray-800 w-full col-span-6 overflow-x-auto">
+
+          <div
+            style={{
+              width: `${Math.max(transformedData.length * 100, 1100)}px`,
+              height: "100%",
+            }}
+          >
+            <ResponsiveBar
+              data={transformedData} // Pass transformed data
+              keys={courseNames} // Extract course names as keys
+              indexBy="date" // X-axis (dates)
+              margin={{ top: 50, right: 130, bottom: 60, left: 60 }}
+              padding={0.3} // Reduce padding for better spacing
+              groupMode="grouped" // Group bars by date
+              colors={{ scheme: "nivo" }} // Predefined color scheme
+              axisBottom={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: -45, // ✅ Rotate labels to avoid overlap
+                legend: "Date",
+                legendPosition: "middle",
+                legendOffset: 40,
+              }}
+              axisLeft={{
+                tickSize: 5,
+                tickPadding: 5,
+                legend: "Clicks",
+                legendPosition: "middle",
+                legendOffset: -50,
+              }}
+              labelSkipWidth={12}
+              labelSkipHeight={12}
+              labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
+              theme={{
+                axis: {
+                  ticks: { text: { fill: "#ffffff" } }, // Axis text color
+                  legend: { text: { fill: "#ffffff" } }, // Legend text color
+                },
+              }}
+              tooltip={({ id, value }) => (
+                <div
+                  style={{
+                    background: "#f8f8f8",
+                    color: "black",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                  }}
+                >
+                  <p>
+                    {id}: {value} clicks
+                  </p>
+                </div>
+              )}
+              legends={[
+                {
+                  dataFrom: "keys",
+                  anchor: "bottom-right",
+                  direction: "column",
+                  translateX: 120,
+                  translateY: 0,
+                  itemsSpacing: 2,
+                  itemWidth: 100,
+                  itemHeight: 20,
+                  itemDirection: "left-to-right",
+                  itemOpacity: 0.85,
+                  symbolSize: 20,
+                  effects: [{ on: "hover", style: { itemOpacity: 1 } }],
+                },
+              ]}
+            />
+          </div>
+
+
+          <div className="absolute top-3 left-3">
+            <p className="text-xl font-semibold uppercase">
+              Popular Universities
+            </p>
+          </div>
+        </div> */}
       </div>
     </div>
   );

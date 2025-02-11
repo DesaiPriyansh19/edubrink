@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import "./App.css";
 import HomePage from "./components/Home/HomePage";
@@ -22,56 +23,60 @@ import LanguageRedirect from "./components/LanguageRedirect";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import AuthModal from "./components/AuthModal";
 import { NavigateToAdminDashboard } from "../utils/NavigateToAdminDashboard";
-import UniversityLeftLayout from "./components/UniversityPage/UniversityLeftLayout";
+import { trackPageView } from "../utils/google-analytics";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
 
   return (
     <LanguageProvider>
       <AnalysisProvider>
         <SearchProvider>
           <div className="max-w-[1440px] w-full mx-auto">
-            <Router>
-              <AppLayout>
-                <LanguageRedirect />
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Navigate to="/en" replace />} />
-                  <Route path="/:lang" element={<HomePage />} />
+            <AppLayout>
+              <LanguageRedirect />
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Navigate to="/en" replace />} />
+                <Route path="/:lang" element={<HomePage />} />
 
-                  {/* Protected Routes (All except HomePage) */}
+                {/* Protected Routes (All except HomePage) */}
+                <Route
+                  element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
+                >
+                  <Route path="/:lang/about" element={<AboutPage />} />
+                  <Route path="/:lang/contact" element={<ContactUs />} />
                   <Route
-                    element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
-                  >
-                    <Route path="/:lang/about" element={<AboutPage />} />
-                    <Route path="/:lang/contact" element={<ContactUs />} />
-                    <Route
-                      path="/:lang/country/:slug"
-                      element={<CountryPage />}
-                    />
+                    path="/:lang/country/:slug"
+                    element={<CountryPage />}
+                  />
 
-                    <Route
-                      path="/:lang/university/:slug"
-                      element={<UniversityPage />}
-                    />
-                    <Route path="/:lang/courses/:id" element={<CoursePage />} />
-                    <Route
-                      path="/:lang/searchresults/*"
-                      element={<SearchResults />}
-                    />
-                    <Route
-                      path="/:lang/admin"
-                      element={<NavigateToAdminDashboard />}
-                    />
-                    <Route
-                      path="/:lang/admin/:slug"
-                      element={<AdminPanelDashBoard />}
-                    />
-                  </Route>
-                </Routes>
-              </AppLayout>
-            </Router>
+                  <Route
+                    path="/:lang/university/:slug"
+                    element={<UniversityPage />}
+                  />
+                  <Route path="/:lang/courses/:id" element={<CoursePage />} />
+                  <Route
+                    path="/:lang/searchresults/*"
+                    element={<SearchResults />}
+                  />
+                  <Route
+                    path="/:lang/admin"
+                    element={<NavigateToAdminDashboard />}
+                  />
+                  <Route
+                    path="/:lang/admin/:slug"
+                    element={<AdminPanelDashBoard />}
+                  />
+                </Route>
+              </Routes>
+            </AppLayout>
+
             <AuthModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}

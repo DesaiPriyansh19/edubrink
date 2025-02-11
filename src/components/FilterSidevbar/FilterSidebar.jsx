@@ -20,7 +20,7 @@ import india from "../../assets/Flags/IndiaFlag.png";
 import CourseBook from "../../../svg/CourseBook";
 import { useSearch } from "../../../context/SearchContext";
 import ReactSlider from "react-slider";
-const FilterSidebar = ({ setShowFilter }) => {
+const FilterSidebar = ({ setShowFilter, language }) => {
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -77,8 +77,9 @@ const FilterSidebar = ({ setShowFilter }) => {
       data-aos-delay="50"
       data-aos-duration="300"
       data-aos-easing="ease-in-out"
+      dir={language === "ar" ? "rtl" : "ltr"}
       className="fixed text-sm right-0 top-0 pb-48 mmd:pb-5 h-full w-[100%] 
-    sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto"
+      sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto"
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">

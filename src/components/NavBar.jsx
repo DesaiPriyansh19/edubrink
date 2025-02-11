@@ -450,10 +450,10 @@ const NavBar = () => {
         <ul
           id="divshadow"
           style={{ top: `${navbarHeight}px` }} // Dynamically set top value
-          className="fixed mmd:absolute z-10 right-[3%] mmd:right-[15%]  mt-2 w-40 bg-white border rounded-2xl shadow-lg"
+          className="fixed mmd:absolute z-10 right-[3%] mmd:right-[15%] overflow-hidden  mt-2 w-40 bg-white border rounded-2xl shadow-lg"
         >
           <li
-            className="cursor-pointer flex items-center mt-4 px-4 py-2 hover:bg-gray-100"
+            className="cursor-pointer flex items-center  px-4 py-2 hover:bg-gray-100"
             onClick={() => {
               changeLanguage("en");
             }}
