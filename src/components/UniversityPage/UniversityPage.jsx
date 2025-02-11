@@ -14,7 +14,7 @@ const UniversityPage = () => {
   const { slug } = useParams();
   const { language } = useLanguage();
   const { data } = useFetch(
-    `http://localhost:4000/api/university/name/${slug}`
+    `https://edu-brink-backend.vercel.app/api/university/name/${slug}`
   );
 
   console.log(data);

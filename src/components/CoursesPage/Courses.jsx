@@ -27,7 +27,7 @@ const CoursePage = () => {
 
   const apiUrl = isObjectId
     ? `https://edu-brink-backend.vercel.app/api/course/${id}`
-    : `http://localhost:4000/api/course/name/${encodeURIComponent(id)}`;
+    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(id)}`;
 
   console.log("Fetching from:", apiUrl);
 
