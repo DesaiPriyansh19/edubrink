@@ -4,6 +4,6 @@ const TRACKING_ID = "G-XXXXXXXXXX"; // Replace with your Measurement ID
 ReactGA.initialize(TRACKING_ID);
 
 export const trackPageView = (path) => {
-  ReactGA.set({ page: path });
-  ReactGA.pageview(path);
-};
+    console.log("Tracking GA4 Page:", path); // Debugging log
+    ReactGA.send({ hitType: "pageview", page: path });
+  };
