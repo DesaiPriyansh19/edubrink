@@ -55,7 +55,7 @@ function Article({ filteredData, loading }) {
             {t("recentBlog.description")}
           </p>
           <div className="w-full hidden sm:flex justify-end items-center px-4">
-            <Link to={"/searchresults/AllBlogs"}>
+            <Link to={`/${language}/searchresults/AllBlogs`}>
               <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
                 {t("viewAll")}
               </button>

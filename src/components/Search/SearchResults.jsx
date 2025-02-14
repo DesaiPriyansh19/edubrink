@@ -23,7 +23,7 @@ function SearchResults() {
     `https://edu-brink-backend.vercel.app/api/country/getAll/DepthData`
   );
 
-  const { filterProp, setSumData, sumData } = useSearch();
+  const { filterProp, setSumData, sumData, initialState } = useSearch();
   const { language } = useLanguage();
   const { t } = useTranslation();
 
@@ -206,6 +206,20 @@ function SearchResults() {
     };
   };
 
+  const countActiveFilters = () => {
+    let count = 0;
+    Object.keys(filterProp).forEach((key) => {
+      if (
+        JSON.stringify(filterProp[key]) !== JSON.stringify(initialState[key])
+      ) {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const activeFilters = countActiveFilters();
+
   useEffect(() => {
     if (!filteredData || filteredData.length === 0) {
       setSumData({
@@ -308,13 +322,20 @@ function SearchResults() {
           </div>
 
           {/* Filter Button (Hidden on Small Screens) */}
-          <button
-            className="hidden sm:flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <FilterLogo2 />
-            {t("filters")}
-          </button>
+          <div className="hidden sm:block relative p-4">
+            <button
+              className="hidden sm:flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <FilterLogo2 />
+              {t("filters")}
+            </button>
+            {activeFilters > 0 && (
+              <div className="absolute top-[8px] right-[9px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-[#5A1EB8] to-[#FF6B6B] rounded-full shadow-md border-2 border-white">
+                {activeFilters}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filter Sidebar */}
@@ -378,9 +399,55 @@ function SearchResults() {
               />
             }
           />
-          <Route path="Allcorse" element={<ExploreTopCorse />} />
-          <Route path="AllUniversity" element={<ExploreTopUniversity />} />
-          <Route path="AllBlogs" element={<ExploreBlogs />} />
+          <Route
+            path="Allcorse"
+            element={
+              <ExploreTopCorse
+                language={language}
+                loading={loading}
+                filteredData={filteredData?.flatMap((item) =>
+                  item.universities.flatMap((university) =>
+                    university.courseId.map((course) => ({
+                      ...course,
+                      courseId: course,
+                      uniName: university.uniName,
+                      countryName: item.countryName,
+                    }))
+                  )
+                )}
+              />
+            }
+          />
+          <Route
+            path="AllUniversity"
+            element={
+              <ExploreTopUniversity
+                language={language}
+                filteredData={filteredData?.flatMap((item) =>
+                  item?.universities?.map((university) => ({
+                    ...university,
+                    countryName: item?.countryName,
+                  }))
+                )}
+                loading={loading}
+              />
+            }
+          />
+          <Route
+            path="AllBlogs"
+            element={
+              <ExploreBlogs
+                language={language}
+                filteredData={filteredData?.flatMap((item) =>
+                  item?.blog?.map((blogs) => ({
+                    ...blogs,
+                    countryName: item?.countryName,
+                  }))
+                )}
+                loading={loading}
+              />
+            }
+          />
         </Routes>
       </div>
 

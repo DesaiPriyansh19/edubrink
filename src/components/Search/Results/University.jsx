@@ -8,6 +8,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import TickMark from "../../../../svg/TickMark";
 import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
+import ReactGA from "react-ga4";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -17,7 +18,25 @@ const CollegeCard = ({ data, loading }) => {
   const path = location.pathname;
   const { addClickData } = useAnalysis();
 
-  const handleApplyClick = (uniId, countryName) => {
+  const handleApplyClick = (uniId, uniName, countryName) => {
+    if (language === "en") {
+      ReactGA.event({
+        category: "University Click",
+        action: "Clicked on Apply",
+        label: uniName.en,
+        value: uniId,
+      });
+    }
+
+    if (language === "ar") {
+      ReactGA.event({
+        category: "University Click",
+        action: "Clicked on Apply",
+        label: uniName.ar,
+        value: uniId,
+      });
+    }
+
     addClickData(uniId, "University", countryName); // Add click data with countryName
   };
 
@@ -88,7 +107,7 @@ const CollegeCard = ({ data, loading }) => {
       className={`${
         path === `/${language}/searchresults/university`
           ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
-          : "flex gap-2"
+          : "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:flex "
       }`}
     >
       {data?.map((university, idx) => {
@@ -130,7 +149,7 @@ const CollegeCard = ({ data, loading }) => {
             className={`relative mt-6 border rounded-xl shadow-md bg-white ${
               path === `/${language}/searchresults/university`
                 ? ""
-                : "max-w-sm sm:max-w-md md:max-w-lg"
+                : "max-w-full sm:max-w-md md:max-w-lg"
             } `}
           >
             <div className="p-4 sm:p-6">
@@ -218,7 +237,11 @@ const CollegeCard = ({ data, loading }) => {
             <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
               <button
                 onClick={() =>
-                  handleApplyClick(university._id, university.countryName)
+                  handleApplyClick(
+                    university._id,
+                    university.uniName,
+                    university.countryName
+                  )
                 }
                 className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
               >
@@ -260,7 +283,7 @@ function Univrsiry({ filteredData, loading }) {
         </div>
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
-          <Link to={"/searchresults/AllUniversity"}>
+          <Link to={`/${language}/searchresults/AllUniversity`}>
             <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4 rounded-full">
               {t("viewAll")}
             </button>

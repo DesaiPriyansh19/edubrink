@@ -11,6 +11,11 @@
   "contactUs": "Contact Us",
   "results": "Results",
   "courses": "Courses",
+  "countries": "Countries",
+  "about": "About",
+
+  "search_placeholder": "Search for courses",
+
   "universities": "Universities",
   "articles": "Articles",
   "filters": "Filters",
@@ -140,6 +145,22 @@
   "recentBlog": {
     "title": "📑 Recent blog",
     "description": "Stay informed with our study abroad blog, featuring expert tips, destination guides, student experiences, and the latest updates on scholarships, visas."
+  },
+  "blog_resources": {
+    "title": "📑 Blog and resources",
+    "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities."
+  },
+
+  "explore_courses": {
+    "title": "Explore top courses with your favourite destination",
+    "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
+    "popular_courses": "📚 Popular Courses"
+  },
+
+  "explore_university": {
+    "title": "Explore universities with worldwide destinations",
+    "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
+    "top_university": "🌎 Top University"
   },
 
   "findCourses": {

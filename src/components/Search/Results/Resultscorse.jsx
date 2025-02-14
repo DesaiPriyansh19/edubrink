@@ -41,7 +41,7 @@ function ResultsCorses({ loading, filteredData }) {
               {t("ourCourseSection.description")}
             </p>
           </div>
-          <Link to={"/searchresults/Allcorse"}>
+          <Link to={`/${language}/searchresults/Allcorse`}>
             <button className="hidden sm:block shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
               {t("viewAll")}
             </button>

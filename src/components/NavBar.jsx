@@ -256,15 +256,22 @@ const NavBar = () => {
             </h2>{" "}
           </div>
 
-          <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative">
+          <div
+            dir={language === "ar" ? "rtl" : "ltl"}
+            className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative"
+          >
             <Link to={`/${language}/searchresults`}>
-              <div className="md:w-6 md:h-6 mr-2">
+              <div
+                className={`md:w-6 md:h-6 ${
+                  language === "ar" ? "ml-2" : "mr-2"
+                }`}
+              >
                 <Search />
               </div>
             </Link>
             <input
               type="text"
-              placeholder="Search for courses"
+              placeholder={t("search_placeholder")}
               value={searchState.searchTerm}
               onChange={handleSearchInput}
               onKeyDown={handleKeyDown} // Add the keydown event handler
@@ -344,7 +351,7 @@ const NavBar = () => {
               <div className="flex items-center space-x-1 bg-white  hover:text-black hover:font-[20rem] text-gray-800">
                 <p>
                   {" "}
-                  <span className="bg-white font-medium">Courses</span>
+                  <span className="bg-white font-medium">{t("courses")}</span>
                 </p>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -368,7 +375,7 @@ const NavBar = () => {
                 className="flex items-center space-x-1 cursor-pointer bg-white text-gray-800"
                 onClick={handleClick}
               >
-                <span className=" font-medium bg-white">Countries</span>
+                <span className=" font-medium bg-white">{t("countries")}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -392,7 +399,7 @@ const NavBar = () => {
                 className="flex items-center space-x-1 bg-white text-gray-800"
               >
                 <span className=" bg-white font-medium ">
-                  <Link to={`/${language}/about`}>About</Link>
+                  <Link to={`/${language}/about`}>{t("about")}</Link>
                 </span>
               </button>
               {showAboutDropdown && (
