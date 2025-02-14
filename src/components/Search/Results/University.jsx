@@ -19,25 +19,20 @@ const CollegeCard = ({ data, loading }) => {
   const { addClickData } = useAnalysis();
 
   const handleApplyClick = (uniId, uniName, countryName) => {
-    if (language === "en") {
-      ReactGA.event({
-        category: "University Click",
-        action: "Clicked on Apply",
-        label: uniName.en,
-        value: uniId,
-      });
-    }
+    if (!window.gtag) return; // Prevent errors if GA4 isn't loaded
 
-    if (language === "ar") {
-      ReactGA.event({
-        category: "University Click",
-        action: "Clicked on Apply",
-        label: uniName.ar,
-        value: uniId,
-      });
-    }
+    // Get the correct language label
+    const uniLabel = language === "ar" ? uniName.ar : uniName.en;
 
-    addClickData(uniId, "University", countryName); // Add click data with countryName
+    // Track event in GA4
+    ReactGA.event("Clicked on Apply", {
+      category: "University Click",
+      label: uniLabel, // University name in the correct language
+      value: uniId,
+    });
+
+    // Store click data in your backend
+    addClickData(uniId, "University", countryName);
   };
 
   const handleNavigate = (uniname) => {
