@@ -202,6 +202,10 @@ export default function AddUniversities({
                 variant={1}
                 options={[
                   {
+                    value: "",
+                    label: "Select University Type (حدد نوع الجامعة)",
+                  },
+                  {
                     value: "public",
                     label: "Public (عام)",
                   },
@@ -284,6 +288,10 @@ export default function AddUniversities({
                 onChange={handleInputChange}
                 variant={1}
                 options={[
+                  {
+                    value: "",
+                    label: "Select Study Level (حدد مستوى الدراسة)",
+                  },
                   {
                     value: "UnderGraduate",
                     label: "UnderGraduate (المرحلة الجامعية)",
@@ -373,7 +381,7 @@ export default function AddUniversities({
           <div className="flex w-full gap-4 justify-between">
             <div className="mb-4 w-full">
               <InputField
-                label="University Discount (Enlgish)"
+                label="University Discount (Engish)"
                 type="text"
                 name="uniDiscount.en"
                 placeholder="Enter discount details"
