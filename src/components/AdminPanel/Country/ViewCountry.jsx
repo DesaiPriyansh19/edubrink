@@ -33,7 +33,7 @@ export default function ViewCountry({ loading, handleEdit, data }) {
           onClick={() => handleEdit("Add")}
           className="bg-red-500 text-white h-8 px-5 rounded"
         >
-          Add New University
+          Add New Country
         </button>
       </div>
       <div className="overflow-x-auto">

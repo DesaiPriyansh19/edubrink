@@ -31,10 +31,8 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("GA4 Page View Tracked:", location.pathname); // Debugging log
     trackPageView(location.pathname);
   }, [location.pathname]);
-
 
   return (
     <LanguageProvider>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import useFetch from "../../../hooks/useFetch";
 
 export default function ManagePeoples() {
   const [selectedPeople, setSelectedPeople] = useState([]);
+  const { data } = useFetch("https://edu-brink-backend.vercel.app/api/users");
+  console.log(data);
 
   const people = [
     { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
@@ -42,11 +45,9 @@ export default function ManagePeoples() {
                       setSelectedPeople(people.map((person) => person.id));
                     }
                   }}
-                >{
-                  selectedPeople.length === people.length
-                    ? "-"
-                    : "+"
-                }</div>
+                >
+                  {selectedPeople.length === people.length ? "-" : "+"}
+                </div>
               </th>
               <th className="px-4 py-2">No</th>
               <th className="px-4 py-2">Name</th>
@@ -58,7 +59,7 @@ export default function ManagePeoples() {
             {people.map((person) => (
               <tr
                 key={person.id}
-                onClick={()=>handleCheckboxChange(person.id)}
+                onClick={() => handleCheckboxChange(person.id)}
                 className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${
                   selectedPeople.includes(person.id) ? "bg-gray-700" : ""
                 }`}
@@ -71,11 +72,9 @@ export default function ManagePeoples() {
                         : "bg-transparent"
                     }`}
                     onClick={() => handleCheckboxChange(person.id)}
-                  >{
-                    selectedPeople.includes(person.id)
-                      ? "-"
-                      : "+"
-                  }</div>
+                  >
+                    {selectedPeople.includes(person.id) ? "-" : "+"}
+                  </div>
                 </td>
                 <td className="px-4 py-2">{person.id}</td>
                 <td className="px-4 py-2">{person.name}</td>
