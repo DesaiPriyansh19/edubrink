@@ -16,6 +16,9 @@ const CarouselSection = () => {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const handleNavigate = (name) => {
+    navigate(`/${language}/country/${name}`);
+  };
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["countries"],
