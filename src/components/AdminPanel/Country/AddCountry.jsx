@@ -162,7 +162,7 @@ export default function AddCountry({
             {" "}
             <p className="text-xl font-semibold uppercase ">Add Country</p>
             <p className=" text-sm text-gray-200">
-              Add Your Univeristy Portfolio
+              Add Your Country To Your Portfolio
             </p>
           </div>
           <div className="flex gap-4">

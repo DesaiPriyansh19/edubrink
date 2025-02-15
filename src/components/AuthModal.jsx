@@ -40,7 +40,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           `https://edu-brink-backend.vercel.app/api/users/login`,
           userData
         );
-        console.log("Login successful:", response.data);
+        console.log("Login successful:", response);
 
         if (response.data.data.status) {
           setOtpVerification(true);
