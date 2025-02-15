@@ -12,6 +12,8 @@ import OurCourses from './OurCourses';
 import FindCourses from './FindCourses';
 import RecentBlog from './RecentBlog';
 import ContactSection from '../ContactSection';
+import BreadCrumbsLink from '../../../utils/BreadCrumbsLink';
+
 
 function HomePage() {
   // Initialize AOS
@@ -25,7 +27,9 @@ function HomePage() {
   }, []);
 
   return (
+    <>
     <div className="space-y-12">
+   
       <div data-aos="fade-in" data-aos-delay="150">
         <Discover />
       </div>
@@ -64,7 +68,7 @@ function HomePage() {
       <div data-aos="fade-up" data-aos-delay="200">
       <ContactSection/>
       </div>
-    </div>
+    </div></>
   );
 }
 
