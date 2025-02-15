@@ -6,8 +6,9 @@ import EditBlogs from "./EditBlogs";
 
 export default function BlogsCRUD() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const baseUrl = `https://edu-brink-backend.vercel.app/api/blog`;
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/blog?admin=true`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
+
   const initialFormData = {
     blogTitle: {
       en: "",

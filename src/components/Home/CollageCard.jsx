@@ -195,7 +195,12 @@ const CollegeCarousel = () => {
           }`}
         >
           {data?.map((college) => (
-            <CollegeCard key={college._id} college={college} />
+            <CollegeCard
+              key={`${college._id}-${
+                college.countryName?.en || college.countryName?.ar
+              }`}
+              college={college}
+            />
           ))}
         </div>
       </div>

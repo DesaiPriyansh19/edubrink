@@ -55,25 +55,39 @@ export default function AddCountry({
     handleUniversity();
   }, []);
 
-  const filteredUniversities = addUniversity?.filter(
-    (university) =>
-      university.uniName.en
-        .toLowerCase()
-        .includes(searchInput?.univername?.toLowerCase()) ||
-      university.uniName.ar
-        .toLowerCase()
-        .includes(searchInput?.univername?.toLowerCase())
-  );
+  const filteredUniversities = addUniversity
+    ?.filter(
+      (university) =>
+        university.uniName.en
+          .toLowerCase()
+          .includes(searchInput?.univername?.toLowerCase()) ||
+        university.uniName.ar
+          .toLowerCase()
+          .includes(searchInput?.univername?.toLowerCase())
+    )
+    .reduce((unique, uni) => {
+      if (!unique.some((u) => u._id === uni._id)) {
+        unique.push(uni);
+      }
+      return unique;
+    }, []);
 
-  const filteredBlogs = addBlog?.filter(
-    (university) =>
-      university.blogTitle.en
-        .toLowerCase()
-        .includes(searchInput?.blogname?.toLowerCase()) ||
-      university?.blogTitle?.ar
-        .toLowerCase()
-        .includes(searchInput?.blogname?.toLowerCase())
-  );
+  const filteredBlogs = addBlog
+    ?.filter(
+      (blog) =>
+        blog.blogTitle.en
+          .toLowerCase()
+          .includes(searchInput?.blogname?.toLowerCase()) ||
+        blog.blogTitle.ar
+          .toLowerCase()
+          .includes(searchInput?.blogname?.toLowerCase())
+    )
+    .reduce((unique, blog) => {
+      if (!unique.some((b) => b._id === blog._id)) {
+        unique.push(blog);
+      }
+      return unique;
+    }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,7 +108,6 @@ export default function AddCountry({
 
     handleEdit("View");
   };
-
   const handleAddItem = (itemType, filteredItems) => {
     if (searchInput[itemType] !== "" && searchInput.id !== "") {
       const selectedItem = filteredItems.find(
@@ -119,9 +132,10 @@ export default function AddCountry({
   };
 
   const handleRemoveItem = (itemType, index) => {
+    const itemPlural = itemType === "univername" ? "universities" : "blog";
     setFormData((prevData) => ({
       ...prevData,
-      [itemType + "s"]: prevData[itemType + "s"].filter((_, i) => i !== index),
+      [itemPlural]: prevData[itemPlural].filter((_, i) => i !== index),
     }));
   };
 

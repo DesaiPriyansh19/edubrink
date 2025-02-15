@@ -68,7 +68,8 @@ function OurCourses() {
           const imageIndex = index % images.length;
           return (
             <div
-              key={course._id}
+            key={`${course._id}-${course.countryNameEn || course.countryNameAr}`} // Unique key
+
               className={`sm:min-w-[397px] w-full flex ${
                 index % 2 == 0 ? "flex-col" : "flex-col-reverse"
               } justify-between p-6 rounded-3xl shadow-md`}
