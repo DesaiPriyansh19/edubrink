@@ -8,6 +8,7 @@ export default function UniCRUD() {
   const API_URL = import.meta.env.VITE_API_URL;
   const baseUrl = `https://edu-brink-backend.vercel.app/api/university`;
   const { data, loading, updateById, addNew, deleteById } = useApiData(baseUrl);
+  const [validationErrors, setValidationErrors] = useState({});
   const initialFormData = {
     id: "",
     uniName: {
@@ -82,8 +83,8 @@ export default function UniCRUD() {
     },
   };
 
-  const [editData, setEditData] = useState({ type: "View", id: null });
   const [formData, setFormData] = useState(initialFormData);
+  const [editData, setEditData] = useState({ type: "View", id: null });
   const [filteredData, setFilteredData] = useState([]);
 
   const handleEdit = (type, id) => {
@@ -199,6 +200,15 @@ export default function UniCRUD() {
         [name]: type === "checkbox" ? checked : value,
       };
     });
+
+    setValidationErrors((prevErrors) => {
+      if (prevErrors[name]) {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name]; // Remove the error for this field
+        return updatedErrors;
+      }
+      return prevErrors;
+    });
   };
 
   const handleMainPhotoChange = (index, field, value) => {
@@ -234,6 +244,8 @@ export default function UniCRUD() {
           addNew={addNew}
           setFormData={setFormData}
           formData={formData}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           handleInputChange={handleInputChange}
           handleMainPhotoChange={handleMainPhotoChange}
           initialFormData={initialFormData}

@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import uninav from "../assets/UniNav.png";
-import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
-function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
+function DropdowneCourses({ data, setShowCoursesDropdown, navbarHeight }) {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
   const { language } = useLanguage();
@@ -18,10 +16,6 @@ function DropdowneCourses({ setShowCoursesDropdown, navbarHeight }) {
       once: true, // Run animation only once
     });
   }, []);
-
-  const { data, loading, error } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
-  );
 
   const handleNavigate = (link) => {
     navigate(`${language}/courses/${link}`);

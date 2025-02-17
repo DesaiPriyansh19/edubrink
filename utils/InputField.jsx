@@ -1,5 +1,3 @@
-import React from "react";
-
 const InputField = ({
   label,
   type = "text",
@@ -17,6 +15,7 @@ const InputField = ({
   checked,
   multiple = false,
   rows = 4, // Default rows for textarea
+  error, // Accept error prop
 }) => {
   const variants = [
     {
@@ -32,12 +31,16 @@ const InputField = ({
       inputClassName: "accent-zinc-900 border border-white",
     },
   ];
+
+  // Determine the class names for the label and input field based on the error
   const { labelClassName, inputClassName } = variants[variant];
+  const errorClass = error ? "text-red-500" : "";
+  const inputErrorClass = error ? "border-red-500" : "";
 
   if (type === "select") {
     return (
       <div className="h-full mb-2 relative">
-        <label htmlFor={name} className={labelClassName}>
+        <label htmlFor={name} className={`${labelClassName} ${errorClass}`}>
           {label}
         </label>
         <select
@@ -46,7 +49,7 @@ const InputField = ({
           onChange={onChange}
           style={{
             backgroundColor: "#1f2937", // Tailwind bg-gray-800
-            borderBottom: "1px solid white", // Tailwind border-white
+            borderBottom: errorClass ? "1px solid red" : "1px solid white", // Tailwind border-white
             borderRadius: "0px", // Tailwind border-radius
             color: "white", // Tailwind text-white
             appearance: "none", // Tailwind appearance-none
@@ -54,7 +57,7 @@ const InputField = ({
             width: "100%", // Tailwind width
             paddingRight: "2rem", // Adding extra padding for arrow icon
           }}
-          className={`${inputClassName} `}
+          className={`${inputClassName}  `}
           required={required}
           multiple={multiple}
         >
@@ -90,6 +93,7 @@ const InputField = ({
       </div>
     );
   }
+
   if (type === "checkbox") {
     return (
       <div className="flex gap-2 justify-between items-center mb-2">
@@ -100,7 +104,7 @@ const InputField = ({
           <input
             type={type}
             name={name}
-            className="appearance-none border-2 cursor-pointer  border-gray-300 bg-transparent w-full h-full rounded"
+            className={`appearance-none border-2 cursor-pointer border-gray-300 bg-transparent w-full h-full rounded ${inputErrorClass}`}
             checked={checked}
             onChange={onChange}
           />
@@ -123,10 +127,11 @@ const InputField = ({
       </div>
     );
   }
+
   if (type === "textarea") {
     return (
       <div>
-        <label htmlFor={name} className={labelClassName}>
+        <label htmlFor={name} className={`${labelClassName} ${errorClass}`}>
           {label}
         </label>
         <textarea
@@ -136,7 +141,7 @@ const InputField = ({
           disabled={disabled}
           onChange={onChange}
           rows={rows}
-          className={`${inputClassName} resize-none`} // Prevent resize for consistent UI
+          className={`${inputClassName} resize-none ${inputErrorClass}`} // Prevent resize for consistent UI
           required={required}
         ></textarea>
       </div>
@@ -145,7 +150,7 @@ const InputField = ({
 
   return (
     <div className="mb-2">
-      <label htmlFor={name} className={labelClassName}>
+      <label htmlFor={name} className={`${labelClassName} ${errorClass}`}>
         {label}
       </label>
       <input
@@ -157,7 +162,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}
-        className={inputClassName}
+        className={`${inputClassName} ${errorClass} ${inputErrorClass}`}
         required={required}
       />
     </div>

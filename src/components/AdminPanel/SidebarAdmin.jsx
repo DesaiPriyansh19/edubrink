@@ -110,7 +110,7 @@ export default function SidebarAdmin() {
           ))}
         </div>
 
-        <div
+        {/* <div
           className={`absolute w-full flex ${
             conMaxWidth === 72 ? "justify-center" : "justify-between"
           } items-center h-auto bottom-8`}
@@ -128,7 +128,7 @@ export default function SidebarAdmin() {
             <p className="mb-1 font-medium">test gmail</p>
             <p className="text-xs">test@gmail.com</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

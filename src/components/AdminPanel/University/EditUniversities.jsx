@@ -66,13 +66,14 @@ export default function EditUniversities({
       },
       onCancel: () => setModal(null), // Close modal
     });
+    setFormData({ ...initialFormData });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
     await updateById(editData.id, formData);
-
+    setFormData({ ...initialFormData });
     handleEdit("View");
   };
 

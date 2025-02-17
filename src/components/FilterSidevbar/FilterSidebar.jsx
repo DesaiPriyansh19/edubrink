@@ -17,6 +17,7 @@ import solvia from "../../assets/Flags/UKFlag.png";
 import spain from "../../assets/Flags/UKFlag.png";
 import russia from "../../assets/Flags/RusiaFlag.png";
 import india from "../../assets/Flags/IndiaFlag.png";
+import azer from "../../assets/Flags/azerbaijan.webp";
 import CourseBook from "../../../svg/CourseBook";
 import { useSearch } from "../../../context/SearchContext";
 import ReactSlider from "react-slider";
@@ -117,6 +118,7 @@ const FilterSidebar = ({ setShowFilter, language }) => {
             { name: "Spain", logo: spain },
             { name: "russia", logo: russia },
             { name: "India", logo: india },
+            { name: "Azerbaijan", logo: azer },
           ].map((country) => (
             <div
               key={country.name}

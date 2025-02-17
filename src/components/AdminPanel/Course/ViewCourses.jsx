@@ -10,6 +10,8 @@ export default function ViewCourses({ loading, handleEdit, data }) {
     return <Loader />;
   }
 
+  console.log(data);
+
   return (
     <div className="text-white mx-auto p-4">
       <div className="flex justify-between">
@@ -37,11 +39,11 @@ export default function ViewCourses({ loading, handleEdit, data }) {
               title: "Tuition Fees",
               description: course?.CourseFees, // Use course-specific data
             },
-            {
-              icon: <LanguageLogo width={20} height={20} color={"#ffffff"} />,
-              title: "Language",
-              description: course?.Language || "English", // Fallback to "English" if not available
-            },
+            // {
+            //   icon: <LanguageLogo width={20} height={20} color={"#ffffff"} />,
+            //   title: "Language",
+            //   description: course?.Language || "English", // Fallback to "English" if not available
+            // },
             {
               icon: <DollerRounded width={20} height={20} color={"#ffffff"} />,
               title: "Deadline",
@@ -64,26 +66,26 @@ export default function ViewCourses({ loading, handleEdit, data }) {
               <div>
                 <div className="flex flex-col items-start justify-between mt-6 sm:mt-2 mb-6 md:mb-3">
                   <div className="flex gap-4 px-4 pt-4 pb-2 w-full items-start">
-                    <div className="w-11 h-11 border p-1 rounded-full">
+                    {/* <div className="w-11 h-11 border p-1 rounded-full">
                       <img
-                        src={UniversityChicago} // Update with course-specific image if available
+                        src={"https://placehold.co/20x20" || UniversityChicago} // Update with course-specific image if available
                         alt="College Logo"
-                        className="w-full h-full"
+                        className="w-full h-full rounded-full"
                       />
-                    </div>
+                    </div> */}
                     <p className="text-lg max-w-60 leading-6 font-semibold">
                       {course?.CourseName?.en}
                     </p>
                   </div>
                   <div className="px-4 mb-2">
-                    <p className="text-[.8rem] max-w-52 font-medium text-white flex items-center ">
+                    {/* <p className="text-[.8rem] max-w-52 font-medium text-white flex items-center ">
                       {course?.Institution || "Unknown Institution"}
                     </p>
                     <div className="flex items-center">
                       <span className="w-5 h-5 rounded-full mr-1">
                         <Master color={"#ffffff"} />
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="flex p-2 flex-wrap gap-5 items-center sm:gap-3 justify-start">
                     {features.map((feature, featureIndex) => (

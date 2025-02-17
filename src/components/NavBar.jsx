@@ -37,6 +37,10 @@ const NavBar = () => {
   const { data, loading } = useFetch(
     `https://edu-brink-backend.vercel.app/api/keyword`
   );
+
+  const { data: CoursesData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
+  );
   const navigate = useNavigate();
   const keywords = data || [];
 
@@ -486,6 +490,7 @@ const NavBar = () => {
       )}
       {showCoursesDropdown && (
         <DropdowneCourses
+          data={CoursesData}
           setShowCoursesDropdown={setShowCoursesDropdown}
           navbarHeight={navbarHeight}
         />

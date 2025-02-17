@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import UploadWidget from "../../../../utils/UploadWidget";
 import InputField from "../../../../utils/InputField";
 import axios from "axios";
+import validationSchema from "./ValidationUniversity";
 
 export default function AddUniversities({
   addNew,
   formData,
   handleEdit,
+  validationErrors,
+  setValidationErrors,
   setFormData,
   handleMainPhotoChange,
   handleInputChange,
@@ -21,10 +24,13 @@ export default function AddUniversities({
   });
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: 11 }, (_, i) => ({
-    value: `${currentYear + i}`,
-    label: `${currentYear + i}`,
-  }));
+  const yearOptions = [
+    { value: "", label: "Select Year (اختر السنة)" }, // Default option
+    ...Array.from({ length: 12 }, (_, i) => ({
+      value: `${currentYear + i}`,
+      label: `${currentYear + i}`,
+    })),
+  ];
   useEffect(() => {
     const handleCourses = async () => {
       try {
@@ -53,15 +59,30 @@ export default function AddUniversities({
   );
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedFormData = {
-      ...formData,
 
-      courseId: formData.courseId.map((course) => course._id),
-    };
-    console.log(updatedFormData);
-    await addNew(formData);
-    setFormData(initialFormData);
-    handleEdit("View");
+    try {
+      // Validate formData using Yup
+      await validationSchema.validate(formData, { abortEarly: false });
+
+      // Process formData before submitting (map courseId, etc.)
+      const updatedFormData = {
+        ...formData,
+        courseId: formData.courseId.map((course) => course._id),
+      };
+
+      await addNew(updatedFormData);
+      setFormData({ ...initialFormData });
+      handleEdit("View");
+    } catch (err) {
+      if (err.inner) {
+        const formattedErrors = err.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+
+        setValidationErrors(formattedErrors);
+      }
+    }
   };
 
   const handleAddItem = (filteredItems) => {
@@ -176,6 +197,7 @@ export default function AddUniversities({
                 placeholder="University Name (English)"
                 value={formData.uniName.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniName.en"]}
                 autoComplete="uniName"
                 variant={1}
               />
@@ -188,6 +210,7 @@ export default function AddUniversities({
                 placeholder="اسم الجامعة (عربي)"
                 value={formData.uniName.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniName.ar"]}
                 autoComplete="uniName"
                 variant={1}
               />
@@ -198,6 +221,7 @@ export default function AddUniversities({
                 type="select"
                 name="uniType"
                 value={formData.uniType}
+                error={validationErrors?.uniType}
                 onChange={handleInputChange}
                 variant={1}
                 options={[
@@ -257,6 +281,7 @@ export default function AddUniversities({
                 type="select"
                 name="scholarshipAvailability"
                 value={formData.scholarshipAvailability}
+                error={validationErrors?.scholarshipAvailability}
                 onChange={handleInputChange}
                 variant={1}
                 options={[
@@ -271,6 +296,7 @@ export default function AddUniversities({
                 type="select"
                 name="entranceExamRequired"
                 value={formData.entranceExamRequired}
+                error={validationErrors?.entranceExamRequired}
                 onChange={handleInputChange}
                 variant={1}
                 options={[
@@ -284,8 +310,9 @@ export default function AddUniversities({
                 label="Study Level  (مستوى الدراسة)"
                 type="select"
                 name="studyLevel"
-                value={formData.studyLevel}
+                value={formData.studyLevel || ""}
                 onChange={handleInputChange}
+                error={validationErrors?.studyLevel}
                 variant={1}
                 options={[
                   {
@@ -313,10 +340,12 @@ export default function AddUniversities({
                 label="Intake Month (شهر التناول)"
                 type="select"
                 name="inTakeMonth"
-                value={formData.inTakeYear}
+                value={formData.inTakeMonth || ""}
                 onChange={handleInputChange}
+                error={validationErrors?.inTakeMonth}
                 variant={1}
                 options={[
+                  { value: "", label: "Select Month (اختر الشهر)" },
                   { value: "January", label: "January (يناير)" },
                   { value: "February", label: "February (فبراير)" },
                   { value: "March", label: "March (مارس)" },
@@ -337,8 +366,9 @@ export default function AddUniversities({
                 label="Intake Year  (سنة القبول)"
                 type="select"
                 name="inTakeYear"
-                value={formData.inTakeYear}
+                value={formData.inTakeYear || ""}
                 onChange={handleInputChange}
+                error={validationErrors?.inTakeYear}
                 variant={1}
                 options={yearOptions}
               />
@@ -353,6 +383,7 @@ export default function AddUniversities({
                 name="uniStartDate"
                 value={formData.uniStartDate}
                 onChange={handleInputChange}
+                error={validationErrors?.uniStartDate}
                 variant={1}
               />
             </div>
@@ -363,6 +394,7 @@ export default function AddUniversities({
                 name="uniDeadline"
                 value={formData.uniDeadline}
                 onChange={handleInputChange}
+                error={validationErrors?.uniDeadline}
                 variant={1}
               />
             </div>
@@ -374,6 +406,7 @@ export default function AddUniversities({
                 placeholder="Enter Duration (أدخل المدة)"
                 value={formData.uniDuration}
                 onChange={handleInputChange}
+                error={validationErrors?.uniDuration}
                 variant={1}
               />
             </div>
@@ -386,6 +419,7 @@ export default function AddUniversities({
                 name="uniDiscount.en"
                 placeholder="Enter discount details"
                 value={formData.uniDiscount.en}
+                error={validationErrors["uniDiscount.en"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -397,6 +431,7 @@ export default function AddUniversities({
                 name="uniDiscount.ar"
                 placeholder="أدخل تفاصيل الخصم"
                 value={formData.uniDiscount.ar}
+                error={validationErrors["uniDiscount.ar"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -416,6 +451,7 @@ export default function AddUniversities({
                 placeholder="Address (English)"
                 value={formData.uniLocation.uniAddress.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniAddress.en"]}
                 variant={1}
               />
               <InputField
@@ -424,6 +460,7 @@ export default function AddUniversities({
                 name="uniLocation.uniAddress.ar"
                 placeholder="عنوان (عربي)"
                 value={formData.uniLocation.uniAddress.ar}
+                error={validationErrors["uniLocation.uniAddress.ar"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -433,6 +470,7 @@ export default function AddUniversities({
                 name="uniLocation.uniCity.en"
                 placeholder="City (English)"
                 value={formData.uniLocation.uniCity.en}
+                error={validationErrors["uniLocation.uniCity.en"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -443,6 +481,7 @@ export default function AddUniversities({
                 placeholder="مدينة (عربي)"
                 value={formData.uniLocation.uniCity.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniCity.ar"]}
                 variant={1}
               />
               <InputField
@@ -452,6 +491,7 @@ export default function AddUniversities({
                 placeholder="State (English)"
                 value={formData.uniLocation.uniState.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniState.en"]}
                 variant={1}
               />
               <InputField
@@ -461,6 +501,7 @@ export default function AddUniversities({
                 placeholder="الدولة (عربي)"
                 value={formData.uniLocation.uniState.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniState.ar"]}
                 variant={1}
               />
 
@@ -471,6 +512,7 @@ export default function AddUniversities({
                 placeholder="Country (English)"
                 value={formData.uniLocation.uniCountry.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniCountry.en"]}
                 variant={1}
               />
               <InputField
@@ -480,6 +522,7 @@ export default function AddUniversities({
                 placeholder="دولة (عربي)"
                 value={formData.uniLocation.uniCountry.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniLocation.uniCountry.ar"]}
                 variant={1}
               />
               <div className="col-span-2">
@@ -490,6 +533,7 @@ export default function AddUniversities({
                   placeholder="Pincode (الرمز السري)"
                   value={formData.uniLocation.uniPincode}
                   onChange={handleInputChange}
+                  error={validationErrors["uniLocation.uniPincode"]}
                   variant={1}
                 />
               </div>
@@ -505,6 +549,7 @@ export default function AddUniversities({
               placeholder="Tuition Fees (الرسوم الدراسية)"
               value={formData.uniTutionFees}
               onChange={handleInputChange}
+              error={validationErrors?.uniTutionFees}
               variant={1}
             />
           </div>
@@ -521,6 +566,7 @@ export default function AddUniversities({
               placeholder="Overview (English)"
               value={formData.uniOverview.en}
               onChange={handleInputChange}
+              error={validationErrors["uniOverview.en"]}
               variant={1}
             />
             <InputField
@@ -530,6 +576,7 @@ export default function AddUniversities({
               placeholder="ملخص (عربي)"
               value={formData.uniOverview.ar}
               onChange={handleInputChange}
+              error={validationErrors["uniOverview.ar"]}
               variant={1}
             />
           </div>
@@ -546,6 +593,7 @@ export default function AddUniversities({
               placeholder="Accommodation (English)"
               value={formData.uniAccomodation.en}
               onChange={handleInputChange}
+              error={validationErrors["uniAccomodation.en"]}
               variant={1}
             />
             <InputField
@@ -554,6 +602,7 @@ export default function AddUniversities({
               name="uniAccomodation.ar"
               placeholder="إقامة (عربي)"
               value={formData.uniAccomodation.ar}
+              error={validationErrors["uniAccomodation.ar"]}
               onChange={handleInputChange}
               variant={1}
             />
@@ -570,15 +619,17 @@ export default function AddUniversities({
               placeholder="Library Description (English)"
               value={formData?.uniLibrary?.libraryDescription?.en}
               onChange={handleInputChange}
+              error={validationErrors["uniLibrary.libraryDescription.en"]}
               variant={1}
             />
             <InputField
               label="وصف المكتبة (عربي)"
-              type="textarea"
+              type="text"
               name="uniLibrary.libraryDescription.ar"
               placeholder="وصف المكتبة (عربي)"
               value={formData?.uniLibrary?.libraryDescription?.ar}
               onChange={handleInputChange}
+              error={validationErrors["uniLibrary.libraryDescription.ar"]}
               variant={1}
             />
             <div className="mb-2">
@@ -673,6 +724,7 @@ export default function AddUniversities({
               placeholder="Sports Description (English)"
               value={formData?.uniSports?.sportsDescription?.en}
               onChange={handleInputChange}
+              error={validationErrors["uniSports.sportsDescription.en"]}
               variant={1}
             />
             <InputField
@@ -682,6 +734,7 @@ export default function AddUniversities({
               placeholder="وصف الرياضة (عربي)"
               value={formData?.uniSports?.sportsDescription?.ar}
               onChange={handleInputChange}
+              error={validationErrors["uniSports.sportsDescription.ar"]}
               variant={1}
             />
             <div className="mb-2">
@@ -773,6 +826,11 @@ export default function AddUniversities({
               placeholder="Lifestyle Description (English)"
               value={formData?.studentLifeStyleInUni?.lifestyleDescription?.en}
               onChange={handleInputChange}
+              error={
+                validationErrors[
+                  "studentLifeStyleInUni.lifestyleDescription.en"
+                ]
+              }
               variant={1}
             />
             <InputField
@@ -782,6 +840,11 @@ export default function AddUniversities({
               placeholder="وصف أسلوب الحياة (عربي)"
               value={formData?.studentLifeStyleInUni?.lifestyleDescription?.ar}
               onChange={handleInputChange}
+              error={
+                validationErrors[
+                  "studentLifeStyleInUni.lifestyleDescription.ar"
+                ]
+              }
               variant={1}
             />
             <div className="mb-2">

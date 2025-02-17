@@ -2,7 +2,6 @@ import React from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { Link, useNavigate } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
-import Skeleton from "react-loading-skeleton"; // Import Skeleton component
 import "react-loading-skeleton/dist/skeleton.css"; // Import CSS for Skeleton
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
