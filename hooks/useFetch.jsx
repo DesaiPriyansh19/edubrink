@@ -15,12 +15,12 @@ export default function useFetch(url) {
     const eduuserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
     const token = eduuserInfo?.token; // Extract the token safely
 
-    if (!token) {
-      console.error("No token found! User may not be authenticated.");
-      setError("Authentication required");
-      setLoading(false);
-      return;
-    }
+    // if (!token) {
+    //   console.error("No token found! User may not be authenticated.");
+    //   setError("Authentication required");
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       const response = await axios.get(url, {

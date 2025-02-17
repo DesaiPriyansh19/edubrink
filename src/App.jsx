@@ -24,6 +24,7 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 import AuthModal from "./components/AuthModal";
 import { NavigateToAdminDashboard } from "../utils/NavigateToAdminDashboard";
 import { trackPageView } from "../utils/google-analytics";
+import Blog from "../src/components/Blog/Blog";
 import MoreInfo from "./components/Blog/Blog";
 
 function App() {
@@ -51,8 +52,9 @@ function App() {
                   element={<ProtectedRoute setIsModalOpen={setIsModalOpen} />}
                 >
                   <Route path="/:lang/about" element={<AboutPage />} />
-                  <Route path="/:lang/blog" element={<MoreInfo/>} />
+                  <Route path="/:lang/blog" element={<MoreInfo />} />
                   <Route path="/:lang/contact" element={<ContactUs />} />
+                  <Route path="/:lang/blog/:slug" element={<Blog />} />
                   <Route
                     path="/:lang/country/:slug"
                     element={<CountryPage />}

@@ -1,6 +1,6 @@
 import React from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
 import Skeleton from "react-loading-skeleton"; // Import Skeleton component
 import "react-loading-skeleton/dist/skeleton.css"; // Import CSS for Skeleton
@@ -9,9 +9,12 @@ import { useTranslation } from "react-i18next";
 
 function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/blog/`
-  );
+  const navigate = useNavigate();
+  const { data, loading } = useFetch(`https://edu-brink-backend.vercel.app/api/blog/`);
+
+  const handleNaviagte = (name, country) => {
+    navigate(`/${language}/blog/${name}?country=${country}`);
+  };
   const { t } = useTranslation();
   const { language } = useLanguage();
   const SkeletonLoader = () => {
@@ -86,7 +89,15 @@ function RecentBlog() {
           {data?.map((card, idx) => (
             <div
               key={idx}
-              className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
+              onClick={() => {
+                handleNaviagte(
+                  language === "ar" ? card?.blogTitle?.ar : card?.blogTitle?.en,
+                  language === "ar"
+                    ? card?.countries[0]?.countryName[0]?.ar
+                    : card?.countries[0]?.countryName[0]?.en
+                );
+              }}
+              className="max-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
               dir={language === "ar" ? "rtl" : "ltr"}
             >
               <div className="h-[55%] w-[100%]">
@@ -99,8 +110,10 @@ function RecentBlog() {
 
               <p className="text-[#E82448] text-sm font-semibold mt-4">
                 {language === "ar"
-                  ? `الدراسة في ${card?.countryName?.ar || "غير متوفر"}`
-                  : `Study in ${card?.countryName?.en || "N/A"}`}
+                  ? `الدراسة في ${
+                      card?.countries[0]?.countryName[0]?.ar || "غير متوفر"
+                    }`
+                  : `Study in ${card?.countries[0]?.countryName[0]?.en || "N/A"}`}
               </p>
 
               <h4 className="font-semibold text-lg text-black mt-2 mb-1">
