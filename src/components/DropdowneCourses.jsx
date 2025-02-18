@@ -26,8 +26,12 @@ function DropdowneCourses({ data, setShowCoursesDropdown, navbarHeight }) {
       <div
         id="divshadow"
         style={{ top: `${navbarHeight}px` }} // Dynamically set top value
-        className="absolute mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%] md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[45vw]  h-auto z-10 flex gap-3  mt-2 
-   bg-[#f8f8f8] rounded-3xl shadow-lg"
+        className={`absolute ${
+          language === "ar"
+            ? " mmd:left-[20%] lg:left-[18%] xl:left-[22%] xlg:left-[19%]"
+            : " mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
+        }   md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[45vw]  h-auto z-10 flex gap-3  mt-2 
+   bg-[#f8f8f8] rounded-3xl shadow-lg`}
         data-aos="fade-out"
         data-aos-delay="0"
         data-aos-duration="300"

@@ -56,10 +56,10 @@ export default function ManagePeoples() {
             </tr>
           </thead>
           <tbody>
-            {people.map((person) => (
+            {data?.map((person, index) => (
               <tr
                 key={person.id}
-                onClick={() => handleCheckboxChange(person.id)}
+                onClick={() => handleCheckboxChange(person._id)}
                 className={`border-b border-gray-600 hover:bg-gray-700 cursor-pointer ${
                   selectedPeople.includes(person.id) ? "bg-gray-700" : ""
                 }`}
@@ -67,19 +67,21 @@ export default function ManagePeoples() {
                 <td className="px-4 py-2">
                   <div
                     className={`w-5 h-5 rounded-md border-2 flex justify-center items-center font-bold border-gray-300 ${
-                      selectedPeople.includes(person.id)
+                      selectedPeople.includes(person._id)
                         ? "bg-white text-[#41a494]"
                         : "bg-transparent"
                     }`}
-                    onClick={() => handleCheckboxChange(person.id)}
+                    onClick={() => handleCheckboxChange(person._id)}
                   >
-                    {selectedPeople.includes(person.id) ? "-" : "+"}
+                    {selectedPeople.includes(person._id) ? "-" : "+"}
                   </div>
                 </td>
-                <td className="px-4 py-2">{person.id}</td>
-                <td className="px-4 py-2">{person.name}</td>
-                <td className="px-4 py-2">{person.email}</td>
-                <td className="px-4 py-2">{person.role}</td>
+                <td className="px-4 py-2">{index + 1}</td>
+                <td className="px-4 py-2">{person?.FullName || "N/A"}</td>
+                <td className="px-4 py-2">{person.Email}</td>
+                <td className="px-4 py-2">
+                  {person.isAdmin === true ? "Admin" : "User"}
+                </td>
               </tr>
             ))}
           </tbody>

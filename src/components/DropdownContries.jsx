@@ -17,13 +17,10 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import useFetch from "../../hooks/useFetch";
 
-function DropdownCountries({ setShowCountriesDropdown, navbarHeight }) {
+function DropdownCountries({ setShowCountriesDropdown, navbarHeight, data }) {
   const navigate = useNavigate();
   const { language } = useLanguage();
 
-  const { data } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryPhotos"
-  );
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -34,27 +31,6 @@ function DropdownCountries({ setShowCountriesDropdown, navbarHeight }) {
     });
   }, []);
 
-  // Country data
-
-  // const countries = [
-  //   { label: "United States of America", name: "United States", flag: usa },
-  //   { label: "Germany", name: "Germany", flag: germny },
-  //   {
-  //     label: "United Arab Emirates",
-  //     name: "United Arab Emirates",
-  //     flag: Unitedarap,
-  //   },
-  //   { label: "Canada", name: "Canada", flag: canada },
-  //   { label: "United Arab Emirates", name: "United Arab Emirates", flag: uae },
-  //   { label: "Switzerland", name: "Switzerland", flag: swizrland },
-  //   { label: "India", name: "India", flag: india },
-  //   { label: "Bangladesh", name: "Bangladesh", flag: bangladesh },
-  //   { label: "Nigeria", name: "Nigeria", flag: nigeria },
-  //   { label: "New Zealand", name: "New Zealand", flag: newzealand },
-  //   { label: "Denmark", name: "Denmark", flag: denmark },
-  //   { label: "Australia", name: "Australia", flag: australia },
-  // ];
-
   const handleNavigate = (name) => {
     navigate(`${language}/country/${name}`);
     setShowCountriesDropdown(false);
@@ -64,7 +40,11 @@ function DropdownCountries({ setShowCountriesDropdown, navbarHeight }) {
     <div
       id="divshadow"
       style={{ top: `${navbarHeight}px` }} // Dynamically set top value
-      className="absolute right-[10%]  px-3 py-3 mmd:w-[38vw]  2xl:w-[28%] 2xl:right-[15%] h-auto z-10 mt-2 bg-white rounded-3xl shadow-lg"
+      className={`absolute ${
+        language === "ar"
+          ? "left-[10%] 2xl:left-[15%]"
+          : "right-[10%] 2xl:right-[15%]"
+      }    px-3 py-3 mmd:w-[38vw]  2xl:w-[28%]  h-auto z-10 mt-2 bg-white rounded-3xl shadow-lg`}
       data-aos="fade-out"
       data-aos-delay="0"
       data-aos-duration="300"

@@ -257,6 +257,8 @@ export default function UniCRUD() {
           handleEdit={handleEdit}
           setFormData={setFormData}
           updateById={updateById}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           editData={editData}
           initialFormData={initialFormData}
           deleteById={deleteById}

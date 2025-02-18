@@ -21,7 +21,7 @@ import azer from "../../assets/Flags/azerbaijan.webp";
 import CourseBook from "../../../svg/CourseBook";
 import { useSearch } from "../../../context/SearchContext";
 import ReactSlider from "react-slider";
-const FilterSidebar = ({ setShowFilter, language }) => {
+const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
   // Initialize AOS
   useEffect(() => {
     AOS.init({
@@ -79,7 +79,7 @@ const FilterSidebar = ({ setShowFilter, language }) => {
       data-aos-duration="300"
       data-aos-easing="ease-in-out"
       dir={language === "ar" ? "rtl" : "ltr"}
-      className="fixed text-sm right-0 top-0 pb-48 mmd:pb-5 h-full w-[100%] 
+      className="fixed text-sm right-0 top-0 md:pb-48 mmd:pb-5 h-full w-[100%] 
       sm:w-[80%] md:w-[44%] xl:w-[30%] bg-[#F9FAFB] shadow-lg p-6 z-50 overflow-y-auto"
     >
       {/* Header */}
@@ -397,7 +397,10 @@ const FilterSidebar = ({ setShowFilter, language }) => {
           >
             Reset Filter
           </button>
-          <button className="px-4 py-2 w-[50%] text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] ">
+          <button
+            onClick={() => setShowFilter(!showFilter)}
+            className="px-4 py-2 w-[50%] text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] "
+          >
             Show All Courses
           </button>
         </div>

@@ -134,6 +134,9 @@
       }
     ]
   },
+  "BlogInnerPage": {
+    "Intro": "مقدمة:"
+  },
 
   "ourCourseSection": {
     "title": "دوراتنا",

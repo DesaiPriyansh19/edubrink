@@ -40,6 +40,7 @@ export default function CourseCRUD() {
   const [formData, setFormData] = useState(initialFormData);
   const [showDropdown, setShowDropdown] = useState(false);
   const [addTags, setAddtags] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({});
   const [searchInput, setSearchInput] = useState({
     id: "",
     TagName: "",
@@ -95,6 +96,15 @@ export default function CourseCRUD() {
 
     // Update formData state with the new temp object
     setFormData(temp);
+
+    setValidationErrors((prevErrors) => {
+      if (prevErrors[name]) {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name]; // Remove the error for this field
+        return updatedErrors;
+      }
+      return prevErrors;
+    });
   };
 
   const addArray = (arrayName) => {
@@ -186,6 +196,8 @@ export default function CourseCRUD() {
           initialFormData={initialFormData}
           addArray={addArray}
           removeArray={removeArray}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           handleRemoveItem={handleRemoveItem}
           handleAddItem={handleAddItem}
           filteredTags={filteredTags}
@@ -203,6 +215,8 @@ export default function CourseCRUD() {
           updateById={updateById}
           editData={editData}
           initialFormData={initialFormData}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           deleteById={deleteById}
           addArray={addArray}
           removeArray={removeArray}

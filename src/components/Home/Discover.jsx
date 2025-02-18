@@ -12,7 +12,7 @@ function Discover() {
   const { t } = useTranslation();
   return (
     <section
-      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[65vh] sm:h-[70vh] md:h-[450px] relative overflow-hidden"
+      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[36vh] sm:h-[50vh] md:h-[450px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",

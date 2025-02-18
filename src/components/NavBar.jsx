@@ -20,8 +20,15 @@ import { filter } from "framer-motion/client";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
-  const { setFilterProp, filterProp, setSearchState, searchState } =
-    useSearch();
+  const {
+    setFilterProp,
+    filterProp,
+    setSearchState,
+    searchState,
+    setSumData,
+    sumData,
+    initialState,
+  } = useSearch();
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
@@ -40,6 +47,10 @@ const NavBar = () => {
 
   const { data: CoursesData } = useFetch(
     `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
+  );
+
+  const { data: CountryData } = useFetch(
+    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryPhotos"
   );
   const navigate = useNavigate();
   const keywords = data || [];
@@ -230,6 +241,20 @@ const NavBar = () => {
     setShowFlagsDropdown(false); // Close dropdown
   };
 
+  const countActiveFilters = () => {
+    let count = 0;
+    Object.keys(filterProp).forEach((key) => {
+      if (
+        JSON.stringify(filterProp[key]) !== JSON.stringify(initialState[key])
+      ) {
+        count++;
+      }
+    });
+    return count;
+  };
+
+  const activeFilters = countActiveFilters();
+
   useEffect(() => {
     if (
       searchState.filteredResults.length > 0 &&
@@ -244,7 +269,10 @@ const NavBar = () => {
 
   return (
     <>
-      <div className="w-full  my-3 h-auto sticky mmd:static top-0 z-30  bg-[#F8F8F8] mmd:bg-transparent">
+      <div
+        dir={language === "ar" ? "rtl" : "ltl"}
+        className="w-full  my-3 h-auto sticky mmd:static top-0 z-30  bg-[#F8F8F8] mmd:bg-transparent"
+      >
         <nav
           id="navbar"
           className="sticky mmd:static top-0 z-30 flex py-4 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-3xl shadow-md"
@@ -313,7 +341,7 @@ const NavBar = () => {
           </div>
 
           {/* Contry Dropdown in sm devices */}
-          <div className="absolute right-1 flex justify-end gap-1 items-center  mmd:hidden">
+          <div className={`absolute ${language==="ar"?"left-1":"right-1"}  flex justify-end gap-1 items-center  mmd:hidden`}>
             {/* Search Bar */}
             <div
               className="h-auto bg-[#F8F8F8] rounded-full w-auto p-2"
@@ -461,7 +489,11 @@ const NavBar = () => {
         <ul
           id="divshadow"
           style={{ top: `${navbarHeight}px` }} // Dynamically set top value
-          className="fixed mmd:absolute z-10 right-[3%] mmd:right-[15%] overflow-hidden  mt-2 w-40 bg-white border rounded-2xl shadow-lg"
+          className={`fixed mmd:absolute z-30 right-[3%] ${
+            language === "ar"
+              ? "left-[3%] mmd:left-[15%]"
+              : "right-[3%] mmd:right-[15%]"
+          }  mmd:right-[15%] overflow-hidden  mt-2 w-40 bg-white border rounded-2xl shadow-lg`}
         >
           <li
             className="cursor-pointer flex items-center  px-4 py-2 hover:bg-gray-100"
@@ -484,6 +516,7 @@ const NavBar = () => {
 
       {showCountriesDropdown && (
         <DropdownContries
+          data={CountryData}
           setShowCountriesDropdown={setShowCountriesDropdown}
           navbarHeight={navbarHeight}
         />
@@ -502,23 +535,65 @@ const NavBar = () => {
       {isSearchOpen && (
         <div
           id="divshadow"
-          className=" w-[95%] mx-auto mb-5   flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[36%]"
+          dir={language === "ar" ? "rtl" : "ltl"}
+          className=" w-[95%] mx-auto mb-5   flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[0%]"
         >
           <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
-            <div className=" mr-2 ">
-              <Search />
-            </div>
+            <Link to={`/${language}/searchresults`}>
+              <div
+                className={`md:w-6 md:h-6 ${
+                  language === "ar" ? "ml-2" : "mr-2"
+                }`}
+              >
+                <Search />
+              </div>
+            </Link>
             <input
               type="text"
-              placeholder="Search for courses"
+              placeholder={t("search_placeholder")}
+              value={searchState.searchTerm}
+              onChange={handleSearchInput}
+              onKeyDown={handleKeyDown} // Add the keydown event handler
+              ref={inputRef} // Assign ref to the input field
               className="bg-transparent  text-start outline-none text-black w-full"
             />
+            {searchState.searchTerm &&
+              searchState.filteredResults.length > 0 && (
+                <div
+                  ref={dropdownRef}
+                  className="fixed bg-white shadow-md text-left top-[150px]  mx-auto rounded-md mt-2 max-h-60 w-[80%] overflow-y-auto z-10"
+                >
+                  {searchState.filteredResults.map((item, index) => {
+                    // Function to highlight and bold the keystroke in the keyword
+                    const highlightedKeyword = item.keyword.replace(
+                      new RegExp(`(${searchState.searchTerm})`, "gi"),
+                      (match) => `<span class="font-bold">${match}</span>` // Bold and highlighted
+                    );
+
+                    return (
+                      <div
+                        key={index}
+                        className={`p-4 cursor-pointer border-b ${getItemClass(
+                          index
+                        )}`}
+                        dangerouslySetInnerHTML={{ __html: highlightedKeyword }} // Render the HTML with highlighted keyword
+                        onClick={() => handleSelectTerm(item)} // Pass both keyword and type to handleSelectTerm
+                      />
+                    );
+                  })}
+                </div>
+              )}
           </div>
           <div
-            className="h-auto w-auto"
+            className="h-auto relative w-auto"
             onClick={() => setShowFilter(!showFilter)}
           >
             <FilterLogo />
+            {activeFilters > 0 && (
+              <div className="absolute top-[-6px] right-[-6px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-[#5A1EB8] to-[#FF6B6B] rounded-full shadow-md border-2 border-white">
+                {activeFilters}
+              </div>
+            )}
           </div>
         </div>
       )}

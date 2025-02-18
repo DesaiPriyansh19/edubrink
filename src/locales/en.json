@@ -137,6 +137,10 @@
     ]
   },
 
+  "BlogInnerPage": {
+    "Intro": "Introduction:"
+  },
+
   "ourCourseSection": {
     "title": "Our courses",
     "description": "Effortlessly explore diverse courses, find programs tailored to your academic goals, compare study opportunities, and make informed decisions."

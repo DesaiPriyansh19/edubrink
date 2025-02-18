@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ConfirmationModal from "../../../../utils/ConfirmationModal";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
+import validationBlogSchema from "./ValidationBlogs";
 
 export default function EditBlogs({
   formData,
@@ -10,6 +11,8 @@ export default function EditBlogs({
   updateById,
   editData,
   initialFormData,
+  validationErrors,
+  setValidationErrors,
   deleteById,
   handleInputChange,
   addArray,
@@ -32,8 +35,24 @@ export default function EditBlogs({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateById(editData.id, formData);
-    handleEdit("View");
+
+    try {
+      // Validate formData using Yup
+      await validationBlogSchema.validate(formData, { abortEarly: false });
+
+      await updateById(editData.id, formData);
+      setFormData({ ...initialFormData });
+      handleEdit("View");
+    } catch (err) {
+      if (err.inner) {
+        const formattedErrors = err.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+
+        setValidationErrors(formattedErrors);
+      }
+    }
   };
 
   return (
@@ -91,6 +110,7 @@ export default function EditBlogs({
                   placeholder="Blog Title (English)"
                   value={formData?.blogTitle?.en}
                   onChange={handleInputChange}
+                  error={validationErrors["blogTitle.en"]}
                   autoComplete="blogTitle"
                   variant={1}
                 />
@@ -104,6 +124,7 @@ export default function EditBlogs({
                   placeholder="عنوان المدونة (عربي)"
                   value={formData?.blogTitle?.ar}
                   onChange={handleInputChange}
+                  error={validationErrors["blogTitle.ar"]}
                   autoComplete="blogTitle"
                   variant={1}
                 />
@@ -119,6 +140,7 @@ export default function EditBlogs({
                   name="blogSubtitle.en"
                   placeholder="Enter Blog Subtitle (English)"
                   value={formData?.blogSubtitle?.en}
+                  error={validationErrors["blogSubtitle.en"]}
                   onChange={handleInputChange}
                   autoComplete="blogSubtitle"
                   variant={1}
@@ -132,6 +154,7 @@ export default function EditBlogs({
                   placeholder="أدخل العنوان الفرعي (عربي)"
                   value={formData?.blogSubtitle?.ar}
                   onChange={handleInputChange}
+                  error={validationErrors["blogSubtitle.ar"]}
                   autoComplete="blogSubtitle"
                   variant={1}
                 />
@@ -148,6 +171,7 @@ export default function EditBlogs({
                   placeholder="Enter Blog Description (English)"
                   value={formData?.blogDescription?.en}
                   onChange={handleInputChange}
+                  error={validationErrors["blogDescription.en"]}
                   autoComplete="blogDescription"
                   rows={5}
                   variant={1}
@@ -161,6 +185,7 @@ export default function EditBlogs({
                   placeholder="أدخل وصف المدونة (عربي)"
                   value={formData?.blogDescription?.ar}
                   onChange={handleInputChange}
+                  error={validationErrors["blogDescription.ar"]}
                   autoComplete="blogDescription"
                   rows={5}
                   variant={1}
@@ -231,6 +256,7 @@ export default function EditBlogs({
                       placeholder="Related Blog (English)"
                       value={related?.en}
                       onChange={handleInputChange}
+                      error={validationErrors[`blogRelated[${index}].en`]}
                       autoComplete="blogRelated"
                       variant={1}
                     />
@@ -244,6 +270,7 @@ export default function EditBlogs({
                       placeholder="مدونة ذات صلة (عربي)"
                       value={related?.ar}
                       onChange={handleInputChange}
+                      error={validationErrors[`blogRelated[${index}].ar`]}
                       autoComplete="blogRelated"
                       variant={1}
                     />

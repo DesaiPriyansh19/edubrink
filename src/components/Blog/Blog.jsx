@@ -60,7 +60,7 @@ const MoreInfo = () => {
   };
 
   return (
-    <>
+    <div dir={language === "ar" ? "rtl" : "ltl"}>
       <div className="max-w-5xl mx-auto px-4 space-y-6">
         {/* Header Section */}
         <div className="flex items-center space-x-2">
@@ -76,10 +76,18 @@ const MoreInfo = () => {
               : ""}
           </p>
         </div>
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold flex justify-start items-start md:pr-24 lg:pr-40 text-start">
+        <h1
+          className={`text-2xl md:text-3xl lg:text-4xl font-semibold flex justify-start items-start ${
+            language === "ar" ? "md:pl-24 lg:pl-40" : "md:pr-24 lg:pr-40"
+          }  text-start`}
+        >
           <span>📚</span> {data?.blogTitle[language]}
         </h1>
-        <p className="text-gray-700 md:pr-24 lg:pr-56 font-medium">
+        <p
+          className={`text-gray-700 ${
+            language === "ar" ? "md:pl-24 lg:pl-56" : "md:pr-24 lg:pr-56"
+          }   font-medium`}
+        >
           {data?.blogSubtitle[language]}
         </p>
 
@@ -107,7 +115,7 @@ const MoreInfo = () => {
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-semibold"> Introduction:</h3>
+              <h3 className="text-2xl font-semibold"> {t("BlogInnerPage.Intro")}</h3>
               <p className="text-sm font-medium mt-2 mb-3">
                 {data?.blogDescription[language]}
               </p>
@@ -201,7 +209,7 @@ const MoreInfo = () => {
         {" "}
         <RelatedBlogs data={data?.countryData} />
       </div>
-    </>
+    </div>
   );
 };
 

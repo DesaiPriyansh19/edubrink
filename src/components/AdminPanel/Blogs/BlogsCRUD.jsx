@@ -33,6 +33,7 @@ export default function BlogsCRUD() {
 
   const [editData, setEditData] = useState({ type: "View", id: null });
   const [formData, setFormData] = useState(initialFormData);
+  const [validationErrors, setValidationErrors] = useState({});
 
   const handleEdit = (type, id) => {
     const selectedBlog = data.find((course) => course._id === id); // Filter data by ID
@@ -82,6 +83,15 @@ export default function BlogsCRUD() {
 
     // Update formData state with the new temp object
     setFormData(temp);
+
+    setValidationErrors((prevErrors) => {
+      if (prevErrors[name]) {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name]; // Remove the error for this field
+        return updatedErrors;
+      }
+      return prevErrors;
+    });
   };
 
   const addArray = (arrayName) => {
@@ -113,6 +123,8 @@ export default function BlogsCRUD() {
           setFormData={setFormData}
           formData={formData}
           handleInputChange={handleInputChange}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           initialFormData={initialFormData}
           addArray={addArray}
           removeArray={removeArray}
@@ -125,6 +137,8 @@ export default function BlogsCRUD() {
           setFormData={setFormData}
           updateById={updateById}
           editData={editData}
+          validationErrors={validationErrors}
+          setValidationErrors={setValidationErrors}
           initialFormData={initialFormData}
           deleteById={deleteById}
           addArray={addArray}

@@ -3,12 +3,15 @@ import ConfirmationModal from "../../../../utils/ConfirmationModal";
 import UploadWidget from "../../../../utils/UploadWidget";
 import InputField from "../../../../utils/InputField";
 import axios from "axios";
+import validationSchema from "./ValidationUniversity";
 
 export default function EditUniversities({
   formData,
   setFormData,
   updateById,
   editData,
+  validationErrors,
+  setValidationErrors,
   deleteById,
   handleInputChange,
   handleMainPhotoChange,
@@ -47,6 +50,8 @@ export default function EditUniversities({
     label: `${currentYear + i}`,
   }));
 
+  console.log(validationErrors);
+
   const filteredCourses = addCourses?.filter(
     (course) =>
       course?.CourseName?.en
@@ -71,10 +76,24 @@ export default function EditUniversities({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    await updateById(editData.id, formData);
-    setFormData({ ...initialFormData });
-    handleEdit("View");
+
+    try {
+      // Validate formData using Yup
+      await validationSchema.validate(formData, { abortEarly: false });
+
+      await updateById(editData.id, formData);
+      setFormData({ ...initialFormData });
+      handleEdit("View");
+    } catch (err) {
+      if (err.inner) {
+        const formattedErrors = err.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+
+        setValidationErrors(formattedErrors);
+      }
+    }
   };
 
   const handleAddItem = (filteredItems) => {
@@ -204,6 +223,7 @@ export default function EditUniversities({
                   placeholder="University Name (English)"
                   value={formData.uniName.en}
                   onChange={handleInputChange}
+                  error={validationErrors["uniName.en"]}
                   autoComplete="uniName"
                   variant={1}
                 />
@@ -216,6 +236,7 @@ export default function EditUniversities({
                   placeholder="اسم الجامعة (عربي)"
                   value={formData.uniName.ar}
                   onChange={handleInputChange}
+                  error={validationErrors["uniName.ar"]}
                   autoComplete="uniName"
                   variant={1}
                 />
@@ -227,6 +248,7 @@ export default function EditUniversities({
                   name="uniType"
                   value={formData.uniType}
                   onChange={handleInputChange}
+                  error={validationErrors?.uniType}
                   variant={1}
                   options={[
                     {
@@ -281,6 +303,7 @@ export default function EditUniversities({
                   type="select"
                   name="scholarshipAvailability"
                   value={formData.scholarshipAvailability}
+                  error={validationErrors?.scholarshipAvailability}
                   onChange={handleInputChange}
                   variant={1}
                   options={[
@@ -295,6 +318,7 @@ export default function EditUniversities({
                   type="select"
                   name="entranceExamRequired"
                   value={formData.entranceExamRequired}
+                  error={validationErrors?.entranceExamRequired}
                   onChange={handleInputChange}
                   variant={1}
                   options={[
@@ -310,6 +334,7 @@ export default function EditUniversities({
                   name="studyLevel"
                   value={formData.studyLevel}
                   onChange={handleInputChange}
+                  error={validationErrors?.studyLevel}
                   variant={1}
                   options={[
                     {
@@ -335,6 +360,7 @@ export default function EditUniversities({
                   name="inTakeMonth"
                   value={formData.inTakeMonth}
                   onChange={handleInputChange}
+                  error={validationErrors?.inTakeMonth}
                   variant={1}
                   options={[
                     { value: "January", label: "January (يناير)" },
@@ -359,6 +385,7 @@ export default function EditUniversities({
                   name="inTakeYear"
                   value={formData.inTakeYear}
                   onChange={handleInputChange}
+                  error={validationErrors?.inTakeYear}
                   variant={1}
                   options={yearOptions}
                 />
@@ -372,6 +399,7 @@ export default function EditUniversities({
                   name="uniStartDate"
                   value={formData.uniStartDate}
                   onChange={handleInputChange}
+                  error={validationErrors?.uniStartDate}
                   variant={1}
                 />
               </div>
@@ -382,6 +410,7 @@ export default function EditUniversities({
                   name="uniDeadline"
                   value={formData.uniDeadline}
                   onChange={handleInputChange}
+                  error={validationErrors?.uniDeadline}
                   variant={1}
                 />
               </div>
@@ -393,6 +422,7 @@ export default function EditUniversities({
                   placeholder="Enter Duration (أدخل المدة)"
                   value={formData.uniDuration}
                   onChange={handleInputChange}
+                  error={validationErrors?.uniDuration}
                   variant={1}
                 />
               </div>
@@ -406,6 +436,7 @@ export default function EditUniversities({
                   placeholder="Enter discount details"
                   value={formData.uniDiscount.en}
                   onChange={handleInputChange}
+                  error={validationErrors["uniDiscount.en"]}
                   variant={1}
                 />
               </div>
@@ -416,6 +447,7 @@ export default function EditUniversities({
                   name="uniDiscount.ar"
                   placeholder="أدخل تفاصيل الخصم"
                   value={formData.uniDiscount.ar}
+                  error={validationErrors["uniDiscount.ar"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -434,6 +466,7 @@ export default function EditUniversities({
                   name="uniLocation.uniAddress.en"
                   placeholder="Address (English)"
                   value={formData.uniLocation.uniAddress.en}
+                  error={validationErrors["uniLocation.uniAddress.en"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -443,6 +476,7 @@ export default function EditUniversities({
                   name="uniLocation.uniAddress.ar"
                   placeholder="عنوان (عربي)"
                   value={formData.uniLocation.uniAddress.ar}
+                  error={validationErrors["uniLocation.uniAddress.ar"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -452,6 +486,7 @@ export default function EditUniversities({
                   name="uniLocation.uniCity.en"
                   placeholder="City (English)"
                   value={formData.uniLocation.uniCity.en}
+                  error={validationErrors["uniLocation.uniCity.en"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -461,6 +496,7 @@ export default function EditUniversities({
                   name="uniLocation.uniCity.ar"
                   placeholder="مدينة (عربي)"
                   value={formData.uniLocation.uniCity.ar}
+                  error={validationErrors["uniLocation.uniCity.ar"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -470,6 +506,7 @@ export default function EditUniversities({
                   name="uniLocation.uniState.en"
                   placeholder="State (English)"
                   value={formData.uniLocation.uniState.en}
+                  error={validationErrors["uniLocation.uniState.en"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -479,6 +516,7 @@ export default function EditUniversities({
                   name="uniLocation.uniState.ar"
                   placeholder="الدولة (عربي)"
                   value={formData.uniLocation.uniState.ar}
+                  error={validationErrors["uniLocation.uniState.ar"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -489,6 +527,7 @@ export default function EditUniversities({
                   name="uniLocation.uniCountry.en"
                   placeholder="Country (English)"
                   value={formData.uniLocation.uniCountry.en}
+                  error={validationErrors["uniLocation.uniCountry.en"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -498,6 +537,7 @@ export default function EditUniversities({
                   name="uniLocation.uniCountry.ar"
                   placeholder="دولة (عربي)"
                   value={formData.uniLocation.uniCountry.ar}
+                  error={validationErrors["uniLocation.uniCountry.ar"]}
                   onChange={handleInputChange}
                   variant={1}
                 />
@@ -508,6 +548,7 @@ export default function EditUniversities({
                     name="uniLocation.uniPincode"
                     placeholder="Pincode (الرمز السري)"
                     value={formData.uniLocation.uniPincode}
+                    error={validationErrors["uniLocation.uniPincode"]}
                     onChange={handleInputChange}
                     variant={1}
                   />
@@ -524,6 +565,7 @@ export default function EditUniversities({
                 placeholder="Tuition Fees (الرسوم الدراسية)"
                 value={formData.uniTutionFees}
                 onChange={handleInputChange}
+                error={validationErrors?.uniTutionFees}
                 variant={1}
               />
             </div>
@@ -539,6 +581,7 @@ export default function EditUniversities({
                 name="uniOverview.en"
                 placeholder="Overview (English)"
                 value={formData.uniOverview.en}
+                error={validationErrors["uniOverview.en"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -548,6 +591,7 @@ export default function EditUniversities({
                 name="uniOverview.ar"
                 placeholder="ملخص (عربي)"
                 value={formData.uniOverview.ar}
+                error={validationErrors["uniOverview.ar"]}
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -565,6 +609,7 @@ export default function EditUniversities({
                 placeholder="Accommodation (English)"
                 value={formData.uniAccomodation.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniAccomodation.en"]}
                 variant={1}
               />
               <InputField
@@ -574,6 +619,7 @@ export default function EditUniversities({
                 placeholder="إقامة (عربي)"
                 value={formData.uniAccomodation.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniAccomodation.ar"]}
                 variant={1}
               />
             </div>
@@ -672,6 +718,7 @@ export default function EditUniversities({
                 placeholder="Library Description (English)"
                 value={formData?.uniLibrary?.libraryDescription?.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniLibrary.libraryDescription.en"]}
                 variant={1}
               />
               <InputField
@@ -681,6 +728,7 @@ export default function EditUniversities({
                 placeholder="وصف المكتبة (عربي)"
                 value={formData?.uniLibrary?.libraryDescription?.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniLibrary.libraryDescription.ar"]}
                 variant={1}
               />
               <div className="mb-2">
@@ -775,6 +823,7 @@ export default function EditUniversities({
                 placeholder="Sports Description (English)"
                 value={formData?.uniSports?.sportsDescription?.en}
                 onChange={handleInputChange}
+                error={validationErrors["uniSports.sportsDescription.en"]}
                 variant={1}
               />
               <InputField
@@ -784,6 +833,7 @@ export default function EditUniversities({
                 placeholder="وصف الرياضة (عربي)"
                 value={formData?.uniSports?.sportsDescription?.ar}
                 onChange={handleInputChange}
+                error={validationErrors["uniSports.sportsDescription.ar"]}
                 variant={1}
               />
               <div className="mb-2">
@@ -879,6 +929,11 @@ export default function EditUniversities({
                 value={
                   formData?.studentLifeStyleInUni?.lifestyleDescription?.en
                 }
+                error={
+                  validationErrors[
+                    "studentLifeStyleInUni.lifestyleDescription.en"
+                  ]
+                }
                 onChange={handleInputChange}
                 variant={1}
               />
@@ -889,6 +944,11 @@ export default function EditUniversities({
                 placeholder="وصف أسلوب الحياة (عربي)"
                 value={
                   formData?.studentLifeStyleInUni?.lifestyleDescription?.ar
+                }
+                error={
+                  validationErrors[
+                    "studentLifeStyleInUni.lifestyleDescription.ar"
+                  ]
                 }
                 onChange={handleInputChange}
                 variant={1}

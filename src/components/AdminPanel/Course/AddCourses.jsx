@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import InputField from "../../../../utils/InputField";
 import axios from "axios";
+import validationCourseSchema from "./ValidationCourse";
 
 export default function AddCourses({
   handleEdit,
@@ -9,6 +10,8 @@ export default function AddCourses({
   formData,
   handleInputChange,
   addArray,
+  validationErrors,
+  setValidationErrors,
   removeArray,
   initialFormData,
   filteredTags,
@@ -21,14 +24,33 @@ export default function AddCourses({
 }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const tagsIds = formData?.Tags?.map((tag) => tag._id);
-    const dataToSubmit = {
-      ...formData,
-      Tags: tagsIds,
-    };
-    await addNew(dataToSubmit);
-    handleEdit("View");
+
+    try {
+      // Validate formData using Yup
+      await validationCourseSchema.validate(formData, { abortEarly: false });
+
+      // Process formData before submitting (map courseId, etc.)
+      const updatedFormData = {
+        ...formData,
+        Tags: formData?.Tags?.map((tag) => tag._id),
+      };
+
+      await addNew(updatedFormData);
+      setFormData({ ...initialFormData });
+      handleEdit("View");
+    } catch (err) {
+      if (err.inner) {
+        const formattedErrors = err.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+
+        setValidationErrors(formattedErrors);
+      }
+    }
   };
+
+
   return (
     <>
       <div className="text-white  mx-auto p-4">
@@ -67,8 +89,9 @@ export default function AddCourses({
                   type="text"
                   name="CourseName.en"
                   placeholder="Course Name (English)"
-                  value={formData?.CourseName?.en}
+                  value={formData?.CourseName?.en || ""}
                   onChange={handleInputChange}
+                  error={validationErrors["CourseName.en"]}
                   autoComplete="courseName"
                   variant={1}
                 />
@@ -80,8 +103,9 @@ export default function AddCourses({
                   type="text"
                   name="CourseName.ar"
                   placeholder="اسم الدورة (عربي)"
-                  value={formData?.CourseName?.ar}
+                  value={formData?.CourseName?.ar || ""}
                   onChange={handleInputChange}
+                  error={validationErrors["CourseName.ar"]}
                   autoComplete="courseName"
                   variant={1}
                 />
@@ -96,8 +120,9 @@ export default function AddCourses({
                   type="textarea"
                   name="CourseDescription.en"
                   placeholder="Enter Course Description"
-                  value={formData?.CourseDescription?.en}
+                  value={formData?.CourseDescription?.en || ""}
                   onChange={handleInputChange}
+                  error={validationErrors["CourseDescription.en"]}
                   autoComplete="courseDescription"
                   rows={5}
                   variant={1}
@@ -109,8 +134,9 @@ export default function AddCourses({
                   type="textarea"
                   name="CourseDescription.ar"
                   placeholder="أدخل وصف الدورة"
-                  value={formData?.CourseDescription?.ar}
+                  value={formData?.CourseDescription?.ar || ""}
                   onChange={handleInputChange}
+                  error={validationErrors["CourseDescription.ar"]}
                   autoComplete="courseDescription"
                   rows={5}
                   variant={1}
@@ -126,8 +152,9 @@ export default function AddCourses({
                   type="text"
                   name="CourseDuration"
                   placeholder="Enter Course Duration"
-                  value={formData?.CourseDuration}
+                  value={formData?.CourseDuration || ""}
                   onChange={handleInputChange}
+                  error={validationErrors?.CourseDuration}
                   autoComplete="courseDuration"
                   variant={1}
                 />
@@ -143,6 +170,7 @@ export default function AddCourses({
                     formData?.DeadLine ? formData?.DeadLine.slice(0, 10) : ""
                   }
                   onChange={handleInputChange}
+                  error={validationErrors?.DeadLine}
                   autoComplete="deadLine"
                   variant={1}
                 />
@@ -155,8 +183,9 @@ export default function AddCourses({
                   type="number"
                   name="CourseFees"
                   placeholder="Enter Course Fees"
-                  value={formData?.CourseFees}
+                  value={formData?.CourseFees || ""}
                   onChange={handleInputChange}
+                  error={validationErrors?.CourseFees}
                   autoComplete="courseFees"
                   variant={1}
                 />
@@ -174,8 +203,9 @@ export default function AddCourses({
                       type="text"
                       name={`ModeOfStudy[${index}].en`}
                       placeholder="Mode of Study (English)"
-                      value={mode?.en}
+                      value={mode?.en || ""}
                       onChange={handleInputChange}
+                      error={validationErrors[`ModeOfStudy[${index}].en`]}
                       autoComplete="modeOfStudy"
                       variant={1}
                     />
@@ -187,8 +217,9 @@ export default function AddCourses({
                       type="text"
                       name={`ModeOfStudy[${index}].ar`}
                       placeholder="طريقة الدراسة (عربي)"
-                      value={mode?.ar}
+                      value={mode?.ar || ""}
                       onChange={handleInputChange}
+                      error={validationErrors[`ModeOfStudy[${index}].ar`]}
                       autoComplete="modeOfStudy"
                       variant={1}
                     />
@@ -226,8 +257,9 @@ export default function AddCourses({
                       type="text"
                       name={`Requirements[${index}].en`} // Dynamic name to bind to array index
                       placeholder="Requirement (English)"
-                      value={requirement?.en}
+                      value={requirement?.en || ""}
                       onChange={handleInputChange}
+                      error={validationErrors[`Requirements[${index}].en`]}
                       autoComplete="requirement"
                       variant={1}
                     />
@@ -238,8 +270,9 @@ export default function AddCourses({
                       type="text"
                       name={`Requirements[${index}].ar`} // Dynamic name to bind to array index
                       placeholder="المتطلبات (عربي)"
-                      value={requirement?.ar}
+                      value={requirement?.ar || ""}
                       onChange={handleInputChange}
+                      error={validationErrors[`Requirements[${index}].ar`]}
                       autoComplete="requirement"
                       variant={1}
                     />
@@ -273,7 +306,7 @@ export default function AddCourses({
                     label="Enroll Tag (التسجيل في الوسم)"
                     type="text"
                     placeholder="Enter Tag Name (أدخل اسم الوسم)"
-                    value={searchInput.TagName}
+                    value={searchInput.TagName || ""}
                     onChange={(e) => {
                       setSearchInput((prev) => ({
                         ...prev,
