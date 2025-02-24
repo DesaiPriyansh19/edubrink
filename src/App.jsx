@@ -92,6 +92,7 @@ function App() {
                     path="/:lang/searchresults/*"
                     element={<SearchResults />}
                   />
+                  
                   {/* <Route
                     path="/:lang/admin"
                     element={<NavigateToAdminDashboard />}
