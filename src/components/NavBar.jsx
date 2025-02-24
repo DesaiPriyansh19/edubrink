@@ -1,14 +1,10 @@
-import { useContext, useState, useEffect, useRef } from "react";
-import flag from "../assets/Flags/UKFlag.png";
-import usa from "../assets/Flags/USAflag.png";
+import { useState, useEffect, useRef } from "react";
 import Search from "../../svg/caplogo/Logo/Search";
 import { Link, useNavigate } from "react-router-dom";
-
 import SideBar from "./SideBar";
 import FilterLogo from "../../svg/FilterLogo";
 import DropdowneCourses from "./DropdowneCourses";
 import DropdownContries from "./DropdownContries";
-import i18n from "../i18n";
 import TogelMenu from "../../svg/TogelMenu/Index";
 import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
 import { useTranslation } from "react-i18next";
@@ -16,7 +12,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import FilterSidebar from "./FilterSidevbar/FilterSidebar";
 import useFetch from "../../hooks/useFetch";
 import { useSearch } from "../../context/SearchContext";
-import { filter } from "framer-motion/client";
+import useClickOutside from "../../hooks/useClickOutside";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
@@ -25,8 +21,6 @@ const NavBar = () => {
     filterProp,
     setSearchState,
     searchState,
-    setSumData,
-    sumData,
     initialState,
   } = useSearch();
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
@@ -34,6 +28,17 @@ const NavBar = () => {
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const dropDownLanguageRef = useClickOutside(() =>
+    setShowFlagsDropdown(false)
+  );
+  const dropDownCountryRef = useClickOutside(() =>
+    setShowCountriesDropdown(false)
+  );
+  const dropDownCourseRef = useClickOutside(() =>
+    setShowCoursesDropdown(false)
+  );
+
   const inputRef = useRef(null);
   const dropdownRef = useRef(null); // Ref for the dropdown list
   const API_URL = import.meta.env.VITE_API_URL;
@@ -41,7 +46,7 @@ const NavBar = () => {
   const { language, setLanguage } = useLanguage();
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
-  const { data, loading } = useFetch(
+  const { data } = useFetch(
     `https://edu-brink-backend.vercel.app/api/keyword`
   );
 
@@ -75,22 +80,16 @@ const NavBar = () => {
       window.removeEventListener("resize", updateNavbarHeight); // Cleanup event listener
     };
   }, []);
-  const handleClick = () => {
-    setShowCountriesDropdown(!showCountriesDropdown);
-    setShowCoursesDropdown(false);
-    setShowFlagsDropdown(false);
+  const handleDropdownToggle = (dropdownType) => {
+    setShowCountriesDropdown((prev) =>
+      dropdownType === "countries" ? !prev : false
+    );
+    setShowCoursesDropdown((prev) =>
+      dropdownType === "courses" ? !prev : false
+    );
+    setShowFlagsDropdown((prev) => (dropdownType === "flags" ? !prev : false));
   };
-  const handleClickTwo = () => {
-    setShowCoursesDropdown(!showCoursesDropdown);
-    setShowCountriesDropdown(false);
-    setShowFlagsDropdown(false);
-  };
-  const handleClickThree = () => {
-    setShowCoursesDropdown(false);
 
-    setShowCountriesDropdown(false);
-    setShowFlagsDropdown(!showFlagsDropdown);
-  };
   const toggleSidebar = () => {
     setIsMenuOpen(!isMenuOpen);
 
@@ -267,6 +266,20 @@ const NavBar = () => {
     }
   }, [searchState.filteredResults]);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowCoursesDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <div
@@ -341,7 +354,11 @@ const NavBar = () => {
           </div>
 
           {/* Contry Dropdown in sm devices */}
-          <div className={`absolute ${language==="ar"?"left-1":"right-1"}  flex justify-end gap-1 items-center  mmd:hidden`}>
+          <div
+            className={`absolute ${
+              language === "ar" ? "left-1" : "right-1"
+            }  flex justify-end gap-1 items-center  mmd:hidden`}
+          >
             {/* Search Bar */}
             <div
               className="h-auto bg-[#F8F8F8] rounded-full w-auto p-2"
@@ -355,7 +372,7 @@ const NavBar = () => {
             <div className="relative inline-block">
               <button
                 className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
-                onClick={handleClickThree}
+                onClick={() => handleDropdownToggle("flags")}
               >
                 <span>{languageLabels[language]}</span>
                 <svg
@@ -379,7 +396,7 @@ const NavBar = () => {
           {/* All Dropdowns Btns*/}
           <div className=" hidden  mmd:flex items-center bg-white space-x-6">
             {/* Courses Dropdown */}
-            <div onClick={handleClickTwo} className="relative cursor-pointer">
+            <div onClick={() => handleDropdownToggle("courses")} className="relative cursor-pointer">
               <div className="flex items-center space-x-1 bg-white  hover:text-black hover:font-[20rem] text-gray-800">
                 <p>
                   {" "}
@@ -405,7 +422,7 @@ const NavBar = () => {
             <div className="relative bg-white rounded-full ">
               <div
                 className="flex items-center space-x-1 cursor-pointer bg-white text-gray-800"
-                onClick={handleClick}
+                onClick={() => handleDropdownToggle("countries")}
               >
                 <span className=" font-medium bg-white">{t("countries")}</span>
                 <svg
@@ -450,10 +467,10 @@ const NavBar = () => {
               )}
             </div>
             {/* language Dropdown */}
-            <div className="relative inline-block">
+            <div className="relative ">
               <button
                 className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
-                onClick={handleClickThree}
+                onClick={() => handleDropdownToggle("flags")}
               >
                 <span>{languageLabels[language]}</span>
                 <svg
@@ -488,6 +505,7 @@ const NavBar = () => {
       {showFlagsDropdown && (
         <ul
           id="divshadow"
+          ref={dropDownLanguageRef}
           style={{ top: `${navbarHeight}px` }} // Dynamically set top value
           className={`fixed mmd:absolute z-30 right-[3%] ${
             language === "ar"
@@ -517,6 +535,7 @@ const NavBar = () => {
       {showCountriesDropdown && (
         <DropdownContries
           data={CountryData}
+          ref={dropDownCountryRef}
           setShowCountriesDropdown={setShowCountriesDropdown}
           navbarHeight={navbarHeight}
         />
@@ -524,6 +543,7 @@ const NavBar = () => {
       {showCoursesDropdown && (
         <DropdowneCourses
           data={CoursesData}
+          ref={dropDownCourseRef}
           setShowCoursesDropdown={setShowCoursesDropdown}
           navbarHeight={navbarHeight}
         />

@@ -54,6 +54,16 @@ const useApiData = (baseUrl) => {
     }
   };
 
+  const updateWithOutById = async (updatedData) => {
+    try {
+      const response = await axios.put(`${baseUrl}`, updatedData);
+      setData(response.data.data);
+      fetchData();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const addNew = async (newData) => {
     try {
       const response = await axios.post(baseUrl, newData);
@@ -76,6 +86,7 @@ const useApiData = (baseUrl) => {
     fetchData,
     fetchById,
     deleteById,
+    updateWithOutById,
     updateById,
     addNew,
   };
