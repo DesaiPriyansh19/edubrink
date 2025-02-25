@@ -1,11 +1,10 @@
-"use client";
-
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../../../context/LanguageContext";
 import { countryFlags } from "../../../libs/countryFlags";
-import { useEffect, useRef } from "react";
+import Marquee from "react-fast-marquee";
+import { useEffect, useState } from "react";
 
 const fetchCountries = async () => {
   const res = await fetch(
@@ -15,27 +14,25 @@ const fetchCountries = async () => {
   return res.json();
 };
 
-const SkeletonLoader = () => {
-  return (
-    <div className="flex gap-6 sm:gap-11">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div
-          key={index}
-          className="flex-shrink-0 flex flex-col items-center w-28 sm:w-32 md:w-32 lg:w-44"
-        >
-          <div className="w-24 h-24 rounded-full bg-gray-200 animate-pulse mb-4"></div>
-          <div className="w-20 h-4 bg-gray-200 animate-pulse rounded"></div>
-        </div>
-      ))}
-    </div>
-  );
-};
+const SkeletonLoader = () => (
+  <div className="flex gap-6 sm:gap-11">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div
+        key={index}
+        className="flex-shrink-0 flex flex-col items-center w-28 sm:w-32 md:w-32 lg:w-44"
+      >
+        <div className="w-24 h-24 rounded-full bg-gray-200 animate-pulse mb-4"></div>
+        <div className="w-20 h-4 bg-gray-200 animate-pulse rounded"></div>
+      </div>
+    ))}
+  </div>
+);
 
 const CarouselSection = () => {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const carouselRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const handleNavigate = (name) => {
     navigate(`/${language}/country/${name}`);
@@ -51,27 +48,17 @@ const CarouselSection = () => {
 
   const countries = Array.isArray(data) ? data : data?.data || [];
 
+  // Detect screen size
   useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5;
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-
-    const animate = () => {
-      scrollPosition += scrollSpeed;
-      if (scrollPosition > maxScroll) {
-        scrollPosition = 0;
-      }
-      carousel.scrollLeft = scrollPosition;
-      requestAnimationFrame(animate);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // `md` breakpoint
     };
-
-    const animation = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animation);
+    handleResize(); // Call on mount
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const shouldUseMarquee = countries.length >= 8 || isMobile;
 
   return (
     <section className="bg-gradient-to-r from-[#6439a2]/10 to-[#d76a6b]/10 w-full py-16 px-4">
@@ -81,93 +68,65 @@ const CarouselSection = () => {
         </h1>
       </div>
 
-      <div ref={carouselRef} className="w-full overflow-x-hidden">
-        {isLoading ? (
-          <SkeletonLoader />
-        ) : isError ? (
-          <p className="text-center text-red-500">Error fetching countries</p>
-        ) : (
-          <div className="flex gap-8 sm:gap-12 px-4">
-            {countries.length > 0 ? (
-              countries.map((country, index) => (
-                <div
-                  onClick={() =>
-                    handleNavigate(
-                      language === "ar"
-                        ? country?.countryName?.ar
-                        : country?.countryName?.en
-                    )
-                  }
-                  key={index}
-                  className="flex-shrink-0 cursor-pointer flex flex-col items-center group"
-                >
-                  <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2]/20 to-[#d76a6b]/20 transition-transform duration-300 group-hover:scale-110"></div>
-                    <div className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                      <span className="text-5xl filter transition-all duration-300 group-hover:rotate-12">
-                        {getCountryEmoji(country?.countryCode)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-center text-sm font-medium text-gray-700 transition-all duration-300 group-hover:text-[#6439a2] ">
-                    {language === "ar"
-                      ? country?.countryName?.ar
-                      : country?.countryName?.en}
-                  </p>
-
-                  {/* Animation Two */}
-                  {/* <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2]/20 to-[#d76a6b]/20 transition-transform duration-300 group-hover:scale-105"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-5xl filter transition-all duration-300 group-hover:animate-bounce">
-                        {getCountryEmoji(country?.countryCode)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-center text-sm font-medium text-gray-700 transition-all duration-300 group-hover:text-[#6439a2] group-hover:translate-y-1">
-                    {language === "ar"
-                      ? country?.countryName?.ar
-                      : country?.countryName?.en}
-                  </p> */}
-
-                  {/* Glow Effect */}
-                  {/* <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2]/20 to-[#d76a6b]/20 transition-opacity duration-300 group-hover:opacity-0"></div>
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2] to-[#d76a6b] opacity-0 transition-opacity duration-300 group-hover:opacity-20"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-5xl filter transition-all duration-300 group-hover:scale-110">
-                        {getCountryEmoji(country?.countryCode)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-center text-sm font-medium text-gray-700 transition-all duration-300 group-hover:text-[#6439a2] group-hover:scale-105">
-                    {language === "ar"
-                      ? country?.countryName?.ar
-                      : country?.countryName?.en}
-                  </p> */}
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-700">No countries found.</p>
-            )}
-          </div>
-        )}
-      </div>
+      {isLoading ? (
+        <SkeletonLoader />
+      ) : isError ? (
+        <p className="text-center text-red-500">Error fetching countries</p>
+      ) : shouldUseMarquee ? (
+        <Marquee speed={50} pauseOnHover={true} loop={0}>
+          {countries.map((country, index) => (
+            <CountryCard key={index} country={country} handleNavigate={handleNavigate} language={language} />
+          ))}
+        </Marquee>
+      ) : (
+        <div className="flex justify-center flex-row scrollbar-hide overflow-x-scroll gap-6">
+          {countries.map((country, index) => (
+            <CountryCard key={index} country={country} handleNavigate={handleNavigate} language={language} />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
 
+const CountryCard = ({ country, handleNavigate, language }) => (
+  <div
+    onClick={() =>
+      handleNavigate(language === "ar" ? country?.countryName?.ar : country?.countryName?.en)
+    }
+    className="flex-shrink-0 mx-6 cursor-pointer flex flex-col items-center group"
+  >
+    <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2]/20 to-[#d76a6b]/20 transition-transform duration-300 group-hover:scale-110"></div>
+      <div className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+        <span className="text-5xl filter transition-all duration-300 group-hover:rotate-12">
+          {getCountryEmoji(country?.countryCode)}
+        </span>
+      </div>
+    </div>
+    <p className="text-center text-sm font-medium text-gray-700 transition-all duration-300 group-hover:text-[#6439a2]">
+      {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
+    </p>
+  </div>
+);
+
+// Function to get country emoji from country code
 const getCountryEmoji = (countryCode) => {
   if (!countryCode) return "🏳️";
+
   const country = countryFlags.find(
     (c) =>
       c.code === countryCode.toUpperCase() ||
       c.alpha3 === countryCode.toUpperCase()
   );
-  return country ? country.emoji : "🏳️";
+
+  return country ? (
+    <span style={{ fontFamily: `"Segoe UI Emoji", "Apple Color Emoji", sans-serif` }}>
+      {country.emoji}
+    </span>
+  ) : (
+    "🏳️"
+  );
 };
 
 export default CarouselSection;
