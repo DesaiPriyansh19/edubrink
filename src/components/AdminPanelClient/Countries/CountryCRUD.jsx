@@ -160,18 +160,18 @@ export default function CountryCRUD() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="h-10 w-10 flex-shrink-0">
-                          {!country.countryPhotos.countryFlag ? (
+                          {!country?.countryPhotos?.countryFlag ? (
                             <img
                               src={
-                                country.countryPhotos.countryFlag ||
+                                country?.countryPhotos?.countryFlag ||
                                 "https://placehold.co/20x20"
                               }
-                              alt={country.countryName[language]}
+                              alt={country?.countryName[language]}
                               className="h-10 w-10 rounded-lg object-cover"
                             />
                           ) : (
                             <p className="text-center text-4xl">
-                              {country.countryPhotos.countryFlag}
+                              {country?.countryPhotos?.countryFlag}
                             </p>
                           )}
                         </div>
@@ -180,7 +180,7 @@ export default function CountryCRUD() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
                         <div className="text-sm font-medium text-gray-900">
-                          {country.countryName[language]}
+                          {country?.countryName[language]}
                         </div>
                       </div>
                     </td>
