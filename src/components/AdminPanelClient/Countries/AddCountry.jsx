@@ -126,7 +126,9 @@ export default function AddCountry() {
     handleAdd,
     handleRemove,
   } = useDropdownData();
-  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/country");
+  const { addNew } = useApiData(
+    "https://edu-brink-backend.vercel.app/api/country"
+  );
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormData);

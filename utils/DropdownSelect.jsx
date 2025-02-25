@@ -1,8 +1,7 @@
+import React, { useState } from "react";
 import { Search, X } from "lucide-react";
-import { useState } from "react";
 
-
-const DropdownSelect = ({
+export default function DropdownSelect({
   label,
   placeholder,
   icon: Icon,
@@ -13,15 +12,16 @@ const DropdownSelect = ({
   onSelect,
   onRemove,
   language,
-  dropdownKey, // Unique key for each dropdown (e.g., "universities", "blogs", "faculty")
+  dropdownKey,
   showDropdown,
   setShowDropdown,
-}) => {
+}) {
   const [searchInput, setSearchInput] = useState("");
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => ({
-      universities: dropdownKey === "universities" ? !prev.universities : false,
+      universities:
+        dropdownKey === "universities" ? !prev.universities : false,
       blogs: dropdownKey === "blogs" ? !prev.blogs : false,
       faculty: dropdownKey === "faculty" ? !prev.faculty : false,
     }));
@@ -39,7 +39,9 @@ const DropdownSelect = ({
             onClick={toggleDropdown}
             className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
           >
-            <span className="text-gray-600">{searchInput || placeholder}</span>
+            <span className="text-gray-600">
+              {searchInput || placeholder}
+            </span>
             <Icon className="w-5 h-5 text-gray-400" />
           </button>
 
@@ -110,6 +112,4 @@ const DropdownSelect = ({
       </div>
     </div>
   );
-};
-
-export default DropdownSelect;
+}
