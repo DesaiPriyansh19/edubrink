@@ -16,7 +16,7 @@ import useApiData from "../../../../hooks/useApiData";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
 import useDropdownData from "../../../../hooks/useDropDownData";
-import DropdownSelect from "../../../../utils/DropDownSelect";
+import DropdownSelect from "../../../../utils/DropdownSelect";
 
 // const countryTemplates = [
 //   {
