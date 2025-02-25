@@ -186,17 +186,17 @@ export default function CountryCRUD() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {country.countryCode}
+                        {country?.countryCode}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {country.countryLanguages[0] || "N/A"}
+                        {country?.countryLanguages?.[0] || "N/A"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {country.countryCurrency || "N/A"}
+                        {country?.countryCurrency || "N/A"}
                       </div>
                     </td>
 
