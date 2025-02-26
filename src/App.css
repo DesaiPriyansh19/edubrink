@@ -11,14 +11,12 @@
     overflow: hidden; /* Prevents scrolling when sidebar is open */
   }
   
-  .content {
-    /* Your content styling goes here */
-  }
+
   
-  .sticky {
-    overflow-y: auto; /* Allows scrolling within the sidebar */
-    max-height: 80vh;  /* Adjusts the maximum height of the sidebar */
-  }
+  /* .sticky {
+    overflow-y: auto; 
+    max-height: 80vh;  
+  } */
   #divshadow{
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
   }

@@ -30,6 +30,10 @@ const InputField = ({
       labelClassName: "block text-sm ",
       inputClassName: "accent-zinc-900 border border-white",
     },
+    {
+      labelClassName: "block text-sm font-medium text-gray-700 mb-2 ",
+      inputClassName: "w-full border-gray-300 px-3 py-3 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500",
+    },
   ];
 
   // Determine the class names for the label and input field based on the error

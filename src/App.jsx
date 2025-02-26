@@ -26,6 +26,23 @@ import { NavigateToAdminDashboard } from "../utils/NavigateToAdminDashboard";
 import { trackPageView } from "../utils/google-analytics";
 import Blog from "../src/components/Blog/Blog";
 import MoreInfo from "./components/Blog/Blog";
+import AdminLayout from "./components/AdminPanelClient/AdminLayout";
+import Dashboard from "./components/AdminPanelClient/Dashboard";
+import CountryCRUD from "./components/AdminPanelClient/Countries/CountryCRUD";
+import UniCRUD from "./components/AdminPanelClient/Universities/UniCRUD";
+import AddCountry from "./components/AdminPanelClient/Countries/AddCountry";
+import AddUniversity from "./components/AdminPanelClient/Universities/AddUniversity";
+import FacultyCRUD from "./components/AdminPanelClient/Faculties/FacultyCRUD";
+import AddFaculty from "./components/AdminPanelClient/Faculties/AddFaculty";
+import MajorCRUD from "./components/AdminPanelClient/Majors/MajorCRUD";
+import AddMajor from "./components/AdminPanelClient/Majors/AddMajor";
+import CourseCRUD from "./components/AdminPanelClient/Courses/CourseCRUD";
+import AddCourse from "./components/AdminPanelClient/Courses/AddCourse";
+import ArticlesCRUD from "./components/AdminPanelClient/Articles/ArticlesCRUD";
+import AddArticle from "./components/AdminPanelClient/Articles/AddArticles";
+import UsersCRUD from "./components/AdminPanelClient/Users/UsersCRUD";
+import AddUser from "./components/AdminPanelClient/Users/AddUser";
+import EditCountry from "./components/AdminPanelClient/Countries/EditCountry";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,11 +52,17 @@ function App() {
     trackPageView(location.pathname);
   }, [location.pathname]);
 
+  const isAdminRoute = location.pathname.includes("/admin");
+
   return (
     <LanguageProvider>
       <AnalysisProvider>
         <SearchProvider>
-          <div className="max-w-[1440px] w-full mx-auto">
+          <div
+            className={
+              isAdminRoute ? "w-full" : "max-w-[1440px] w-full mx-auto"
+            }
+          >
             <AppLayout>
               <LanguageRedirect />
               <Routes>
@@ -69,14 +92,36 @@ function App() {
                     path="/:lang/searchresults/*"
                     element={<SearchResults />}
                   />
-                  <Route
+                  
+                  {/* <Route
                     path="/:lang/admin"
                     element={<NavigateToAdminDashboard />}
-                  />
-                  <Route
-                    path="/:lang/admin/:slug"
-                    element={<AdminPanelDashBoard />}
-                  />
+                  /> */}
+                  <Route path="/:lang/admin" element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="countries" element={<CountryCRUD />} />
+                    <Route path="countries/add" element={<AddCountry />} />
+                    <Route path="countries/:id" element={<EditCountry />} />
+                    <Route path="universities" element={<UniCRUD />} />
+                    <Route
+                      path="universities/add"
+                      element={<AddUniversity />}
+                    />
+                    <Route path="faculties" element={<FacultyCRUD />} />
+                    <Route path="faculties/add" element={<AddFaculty />} />
+                    <Route path="majors" element={<MajorCRUD />} />
+                    <Route path="majors/add" element={<AddMajor />} />
+                    {/* <Route
+                      path="universities/:id"
+                      element={<UniversityDetails />}
+                    /> */}
+                    <Route path="courses" element={<CourseCRUD />} />
+                    <Route path="courses/add" element={<AddCourse />} />
+                    <Route path="articles" element={<ArticlesCRUD />} />
+                    <Route path="articles/add" element={<AddArticle />} />
+                    <Route path="users" element={<UsersCRUD />} />
+                    <Route path="users/add" element={<AddUser />} />
+                  </Route>
                 </Route>
               </Routes>
             </AppLayout>
