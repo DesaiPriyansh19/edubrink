@@ -24,7 +24,7 @@ function Discover() {
       <div
         className="absolute inset-0 backdrop-blur-[3px]"
         style={{
-          background: `linear-gradient(to right, rgba(56, 12, 149, 0.8), rgba(225, 87, 84, 0.8)`,
+          background: `linear-gradient(to right, rgba(56, 12, 149, 0.6), rgba(56, 12, 149, 0.7)`,
           zIndex: 1,
         }}
       ></div>
@@ -39,7 +39,7 @@ function Discover() {
           {t("description")}
 
         </p>
-        <button className="px-6 rounded-full py-3 bg-gradient-to-r from-[#380C95] to-[#E15754] text-sm text-white   md:text-lg font-normal shadow-lg hover:scale-105 transition-transform">
+        <button className="px-6 rounded-full py-3 bg-[#3A3D8D] text-sm text-white   md:text-lg font-normal shadow-lg hover:scale-105 transition-transform">
           {t("buttonLabel")}
         </button>
       </div>

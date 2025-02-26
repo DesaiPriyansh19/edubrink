@@ -476,7 +476,7 @@ const NavBar = () => {
 
           {/* Contact Us Button */}
           <Link to={"/contact"}>
-            <button className="hidden mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-[#E15754] hover:to-[#380C95] hover:shadow-lg hover:ring-2 hover:ring-white">
+            <button className="hidden mmd:flex px-4 py-2 w-auto text-sm text-white rounded-full bg-[#3A3D8D] transition-all duration-300 ease-in-out transform hover:scale-105  hover:shadow-lg hover:ring-2 hover:ring-white">
               {t("contactUs")}
             </button>
           </Link>
