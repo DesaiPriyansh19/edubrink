@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -135,8 +135,9 @@ const commonRequirements = [
   "Recommendation Letters",
 ];
 
-export default function AddUniversity() {
+export default function EditUniversity() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const {
     filteredFaculty,
     filteredCourses,
@@ -149,9 +150,89 @@ export default function AddUniversity() {
     courses: false,
     faculty: false,
   });
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/university"
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/university/${id}`
   );
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        uniName: {
+          en: data?.uniName?.en || "",
+          ar: data?.uniName?.ar || "",
+        },
+        uniTutionFees: data?.uniTutionFees || "",
+        uniStartDate: data?.uniStartDate || "",
+        uniDeadline: data?.uniDeadline || "",
+        uniMainImage: data?.uniMainImage || "",
+        uniSymbol: data?.uniSymbol || "",
+        study_programs: data?.study_programs || [],
+        faculty: data?.faculty || [],
+        courseId: data?.courseId || [],
+        uniLocation: {
+          uniAddress: {
+            en: data?.uniLocation?.uniAddress?.en || "",
+            ar: data?.uniLocation?.uniAddress?.ar || "",
+          },
+          uniPincode: data?.uniLocation?.uniPincode || "",
+          uniCity: {
+            en: data?.uniLocation?.uniCity?.en || "",
+            ar: data?.uniLocation?.uniCity?.ar || "",
+          },
+          uniState: {
+            en: data?.uniLocation?.uniState?.en || "",
+            ar: data?.uniLocation?.uniState?.ar || "",
+          },
+          uniCountry: {
+            en: data?.uniLocation?.uniCountry?.en || "",
+            ar: data?.uniLocation?.uniCountry?.ar || "",
+          },
+        },
+        uniOverview: {
+          en: data?.uniOverview?.en || "",
+          ar: data?.uniOverview?.ar || "",
+        },
+        uniAccomodation: {
+          en: data?.uniAccomodation?.en || "",
+          ar: data?.uniAccomodation?.ar || "",
+        },
+        uniLibrary: {
+          libraryPhotos: data?.uniLibrary?.libraryPhotos || [],
+          libraryDescription: {
+            en: data?.uniLibrary?.libraryDescription?.en || "",
+            ar: data?.uniLibrary?.libraryDescription?.ar || "",
+          },
+        },
+        uniSports: {
+          sportsPhotos: data?.uniSports?.sportsPhotos || [],
+          sportsDescription: {
+            en: data?.uniSports?.sportsDescription?.en || "",
+            ar: data?.uniSports?.sportsDescription?.ar || "",
+          },
+        },
+        studentLifeStyleInUni: {
+          lifestylePhotos: data?.studentLifeStyleInUni?.lifestylePhotos || [],
+          lifestyleDescription: {
+            en: data?.studentLifeStyleInUni?.lifestyleDescription?.en || "",
+            ar: data?.studentLifeStyleInUni?.lifestyleDescription?.ar || "",
+          },
+        },
+        uniType: data?.uniType || "",
+        studyLevel: data?.studyLevel || [],
+        spokenLanguage: data?.spokenLanguage || [],
+        entranceExamRequired: data?.entranceExamRequired ?? false,
+        scholarshipAvailability: data?.scholarshipAvailability ?? false,
+        admission_requirements: data?.admission_requirements || [],
+        preparatory_year: data?.preparatory_year ?? false,
+        preparatory_year_fees: data?.preparatory_year_fees || "",
+        scholarships_available: data?.scholarships_available ?? false,
+        housing_available: data?.housing_available ?? false,
+        living_cost: data?.living_cost || "",
+        uniFeatured: data?.uniFeatured ?? false,
+      });
+    }
+  }, [data]);
+
   const { language } = useLanguage();
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
@@ -234,8 +315,7 @@ export default function AddUniversity() {
         faculty: formData.faculty.map((faculty) => faculty._id),
       };
 
-      await addNew(updatedFormData);
-      setFormData(initialFormData);
+      await updateWithOutById(updatedFormData);
       navigate(`/${language}/admin/universities`);
     } catch (err) {
       console.error("Error adding university:", err);
@@ -872,7 +952,7 @@ export default function AddUniversity() {
               label="Preparatory Year Available"
               type="checkbox"
               name="preparatory_year"
-              value={formData?.preparatory_year}
+              checked={formData?.preparatory_year}
               onChange={handleInputChange}
               variant={3}
             />
@@ -883,7 +963,7 @@ export default function AddUniversity() {
               label="Scholarship Availability "
               type="checkbox"
               name="scholarshipAvailability"
-              value={formData?.scholarshipAvailability}
+              checked={formData?.scholarshipAvailability}
               onChange={handleInputChange}
               variant={3}
             />
@@ -894,7 +974,7 @@ export default function AddUniversity() {
               label="Student Housing Available"
               type="checkbox"
               name="housing_available"
-              value={formData?.housing_available}
+              checked={formData?.housing_available}
               onChange={handleInputChange}
               variant={3}
             />
@@ -905,7 +985,7 @@ export default function AddUniversity() {
               label="Entrance Exam Required"
               type="checkbox"
               name="entranceExamRequired"
-              value={formData.entranceExamRequired}
+              checked={formData.entranceExamRequired}
               onChange={handleInputChange}
               variant={3}
             />
@@ -916,7 +996,7 @@ export default function AddUniversity() {
               label="Featured University"
               type="checkbox"
               name="uniFeatured"
-              value={formData?.uniFeatured}
+              checked={formData?.uniFeatured}
               onChange={handleInputChange}
               variant={3}
             />

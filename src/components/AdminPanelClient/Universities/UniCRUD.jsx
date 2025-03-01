@@ -12,14 +12,15 @@ import {
   Home,
   SortAsc,
   Filter,
+  Gem,
 } from "lucide-react";
 import Loader from "../../../../utils/Loader";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function UniCRUD() {
   const navigate = useNavigate();
-  const [universities, setUniversities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCountry, setFilterCountry] = useState("");
   const [filterType, setFilterType] = useState("");
@@ -28,59 +29,36 @@ export default function UniCRUD() {
   const [error, setError] = useState(null);
   const [countries, setCountries] = useState([]);
   const { language } = useLanguage();
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery); // Store debounced value
+
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [universityToDelete, setUniversityToDelete] = useState(null);
 
   useEffect(() => {
-    fetchUniversities();
-    fetchCountries();
-  }, []);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500); // 500ms delay
 
-  const fetchUniversities = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("universities")
-        .select(
-          `
-          *,
-          country:countries(*)
-        `
-        )
-        .order("name");
+    return () => clearTimeout(handler); // Cleanup on unmount or if searchQuery changes
+  }, [searchQuery]);
 
-      if (error) throw error;
-      setUniversities(data || []);
-    } catch (err) {
-      console.error("Error fetching universities:", err);
-      setError("Failed to load universities");
-    } finally {
-      setLoading(false);
-    }
+  const baseUrl = isDeletePopupOpen
+    ? `https://edu-brink-backend.vercel.app/api/university`
+    : `https://edu-brink-backend.vercel.app/api/university/fields/query?search=${debouncedSearch}`;
+  const { data: universities, loading, deleteById } = useApiData(baseUrl);
+
+  const handleDelete = (university) => {
+    setUniversityToDelete(university);
+    setIsDeletePopupOpen(true);
   };
 
-  const fetchCountries = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("countries")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-      setCountries(data || []);
-    } catch (err) {
-      console.error("Error fetching countries:", err);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this university?")) return;
+  const confirmDelete = async (id) => {
+    if (!universityToDelete) return;
 
     try {
-      const { error } = await supabase
-        .from("universities")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-      setUniversities(universities.filter((uni) => uni.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setUniversityToDelete(null);
     } catch (error) {
       console.error("Error deleting university:", error);
     }
@@ -91,17 +69,17 @@ export default function UniCRUD() {
 
     switch (sortBy) {
       case "name":
-        return direction * a.name.localeCompare(b.name);
+        return direction * a.uniName.en.localeCompare(b.uniName.en);
       case "country":
         return (
           direction *
-          (a.country?.name || "").localeCompare(b.country?.name || "")
+          (a.countryName?.en || "").localeCompare(b.countryName?.en || "")
         );
-      case "created_at":
-        return (
-          direction *
-          (new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        );
+      // case "created_at":
+      //   return (
+      //     direction *
+      //     (new Date(a.uniCreationDate).getTime() - new Date(b.uniCreationDate).getTime())
+      //   );
       default:
         return 0;
     }
@@ -109,24 +87,10 @@ export default function UniCRUD() {
 
   const filteredUniversities = universities
     .filter((university) => {
-      const matchesSearch =
-        university.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        university.country?.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        university.description
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase());
-
-      const matchesCountry =
-        !filterCountry || university.country_id === filterCountry;
       const matchesType =
         !filterType ||
-        university.description
-          ?.toLowerCase()
-          .includes(filterType.toLowerCase());
-
-      return matchesSearch && matchesCountry && matchesType;
+        university.uniType?.toLowerCase().includes(filterType.toLowerCase());
+      return matchesType;
     })
     .sort(sortUniversities);
 
@@ -281,34 +245,32 @@ export default function UniCRUD() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredUniversities.map((university) => (
                 <div
-                  key={university.id}
+                  key={`${university.countryName.en}-${university._id}`}
                   className="group bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 relative"
                 >
                   <div className="aspect-video bg-gray-100 relative overflow-hidden">
                     <img
                       src={
-                        university.description?.match(
-                          /https:\/\/\S+\.(jpg|jpeg|png|gif)/i
-                        )?.[0] ||
+                        university?.uniMainImage ||
                         "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=800"
                       }
-                      alt={university.name}
+                      alt={university.uniName.en}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <h3 className="text-white font-semibold text-lg leading-tight mb-1">
-                        {university.name}
+                        {university.uniName.en}
                       </h3>
                       <div className="flex items-center text-white/90 text-sm">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {university.country?.name}
+                        {university.countryName?.en || "USA"}
                       </div>
                     </div>
                   </div>
                   <div className="p-4">
                     <div className="text-sm text-gray-600 line-clamp-2 mb-4">
-                      {university.description?.split("\n")[0] ||
+                      {university.uniOverview.en?.split("\n")[0] ||
                         "No description available"}
                     </div>
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -320,6 +282,10 @@ export default function UniCRUD() {
                         <Home className="w-3 h-3 mr-1" />
                         Campus
                       </span>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <Gem className="w-3 h-3 mr-1" />
+                        Featured
+                      </span>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                         <Award className="w-3 h-3 mr-1" />
                         Accredited
@@ -328,14 +294,16 @@ export default function UniCRUD() {
                     <div className="flex justify-between items-center">
                       <button
                         onClick={() =>
-                          navigate(`/universities/${university.id}`)
+                          navigate(
+                            `/${language}/admin/universities/${university._id}`
+                          )
                         }
                         className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
                         View Details
                       </button>
                       <button
-                        onClick={() => handleDelete(university.id)}
+                        onClick={() => handleDelete(university)}
                         className="text-red-600 hover:text-red-800 text-sm font-medium"
                       >
                         Delete
@@ -397,6 +365,13 @@ export default function UniCRUD() {
           <div className="mt-2 text-sm text-gray-500">Available courses</div>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={universityToDelete?.uniName.en || ""}
+        uniId={universityToDelete?._id || ""}
+      />
     </div>
   );
 }

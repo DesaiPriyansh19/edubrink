@@ -43,6 +43,12 @@ import AddArticle from "./components/AdminPanelClient/Articles/AddArticles";
 import UsersCRUD from "./components/AdminPanelClient/Users/UsersCRUD";
 import AddUser from "./components/AdminPanelClient/Users/AddUser";
 import EditCountry from "./components/AdminPanelClient/Countries/EditCountry";
+import EditUniversity from "./components/AdminPanelClient/Universities/EditUniversity";
+import EditFaculty from "./components/AdminPanelClient/Faculties/EditFaculty";
+import EditMajor from "./components/AdminPanelClient/Majors/EditMajor";
+import EditCourse from "./components/AdminPanelClient/Courses/EditCourse";
+import EditArticle from "./components/AdminPanelClient/Articles/EditArticles";
+import EditUser from "./components/AdminPanelClient/Users/EditUser";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -92,7 +98,7 @@ function App() {
                     path="/:lang/searchresults/*"
                     element={<SearchResults />}
                   />
-                  
+
                   {/* <Route
                     path="/:lang/admin"
                     element={<NavigateToAdminDashboard />}
@@ -109,18 +115,23 @@ function App() {
                     />
                     <Route path="faculties" element={<FacultyCRUD />} />
                     <Route path="faculties/add" element={<AddFaculty />} />
+                    <Route path="faculties/:id" element={<EditFaculty />} />
                     <Route path="majors" element={<MajorCRUD />} />
                     <Route path="majors/add" element={<AddMajor />} />
-                    {/* <Route
+                    <Route path="majors/:id" element={<EditMajor />} />
+                    <Route
                       path="universities/:id"
-                      element={<UniversityDetails />}
-                    /> */}
+                      element={<EditUniversity />}
+                    />
                     <Route path="courses" element={<CourseCRUD />} />
                     <Route path="courses/add" element={<AddCourse />} />
+                    <Route path="courses/:id" element={<EditCourse />} />
                     <Route path="articles" element={<ArticlesCRUD />} />
                     <Route path="articles/add" element={<AddArticle />} />
+                    <Route path="articles/:id" element={<EditArticle />} />
                     <Route path="users" element={<UsersCRUD />} />
                     <Route path="users/add" element={<AddUser />} />
+                    <Route path="users/:id" element={<EditUser />} />
                   </Route>
                 </Route>
               </Routes>

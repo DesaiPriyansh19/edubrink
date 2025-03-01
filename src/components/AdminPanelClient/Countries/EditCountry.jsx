@@ -110,6 +110,18 @@ const initialFormData = {
     en: "",
     ar: "",
   },
+  metaTitle: {
+    en: "", // SEO Meta Title in English
+    ar: "", // SEO Meta Title in Arabic
+  },
+  metaDescription: {
+    en: "", // SEO Meta Title in English
+    ar: "", // SEO Meta Description in Arabic
+  },
+  metakeywords: {
+    en: [], // Array of SEO Keywords in English
+    ar: [], // Array of SEO Keywords in Arabic
+  },
   name: "",
   countryCode: "",
   universities: [], // Array to hold references to university IDs
@@ -123,7 +135,6 @@ export default function EditCountry() {
   const {
     filteredUniversities,
     filteredBlogs,
-    filteredFaculty,
     setSearchInput,
     handleAdd,
     handleRemove,
@@ -149,6 +160,18 @@ export default function EditCountry() {
           mainPagePhoto: data?.countryPhotos?.mainPagePhoto || "",
           countryFlag: data?.countryPhotos?.countryFlag || "",
         },
+        metaTitle: {
+          en: data?.metaTitle?.en || "",
+          ar: data?.metaTitle?.ar || "",
+        },
+        metaDescription: {
+          en: data?.metaDescription?.en || "",
+          ar: data?.metaDescription?.ar || "",
+        },
+        keywords: {
+          en: data?.keywords?.en || [], // Default to empty array if not available
+          ar: data?.keywords?.ar || [], // Default to empty array if not available
+        },
         countryOverview: {
           en: data?.countryOverview?.en || "",
           ar: data?.countryOverview?.ar || "",
@@ -166,7 +189,6 @@ export default function EditCountry() {
   const [showDropdown, setShowDropdown] = useState({
     universities: false,
     blogs: false,
-    faculty: false,
   });
   const [error, setError] = useState(null);
   const [newItem, setNewItem] = useState("");
@@ -266,27 +288,55 @@ export default function EditCountry() {
   };
 
   const addItem = (field) => {
-    if (
-      newItem &&
-      Array.isArray(formData[field]) &&
-      !formData[field].includes(newItem)
-    ) {
-      setFormData({
-        ...formData,
-        [field]: [...formData[field], newItem],
-      });
-      setNewItem("");
-      setActiveSection(null);
-    }
+    if (!newItem.trim()) return;
+
+    setFormData((prev) => {
+      const fieldPath = field.split(".");
+      const fieldKey = fieldPath[0]; // "keywords"
+      const subKey = fieldPath[1]; // "en"
+
+      if (subKey) {
+        return {
+          ...prev,
+          [fieldKey]: {
+            ...prev[fieldKey],
+            [subKey]: [...(prev[fieldKey]?.[subKey] || []), newItem],
+          },
+        };
+      } else {
+        return {
+          ...prev,
+          [field]: [...(prev[field] || []), newItem],
+        };
+      }
+    });
+
+    setNewItem(""); // Clear input field
   };
 
-  const removeItem = (field, item) => {
-    if (Array.isArray(formData[field])) {
-      setFormData({
-        ...formData,
-        [field]: formData[field].filter((i) => i !== item),
-      });
-    }
+  const removeItem = (field, itemToRemove) => {
+    setFormData((prev) => {
+      const fieldPath = field.split(".");
+      const fieldKey = fieldPath[0]; // "keywords"
+      const subKey = fieldPath[1]; // "en"
+
+      if (subKey) {
+        return {
+          ...prev,
+          [fieldKey]: {
+            ...prev[fieldKey],
+            [subKey]: prev[fieldKey]?.[subKey]?.filter(
+              (item) => item !== itemToRemove
+            ),
+          },
+        };
+      } else {
+        return {
+          ...prev,
+          [field]: prev[field].filter((item) => item !== itemToRemove),
+        };
+      }
+    });
   };
 
   const filteredFlags = countryFlags.filter(
@@ -295,48 +345,73 @@ export default function EditCountry() {
       country.code.toLowerCase().includes(flagSearch.toLowerCase())
   );
 
-  const renderArrayField = (field, label, icon, placeholder) => (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      <div className="flex gap-2 mb-2">
-        <input
-          type="text"
-          value={activeSection === field ? newItem : ""}
-          onChange={(e) => {
-            setNewItem(e.target.value);
-            setActiveSection(field);
-          }}
-          placeholder={placeholder}
-          className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-        <button
-          type="button"
-          onClick={() => addItem(field)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Edit
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {formData[field].map((item) => (
-          <div
-            key={item}
-            className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+  const renderArrayField = (field, label, icon, placeholder) => {
+    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
+    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
+    const subKey = fieldPath[1]; // Second key (e.g., "en")
+
+    return (
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            value={activeSection === field ? newItem : ""}
+            onChange={(e) => {
+              setNewItem(e.target.value);
+              setActiveSection(field);
+            }}
+            placeholder={placeholder}
+            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+          <button
+            type="button"
+            onClick={() => addItem(field)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            {icon}
-            {item}
-            <button
-              type="button"
-              onClick={() => removeItem(field, item)}
-              className="text-blue-500 hover:text-blue-700"
-            >
-              ×
-            </button>
-          </div>
-        ))}
+            Add
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {subKey
+            ? formData?.[fieldKey]?.[subKey]?.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                >
+                  {icon}
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeItem(field, item)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))
+            : formData?.[fieldKey]?.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                >
+                  {icon}
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeItem(field, item)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -499,6 +574,73 @@ export default function EditCountry() {
                 )}
               </div>
             </div>
+
+            <InputField
+              label="Meta Title (English)"
+              type="text"
+              name="metaTitle.en"
+              placeholder="Enter Meta Title in English"
+              value={formData?.metaTitle?.en}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            {/* Meta Title (Arabic) */}
+
+            <InputField
+              label="Meta Title (العنوان التعريفي)"
+              type="text"
+              name="metaTitle.ar"
+              placeholder="أدخل العنوان التعريفي"
+              value={formData?.metaTitle?.ar}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            <div className="col-span-2">
+              <InputField
+                label="Meta Description (English)"
+                type="textarea"
+                name="metaDescription.en"
+                placeholder="Enter Meta Description in English"
+                value={formData?.metaDescription?.en}
+                onChange={handleInputChange}
+                autoComplete="metaDescription"
+                variant={3}
+              />
+            </div>
+
+            {/* Meta Description (Arabic) */}
+            <div className="col-span-2">
+              <InputField
+                label="Meta Description (الوصف التعريفي)"
+                type="textarea"
+                name="metaDescription.ar"
+                placeholder="أدخل الوصف التعريفي"
+                value={formData?.metaDescription?.ar}
+                onChange={handleInputChange}
+                autoComplete="metaDescription"
+                variant={3}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-3">
+              {renderArrayField(
+                "keywords.en", // Pass the nested field
+                "Keywords (English)",
+                <Languages className="w-4 h-4" />,
+                "Add New Keyword..."
+              )}
+              {renderArrayField(
+                "keywords.ar",
+                "Keywords (Arabic)",
+                <Languages className="w-4 h-4" />,
+                "أضف كلمة مفتاحية جديدة..."
+              )}
+            </div>
+
+            {/* Keywords (Arabic) */}
 
             <div className=" col-span-2">
               <div className="mb-2">
@@ -692,7 +834,7 @@ export default function EditCountry() {
           />
 
           {/* Faculty Dropdown */}
-          <DropdownSelect
+          {/* <DropdownSelect
             label="Enroll Faculty (التسجيل بالكلية)"
             placeholder="Select a Faculty"
             icon={BookOpen}
@@ -710,7 +852,7 @@ export default function EditCountry() {
             dropdownKey="faculty"
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
-          />
+          /> */}
         </div>
 
         <div className="mt-4">

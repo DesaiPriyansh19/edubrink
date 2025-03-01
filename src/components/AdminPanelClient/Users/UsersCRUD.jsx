@@ -9,65 +9,51 @@ import {
   Loader2,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function UsersCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const baseUrl = isDeletePopupOpen
+    ? `https://edu-brink-backend.vercel.app/api/users`
+    : `https://edu-brink-backend.vercel.app/api/users/admin`;
 
-  const fetchUsers = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("admin_users")
-        .select("*")
-        .order("created_at", { ascending: false });
+  const {
+    data: users,
+    error,
+    loading,
+    updateById,
+    deleteById,
+  } = useApiData(baseUrl);
 
-      if (error) throw error;
-      setUsers(data || []);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-      setError("Failed to load users");
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (user) => {
+    setUserToDelete(user);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  const confirmDelete = async (id) => {
+    if (!userToDelete) return;
 
     try {
-      const { error } = await supabase
-        .from("admin_users")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-      setUsers(users.filter((user) => user.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setUserToDelete(null);
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error deleting university:", error);
     }
   };
 
   const toggleStatus = async (user) => {
     try {
-      const newStatus = user.status === "Active" ? "Inactive" : "Active";
-      const { error } = await supabase
-        .from("admin_users")
-        .update({ status: newStatus })
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      setUsers(
-        users.map((u) => (u.id === user.id ? { ...u, status: newStatus } : u))
-      );
+      await updateById(user._id, {
+        Status: !user.Status,
+      });
     } catch (error) {
       console.error("Error updating user status:", error);
     }
@@ -75,9 +61,9 @@ export default function UsersCRUD() {
 
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchQuery.toLowerCase())
+      user.FullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.Email.toLowerCase().includes(searchQuery.toLowerCase())
+    // user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -131,53 +117,55 @@ export default function UsersCRUD() {
           ) : (
             filteredUsers.map((user) => (
               <div
-                key={user.id}
+                key={user._id}
                 className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{user.name}</h3>
+                    <h3 className="font-medium">{user.FullName || "N/A"}</h3>
                     <span
                       className={`${
-                        user.status === "Active"
+                        user.Status
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
                       } text-xs px-2 py-1 rounded-full`}
                     >
-                      {user.status}
+                      {user.Status ? "Active" : "Not Active"}
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mt-1">
                     <div className="flex items-center text-sm text-gray-500">
                       <Shield className="w-4 h-4 mr-1" />
-                      {user.role}
+                      {user.isAdmin ? "Admin" : "Viewer"}
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />
-                      {new Date(user.created_at).toLocaleDateString()}
+                      {new Date(user.createdAt).toLocaleDateString()}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 mt-1">{user.email}</div>
+                  <div className="text-sm text-gray-500 mt-1">{user.Email}</div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => toggleStatus(user)}
                     className={`${
-                      user.status === "Active"
+                      user.Status
                         ? "text-green-600 hover:text-green-800"
                         : "text-gray-600 hover:text-gray-800"
                     } px-3 py-1`}
                   >
-                    {user.status === "Active" ? "Deactivate" : "Activate"}
+                    {!user.Status ? "Deactivate" : "Activate"}
                   </button>
                   <button
-                    onClick={() => navigate(`/users/${user.id}`)}
+                    onClick={() =>
+                      navigate(`/${language}/admin/users/${user._id}`)
+                    }
                     className="text-blue-600 hover:text-blue-800 px-3 py-1"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(user)}
                     className="text-red-600 hover:text-red-800 px-3 py-1"
                   >
                     Delete
@@ -205,7 +193,7 @@ export default function UsersCRUD() {
             <h2 className="text-lg font-semibold">Active Users</h2>
           </div>
           <p className="text-3xl font-bold">
-            {users.filter((u) => u.status === "Active").length}
+            {users.filter((u) => u.Status).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Currently active</p>
         </div>
@@ -216,11 +204,18 @@ export default function UsersCRUD() {
             <h2 className="text-lg font-semibold">Admins</h2>
           </div>
           <p className="text-3xl font-bold">
-            {users.filter((u) => u.role === "Admin").length}
+            {users.filter((u) => u.isAdmin).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Admin users</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={userToDelete?.Email || ""}
+        uniId={userToDelete?._id || ""}
+      />
     </div>
   );
 }

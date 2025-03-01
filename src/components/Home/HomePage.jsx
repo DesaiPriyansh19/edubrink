@@ -12,7 +12,6 @@ import OurCourses from './OurCourses';
 import FindCourses from './FindCourses';
 import RecentBlog from './RecentBlog';
 import ContactSection from '../ContactSection';
-import BreadCrumbsLink from '../../../utils/BreadCrumbsLink';
 
 
 function HomePage() {

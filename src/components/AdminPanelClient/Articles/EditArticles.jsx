@@ -1,13 +1,6 @@
-import React, { useState, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Plus,
-  ArrowLeft,
-  FileText,
-  Tag,
-  Image as ImageIcon,
-  X,
-} from "lucide-react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Plus, ArrowLeft, Tag, X } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useLanguage } from "../../../../context/LanguageContext";
@@ -52,16 +45,47 @@ const categories = [
   "Education News",
 ];
 
-export default function AddArticle() {
+export default function EditArticle() {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [newTag, setNewTag] = useState({ en: "", ar: "" });
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/blog?admin=true"
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/blog/${id}`
   );
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        blogTitle: {
+          en: data?.blogTitle?.en || "",
+          ar: data?.blogTitle?.ar || "",
+        },
+        blogSubtitle: {
+          en: data?.blogSubtitle?.en || "",
+          ar: data?.blogSubtitle?.ar || "",
+        },
+        blogDescription: {
+          en: data?.blogDescription?.en || "",
+          ar: data?.blogDescription?.ar || "",
+        },
+        publishImmediately: !!data?.publishImmediately, // Ensure Boolean
+        featuredBlog: !!data?.featuredBlog, // Ensure Boolean
+        blogAuthor: data?.blogAuthor || "",
+        blogCategory: data?.blogCategory || "",
+        blogTags: {
+          en: Array.isArray(data?.blogTags?.en) ? data?.blogTags.en : [],
+          ar: Array.isArray(data?.blogTags?.ar) ? data?.blogTags.ar : [],
+        },
+        blogPhoto: data?.blogPhoto || "",
+      });
+    } else {
+      setFormData(initialFormData); // Reset to initial state when `data` is empty
+    }
+  }, [data]);
 
   const quillRef = useRef(null);
 
@@ -150,11 +174,11 @@ export default function AddArticle() {
     setError(null);
 
     try {
-      const { uniName, ...updatedFormData } = {
+      const { ...updatedFormData } = {
         ...formData,
       };
 
-      await addNew(updatedFormData);
+      await updateWithOutById(updatedFormData);
 
       navigate(`/${language}/admin/articles`);
     } catch (err) {

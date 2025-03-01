@@ -23,7 +23,6 @@ export default function CountryCRUD() {
   const { language } = useLanguage();
   const baseUrl = `https://edu-brink-backend.vercel.app/api/country`;
   const { data, loading, deleteById } = useApiData(baseUrl);
-  console.log(data);
 
   const handleDelete = async (id) => {
     setDeleteLoad(true);

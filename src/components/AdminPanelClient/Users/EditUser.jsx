@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Mail,
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import useApiData from "../../../../hooks/useApiData";
 import { useLanguage } from "../../../../context/LanguageContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialFormData = {
   FullName: "",
@@ -35,39 +35,39 @@ const maritalStatuses = ["Married", "Not-Married"];
 const genders = ["Male", "Female", "Non-Binary"];
 const status = ["Active", "Not Active"];
 
-export default function AddUser() {
+export default function EditUser() {
+  const { id } = useParams();
   const { language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  const { error: resError, addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/users/admin"
-  );
+  const {
+    data,
+    error: resError,
+    updateWithOutById,
+  } = useApiData(`https://edu-brink-backend.vercel.app/api/users/admin/${id}`);
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        FullName: data?.FullName || "",
+        Email: data?.Email || "",
+        MobileNumber: data?.MobileNumber || "",
+        DateOfBirth: data?.DateOfBirth || "",
+        isAdmin: data?.isAdmin ?? false,
+        verified: data?.verified ?? false,
+        Address: data?.Address || "",
+        Status: data?.Status ?? false,
+        MaritalStatus: data?.MaritalStatus || "Not-Married",
+        Gender: data?.Gender || "Male",
+      });
+    }
+  }, [data]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.FullName.trim()) {
-      setError("Full Name is required");
-      return;
-    }
-
-    if (!formData.Email.trim()) {
-      setError("Email is required");
-      return;
-    }
-
-    if (!formData.Password.trim()) {
-      setError("Password is required");
-      return;
-    }
-
-    if (!formData.MobileNumber.trim()) {
-      setError("Mobile Number is required");
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -78,7 +78,7 @@ export default function AddUser() {
         ...formData,
       };
 
-      await addNew(updatedFormData);
+      await updateWithOutById(updatedFormData);
 
       setSuccess(true);
 
@@ -156,24 +156,6 @@ export default function AddUser() {
                 value={formData.Email}
                 onChange={(e) =>
                   setFormData({ ...formData, Email: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <Shield className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="password"
-                value={formData.Password}
-                onChange={(e) =>
-                  setFormData({ ...formData, Password: e.target.value })
                 }
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
                 required

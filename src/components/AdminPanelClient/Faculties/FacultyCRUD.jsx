@@ -11,68 +11,49 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function FacultyCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [faculties, setFaculties] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [facultyToDelete, setFacultyToDelete] = useState(null);
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/faculty`;
+  const { data: faculties, loading, deleteById } = useApiData(baseUrl);
 
-  useEffect(() => {
-    fetchFaculties();
-  }, []);
-
-  const fetchFaculties = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("faculties")
-        .select(
-          `
-          *,
-          university:universities(
-            name,
-            country:countries(name)
-          )
-        `
-        )
-        .order("name");
-
-      if (error) throw error;
-      setFaculties(data || []);
-    } catch (err) {
-      console.error("Error fetching faculties:", err);
-      setError("Failed to load faculties");
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (university) => {
+    setFacultyToDelete(university);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this faculty?")) return;
+  const confirmDelete = async (id) => {
+    if (!facultyToDelete) return;
 
     try {
-      const { error } = await supabase.from("faculties").delete().eq("id", id);
-
-      if (error) throw error;
-      setFaculties(faculties.filter((faculty) => faculty.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setFacultyToDelete(null);
     } catch (error) {
-      console.error("Error deleting faculty:", error);
+      console.error("Error deleting university:", error);
     }
   };
 
   const filteredFaculties = faculties.filter(
     (faculty) =>
-      faculty.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faculty.university?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      faculty.university?.country?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+      faculty.facultyName.en.toLowerCase().includes(searchQuery.toLowerCase())
+    // faculty.university?.name
+    //   .toLowerCase()
+    //   .includes(searchQuery.toLowerCase()) ||
+    // faculty.university?.country?.name
+    //   .toLowerCase()
+    //   .includes(searchQuery.toLowerCase())
   );
 
+  console.log(filteredFaculties);
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -124,13 +105,13 @@ export default function FacultyCRUD() {
           ) : (
             filteredFaculties.map((faculty) => (
               <div
-                key={faculty.id}
+                key={faculty._id}
                 className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{faculty.name}</h3>
-                    {faculty.featured && (
+                    <h3 className="font-medium">{faculty.facultyName.en}</h3>
+                    {faculty.facultyFeatured && (
                       <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                         Featured
                       </span>
@@ -161,13 +142,15 @@ export default function FacultyCRUD() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => navigate(`/faculties/${faculty.id}`)}
+                    onClick={() =>
+                      navigate(`/${language}/admin/faculties/${faculty._id}`)
+                    }
                     className="text-blue-600 hover:text-blue-800 px-3 py-1"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(faculty.id)}
+                    onClick={() => handleDelete(faculty)}
                     className="text-red-600 hover:text-red-800 px-3 py-1"
                   >
                     Delete
@@ -214,6 +197,13 @@ export default function FacultyCRUD() {
           <p className="text-sm text-gray-500 mt-1">Highlighted faculties</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={facultyToDelete?.facultyName.en || ""}
+        uniId={facultyToDelete?._id || ""}
+      />
     </div>
   );
 }

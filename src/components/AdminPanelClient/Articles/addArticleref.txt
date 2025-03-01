@@ -1,0 +1,622 @@
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, ArrowLeft, Tag } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+
+// Sample tag suggestions - replace with your actual data source
+const tagSuggestions = [
+  "Education",
+  "University",
+  "Study Abroad",
+  "Scholarship",
+  "Student Life",
+  "Career",
+  "Technology",
+  "Research",
+  "Academic",
+  "Learning",
+  "International",
+  "Exchange Program",
+  "Internship",
+  "Graduate",
+  "Undergraduate",
+  "Campus",
+];
+
+// const initialFormData = {
+//   blogTitle: {
+//     en: "",
+//     ar: "",
+//   },
+//   blogSubtitle: {
+//     en: "",
+//     ar: "",
+//   },
+//   blogDescription: {
+//     en: "",
+//     ar: "",
+//   },
+//   blogPhoto: "",
+// };
+
+const initialFormData = {
+  blogTitle: {
+    en: "",
+    ar: "",
+  },
+  blogSubtitle: {
+    en: "",
+    ar: "",
+  },
+  blogDescription: {
+    en: "",
+    ar: "",
+  },
+  blogAuthor: "",
+  blogCategory: "",
+  blogTags: [],
+  cover_image: "",
+  published: false,
+  featured: false,
+};
+
+const categories = [
+  "Study Abroad",
+  "University Life",
+  "Career Advice",
+  "Student Tips",
+  "Academic Success",
+  "Cultural Exchange",
+  "Language Learning",
+  "Scholarships",
+  "Student Stories",
+  "Education News",
+];
+
+// Helper function to highlight matching text
+const highlightMatch = (text, query) => {
+  if (!query.trim()) return text;
+
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi"
+  );
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span key={index} className="bg-yellow-200 font-medium">
+        {part}
+      </span>
+    ) : (
+      <span key={index}>{part}</span>
+    )
+  );
+};
+
+export default function AddArticle() {
+  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+  const [newTag, setNewTag] = useState("");
+  const quillRef = useRef(null);
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  // Tag dropdown state
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  // Filter suggestions based on input
+  useEffect(() => {
+    if (newTag.trim() === "") {
+      setFilteredSuggestions([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const filtered = tagSuggestions.filter((tag) =>
+      tag.toLowerCase().includes(newTag.toLowerCase())
+    );
+    setFilteredSuggestions(filtered);
+    setShowDropdown(filtered.length > 0);
+    setSelectedIndex(-1);
+  }, [newTag]);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "blockquote"],
+        [{ align: [] }],
+        ["clean"],
+      ],
+    }),
+    []
+  );
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "link",
+    "blockquote",
+    "align",
+  ];
+
+  const handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
+
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
+
+    // Dynamically navigate through the object based on nameParts
+    nameParts.reduce((acc, part, index) => {
+      if (index === nameParts.length - 1) {
+        // Set the value for the last part (en or ar)
+        acc[part] = type === "checkbox" ? checked : value;
+      } else {
+        // Navigate deeper into the nested object or array
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
+      }
+      return acc[part];
+    }, temp);
+
+    // Update formData state with the new temp object
+    setFormData(temp);
+
+    // setValidationErrors((prevErrors) => {
+    //   if (prevErrors[name]) {
+    //     const updatedErrors = { ...prevErrors };
+    //     delete updatedErrors[name]; // Remove the error for this field
+    //     return updatedErrors;
+    //   }
+    //   return prevErrors;
+    // });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.blogTitle?.en?.trim() || !formData.blogTitle?.ar?.trim()) {
+      setError("Title is required");
+      return;
+    }
+
+    if (
+      !formData.blogDescription?.en?.trim() ||
+      !formData.blogDescription?.ar?.trim()
+    ) {
+      setError("Content is required");
+      return;
+    }
+
+    if (!formData.blogAuthor?.trim()) {
+      setError("Author is required");
+      return;
+    }
+
+    if (!formData.blogCategory) {
+      setError("Category is required");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error: insertError } = await supabase.from("articles").insert([
+        {
+          ...formData,
+          blogTitle: {
+            en: formData.blogTitle.en,
+            ar: formData.blogTitle.ar,
+          },
+          blogSubtitle: {
+            en: formData.blogSubtitle.en,
+            ar: formData.blogSubtitle.ar,
+          },
+          blogDescription: {
+            en: formData.blogDescription.en,
+            ar: formData.blogDescription.ar,
+          },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (insertError) throw insertError;
+      navigate(`/${language}/admin/articles`);
+    } catch (err) {
+      console.error("Error adding article:", err);
+      setError(err.message || "Failed to add article");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addTag = () => {
+    if (newTag && !formData.blogTags.includes(newTag)) {
+      setFormData((prev) => ({
+        ...prev,
+        blogTags: [...prev.blogTags, newTag],
+      }));
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      blogTags: prev.blogTags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  // Handle keyboard navigation for tag dropdown
+  const handleTagKeyDown = (e) => {
+    if (!showDropdown) return;
+
+    // Enter key - select the highlighted suggestion
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < filteredSuggestions.length) {
+        setNewTag(filteredSuggestions[selectedIndex]);
+        setTimeout(addTag, 0);
+      } else {
+        addTag();
+      }
+    }
+    // Arrow down - move selection down
+    else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+      );
+    }
+    // Arrow up - move selection up
+    else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    }
+    // Escape - close dropdown
+    else if (e.key === "Escape") {
+      setShowDropdown(false);
+    }
+  };
+
+  // Select a suggestion from dropdown
+  const selectSuggestion = (suggestion) => {
+    setNewTag(suggestion);
+    setShowDropdown(false);
+    setTimeout(addTag, 0);
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={() => navigate(`/${language}/admin/articles`)}
+          className="flex items-center text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Articles
+        </button>
+        <h1 className="text-2xl font-bold">Add New Article</h1>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-lg shadow-md p-6"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <InputField
+            label="Blog Title (English)"
+            type="text"
+            name="blogTitle.en"
+            placeholder="Blog Title (English)"
+            value={formData?.blogTitle?.en}
+            onChange={handleInputChange}
+            autoComplete="blogTitle"
+            variant={3}
+          />
+
+          <InputField
+            label="عنوان المدونة (عربي)"
+            type="text"
+            name="blogTitle.ar"
+            placeholder="عنوان المدونة (عربي)"
+            value={formData?.blogTitle?.ar}
+            onChange={handleInputChange}
+            autoComplete="blogTitle"
+            variant={3}
+          />
+
+          <InputField
+            label="Blog Subtitle (English)"
+            type="text"
+            name="blogSubtitle.en"
+            placeholder="Enter Blog Subtitle (English)"
+            value={formData?.blogSubtitle?.en}
+            onChange={handleInputChange}
+            autoComplete="blogSubtitle"
+            variant={3}
+          />
+
+          <InputField
+            label="عنوان فرعي (عربي)"
+            type="text"
+            name="blogSubtitle.ar"
+            placeholder="أدخل العنوان الفرعي (عربي)"
+            value={formData?.blogSubtitle?.ar}
+            onChange={handleInputChange}
+            autoComplete="blogSubtitle"
+            variant={3}
+          />
+
+          <InputField
+            label="Blog Category"
+            type="select"
+            name="blogCategory"
+            value={formData?.blogCategory || ""}
+            onChange={handleInputChange}
+            options={categories.map((mode) => ({
+              value: mode,
+              label: mode,
+            }))}
+          />
+          <div>
+            <InputField
+              label="Blog Author"
+              type="text"
+              name="blogAuthor"
+              placeholder="Name of the Author"
+              value={formData?.blogAuthor}
+              onChange={handleInputChange}
+              autoComplete="blogSubtitle"
+              variant={3}
+            />
+          </div>
+
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Content (English)
+            </label>
+            <div className="prose max-w-none">
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <ReactQuill
+                  ref={quillRef}
+                  theme="snow"
+                  value={formData.blogDescription.en}
+                  onChange={(content) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      blogDescription: { ...prev.blogDescription, en: content },
+                    }))
+                  }
+                  modules={modules}
+                  formats={formats}
+                  className="h-64"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              المحتوى (عربي)
+            </label>
+            <div className="prose max-w-none">
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                <ReactQuill
+                  ref={quillRef}
+                  theme="snow"
+                  value={formData.blogDescription.ar}
+                  onChange={(content) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      blogDescription: { ...prev.blogDescription, ar: content },
+                    }))
+                  }
+                  modules={modules}
+                  formats={formats}
+                  className="h-64"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tags
+            </label>
+            <div className="relative">
+              <div className="flex gap-2 mb-2">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                  onFocus={() => newTag.trim() !== "" && setShowDropdown(true)}
+                  placeholder="Add a tag..."
+                  className="flex-1 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2"
+                />
+                <button
+                  type="button"
+                  onClick={addTag}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add
+                </button>
+              </div>
+
+              {/* Dropdown suggestions */}
+              {showDropdown && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                >
+                  {filteredSuggestions.map((suggestion, index) => (
+                    <div
+                      key={suggestion}
+                      onClick={() => selectSuggestion(suggestion)}
+                      className={`px-4 py-2 cursor-pointer hover:bg-blue-50 ${
+                        index === selectedIndex ? "bg-blue-100" : ""
+                      }`}
+                    >
+                      {/* Highlight the matching part of the suggestion */}
+                      {highlightMatch(suggestion, newTag)}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                {formData.blogTags.map((tag) => (
+                  <div
+                    key={tag}
+                    className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                  >
+                    <Tag className="w-4 h-4" />
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Cover Image URL
+            </label>
+            <input
+              type="url"
+              value={formData.cover_image}
+              onChange={(e) =>
+                setFormData({ ...formData, cover_image: e.target.value })
+              }
+              className="w-full border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2"
+              placeholder="https://example.com/image.jpg"
+            />
+            {formData.cover_image && (
+              <div className="mt-2">
+                <img
+                  src={formData.cover_image || "/placeholder.svg"}
+                  alt="Cover"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="published"
+                checked={formData.published}
+                onChange={(e) =>
+                  setFormData({ ...formData, published: e.target.checked })
+                }
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="published"
+                className="text-sm font-medium text-gray-700"
+              >
+                Publish Immediately
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={formData.featured}
+                onChange={(e) =>
+                  setFormData({ ...formData, featured: e.target.checked })
+                }
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="featured"
+                className="text-sm font-medium text-gray-700"
+              >
+                Featured Article
+              </label>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => navigate("/articles")}
+              className="mr-4 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center"
+            >
+              {loading ? (
+                "Saving..."
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Save Article
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}

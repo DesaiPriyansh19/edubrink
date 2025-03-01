@@ -32,7 +32,8 @@ const InputField = ({
     },
     {
       labelClassName: "block text-sm font-medium text-gray-700 mb-2 ",
-      inputClassName: "w-full border-gray-300 px-3 py-3 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500",
+      inputClassName:
+        "w-full border border-gray-300 px-4 py-2  rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500",
     },
   ];
 
@@ -43,24 +44,27 @@ const InputField = ({
 
   if (type === "select") {
     return (
-      <div className="h-full mb-2 relative">
-        <label htmlFor={name} className={`${labelClassName} ${errorClass}`}>
+      <div className=" relative">
+        <label
+          htmlFor={name}
+          className={`${labelClassName} block text-sm font-medium text-gray-700 mb-2 ${errorClass}`}
+        >
           {label}
         </label>
         <select
           name={name}
           value={value}
           onChange={onChange}
-          style={{
-            backgroundColor: "#1f2937", // Tailwind bg-gray-800
-            borderBottom: errorClass ? "1px solid red" : "1px solid white", // Tailwind border-white
-            borderRadius: "0px", // Tailwind border-radius
-            color: "white", // Tailwind text-white
-            appearance: "none", // Tailwind appearance-none
-            padding: "1rem", // Tailwind padding
-            width: "100%", // Tailwind width
-            paddingRight: "2rem", // Adding extra padding for arrow icon
-          }}
+          // style={{
+          //   backgroundColor: "#1f2937", // Tailwind bg-gray-800
+          //   borderBottom: errorClass ? "1px solid red" : "1px solid white", // Tailwind border-white
+          //   borderRadius: "0px", // Tailwind border-radius
+          //   color: "white", // Tailwind text-white
+          //   appearance: "none", // Tailwind appearance-none
+          //   padding: "1rem", // Tailwind padding
+          //   width: "100%", // Tailwind width
+          //   paddingRight: "2rem", // Adding extra padding for arrow icon
+          // }}
           className={`${inputClassName}  `}
           required={required}
           multiple={multiple}
@@ -100,34 +104,33 @@ const InputField = ({
 
   if (type === "checkbox") {
     return (
-      <div className="flex gap-2 justify-between items-center mb-2">
-        <label htmlFor={name} className="max-w-44 text-sm">
+      <div className="flex items-center space-x-2">
+        <input
+          type={type}
+          name={name}
+          className={` rounded border-gray-300 text-blue-600 focus:ring-blue-500 ${inputErrorClass}`}
+          checked={checked}
+          onChange={onChange}
+        />
+        {/* {checked && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width=""
+            height=""
+            viewBox="0 0 24 24"
+            fill="white"
+            className="absolute top-[40%] -z-[1] left-[75%] -translate-x-1/2 -translate-y-1/2 "
+          >
+            <path
+              fillRule="evenodd"
+              d="M 22.59375 3.5 L 8.0625 18.1875 L 1.40625 11.5625 L 0 13 L 8.0625 21 L 24 4.9375 Z"
+            ></path>
+          </svg>
+        )} */}
+
+        <label htmlFor={name} className="text-sm font-medium text-gray-700">
           {label}
         </label>
-        <div className="relative z-[2] w-4 h-4 mb-[2px]">
-          <input
-            type={type}
-            name={name}
-            className={`appearance-none border-2 cursor-pointer border-gray-300 bg-transparent w-full h-full rounded ${inputErrorClass}`}
-            checked={checked}
-            onChange={onChange}
-          />
-          {checked && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width=""
-              height=""
-              viewBox="0 0 24 24"
-              fill="white"
-              className="absolute top-[40%] -z-[1] left-[75%] -translate-x-1/2 -translate-y-1/2 "
-            >
-              <path
-                fillRule="evenodd"
-                d="M 22.59375 3.5 L 8.0625 18.1875 L 1.40625 11.5625 L 0 13 L 8.0625 21 L 24 4.9375 Z"
-              ></path>
-            </svg>
-          )}
-        </div>
       </div>
     );
   }

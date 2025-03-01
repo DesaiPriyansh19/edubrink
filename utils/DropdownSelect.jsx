@@ -20,10 +20,12 @@ export default function DropdownSelect({
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => ({
-      universities:
-        dropdownKey === "universities" ? !prev.universities : false,
+      universities: dropdownKey === "universities" ? !prev.universities : false,
       blogs: dropdownKey === "blogs" ? !prev.blogs : false,
       faculty: dropdownKey === "faculty" ? !prev.faculty : false,
+      courses: dropdownKey === "courses" ? !prev.courses : false,
+      major: dropdownKey === "major" ? !prev.major : false,
+      tags: dropdownKey === "tags" ? !prev.tags : false,
     }));
   };
 
@@ -39,9 +41,7 @@ export default function DropdownSelect({
             onClick={toggleDropdown}
             className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
           >
-            <span className="text-gray-600">
-              {searchInput || placeholder}
-            </span>
+            <span className="text-gray-600">{searchInput || placeholder}</span>
             <Icon className="w-5 h-5 text-gray-400" />
           </button>
 

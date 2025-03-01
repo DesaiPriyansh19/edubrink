@@ -10,61 +10,39 @@ import {
   Loader2,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function CourseCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/course`;
+  const { data: courses, loading, error, deleteById } = useApiData(baseUrl);
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("courses")
-        .select(
-          `
-          *,
-          university:universities(
-            name,
-            country:countries(name)
-          )
-        `
-        )
-        .order("name");
-
-      if (error) throw error;
-      setCourses(data || []);
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-      setError("Failed to load courses");
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (university) => {
+    setCourseToDelete(university);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this course?")) return;
+  const confirmDelete = async (id) => {
+    if (!courseToDelete) return;
 
     try {
-      const { error } = await supabase.from("courses").delete().eq("id", id);
-
-      if (error) throw error;
-      setCourses(courses.filter((course) => course.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setCourseToDelete(null);
     } catch (error) {
-      console.error("Error deleting course:", error);
+      console.error("Error deleting university:", error);
     }
   };
 
   const filteredCourses = courses.filter(
     (course) =>
-      course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.university?.name.toLowerCase().includes(searchQuery.toLowerCase())
+      course.CourseName.en.toLowerCase().includes(searchQuery.toLowerCase())
+    // course.university?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -74,6 +52,8 @@ export default function CourseCRUD() {
       </div>
     );
   }
+
+  console.log(filteredCourses);
 
   return (
     <div>
@@ -118,40 +98,42 @@ export default function CourseCRUD() {
           ) : (
             filteredCourses.map((course) => (
               <div
-                key={course.id}
+                key={course._id}
                 className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{course.name}</h3>
-                    {course.most_popular && (
+                    <h3 className="font-medium">
+                      {course.CourseName[language]}
+                    </h3>
+                    {course.MostPopular && (
                       <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                         Most Popular
                       </span>
                     )}
-                    {course.scholarships_available && (
+                    {course.scholarshipsAvailable && (
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                         Scholarships
                       </span>
                     )}
-                    {course.discount_available && (
+                    {course.DiscountAvailable && (
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                         Discount
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-4 mt-1">
-                    <div className="flex items-center text-sm text-gray-500">
+                    {/* <div className="flex items-center text-sm text-gray-500">
                       <BookOpenCheck className="w-4 h-4 mr-1" />
                       {course.university?.name}
-                    </div>
+                    </div> */}
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />
-                      {course.duration}
+                      {course.CourseDuration}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {course.study_levels?.map((level) => (
+                    {course.StudyLevel?.map((level) => (
                       <span
                         key={level}
                         className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full"
@@ -163,13 +145,15 @@ export default function CourseCRUD() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => navigate(`/courses/${course.id}`)}
+                    onClick={() =>
+                      navigate(`/${language}/admin/courses/${course._id}`)
+                    }
                     className="text-blue-600 hover:text-blue-800 px-3 py-1"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(course.id)}
+                    onClick={() => handleDelete(course)}
                     className="text-red-600 hover:text-red-800 px-3 py-1"
                   >
                     Delete
@@ -215,6 +199,13 @@ export default function CourseCRUD() {
           <p className="text-sm text-gray-500 mt-1">Popular courses</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={courseToDelete?.CourseName.en || ""}
+        uniId={courseToDelete?._id || ""}
+      />
     </div>
   );
 }

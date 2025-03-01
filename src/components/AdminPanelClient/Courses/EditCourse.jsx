@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, forwardRef, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, forwardRef, useMemo, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -10,13 +10,14 @@ import {
   FileCheck,
   BookOpen,
   Search,
+  CalendarPlus2,
   X,
-  Tag,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import ReactQuill from "react-quill";
 import useDropdownData from "../../../../hooks/useDropdownData";
+import DropdownSelect from "../../../../utils/DropdownSelect";
 import useApiData from "../../../../hooks/useApiData";
 
 const QuillWrapper = forwardRef((props, ref) => (
@@ -81,26 +82,85 @@ const formats = [
   "align",
 ];
 
-export default function AddCourse() {
+export default function EditCourse() {
+  const { id } = useParams();
   const { language } = useLanguage();
   const { filteredUniversities, addTags } = useDropdownData();
-
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/course"
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/course/${id}`
   );
+
+  console.log(addTags);
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        CourseName: {
+          en: data?.CourseName?.en || "",
+          ar: data?.CourseName?.ar || "",
+        },
+        CourseDescription: {
+          en: data?.CourseDescription?.en || "",
+          ar: data?.CourseDescription?.ar || "",
+        },
+        DeadLine: data?.DeadLine || null,
+        university: data?.university?._id || "",
+        uniName: {
+          en: data?.uniName?.en || "",
+          ar: data?.uniName?.ar || "",
+        },
+        CourseType: data?.CourseType || "",
+        ModeOfStudy: {
+          en: Array.isArray(data?.ModeOfStudy?.en)
+            ? data?.ModeOfStudy?.en
+            : Array.isArray(data?.ModeOfStudy)
+            ? data?.ModeOfStudy.map((item) => item.en).filter(Boolean)
+            : [], // ✅ Convert old format to new format
+          ar: Array.isArray(data?.ModeOfStudy?.ar)
+            ? data?.ModeOfStudy?.ar
+            : Array.isArray(data?.ModeOfStudy)
+            ? data?.ModeOfStudy.map((item) => item.ar).filter(Boolean)
+            : [], // ✅ Convert old format to new format
+        },
+        Tags: {
+          en: Array.isArray(data?.Tags?.en) ? data?.Tags.en : [],
+          ar: Array.isArray(data?.Tags?.ar) ? data?.Tags.ar : [],
+        },
+        CourseDuration: data?.CourseDuration || "",
+        StudyLevel: Array.isArray(data?.StudyLevel) ? data?.StudyLevel : [],
+        Languages: Array.isArray(data?.Languages) ? data?.Languages : [],
+        Requirements: {
+          en: Array.isArray(data?.Requirements?.en)
+            ? data?.Requirements?.en
+            : Array.isArray(data?.Requirements)
+            ? data?.Requirements.map((item) => item.en).filter(Boolean)
+            : [],
+          ar: Array.isArray(data?.Requirements?.ar)
+            ? data?.Requirements?.ar
+            : Array.isArray(data?.Requirements)
+            ? data?.Requirements.map((item) => item.ar).filter(Boolean)
+            : [],
+        },
+        scholarshipsAvailable: !!data?.scholarshipsAvailable,
+        DiscountAvailable: !!data?.DiscountAvailable,
+        MostPopular: !!data?.MostPopular,
+      });
+    }
+  }, [data]);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showFlagPicker, setShowFlagPicker] = useState(false);
   const [flagSearch, setFlagSearch] = useState("");
   const [formData, setFormData] = useState(initialFormData);
+
   const [newItem, setNewItem] = useState("");
   const [searchInput, setSearchInput] = useState({ tagEn: "", tagAr: "" });
   const [showDropdown, setShowDropdown] = useState({
     tagEn: false,
     tagAr: false,
   });
-  const [selectedTags, setSelectedTags] = useState({ tagEn: [], tagAr: [] });
 
   // Extract English & Arabic tags from addTags
   const tagOptions = {
@@ -124,21 +184,28 @@ export default function AddCourse() {
   };
 
   // Handle tag selection
-  const onSelect = (key, tag) => {
-    if (!selectedTags[key].includes(tag)) {
-      setSelectedTags((prev) => ({
-        ...prev,
-        [key]: [...prev[key], tag], // Add tag if not already selected
-      }));
-    }
-    setShowDropdown((prev) => ({ ...prev, [key]: false })); // Close dropdown
+  const onSelect = (key, tag, drop) => {
+    setFormData((prev) => ({
+      ...prev,
+      Tags: {
+        ...prev.Tags,
+        [key]: prev.Tags[key].includes(tag)
+          ? prev.Tags[key]
+          : [...prev.Tags[key], tag], // Prevent duplicates
+      },
+    }));
+
+    setShowDropdown((prev) => ({ ...prev, [drop]: false })); // Close dropdown
   };
 
   // Handle tag removal
   const onRemove = (key, tag) => {
-    setSelectedTags((prev) => ({
+    setFormData((prev) => ({
       ...prev,
-      [key]: prev[key].filter((t) => t !== tag),
+      Tags: {
+        ...prev.Tags,
+        [key]: prev.Tags[key].filter((t) => t !== tag), // Remove the tag
+      },
     }));
   };
 
@@ -199,7 +266,9 @@ export default function AddCourse() {
         ...formData,
       };
 
-      await addNew(updatedFormData);
+      console.log(updatedFormData);
+
+      await updateWithOutById(updatedFormData);
       navigate(`/${language}/admin/courses`);
     } catch (err) {
       console.error("Error adding course:", err);
@@ -272,11 +341,18 @@ export default function AddCourse() {
       }
     });
   };
-
   const renderArrayField = (field, label, icon, placeholder, options) => {
-    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
-    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
+    const fieldPath = field.split("."); // Split nested field (e.g., ["ModeOfStudy", "en"])
+    const fieldKey = fieldPath[0]; // First key (e.g., "ModeOfStudy")
     const subKey = fieldPath[1]; // Second key (e.g., "en")
+
+    const items = subKey
+      ? Array.isArray(formData?.[fieldKey]?.[subKey])
+        ? formData[fieldKey][subKey]
+        : []
+      : Array.isArray(formData?.[fieldKey])
+      ? formData[fieldKey]
+      : [];
 
     return (
       <div className="space-y-2">
@@ -323,39 +399,22 @@ export default function AddCourse() {
           </button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {subKey
-            ? formData?.[fieldKey]?.[subKey]?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))
-            : formData?.[fieldKey]?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+            >
+              {icon}
+              {item}
+              <button
+                type="button"
+                onClick={() => removeItem(field, item)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                ×
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -371,7 +430,7 @@ export default function AddCourse() {
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Courses
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Add New Course</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Course</h1>
       </div>
 
       {error && (
@@ -624,11 +683,14 @@ export default function AddCourse() {
 
           <div className="mb-4">
             {/* English Tags */}
-            {["tagEn", "tagAr"].map((key) => (
+            {[
+              { label: "Tags (English)", key: "tagEn", value: "en" },
+              { label: "Tags (Arabic)", key: "tagAr", value: "ar" },
+            ].map(({ label, key, value }) => (
               <div key={key} className="mb-4">
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {key === "tagEn" ? "Tags (English)" : "Tags (Arabic)"}
+                    {label}
                   </label>
                   <div className="relative">
                     <button
@@ -662,18 +724,15 @@ export default function AddCourse() {
                           </div>
                         </div>
                         <div className="max-h-60 overflow-y-auto">
-                          {filteredTags[key].length > 0 ? (
+                          {filteredTags[key]?.length > 0 ? (
                             filteredTags[key].map((tag, idx) => (
                               <button
                                 key={idx}
                                 type="button"
-                                onClick={() => onSelect(key, tag)}
+                                onClick={() => onSelect(value, tag, key)} // Pass "en" or "ar"
                                 className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between"
                               >
-                                <span className="font-medium">
-                                  <Tag className="w-4 h-4" />
-                                  {tag}
-                                </span>
+                                <span className="font-medium">{tag}</span>
                               </button>
                             ))
                           ) : (
@@ -690,7 +749,7 @@ export default function AddCourse() {
                 {/* Selected Tags */}
                 <div className="mt-4">
                   <div className="flex flex-wrap gap-2">
-                    {selectedTags[key].map((tag, idx) => (
+                    {formData.Tags[value].map((tag, idx) => (
                       <div
                         key={idx}
                         className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
@@ -698,7 +757,7 @@ export default function AddCourse() {
                         <span>{tag}</span>
                         <button
                           type="button"
-                          onClick={() => onRemove(key, tag)}
+                          onClick={() => onRemove(value, tag)}
                           className="text-blue-500 hover:text-blue-700"
                         >
                           <X className="w-4 h-4" />
@@ -747,7 +806,7 @@ export default function AddCourse() {
         <div className="flex justify-end space-x-4">
           <button
             type="button"
-            onClick={() => navigate("/courses")}
+            onClick={() => navigate(`/${language}/admin/courses`)}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
           >
             Cancel

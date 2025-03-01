@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, forwardRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -108,7 +108,8 @@ const QuillWrapper = forwardRef((props, ref) => (
 
 QuillWrapper.displayName = "QuillWrapper";
 
-export default function AddMajor() {
+export default function EditMajor() {
+  const { id } = useParams();
   const { filteredFaculty } = useDropdownData();
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -123,11 +124,48 @@ export default function AddMajor() {
     majorAdmissionRequirement: "",
     majorIntakeMonth: "",
   });
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/majors"
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/majors/${id}`
   );
   const [activeSection, setActiveSection] = useState(null);
   const quillRef = useRef(null);
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        majorName: {
+          en: data?.majorName?.en || "",
+          ar: data?.majorName?.ar || "",
+        },
+        faculty: data?.faculty?._id || "",
+        majorDescription: {
+          en: data?.majorDescription?.en || "",
+          ar: data?.majorDescription?.ar || "",
+        },
+        duration: data?.duration || "",
+        durationUnits: data?.durationUnits || "Years",
+        studyLevel: data?.studyLevel || [],
+        majorLanguages: data?.majorLanguages || [],
+        majorAdmissionRequirement: data?.majorAdmissionRequirement || [],
+        majorTuitionFees: data?.majorTuitionFees || "",
+        facultyName: {
+          en: data?.faculty?.facultyName?.en || "",
+          ar: data?.faculty?.facultyName?.ar || "",
+        },
+        majorIntakeYear:
+          data?.majorIntakeYear || new Date().getFullYear().toString(),
+        majorIntakeMonth: data?.majorIntakeMonth || [],
+        modeOfStudy: data?.modeOfStudy || "Full-time",
+        majorCheckBox: {
+          scholarshipsAvailable:
+            data?.majorCheckBox?.scholarshipsAvailable ?? false,
+          expressAdmission: data?.majorCheckBox?.expressAdmission ?? false,
+          entranceExamRequired:
+            data?.majorCheckBox?.entranceExamRequired ?? false,
+          featuredMajor: data?.majorCheckBox?.featuredMajor ?? false,
+        },
+      });
+    }
+  }, [data]);
 
   const modules = useMemo(
     () => ({
@@ -196,9 +234,7 @@ export default function AddMajor() {
       const { facultyName, ...updatedFormData } = {
         ...formData,
       };
-
-      console.log(updatedFormData);
-      await addNew(updatedFormData);
+      await updateWithOutById(updatedFormData);
       navigate(`/${language}/admin/majors`);
     } catch (err) {
       console.error("Error adding major:", err);
@@ -233,93 +269,66 @@ export default function AddMajor() {
       country.facultyName.ar.toLowerCase().includes(flagSearch.toLowerCase())
   );
 
-  const renderArrayField = (field, label, icon, placeholder, options) => {
-    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
-    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
-    const subKey = fieldPath[1]; // Second key (e.g., "en")
-
-    return (
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
-        <div className="flex gap-2 mb-2">
-          {options ? (
-            // Dropdown select if options exist
-            <select
-              value={activeSection === field ? newItems[field] : ""}
-              onChange={(e) => {
-                setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
-                setActiveSection(field);
-              }}
-              className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              <option value="">Select {label}</option>
-              {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          ) : (
-            // Text input if no options are provided
-            <input
-              type="text"
-              value={activeSection === field ? newItems[field] : ""}
-              onChange={(e) => {
-                setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
-                setActiveSection(field);
-              }}
-              placeholder={placeholder}
-              className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            />
-          )}
-          <button
-            type="button"
-            onClick={() => addItem(field)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+  const renderArrayField = (field, label, icon, placeholder, options) => (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="flex gap-2 mb-2">
+        {options ? (
+          <select
+            value={activeSection === field ? newItems[field] : ""}
+            onChange={(e) => {
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+              setActiveSection(field);
+            }}
+            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
-            Add
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {subKey
-            ? formData?.[fieldKey]?.[subKey]?.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))
-            : formData?.[fieldKey]?.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-        </div>
+            <option value="">Select {label}</option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type="text"
+            value={activeSection === field ? newItems[field] : ""}
+            onChange={(e) => {
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+              setActiveSection(field);
+            }}
+            placeholder={placeholder}
+            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        )}
+        <button
+          type="button"
+          onClick={() => addItem(field)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Add
+        </button>
       </div>
-    );
-  };
+      <div className="flex flex-wrap gap-2">
+        {formData[field].map((item) => (
+          <div
+            key={item}
+            className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+          >
+            {icon}
+            {item}
+            <button
+              type="button"
+              onClick={() => removeItem(field, item)}
+              className="text-blue-500 hover:text-blue-700"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-4xl mx-auto">

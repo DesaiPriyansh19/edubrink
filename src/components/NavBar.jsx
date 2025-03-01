@@ -46,9 +46,7 @@ const NavBar = () => {
   const { language, setLanguage } = useLanguage();
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
-  const { data } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/keyword`
-  );
+  const { data } = useFetch(`https://edu-brink-backend.vercel.app/api/keyword`);
 
   const { data: CoursesData } = useFetch(
     `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
@@ -106,7 +104,7 @@ const NavBar = () => {
   const handleSelectTerm = (term) => {
     setSearchState({
       ...searchState,
-      searchTerm: term.keyword,
+      searchTerm: term.keyword, // Keep the selected keyword in search input
       filteredResults: [],
       selectedIndex: null,
     });
@@ -117,9 +115,8 @@ const NavBar = () => {
       setFilterProp((prev) => ({
         ...prev,
         searchQuery: {
-          ...prev.searchQuery,
-          en: term.tagName.en,
-          ar: term.tagName.ar,
+          en: language === "en" ? term.keyword : prev.searchQuery.en, // Update only relevant language
+          ar: language === "ar" ? term.keyword : prev.searchQuery.ar,
         },
       }));
       navigate(`/${language}/searchresults`);
@@ -149,7 +146,7 @@ const NavBar = () => {
       .map((item) => ({
         type: item.type,
         keywords: item.keywords.filter((keyword) =>
-          keyword.toLowerCase().includes(value)
+          keyword.toLowerCase().includes(value.toLowerCase())
         ),
       }))
       .filter((item) => item.keywords.length > 0);
@@ -158,12 +155,13 @@ const NavBar = () => {
     const tagData = keywords.find((item) => item.type === "tag");
     const tagKeywords = tagData
       ? tagData.data.flatMap((tag) =>
-          tag.keywords
-            .filter((keyword) => keyword.toLowerCase().includes(value))
+          [...tag.en, ...tag.ar] // Merge English & Arabic tags
+            .filter((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            )
             .map((keyword) => ({
               keyword,
               type: "tag",
-              tagName: tag.TagName, // Include the tag name for reference
             }))
         )
       : [];
@@ -396,7 +394,10 @@ const NavBar = () => {
           {/* All Dropdowns Btns*/}
           <div className=" hidden  mmd:flex items-center bg-white space-x-6">
             {/* Courses Dropdown */}
-            <div onClick={() => handleDropdownToggle("courses")} className="relative cursor-pointer">
+            <div
+              onClick={() => handleDropdownToggle("courses")}
+              className="relative cursor-pointer"
+            >
               <div className="flex items-center space-x-1 bg-white  hover:text-black hover:font-[20rem] text-gray-800">
                 <p>
                   {" "}

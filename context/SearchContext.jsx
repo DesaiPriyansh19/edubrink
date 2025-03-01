@@ -19,12 +19,12 @@ export const SearchProvider = ({ children }) => {
     minBudget: 0,
     maxBudget: 100000,
   };
+  const [filterProp, setFilterProp] = useState(initialState);
   const [searchState, setSearchState] = useState({
     searchTerm: "",
     filteredResults: [],
     selectedIndex: null,
   });
-  const [filterProp, setFilterProp] = useState(initialState);
   const [sumData, setSumData] = useState({
     sumResult: 0,
     sumUniversities: 0,

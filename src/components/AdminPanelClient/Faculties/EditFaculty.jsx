@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, forwardRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -33,7 +33,8 @@ const initialFormData = {
 
 const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
 
-export default function AddFaculty() {
+export default function EditFaculty() {
+  const { id } = useParams();
   const {
     filteredUniversities,
     filteredMajor,
@@ -52,9 +53,28 @@ export default function AddFaculty() {
   const [formData, setFormData] = useState(initialFormData);
   const [newStudyLevel, setNewStudyLevel] = useState("");
   const quillRef = useRef(null);
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/faculty"
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/faculty/${id}`
   );
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        facultyName: {
+          en: data?.facultyName?.en || "",
+          ar: data?.facultyName?.ar || "",
+        },
+        studyLevel: data?.studyLevel || [],
+        major: data?.major || [],
+        universities: data?.universities || [],
+        facultyDescription: {
+          en: data?.facultyDescription?.en || "",
+          ar: data?.facultyDescription?.ar || "",
+        },
+        facultyFeatured: data?.facultyFeatured ?? false,
+      });
+    }
+  }, [data]);
 
   const modules = useMemo(
     () => ({
@@ -127,7 +147,8 @@ export default function AddFaculty() {
         ),
         major: formData.major.map((major) => major._id),
       };
-      await addNew(updatedFormData);
+      console.log(updatedFormData);
+      await updateWithOutById(updatedFormData);
 
       navigate(`/${language}/admin/faculties`);
     } catch (err) {
@@ -165,7 +186,7 @@ export default function AddFaculty() {
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Faculties
         </button>
-        <h1 className="text-2xl font-bold">Add New Faculty</h1>
+        <h1 className="text-2xl font-bold">Edit Faculty</h1>
       </div>
 
       {error && (

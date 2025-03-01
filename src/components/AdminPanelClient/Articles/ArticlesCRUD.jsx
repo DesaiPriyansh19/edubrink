@@ -10,73 +10,68 @@ import {
   Loader2,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+import axios from "axios";
 
 export default function ArticlesCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchArticles();
-  }, []);
+  const baseUrl = isDeletePopupOpen
+    ? `https://edu-brink-backend.vercel.app/api/blog`
+    : `https://edu-brink-backend.vercel.app/api/blog?admin=true"`;
 
-  const fetchArticles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("articles")
-        .select("*")
-        .order("created_at", { ascending: false });
+  const { data: articles, error, loading, deleteById } = useApiData(baseUrl);
 
-      if (error) throw error;
-      setArticles(data || []);
-    } catch (err) {
-      console.error("Error fetching articles:", err);
-      setError("Failed to load articles");
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (university) => {
+    setArticleToDelete(university);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this article?")) return;
+  const confirmDelete = async (id) => {
+    if (!articleToDelete) return;
 
     try {
-      const { error } = await supabase.from("articles").delete().eq("id", id);
-
-      if (error) throw error;
-      setArticles(articles.filter((article) => article.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setArticleToDelete(null);
     } catch (error) {
-      console.error("Error deleting article:", error);
+      console.error("Error deleting university:", error);
     }
   };
 
   const togglePublished = async (article) => {
     try {
-      const { error } = await supabase
-        .from("articles")
-        .update({ published: !article.published })
-        .eq("id", article.id);
-
-      if (error) throw error;
-
-      setArticles(
-        articles.map((a) =>
-          a.id === article.id ? { ...a, published: !a.published } : a
-        )
+      const response = await axios.put(
+        `https://edu-brink-backend.vercel.app/api/blog/${article._id}`,
+        {
+          publishImmediately: !article.publishImmediately,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
+
+      console.log("Article updated:", response.data);
+
+      fetchData(); // Refresh data after update
     } catch (error) {
       console.error("Error updating article:", error);
     }
   };
-
   const filteredArticles = articles.filter(
     (article) =>
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.author.toLowerCase().includes(searchQuery.toLowerCase())
+      article?.blogTitle?.en
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      article?.blogCategory
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      article?.blogAuthor?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -130,82 +125,86 @@ export default function ArticlesCRUD() {
           ) : (
             filteredArticles.map((article) => (
               <div
-                key={article.id}
+                key={article._id}
                 className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
               >
-                {article.cover_image && (
-                  <div className="w-16 h-16 rounded-lg overflow-hidden mr-4">
-                    <img
-                      src={article.cover_image}
-                      alt={article.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+                <div className="w-16 h-16 rounded-lg overflow-hidden mr-4">
+                  <img
+                    src={article.blogPhoto || "https://placehold.co/20x20"}
+                    alt={article.blogTitle[language]}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{article.title}</h3>
-                    {article.featured && (
+                    <h3 className="font-medium">
+                      {article.blogTitle[language]}
+                    </h3>
+                    {article.featuredBlog && (
                       <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                         Featured
                       </span>
                     )}
                     <span
                       className={`${
-                        article.published
+                        article.publishImmediately
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
                       } text-xs px-2 py-1 rounded-full`}
                     >
-                      {article.published ? "Published" : "Draft"}
+                      {article.publishImmediately ? "Published" : "Draft"}
                     </span>
                   </div>
                   <div className="flex items-center gap-4 mt-1">
                     <div className="flex items-center text-sm text-gray-500">
                       <FileText className="w-4 h-4 mr-1" />
-                      {article.category || "Uncategorized"}
+                      {article.blogCategory || "Uncategorized"}
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Calendar className="w-4 h-4 mr-1" />
-                      {new Date(article.created_at).toLocaleDateString()}
+                      {new Date(article.blogAdded).toLocaleDateString()}
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Tag className="w-4 h-4 mr-1" />
-                      {article.author}
+                      {article.blogAuthor || "N/A"}
                     </div>
                   </div>
-                  {article.tags && article.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {article.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {article.blogTags &&
+                    article.blogTags[language].length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {article.blogTags[language].map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => togglePublished(article)}
                     className={`${
-                      article.published
+                      article.publishImmediately
                         ? "text-green-600 hover:text-green-800"
                         : "text-gray-600 hover:text-gray-800"
                     } px-3 py-1`}
                   >
-                    {article.published ? "Unpublish" : "Publish"}
+                    {article.publishImmediately ? "Unpublish" : "Publish"}
                   </button>
                   <button
-                    onClick={() => navigate(`/articles/${article.id}`)}
+                    onClick={() =>
+                      navigate(`/${language}/admin/articles/${article._id}`)
+                    }
                     className="text-blue-600 hover:text-blue-800 px-3 py-1"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(article.id)}
+                    onClick={() => handleDelete(article)}
                     className="text-red-600 hover:text-red-800 px-3 py-1"
                   >
                     Delete
@@ -233,7 +232,7 @@ export default function ArticlesCRUD() {
             <h2 className="text-lg font-semibold">Published</h2>
           </div>
           <p className="text-3xl font-bold">
-            {articles.filter((a) => a.published).length}
+            {articles.filter((a) => a.publishImmediately).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Live articles</p>
         </div>
@@ -244,11 +243,18 @@ export default function ArticlesCRUD() {
             <h2 className="text-lg font-semibold">Featured</h2>
           </div>
           <p className="text-3xl font-bold">
-            {articles.filter((a) => a.featured).length}
+            {articles.filter((a) => a.featuredBlog).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Featured articles</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={articleToDelete?.blogTitle.en || ""}
+        uniId={articleToDelete?._id || ""}
+      />
     </div>
   );
 }

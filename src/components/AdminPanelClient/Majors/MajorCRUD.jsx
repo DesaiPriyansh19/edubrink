@@ -12,70 +12,47 @@ import {
   Languages,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
+import useApiData from "../../../../hooks/useApiData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function MajorCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-  const [majors, setMajors] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [majorToDelete, setMajorToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchMajors();
-  }, []);
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/majors`;
+  const { data: majors, loading, error, deleteById } = useApiData(baseUrl);
 
-  const fetchMajors = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("majors")
-        .select(
-          `
-          *,
-          faculty:faculties(
-            name,
-            university:universities(
-              name,
-              country:countries(name)
-            )
-          )
-        `
-        )
-        .order("name");
-
-      if (error) throw error;
-      setMajors(data || []);
-    } catch (err) {
-      console.error("Error fetching majors:", err);
-      setError("Failed to load majors");
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (major) => {
+    setMajorToDelete(major);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this major?")) return;
+  const confirmDelete = async (id) => {
+    if (!majorToDelete) return;
 
     try {
-      const { error } = await supabase.from("majors").delete().eq("id", id);
-
-      if (error) throw error;
-      setMajors(majors.filter((major) => major.id !== id));
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setMajorToDelete(null);
     } catch (error) {
-      console.error("Error deleting major:", error);
+      console.error("Error deleting university:", error);
     }
   };
 
   const filteredMajors = majors.filter(
     (major) =>
-      major.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      major.faculty?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      major.faculty?.university?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      major.faculty?.university?.country?.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+      major.majorName.en.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      major.majorName.ar.toLowerCase().includes(searchQuery.toLowerCase())
+    // major.faculty?.university?.name
+    //   .toLowerCase()
+    //   .includes(searchQuery.toLowerCase()) ||
+    // major.faculty?.university?.country?.name
+    //   .toLowerCase()
+    //   .includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -134,13 +111,13 @@ export default function MajorCRUD() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{major.name}</h3>
-                    {major.featured && (
+                    <h3 className="font-medium">{major.majorName[language]}</h3>
+                    {major.majorCheckBox.featuredMajor && (
                       <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                         Featured
                       </span>
                     )}
-                    {major.scholarships_available && (
+                    {major.majorCheckBox.scholarshipsAvailable && (
                       <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                         Scholarships
                       </span>
@@ -149,21 +126,21 @@ export default function MajorCRUD() {
                   <div className="flex items-center gap-4 mt-1">
                     <div className="flex items-center text-sm text-gray-500">
                       <Building2 className="w-4 h-4 mr-1" />
-                      {major.faculty?.name}
+                      {major?.faculty?.facultyName[language]}
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {major.faculty?.university?.name}
+                      {major.faculty?.universities[0]?.uniName[language]}
                     </div>
                     {major.duration && (
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="w-4 h-4 mr-1" />
-                        {major.duration}
+                        {major.duration} {major.durationUnits}
                       </div>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {major.study_levels?.map((level) => (
+                    {major.studyLevel?.map((level) => (
                       <span
                         key={level}
                         className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full flex items-center"
@@ -172,7 +149,7 @@ export default function MajorCRUD() {
                         {level}
                       </span>
                     ))}
-                    {major.languages?.map((language) => (
+                    {major.majorLanguages?.map((language) => (
                       <span
                         key={language}
                         className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full flex items-center"
@@ -185,13 +162,15 @@ export default function MajorCRUD() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => navigate(`/majors/${major.id}`)}
+                    onClick={() =>
+                      navigate(`/${language}/admin/majors/${major._id}`)
+                    }
                     className="text-blue-600 hover:text-blue-800 px-3 py-1"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(major.id)}
+                    onClick={() => handleDelete(major)}
                     className="text-red-600 hover:text-red-800 px-3 py-1"
                   >
                     Delete
@@ -237,6 +216,13 @@ export default function MajorCRUD() {
           <p className="text-sm text-gray-500 mt-1">Highlighted majors</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={majorToDelete?.majorName.en || ""}
+        uniId={majorToDelete?._id || ""}
+      />
     </div>
   );
 }
