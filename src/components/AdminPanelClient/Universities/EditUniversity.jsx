@@ -86,7 +86,6 @@ const initialFormData = {
   admission_requirements: [],
   preparatory_year: false,
   preparatory_year_fees: "",
-  scholarships_available: false,
   housing_available: false,
   living_cost: "",
   uniFeatured: false,
@@ -138,13 +137,8 @@ const commonRequirements = [
 export default function EditUniversity() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const {
-    filteredFaculty,
-    filteredCourses,
-    setSearchInput,
-    handleAdd,
-    handleRemove,
-  } = useDropdownData();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState({
     courses: false,
@@ -911,7 +905,7 @@ export default function EditUniversity() {
             icon={BookOpen}
             selectedItems={formData?.faculty}
             searchKey="facultyName"
-            options={filteredFaculty}
+            options={filteredData?.faculties}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, facultyname: value }))
             }
@@ -931,7 +925,7 @@ export default function EditUniversity() {
             icon={BookOpen}
             selectedItems={formData?.courseId}
             searchKey="CourseName"
-            options={filteredCourses}
+            options={filteredData?.courses}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, coursename: value }))
             }

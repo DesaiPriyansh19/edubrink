@@ -83,7 +83,7 @@ const formats = [
 
 export default function AddCourse() {
   const { language } = useLanguage();
-  const { filteredUniversities, addTags } = useDropdownData();
+  const { filteredData, addTags } = useDropdownData();
 
   const { addNew } = useApiData(
     "https://edu-brink-backend.vercel.app/api/course"
@@ -537,7 +537,7 @@ export default function AddCourse() {
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filteredUniversities.map((university) => (
+                      {filteredData.universities.map((university) => (
                         <button
                           key={university._id}
                           type="button"
@@ -670,10 +670,7 @@ export default function AddCourse() {
                                 onClick={() => onSelect(key, tag)}
                                 className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between"
                               >
-                                <span className="font-medium">
-                                  <Tag className="w-4 h-4" />
-                                  {tag}
-                                </span>
+                                <span className="font-medium">{tag}</span>
                               </button>
                             ))
                           ) : (
@@ -695,13 +692,16 @@ export default function AddCourse() {
                         key={idx}
                         className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
                       >
-                        <span>{tag}</span>
+                        <span className="flex items-center gap-1">
+                          <Tag className="w-4 h-4" />
+                          {tag}
+                        </span>
                         <button
                           type="button"
                           onClick={() => onRemove(key, tag)}
                           className="text-blue-500 hover:text-blue-700"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
                     ))}

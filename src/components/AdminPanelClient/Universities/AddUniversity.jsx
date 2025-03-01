@@ -86,7 +86,6 @@ const initialFormData = {
   admission_requirements: [],
   preparatory_year: false,
   preparatory_year_fees: "",
-  scholarships_available: false,
   housing_available: false,
   living_cost: "",
   uniFeatured: false,
@@ -138,8 +137,7 @@ const commonRequirements = [
 export default function AddUniversity() {
   const navigate = useNavigate();
   const {
-    filteredFaculty,
-    filteredCourses,
+    filteredData,
     setSearchInput,
     handleAdd,
     handleRemove,
@@ -831,7 +829,7 @@ export default function AddUniversity() {
             icon={BookOpen}
             selectedItems={formData?.faculty}
             searchKey="facultyName"
-            options={filteredFaculty}
+            options={filteredData.faculties}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, facultyname: value }))
             }
@@ -851,7 +849,7 @@ export default function AddUniversity() {
             icon={BookOpen}
             selectedItems={formData?.courseId}
             searchKey="CourseName"
-            options={filteredCourses}
+            options={filteredData.courses}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, coursename: value }))
             }

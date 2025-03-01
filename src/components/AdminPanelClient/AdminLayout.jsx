@@ -4,6 +4,9 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 
 export default function AdminLayout() {
+
+  
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />

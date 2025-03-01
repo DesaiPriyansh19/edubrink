@@ -8,19 +8,21 @@ import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { BookOpen, GraduationCap } from "lucide-react";
 
-const CollegeCard = ({ college }) => {
+const CollegeCard = ({ college, idx }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  console.log(college);
   const features = [
     {
-      icon: <DollerRounded />,
+      icon: <BookOpen />,
       title: language === "ar" ? "عدد الدورات" : "Number of courses",
       description: college.courseId.length,
     },
     {
-      icon: <ScholerShipLogo />,
+      icon: <GraduationCap />,
       title: language === "ar" ? "المنح الدراسية" : "Scholarship",
       description:
         college.scholarshipAvailability === true
@@ -31,21 +33,25 @@ const CollegeCard = ({ college }) => {
           ? "غير متاح"
           : "Not Available",
     },
-    {
-      icon: <DiscountLogo />,
-      title: language === "ar" ? "الخصم" : "Discount",
-      description: "N/A",
-    },
+    // {
+    //   icon: <DiscountLogo />,
+    //   title: language === "ar" ? "الخصم" : "Discount",
+    //   description: "N/A",
+    // },
   ];
 
   const handleLearnMore = (uniName) => {
     navigate(`/${language}/university/${uniName}`);
   };
 
+  console.log(college);
+
   return (
     <div
       className={`relative  mt-3 border rounded-xl shadow-md bg-white ${
-        language === "ar" ? "text-right 1xl:mr-24 ml-4" : "text-left 1xl:ml-24"
+        language === "ar"
+          ? `text-right ${idx === 0 ? "1xl:mr-24 ml-4" : ""} `
+          : `text-left ${idx === 0 ? "1xl:ml-24" : ""} `
       }`}
       dir={language === "ar" ? "rtl" : "ltr"}
     >
@@ -57,8 +63,9 @@ const CollegeCard = ({ college }) => {
             : "pr-3 sm:pr-8 md:pr-9  lg:pr-16"
         }  p-4`}
       >
-        <div
-          className={`absolute top-0
+        {college?.uniFeatured && (
+          <div
+            className={`absolute top-0
           
           ${
             language === "ar"
@@ -66,9 +73,10 @@ const CollegeCard = ({ college }) => {
               : "right-0 rounded-bl-[4px] rounded-tr-xl"
           } 
            bg-red-500 text-white text-sm px-2 py-1  `}
-        >
-          {t("mostPopular")}
-        </div>
+          >
+            {t("mostPopular")}
+          </div>
+        )}
 
         {/* College Info */}
         <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
@@ -84,12 +92,8 @@ const CollegeCard = ({ college }) => {
               {language === "ar" ? college?.uniName?.ar : college?.uniName?.en}
               {/* <img src={college.svgIcon} alt="SVG Icon" className="w-4 h-4 ml-2" /> */}
             </h1>
-            <p className="text-[.8rem] font-medium text-black  flex items-center mt-1">
-              <img
-                src={"https://placehold.co/20x20" || college?.countryFlag}
-                alt="Flag"
-                className="w-5 h-5 rounded-full mr-1"
-              />
+            <p className="text-[.8rem] font-medium gap-1 text-black  flex items-center mt-1">
+              <p>{college?.countryFlag}</p>
               {language === "ar"
                 ? college?.countryName?.ar
                 : college?.countryName?.en}
@@ -112,11 +116,11 @@ const CollegeCard = ({ college }) => {
 
         <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
           {features.map((feature, index) => (
-            <div key={index} className="flex items-center justify-center">
+            <div key={index} className="flex items-center gap-2 justify-center">
               <span className="rounded-full w-10 flex items-center justify-center h-10 border ">
                 {feature.icon}
               </span>
-              <div>
+              <div className="">
                 <p className="text-xs font-medium">{feature.title}</p>
                 <p className="text-xs font-medium">{feature.description}</p>
               </div>
@@ -147,9 +151,7 @@ const CollegeCard = ({ college }) => {
 
 const CollegeCarousel = () => {
   const API_URL = import.meta.env.VITE_API_URL;
-  const { data } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/university`
-  );
+  const { data } = useFetch(`http://localhost:4000/api/university`);
   const { t } = useTranslation();
   const { language } = useLanguage();
   return (
@@ -184,7 +186,7 @@ const CollegeCarousel = () => {
       </div>
 
       <div
-        className={`overflow-x-auto scrollbar-hide mx-2 mb-24 md:mx-4 my-3 whitespace-nowrap py-2 sm:py-8`}
+        className={`overflow-x-auto snap-x snap-mandatory scrollbar-hide mx-2 mb-24 md:mx-4 my-3 whitespace-nowrap py-2 sm:py-8`}
         dir={language === "ar" ? "rtl" : "ltr"}
       >
         <div
@@ -194,13 +196,16 @@ const CollegeCarousel = () => {
               : "space-x-0 sm:space-x-4"
           }`}
         >
-          {data?.map((college) => (
-            <CollegeCard
-              key={`${college._id}-${
-                college.countryName?.en || college.countryName?.ar
-              }`}
-              college={college}
-            />
+          {data?.map((college, idx) => (
+            <div className="snap-start">
+              <CollegeCard
+                key={`${college._id}-${
+                  college.countryName?.en || college.countryName?.ar
+                }`}
+                college={college}
+                idx={idx}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -35,13 +35,8 @@ const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
 
 export default function EditFaculty() {
   const { id } = useParams();
-  const {
-    filteredUniversities,
-    filteredMajor,
-    setSearchInput,
-    handleAdd,
-    handleRemove,
-  } = useDropdownData();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
   const { language } = useLanguage();
   const [showDropdown, setShowDropdown] = useState({
     major: false,
@@ -274,7 +269,7 @@ export default function EditFaculty() {
               icon={CalendarPlus2}
               selectedItems={formData?.major}
               searchKey="majorName"
-              options={filteredMajor}
+              options={filteredData?.majors}
               onSearch={(value) =>
                 setSearchInput((prev) => ({ ...prev, majorname: value }))
               }
@@ -295,7 +290,7 @@ export default function EditFaculty() {
               icon={School}
               selectedItems={formData?.universities}
               searchKey="uniName"
-              options={filteredUniversities}
+              options={filteredData?.universities}
               onSearch={(value) =>
                 setSearchInput((prev) => ({ ...prev, univername: value }))
               }

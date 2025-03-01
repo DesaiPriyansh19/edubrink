@@ -63,7 +63,7 @@ export default function DropdownSelect({
                 </div>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                {options.map((item) => (
+                {options?.map((item) => (
                   <button
                     key={item._id}
                     type="button"

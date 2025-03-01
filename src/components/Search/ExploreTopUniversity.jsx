@@ -6,7 +6,7 @@ import TickMark from "../../../svg/TickMark";
 import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
 
-function ExploreTopUniversity({ filteredData, loading, language }) {
+function ExploreTopUniversity({ filteredData, language }) {
   const { t } = useTranslation();
   // Array of buttons and corresponding content
   // const items = [

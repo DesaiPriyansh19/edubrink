@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { g } from "framer-motion/client";
 
 const useDropdownData = () => {
-  const [addMajor, setAddMajor] = useState([]);
-  const [addFaculty, setAddFaculty] = useState([]);
-  const [addUniversity, setAddUniversity] = useState([]);
-  const [addBlog, setAddBlog] = useState([]);
-  const [addCourse, setAddCourse] = useState([]);
-  const [addTags, setAddTags] = useState([]);
+  const [dropdownData, setDropdownData] = useState({
+    faculties: [],
+    universities: [],
+    blogs: [],
+    courses: [],
+    majors: [],
+    tags: [],
+  });
+
   const [searchInput, setSearchInput] = useState({
     facultyname: "",
     blogname: "",
@@ -22,30 +24,11 @@ const useDropdownData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [
-          facultyRes,
-          universityRes,
-          blogRes,
-          courseRes,
-          majorRes,
-          tagsRes,
-        ] = await Promise.all([
-          axios.get("https://edu-brink-backend.vercel.app/api/faculty"),
-          axios.get("https://edu-brink-backend.vercel.app/api/university"),
-          axios.get("https://edu-brink-backend.vercel.app/api/blog"),
-          axios.get("https://edu-brink-backend.vercel.app/api/course"),
-          axios.get("https://edu-brink-backend.vercel.app/api/majors"),
-          axios.get("https://edu-brink-backend.vercel.app/api/tags"),
-        ]);
+        const response = await axios.get("https://edu-brink-backend.vercel.app/api/helper");
 
-        setAddFaculty(facultyRes.data.data);
-        setAddUniversity(universityRes.data.data);
-        setAddBlog(blogRes.data.data);
-        setAddCourse(courseRes.data.data);
-        setAddMajor(majorRes.data.data);
-        setAddTags(tagsRes.data.data);
+        setDropdownData(response.data.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching dropdown data:", error);
       }
     };
 
@@ -72,15 +55,17 @@ const useDropdownData = () => {
       }, []);
   };
 
-  const filteredUniversities = filterData(
-    addUniversity,
-    "uniName",
-    "univername"
-  );
-  const filteredBlogs = filterData(addBlog, "blogTitle", "blogname");
-  const filteredFaculty = filterData(addFaculty, "facultyName", "facultyname");
-  const filteredCourses = filterData(addCourse, "CourseName", "coursename");
-  const filteredMajor = filterData(addMajor, "majorName", "majorname");
+  const filteredData = {
+    faculties: filterData(dropdownData.faculties, "facultyName", "facultyname"),
+    universities: filterData(
+      dropdownData.universities,
+      "uniName",
+      "univername"
+    ),
+    blogs: filterData(dropdownData.blogs, "blogTitle", "blogname"),
+    courses: filterData(dropdownData.courses, "CourseName", "coursename"),
+    majors: filterData(dropdownData.majors, "majorName", "majorname"),
+  };
 
   const handleAdd = (field, value, setFormData, setShowDropdown) => {
     setFormData((prev) => ({
@@ -89,14 +74,10 @@ const useDropdownData = () => {
         ? prev[field]
         : [...prev[field], value],
     }));
-    setSearchInput({
-      facultyname: "",
-      blogname: "",
-      univername: "",
-      coursename: "",
-      majorname: "",
-      id: "",
-    });
+    setSearchInput((prev) => ({
+      ...prev,
+      [field]: "",
+    }));
     setShowDropdown(false);
   };
 
@@ -108,12 +89,8 @@ const useDropdownData = () => {
   };
 
   return {
-    filteredUniversities,
-    filteredBlogs,
-    filteredFaculty,
-    filteredCourses,
-    filteredMajor,
-    addTags,
+    filteredData,
+    addTags: dropdownData.tags,
     searchInput,
     setSearchInput,
     handleAdd,

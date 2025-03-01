@@ -27,11 +27,13 @@ const CoursePage = () => {
 
   const apiUrl = isObjectId
     ? `https://edu-brink-backend.vercel.app/api/course/${id}`
-    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(id)}`;
-
-  console.log("Fetching from:", apiUrl);
+    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
+        id
+      )}`;
 
   const { data } = useFetch(apiUrl);
+
+  console.log(data);
 
   return (
     <div
@@ -132,8 +134,8 @@ const CoursePage = () => {
               <div>
                 <p className="text-lg font-bold leading-5">
                   {language === "ar"
-                    ? data?.ModeOfStudy?.[0]?.ar
-                    : data?.ModeOfStudy?.[0]?.en || "N/A"}
+                    ? data?.ModeOfStudy?.ar?.[0]
+                    : data?.ModeOfStudy?.en?.[0] || "N/A"}
                 </p>
                 <p className="text-sm font-sans font-normal leading-5">
                   Mode Of Study
@@ -189,14 +191,14 @@ const CoursePage = () => {
             Requirements
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data?.Requirements?.length > 0
-              ? data.Requirements.map((req, index) => (
+            {data?.Requirements?.[language]?.length > 0
+              ? data.Requirements?.[language].map((req, index) => (
                   <div
                     key={index}
                     className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5"
                   >
                     <Consolidation />
-                    {req?.[language] || "Requirement not specified."}
+                    {req || "Requirement not specified."}
                   </div>
                 ))
               : "No requirements available."}

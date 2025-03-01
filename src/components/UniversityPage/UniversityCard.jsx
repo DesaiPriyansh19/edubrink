@@ -44,8 +44,8 @@ const UniversityCard = ({ data, language }) => {
                     <p className="font-semibold">Mode Of Study</p>
                     <p>
                       {language === "ar"
-                        ? item?.ModeOfStudy[0].ar
-                        : item?.ModeOfStudy[0].en}
+                        ? item?.ModeOfStudy?.ar?.[0]
+                        : item?.ModeOfStudy?.en?.[0]}
                     </p>
                   </div>
                 </div>

@@ -20,7 +20,7 @@ function SearchResults() {
   const [showFilter, setShowFilter] = useState(false);
   const location = useLocation();
   const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/country/getAll/DepthData`
+    `http://localhost:4000/api/country/getAll/DepthData`
   );
 
   const { filterProp, setSumData, sumData, initialState } = useSearch();
@@ -162,7 +162,6 @@ function SearchResults() {
 
   const getTotalCounts = (data) => {
     const totalCountries = data?.length || 0;
-    console.log(data);
     const totalUniversities = data?.reduce(
       (acc, country) => acc + (country?.universities?.length || 0),
       0
@@ -204,7 +203,7 @@ function SearchResults() {
   const activeFilters = countActiveFilters();
 
   useEffect(() => {
-    if (!filteredData || filteredData.length === 0) {
+    if (!filteredData || filteredData?.length === 0) {
       setSumData({
         sumResult: 0,
         sumUniversities: 0,
@@ -357,15 +356,7 @@ function SearchResults() {
           <Route
             path="university"
             element={
-              <Univrsiry
-                filteredData={filteredData?.flatMap((item) =>
-                  item?.universities?.map((university) => ({
-                    ...university,
-                    countryName: item?.countryName,
-                  }))
-                )}
-                loading={loading}
-              />
+              <Univrsiry filteredData={filteredData} loading={loading} />
             }
           />
           <Route
@@ -410,6 +401,8 @@ function SearchResults() {
                   item?.universities?.map((university) => ({
                     ...university,
                     countryName: item?.countryName,
+                    countryPhotos: item?.countryPhotos,
+                    countryCode: item?.countryCode,
                   }))
                 )}
                 loading={loading}

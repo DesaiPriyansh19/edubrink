@@ -35,7 +35,7 @@ function ResultsCorses({ loading, filteredData }) {
         >
           <div className="">
             <h1 className="text-2xl sm:text-4xl font-semibold">
-              📚{t("ourCourseSection.title")}
+              📚 {t("ourCourseSection.title")}
             </h1>
             <p className="text-sm mt-3 max-w-xl font-medium">
               {t("ourCourseSection.description")}
@@ -184,7 +184,7 @@ function ResultsCorses({ loading, filteredData }) {
                       ))}
                     </div>
                   </div>
-                  <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
+                  <div className="grid gap-6 px-3 grid-cols-2  mt-4">
                     <button
                       onClick={() =>
                         handleApplyClick(university._id, university.countryName)

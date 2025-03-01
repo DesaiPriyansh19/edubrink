@@ -16,7 +16,6 @@ import "react-quill/dist/quill.snow.css";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import useDropdownData from "../../../../hooks/useDropdownData";
-import DropdownSelect from "../../../../utils/DropdownSelect";
 import useApiData from "../../../../hooks/useApiData";
 
 const initialFormData = {
@@ -109,7 +108,7 @@ const QuillWrapper = forwardRef((props, ref) => (
 QuillWrapper.displayName = "QuillWrapper";
 
 export default function AddMajor() {
-  const { filteredFaculty } = useDropdownData();
+  const { filteredData } = useDropdownData();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -227,7 +226,7 @@ export default function AddMajor() {
     }));
   };
 
-  const filterFacultyData = filteredFaculty.filter(
+  const filterFacultyData = filteredData.faculties.filter(
     (country) =>
       country.facultyName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
       country.facultyName.ar.toLowerCase().includes(flagSearch.toLowerCase())

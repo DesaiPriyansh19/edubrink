@@ -132,13 +132,8 @@ const initialFormData = {
 export default function EditCountry() {
   const { language } = useLanguage();
   const { id } = useParams();
-  const {
-    filteredUniversities,
-    filteredBlogs,
-    setSearchInput,
-    handleAdd,
-    handleRemove,
-  } = useDropdownData();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
   const { data, updateWithOutById } = useApiData(
     `https://edu-brink-backend.vercel.app/api/country/${id}`
   );
@@ -793,7 +788,7 @@ export default function EditCountry() {
             icon={School}
             selectedItems={formData?.universities}
             searchKey="uniName"
-            options={filteredUniversities}
+            options={filteredData?.universities}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, univername: value }))
             }
@@ -819,7 +814,7 @@ export default function EditCountry() {
             icon={BookOpen}
             selectedItems={formData?.blog}
             searchKey="blogTitle"
-            options={filteredBlogs}
+            options={filteredData?.blogs}
             onSearch={(value) =>
               setSearchInput((prev) => ({ ...prev, blogname: value }))
             }

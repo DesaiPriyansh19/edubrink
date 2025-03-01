@@ -34,13 +34,8 @@ const initialFormData = {
 const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
 
 export default function AddFaculty() {
-  const {
-    filteredUniversities,
-    filteredMajor,
-    setSearchInput,
-    handleAdd,
-    handleRemove,
-  } = useDropdownData();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
   const { language } = useLanguage();
   const [showDropdown, setShowDropdown] = useState({
     major: false,
@@ -253,7 +248,7 @@ export default function AddFaculty() {
               icon={CalendarPlus2}
               selectedItems={formData?.major}
               searchKey="majorName"
-              options={filteredMajor}
+              options={filteredData?.majors}
               onSearch={(value) =>
                 setSearchInput((prev) => ({ ...prev, majorname: value }))
               }
@@ -274,7 +269,7 @@ export default function AddFaculty() {
               icon={School}
               selectedItems={formData?.universities}
               searchKey="uniName"
-              options={filteredUniversities}
+              options={filteredData?.universities}
               onSearch={(value) =>
                 setSearchInput((prev) => ({ ...prev, univername: value }))
               }
