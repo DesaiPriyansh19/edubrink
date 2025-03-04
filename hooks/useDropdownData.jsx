@@ -10,6 +10,7 @@ const useDropdownData = () => {
     courses: [],
     majors: [],
     tags: [],
+    users: 0,
   });
 
   const [searchInput, setSearchInput] = useState({
@@ -26,10 +27,7 @@ const useDropdownData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://edu-brink-backend.vercel.app/api/helper"
-        );
-
+        const response = await axios.get("http://localhost:4000/api/helper");
         setDropdownData(response.data.data);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
@@ -95,6 +93,7 @@ const useDropdownData = () => {
 
   return {
     filteredData,
+    userCount: dropdownData.userCount,
     addTags: dropdownData.tags,
     searchInput,
     setSearchInput,

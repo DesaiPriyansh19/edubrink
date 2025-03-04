@@ -2,6 +2,7 @@ import React from "react";
 import { Users, GraduationCap, Globe, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
+import useDropdownData from "../../../hooks/useDropdownData";
 
 const StatCard = ({ icon: Icon, label, value, color }) => (
   <div className="bg-white rounded-lg shadow p-6">
@@ -19,17 +20,33 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { userCount, filteredData } = useDropdownData();
   const { language } = useLanguage();
   const stats = [
-    { icon: Users, label: "Total Users", value: "1,234", color: "bg-blue-500" },
+    {
+      icon: Users,
+      label: "Total Users",
+      value: userCount,
+      color: "bg-blue-500",
+    },
     {
       icon: GraduationCap,
       label: "Universities",
-      value: "56",
+      value: filteredData?.universities?.length,
       color: "bg-green-500",
     },
-    { icon: Globe, label: "Countries", value: "25", color: "bg-purple-500" },
-    { icon: FileText, label: "Articles", value: "89", color: "bg-orange-500" },
+    {
+      icon: Globe,
+      label: "Countries",
+      value: filteredData?.countries?.length,
+      color: "bg-purple-500",
+    },
+    {
+      icon: FileText,
+      label: "Articles",
+      value: filteredData?.blogs?.length,
+      color: "bg-orange-500",
+    },
   ];
 
   return (
