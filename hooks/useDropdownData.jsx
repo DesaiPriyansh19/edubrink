@@ -27,7 +27,9 @@ const useDropdownData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/helper");
+        const response = await axios.get(
+          "https://edu-brink-backend.vercel.app/api/helper"
+        );
         setDropdownData(response.data.data);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
