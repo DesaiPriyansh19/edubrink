@@ -13,17 +13,20 @@ import {
 import { useLanguage } from "../../../../context/LanguageContext";
 import useApiData from "../../../../hooks/useApiData";
 import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+import useDropdownData from "../../../../hooks/useDropdownData";
 
 export default function FacultyCRUD() {
   const { language } = useLanguage();
   const navigate = useNavigate();
-
+  const { filteredData } = useDropdownData();
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [facultyToDelete, setFacultyToDelete] = useState(null);
   const baseUrl = `https://edu-brink-backend.vercel.app/api/faculty`;
   const { data: faculties, loading, deleteById } = useApiData(baseUrl);
+
+  console.log(faculties);
 
   const handleDelete = (university) => {
     setFacultyToDelete(university);
@@ -44,16 +47,18 @@ export default function FacultyCRUD() {
 
   const filteredFaculties = faculties.filter(
     (faculty) =>
-      faculty.facultyName.en.toLowerCase().includes(searchQuery.toLowerCase())
-    // faculty.university?.name
-    //   .toLowerCase()
-    //   .includes(searchQuery.toLowerCase()) ||
+      faculty.facultyName.en
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      faculty.universities.some(
+        (item) => item.uniName.en.toLowerCase() === searchQuery.toLowerCase()
+      )
+
     // faculty.university?.country?.name
     //   .toLowerCase()
     //   .includes(searchQuery.toLowerCase())
   );
 
-  console.log(filteredFaculties);
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -88,7 +93,7 @@ export default function FacultyCRUD() {
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search faculties..."
+                placeholder="Search faculties, faculties by universities name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
@@ -175,14 +180,9 @@ export default function FacultyCRUD() {
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center gap-3 mb-4">
             <BookOpen className="w-5 h-5 text-green-600" />
-            <h2 className="text-lg font-semibold">Total Programs</h2>
+            <h2 className="text-lg font-semibold">Total Majors</h2>
           </div>
-          <p className="text-3xl font-bold">
-            {faculties.reduce(
-              (total, faculty) => total + (faculty.study_programs?.length || 0),
-              0
-            )}
-          </p>
+          <p className="text-3xl font-bold">{filteredData?.majors?.length}</p>
           <p className="text-sm text-gray-500 mt-1">Across all faculties</p>
         </div>
 
@@ -192,7 +192,7 @@ export default function FacultyCRUD() {
             <h2 className="text-lg font-semibold">Featured Faculties</h2>
           </div>
           <p className="text-3xl font-bold">
-            {faculties.filter((f) => f.featured).length}
+            {faculties.filter((f) => f.facultyFeatured).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Highlighted faculties</p>
         </div>

@@ -482,7 +482,7 @@ export default function EditArticle() {
               name="featuredBlog"
               checked={formData?.featuredBlog || false}
               onChange={handleInputChange}
-              autoComplete="publishImmediately"
+              autoComplete="featuredBlog"
               variant={3}
             />
           </div>

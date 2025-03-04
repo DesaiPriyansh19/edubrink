@@ -12,6 +12,7 @@ import {
   Search,
   X,
   Tag,
+  Landmark,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
@@ -35,7 +36,7 @@ const initialFormData = {
     ar: "",
   },
   DeadLine: null,
-  university: "",
+  university: null,
   uniName: {
     en: "",
     ar: "",
@@ -51,8 +52,27 @@ const initialFormData = {
   Languages: [],
   Requirements: [],
   scholarshipsAvailable: false,
+  scholarshipType: "none",
+  scholarshipPercentage: "",
   DiscountAvailable: false,
+  DiscountValue: "",
   MostPopular: false,
+  CourseCategory: "university_course",
+  provider: "",
+  seo: {
+    metaTitle: {
+      en: "", // SEO Meta Title in English
+      ar: "", // SEO Meta Title in Arabic
+    },
+    metaDescription: {
+      en: "", // SEO Meta Title in English
+      ar: "", // SEO Meta Description in Arabic
+    },
+    metaKeywords: {
+      en: [], // Array of SEO Keywords in English
+      ar: [], // Array of SEO Keywords in Arabic
+    },
+  },
 };
 
 const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
@@ -100,7 +120,6 @@ export default function AddCourse() {
     tagEn: false,
     tagAr: false,
   });
-  const [selectedTags, setSelectedTags] = useState({ tagEn: [], tagAr: [] });
 
   // Extract English & Arabic tags from addTags
   const tagOptions = {
@@ -118,27 +137,33 @@ export default function AddCourse() {
     ),
   };
 
-  // Toggle dropdown visibility
   const toggleDropdown = (key) => {
     setShowDropdown((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   // Handle tag selection
-  const onSelect = (key, tag) => {
-    if (!selectedTags[key].includes(tag)) {
-      setSelectedTags((prev) => ({
-        ...prev,
-        [key]: [...prev[key], tag], // Add tag if not already selected
-      }));
-    }
-    setShowDropdown((prev) => ({ ...prev, [key]: false })); // Close dropdown
+  const onSelect = (key, tag, drop) => {
+    setFormData((prev) => ({
+      ...prev,
+      Tags: {
+        ...prev.Tags,
+        [key]: prev.Tags[key].includes(tag)
+          ? prev.Tags[key]
+          : [...prev.Tags[key], tag], // Prevent duplicates
+      },
+    }));
+
+    setShowDropdown((prev) => ({ ...prev, [drop]: false })); // Close dropdown
   };
 
   // Handle tag removal
   const onRemove = (key, tag) => {
-    setSelectedTags((prev) => ({
+    setFormData((prev) => ({
       ...prev,
-      [key]: prev[key].filter((t) => t !== tag),
+      Tags: {
+        ...prev.Tags,
+        [key]: prev.Tags[key].filter((t) => t !== tag), // Remove the tag
+      },
     }));
   };
 
@@ -214,35 +239,22 @@ export default function AddCourse() {
 
     setFormData((prev) => {
       const fieldPath = field.split(".");
-      const fieldKey = fieldPath[0]; // "keywords"
-      const subKey = fieldPath[1]; // "en"
+      let newState = { ...prev }; // Clone the state
 
-      if (subKey) {
-        // Get existing array
-        const existingItems = prev[fieldKey]?.[subKey] || [];
-
-        // Prevent duplicates
-        if (existingItems.includes(newItem)) return prev;
-
-        return {
-          ...prev,
-          [fieldKey]: {
-            ...prev[fieldKey],
-            [subKey]: [...existingItems, newItem],
-          },
-        };
-      } else {
-        // Get existing array
-        const existingItems = prev[field] || [];
-
-        // Prevent duplicates
-        if (existingItems.includes(newItem)) return prev;
-
-        return {
-          ...prev,
-          [field]: [...existingItems, newItem],
-        };
+      let ref = newState;
+      for (let i = 0; i < fieldPath.length - 1; i++) {
+        const key = fieldPath[i];
+        ref[key] = ref[key] || {}; // Ensure object structure exists
+        ref = ref[key];
       }
+
+      const lastKey = fieldPath[fieldPath.length - 1];
+      ref[lastKey] = Array.isArray(ref[lastKey]) ? ref[lastKey] : []; // Ensure it's an array
+      if (!ref[lastKey].includes(newItem)) {
+        ref[lastKey].push(newItem);
+      }
+
+      return newState;
     });
 
     setNewItem(""); // Clear input field
@@ -251,32 +263,30 @@ export default function AddCourse() {
   const removeItem = (field, itemToRemove) => {
     setFormData((prev) => {
       const fieldPath = field.split(".");
-      const fieldKey = fieldPath[0]; // "keywords"
-      const subKey = fieldPath[1]; // "en"
+      let newState = { ...prev }; // Clone the state
 
-      if (subKey) {
-        return {
-          ...prev,
-          [fieldKey]: {
-            ...prev[fieldKey],
-            [subKey]: prev[fieldKey]?.[subKey]?.filter(
-              (item) => item !== itemToRemove
-            ),
-          },
-        };
-      } else {
-        return {
-          ...prev,
-          [field]: prev[field].filter((item) => item !== itemToRemove),
-        };
+      let ref = newState;
+      for (let i = 0; i < fieldPath.length - 1; i++) {
+        const key = fieldPath[i];
+        ref[key] = ref[key] || {}; // Ensure object structure exists
+        ref = ref[key];
       }
+
+      const lastKey = fieldPath[fieldPath.length - 1];
+      if (Array.isArray(ref[lastKey])) {
+        ref[lastKey] = ref[lastKey].filter((item) => item !== itemToRemove);
+      }
+
+      return newState;
     });
   };
 
   const renderArrayField = (field, label, icon, placeholder, options) => {
-    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
-    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
-    const subKey = fieldPath[1]; // Second key (e.g., "en")
+    const fieldPath = field.split(".");
+    const fieldData = fieldPath.reduce(
+      (acc, key) => acc?.[key] || [],
+      formData
+    ); // Ensure data is an array
 
     return (
       <div className="space-y-2">
@@ -285,9 +295,8 @@ export default function AddCourse() {
         </label>
         <div className="flex gap-2 mb-2">
           {options ? (
-            // Dropdown Select if options exist
             <select
-              value={activeSection === field ? newItem : ""}
+              value={activeSection === field ? newItem || "" : ""}
               onChange={(e) => {
                 setNewItem(e.target.value);
                 setActiveSection(field);
@@ -302,10 +311,9 @@ export default function AddCourse() {
               ))}
             </select>
           ) : (
-            // Text Input if no options are provided
             <input
               type="text"
-              value={activeSection === field ? newItem : ""}
+              value={activeSection === field ? newItem || "" : ""}
               onChange={(e) => {
                 setNewItem(e.target.value);
                 setActiveSection(field);
@@ -322,40 +330,25 @@ export default function AddCourse() {
             Add
           </button>
         </div>
+
         <div className="flex flex-wrap gap-2">
-          {subKey
-            ? formData?.[fieldKey]?.[subKey]?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+          {Array.isArray(fieldData) &&
+            fieldData.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+              >
+                {icon}
+                {item}
+                <button
+                  type="button"
+                  onClick={() => removeItem(field, item)}
+                  className="text-blue-500 hover:text-blue-700"
                 >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))
-            : formData?.[fieldKey]?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  {icon}
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeItem(field, item)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
+                  ×
+                </button>
+              </div>
+            ))}
         </div>
       </div>
     );
@@ -406,6 +399,39 @@ export default function AddCourse() {
                 onChange={handleInputChange}
                 autoComplete="courseName"
                 variant={3}
+              />
+            </div>
+
+            <div>
+              <InputField
+                label="Course Category"
+                type="select"
+                name="CourseCategory"
+                value={formData?.CourseCategory || ""}
+                onChange={handleInputChange}
+                options={[
+                  {
+                    value: "university_course",
+                    label: "University Course",
+                  },
+                  {
+                    value: "external_course",
+                    label: "External Course",
+                  },
+                ]}
+              />
+            </div>
+            <div>
+              <InputField
+                label="Course Type"
+                type="select"
+                name="CourseType"
+                value={formData?.CourseType || ""}
+                onChange={handleInputChange}
+                options={courseTypes.map((mode) => ({
+                  value: mode,
+                  label: mode,
+                }))}
               />
             </div>
 
@@ -460,7 +486,7 @@ export default function AddCourse() {
               </div>
             </div>
 
-            <div className="mb-4 w-full">
+            <div className=" w-full">
               <InputField
                 label="Deadline"
                 type="date"
@@ -474,21 +500,7 @@ export default function AddCourse() {
               />
             </div>
 
-            <div>
-              <InputField
-                label="Course Type"
-                type="select"
-                name="CourseType"
-                value={formData?.CourseType || ""}
-                onChange={handleInputChange}
-                options={courseTypes.map((mode) => ({
-                  value: mode,
-                  label: mode,
-                }))}
-              />
-            </div>
-
-            <div className="mb-4 w-full">
+            <div className=" w-full">
               <InputField
                 label="Course Duration"
                 type="text"
@@ -501,9 +513,29 @@ export default function AddCourse() {
               />
             </div>
 
+            {formData.CourseCategory === "external_course" && (
+              <div className="relative col-span-2">
+                <InputField
+                  label="Provider (External Course)"
+                  type="text"
+                  name="provider"
+                  value={formData?.provider || ""}
+                  onChange={handleInputChange}
+                  autoComplete="course_provider"
+                  variant={3}
+                />
+                <div className="absolute right-5 top-1/2">
+                  <Landmark className="w-4 h-4" />
+                </div>
+              </div>
+            )}
+
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                University
+                University{" "}
+                {formData.CourseCategory === "external_course"
+                  ? "External Course (Optional)"
+                  : ""}
               </label>
               <div className="relative">
                 <button
@@ -607,6 +639,72 @@ export default function AddCourse() {
             admissionRequirements
           )}
         </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <InputField
+            label="Meta Title (English)"
+            type="text"
+            name="seo.metaTitle.en"
+            placeholder="Enter Meta Title in English"
+            value={formData?.seo?.metaTitle?.en}
+            onChange={handleInputChange}
+            autoComplete="metaTitle"
+            variant={3}
+          />
+
+          {/* Meta Title (Arabic) */}
+
+          <InputField
+            label="Meta Title (العنوان التعريفي)"
+            type="text"
+            name="seo.metaTitle.ar"
+            placeholder="أدخل العنوان التعريفي"
+            value={formData?.seo?.metaTitle?.ar}
+            onChange={handleInputChange}
+            autoComplete="metaTitle"
+            variant={3}
+          />
+
+          <div className="col-span-2">
+            <InputField
+              label="Meta Description (English)"
+              type="textarea"
+              name="seo.metaDescription.en"
+              placeholder="Enter Meta Description in English"
+              value={formData?.seo?.metaDescription?.en}
+              onChange={handleInputChange}
+              autoComplete="metaDescription"
+              variant={3}
+            />
+          </div>
+
+          {/* Meta Description (Arabic) */}
+          <div className="col-span-2">
+            <InputField
+              label="Meta Description (الوصف التعريفي)"
+              type="textarea"
+              name="seo.metaDescription.ar"
+              placeholder="أدخل الوصف التعريفي"
+              value={formData?.seo?.metaDescription?.ar}
+              onChange={handleInputChange}
+              autoComplete="metaDescription"
+              variant={3}
+            />
+          </div>
+          <div className="col-span-2 flex flex-col gap-3">
+            {renderArrayField(
+              "seo.metaKeywords.en", // Pass the nested field
+              "Keywords (English)",
+              <Tag className="w-4 h-4" />,
+              "Add New Keyword..."
+            )}
+            {renderArrayField(
+              "seo.metaKeywords.ar",
+              "Keywords (Arabic)",
+              <Tag className="w-4 h-4" />,
+              "أضف كلمة مفتاحية جديدة..."
+            )}
+          </div>
+        </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
           <div className="mb-4 w-full">
@@ -624,11 +722,14 @@ export default function AddCourse() {
 
           <div className="mb-4">
             {/* English Tags */}
-            {["tagEn", "tagAr"].map((key) => (
+            {[
+              { label: "Tags (English)", key: "tagEn", value: "en" },
+              { label: "Tags (Arabic)", key: "tagAr", value: "ar" },
+            ].map(({ label, key, value }) => (
               <div key={key} className="mb-4">
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {key === "tagEn" ? "Tags (English)" : "Tags (Arabic)"}
+                    {label}
                   </label>
                   <div className="relative">
                     <button
@@ -662,12 +763,12 @@ export default function AddCourse() {
                           </div>
                         </div>
                         <div className="max-h-60 overflow-y-auto">
-                          {filteredTags[key].length > 0 ? (
+                          {filteredTags[key]?.length > 0 ? (
                             filteredTags[key].map((tag, idx) => (
                               <button
                                 key={idx}
                                 type="button"
-                                onClick={() => onSelect(key, tag)}
+                                onClick={() => onSelect(value, tag, key)} // Pass "en" or "ar"
                                 className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between"
                               >
                                 <span className="font-medium">{tag}</span>
@@ -687,21 +788,18 @@ export default function AddCourse() {
                 {/* Selected Tags */}
                 <div className="mt-4">
                   <div className="flex flex-wrap gap-2">
-                    {selectedTags[key].map((tag, idx) => (
+                    {formData.Tags[value].map((tag, idx) => (
                       <div
                         key={idx}
                         className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
                       >
-                        <span className="flex items-center gap-1">
-                          <Tag className="w-4 h-4" />
-                          {tag}
-                        </span>
+                        <span>{tag}</span>
                         <button
                           type="button"
-                          onClick={() => onRemove(key, tag)}
+                          onClick={() => onRemove(value, tag)}
                           className="text-blue-500 hover:text-blue-700"
                         >
-                          <X className="w-4 h-4 text-red-600" />
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
@@ -744,10 +842,64 @@ export default function AddCourse() {
           </div>
         </div>
 
+        {formData.scholarshipsAvailable && (
+          <div className="p-4 border border-blue-100 bg-blue-50 rounded-lg space-y-4">
+            <h3 className="font-medium text-blue-800">Scholarship Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                label="Scholarship Type"
+                type="select"
+                name="scholarshipType"
+                value={formData?.scholarshipType || "none"}
+                onChange={handleInputChange}
+                options={[
+                  { value: "", label: "None" },
+                  { value: "partial", label: "Partial" },
+                  { value: "full", label: "Full" },
+                ]}
+                variant={3}
+              />
+
+              {formData.scholarshipType === "partial" && (
+                <InputField
+                  label="Scholarship Percentage"
+                  type="text"
+                  name="scholarshipPercentage"
+                  placeholder="e.g., 50"
+                  value={formData?.scholarshipPercentage || ""}
+                  onChange={handleInputChange}
+                  autoComplete="scholarshipPercentage"
+                  variant={3}
+                  min="1"
+                  max="99"
+                />
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Discount fields - conditionally rendered */}
+        {formData.DiscountAvailable && (
+          <div className="p-4 border border-green-100 bg-green-50 rounded-lg space-y-4">
+            <h3 className="font-medium text-green-800">Discount Details</h3>
+            <InputField
+              label="Discount Value"
+              type="text"
+              name="DiscountValue"
+              placeholder="Enter discount amount"
+              value={formData?.DiscountValue || ""}
+              onChange={handleInputChange}
+              autoComplete="discountValue"
+              variant={3}
+              min="1"
+            />
+          </div>
+        )}
+
         <div className="flex justify-end space-x-4">
           <button
             type="button"
-            onClick={() => navigate("/courses")}
+            onClick={() => navigate(`/${language}/admin/courses`)}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
           >
             Cancel

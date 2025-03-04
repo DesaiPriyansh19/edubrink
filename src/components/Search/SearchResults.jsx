@@ -20,7 +20,7 @@ function SearchResults() {
   const [showFilter, setShowFilter] = useState(false);
   const location = useLocation();
   const { data, loading } = useFetch(
-    `http://localhost:4000/api/country/getAll/DepthData`
+    `https://edu-brink-backend.vercel.app/api/country/getAll/DepthData`
   );
 
   const { filterProp, setSumData, sumData, initialState } = useSearch();

@@ -3,6 +3,7 @@ import axios from "axios";
 
 const useDropdownData = () => {
   const [dropdownData, setDropdownData] = useState({
+    countries: [],
     faculties: [],
     universities: [],
     blogs: [],
@@ -12,6 +13,7 @@ const useDropdownData = () => {
   });
 
   const [searchInput, setSearchInput] = useState({
+    countryname: "",
     facultyname: "",
     blogname: "",
     coursename: "",
@@ -24,7 +26,9 @@ const useDropdownData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://edu-brink-backend.vercel.app/api/helper");
+        const response = await axios.get(
+          "https://edu-brink-backend.vercel.app/api/helper"
+        );
 
         setDropdownData(response.data.data);
       } catch (error) {
@@ -65,6 +69,7 @@ const useDropdownData = () => {
     blogs: filterData(dropdownData.blogs, "blogTitle", "blogname"),
     courses: filterData(dropdownData.courses, "CourseName", "coursename"),
     majors: filterData(dropdownData.majors, "majorName", "majorname"),
+    countries: filterData(dropdownData.countries, "countryName", "countryname"),
   };
 
   const handleAdd = (field, value, setFormData, setShowDropdown) => {

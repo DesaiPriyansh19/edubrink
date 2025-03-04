@@ -7,6 +7,7 @@ import {
   Languages,
   School,
   BookOpen,
+  Tag,
 } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -125,6 +126,8 @@ const initialFormData = {
   countryCode: "",
   universities: [], // Array to hold references to university IDs
   blog: [],
+  hotDestination: false,
+  livingCost: "",
 };
 
 export default function AddCountry() {
@@ -194,6 +197,7 @@ export default function AddCountry() {
         blog: formData.blog.map((blog) => blog._id),
       };
 
+      console.log(updatedFormData);
       await addNew(updatedFormData);
       navigate(`/${language}/admin/countries`);
     } catch (err) {
@@ -411,30 +415,44 @@ export default function AddCountry() {
               />
             </div>
 
-            <div>
-              <InputField
-                label="ISO Code"
-                type="text"
-                name="countryCode"
-                placeholder="E.g. USA"
-                value={formData?.countryCode}
-                onChange={handleInputChange}
-                autoComplete="countryCode"
-                variant={3}
-              />
-            </div>
+            <div className="col-span-2 flex justify-between gap-6">
+              <div className="w-full">
+                <InputField
+                  label="Living Cost"
+                  type="text"
+                  name="livingCost"
+                  placeholder="E.g. $800"
+                  value={formData?.livingCost}
+                  onChange={handleInputChange}
+                  autoComplete="living_cost"
+                  variant={3}
+                />
+              </div>
+              <div className="w-full">
+                <InputField
+                  label="ISO Code"
+                  type="text"
+                  name="countryCode"
+                  placeholder="E.g. USA"
+                  value={formData?.countryCode}
+                  onChange={handleInputChange}
+                  autoComplete="countryCode"
+                  variant={3}
+                />
+              </div>
 
-            <div>
-              <InputField
-                label="Country Currency (عملة البلد)"
-                type="text"
-                name="countryCurrency"
-                placeholder="E.g. USD"
-                value={formData?.countryCurrency}
-                onChange={handleInputChange}
-                autoComplete="countryCurrency"
-                variant={3}
-              />
+              <div className="w-full">
+                <InputField
+                  label="Country Currency (عملة البلد)"
+                  type="text"
+                  name="countryCurrency"
+                  placeholder="E.g. USD"
+                  value={formData?.countryCurrency}
+                  onChange={handleInputChange}
+                  autoComplete="countryCurrency"
+                  variant={3}
+                />
+              </div>
             </div>
             <div>
               <InputField
@@ -570,20 +588,18 @@ export default function AddCountry() {
             </div>
             <div className="col-span-2 flex flex-col gap-3">
               {renderArrayField(
-                "keywords.en", // Pass the nested field
+                "metakeywords.en", // Pass the nested field
                 "Keywords (English)",
-                <Languages className="w-4 h-4" />,
+                <Tag className="w-4 h-4" />,
                 "Add New Keyword..."
               )}
               {renderArrayField(
-                "keywords.ar",
+                "metakeywords.ar",
                 "Keywords (Arabic)",
-                <Languages className="w-4 h-4" />,
+                <Tag className="w-4 h-4" />,
                 "أضف كلمة مفتاحية جديدة..."
               )}
             </div>
-
-            {/* Keywords (Arabic) */}
 
             <div className=" col-span-2">
               <div className="mb-2">
@@ -774,6 +790,16 @@ export default function AddCountry() {
             dropdownKey="blogs"
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
+          />
+
+          <InputField
+            label="Hot Destination"
+            type="checkbox"
+            name="hotDestination"
+            checked={formData?.hotDestination || false}
+            onChange={handleInputChange}
+            autoComplete="hot_destination"
+            variant={3}
           />
 
           {/* Faculty Dropdown */}

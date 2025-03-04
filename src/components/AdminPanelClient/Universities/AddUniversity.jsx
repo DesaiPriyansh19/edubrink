@@ -8,6 +8,7 @@ import {
   Languages,
   FileCheck,
   BookOpen,
+  Tag,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
@@ -18,6 +19,8 @@ import "react-quill/dist/quill.snow.css";
 import DropdownSelect from "../../../../utils/DropdownSelect";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
+import CampusSection from "./CampusSection";
+import MetaArrayFields from "./MetaArrayFields";
 
 const initialFormData = {
   uniName: {
@@ -89,6 +92,33 @@ const initialFormData = {
   housing_available: false,
   living_cost: "",
   uniFeatured: false,
+  campuses: [
+    {
+      campusName: { en: "", ar: "" },
+      campusLocation: {
+        uniAddress: { en: "", ar: "" },
+        uniPincode: "",
+        uniCity: { en: "", ar: "" },
+        uniState: { en: "", ar: "" },
+        uniCountry: { en: "", ar: "" },
+      },
+      campusFacilities: [], // List of facilities available on the campus
+    },
+  ],
+  seo: {
+    metaTitle: {
+      en: "",
+      ar: "",
+    },
+    metaDescription: {
+      en: "",
+      ar: "",
+    },
+    metaKeywords: {
+      en: [], // Array of SEO Keywords in English
+      ar: [], // Array of SEO Keywords in Arabic
+    },
+  },
 };
 
 const universityTypes = ["Public", "Private", "Research", "Technical"];
@@ -136,12 +166,8 @@ const commonRequirements = [
 
 export default function AddUniversity() {
   const navigate = useNavigate();
-  const {
-    filteredData,
-    setSearchInput,
-    handleAdd,
-    handleRemove,
-  } = useDropdownData();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState({
     courses: false,
@@ -231,6 +257,7 @@ export default function AddUniversity() {
         courseId: formData.courseId.map((course) => course._id),
         faculty: formData.faculty.map((faculty) => faculty._id),
       };
+      console.log(updatedFormData);
 
       await addNew(updatedFormData);
       setFormData(initialFormData);
@@ -356,12 +383,9 @@ export default function AddUniversity() {
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-6"
-      >
+      <form onSubmit={handleSubmit} className="">
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 bg-white rounded-lg shadow-md p-6  md:grid-cols-2 gap-6">
             {/* <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 University Name
@@ -516,27 +540,27 @@ export default function AddUniversity() {
                 className="h-52 pb-10"
               />
             </div>
+          </div>
 
-            <div className="mb-4 w-full">
-              <InputField
-                label="University Start Date (تاريخ بدء الجامعة)"
-                type="date"
-                name="uniStartDate"
-                value={formData?.uniStartDate || ""}
-                onChange={handleInputChange}
-                variant={3}
-              />
-            </div>
-            <div className="mb-4 w-full">
-              <InputField
-                label="Application Deadline (الموعد النهائي للتقديم)"
-                type="date"
-                name="uniDeadline"
-                value={formData?.uniDeadline || ""}
-                onChange={handleInputChange}
-                variant={3}
-              />
-            </div>
+          <div className="grid grid-cols-1 bg-white rounded-lg shadow-md p-6 md:grid-cols-2 gap-6">
+            <InputField
+              label="University Start Date (تاريخ بدء الجامعة)"
+              type="date"
+              name="uniStartDate"
+              value={formData?.uniStartDate || ""}
+              onChange={handleInputChange}
+              variant={3}
+            />
+
+            <InputField
+              label="Application Deadline (الموعد النهائي للتقديم)"
+              type="date"
+              name="uniDeadline"
+              value={formData?.uniDeadline || ""}
+              onChange={handleInputChange}
+              variant={3}
+            />
+
             {/* UniLocation Start */}
             <InputField
               label="Address (English)"
@@ -664,7 +688,7 @@ export default function AddUniversity() {
             />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 bg-white rounded-lg shadow-md p-6">
             {renderArrayField(
               "studyLevel",
               "Study Levels",
@@ -695,269 +719,344 @@ export default function AddUniversity() {
             )}
           </div>
 
-          <div className="w-full flex items-center gap-4 justify-between">
-            <div className="w-full">
+          <div className="bg-white rounded-lg space-y-6 shadow-md p-6">
+            <div className="w-full flex items-center gap-4 justify-between">
+              <div className="w-full mb-4">
+                <InputField
+                  label="University Main Image URL (رابط الصورة الرئيسية للجامعة)"
+                  type="text"
+                  name="uniMainImage"
+                  placeholder="Upload or enter image URL"
+                  value={formData.uniMainImage || ""}
+                  onChange={handleInputChange}
+                  autoComplete="off"
+                  variant={3}
+                />
+              </div>
+
+              <div className=" whitespace-nowrap">
+                <UploadWidget
+                  uwConfig={{
+                    cloudName: "edubrink",
+                    uploadPreset: "EduBrinkImages",
+                    multiple: false,
+                    maxImageFileSize: 2000000,
+                    folder: "university/MainImages",
+                  }}
+                  setFormData={setFormData}
+                  field="uniMainImage"
+                  uploadName="Upload Main Image"
+                  id="upload_widget_mainImage"
+                  className=" text-blue-500 border border-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <ArrayFieldAndPhotos
+              title="Student Lifestyle in University (نمط حياة الطالب في الجامعة)"
+              fields={[
+                {
+                  label: "Lifestyle Description (English)",
+                  name: "studentLifeStyleInUni.lifestyleDescription.en",
+                  placeholder: "Lifestyle Description (English)",
+                },
+                {
+                  label: "وصف أسلوب الحياة (عربي)",
+                  name: "studentLifeStyleInUni.lifestyleDescription.ar",
+                  placeholder: "وصف أسلوب الحياة (عربي)",
+                },
+              ]}
+              photosTitle={"Life Style"}
+              fieldName="studentLifeStyleInUni"
+              formData={formData}
+              setFormData={setFormData}
+              handleInputChange={handleInputChange}
+              handleMainPhotoChange={handleMainPhotoChange}
+              uploadConfig={{
+                cloudName: "edubrink",
+                fieldName: "lifestylePhotos",
+                uploadPreset: "EduBrinkImages",
+                multiple: true,
+                maxImageFileSize: 2000000,
+                folder: "university/lifestyleImages",
+                uploadName: "Upload Lifestyle Photo",
+              }}
+              photosKey={"lifestylePhotos"}
+            />
+
+            <ArrayFieldAndPhotos
+              title="University Sports (الرياضة الجامعية)"
+              fields={[
+                {
+                  label: "Sports Description (English)",
+                  name: "uniSports.sportsDescription.en",
+                  placeholder: "Sports Description (English)",
+                },
+                {
+                  label: "وصف الرياضة (عربي)",
+                  name: "uniSports.sportsDescription.ar",
+                  placeholder: "وصف الرياضة (عربي)",
+                },
+              ]}
+              fieldName="uniSports"
+              photosTitle={"Sports"}
+              formData={formData}
+              setFormData={setFormData}
+              handleInputChange={handleInputChange}
+              handleMainPhotoChange={handleMainPhotoChange}
+              uploadConfig={{
+                cloudName: "edubrink",
+                fieldName: "sportsPhotos",
+                uploadPreset: "EduBrinkImages",
+                multiple: true,
+                maxImageFileSize: 2000000,
+                folder: "university/sportsImage",
+                uploadName: "Upload Sports Photo",
+              }}
+              photosKey={"sportsPhotos"}
+            />
+
+            <ArrayFieldAndPhotos
+              title="University Library (مكتبة الجامعة)"
+              fields={[
+                {
+                  label: "Library Description (English)",
+                  name: "uniLibrary.libraryDescription.en",
+                  placeholder: "Library Description (English)",
+                },
+                {
+                  label: "وصف المكتبة (عربي)",
+                  name: "uniLibrary.libraryDescription.ar",
+                  placeholder: "وصف المكتبة (عربي)",
+                },
+              ]}
+              fieldName="uniLibrary"
+              photosTitle={"Library"}
+              formData={formData}
+              setFormData={setFormData}
+              handleInputChange={handleInputChange}
+              handleMainPhotoChange={handleMainPhotoChange}
+              uploadConfig={{
+                cloudName: "edubrink",
+                uploadPreset: "EduBrinkImages",
+                fieldName: "libraryPhotos",
+                multiple: true,
+                maxImageFileSize: 2000000,
+                folder: "university/libraryImages",
+                uploadName: "Upload Library Photo",
+              }}
+              photosKey="libraryPhotos"
+            />
+
+            <DropdownSelect
+              label="Enroll Faculty (التسجيل بالكلية)"
+              placeholder="Select a Faculty"
+              icon={BookOpen}
+              selectedItems={formData?.faculty}
+              searchKey="facultyName"
+              options={filteredData.faculties}
+              onSearch={(value) =>
+                setSearchInput((prev) => ({ ...prev, facultyname: value }))
+              }
+              onSelect={(faculty) =>
+                handleAdd("faculty", faculty, setFormData, setShowDropdown)
+              }
+              onRemove={(id) => handleRemove("faculty", id, setFormData)}
+              language="en"
+              dropdownKey="faculty"
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
+            />
+
+            <DropdownSelect
+              label="Enroll Course (التسجيل في الدورة)"
+              placeholder="Select a Course"
+              icon={BookOpen}
+              selectedItems={formData?.courseId}
+              searchKey="CourseName"
+              options={filteredData.courses}
+              onSearch={(value) =>
+                setSearchInput((prev) => ({ ...prev, coursename: value }))
+              }
+              onSelect={(course) =>
+                handleAdd("courseId", course, setFormData, setShowDropdown)
+              }
+              onRemove={(id) => handleRemove("courseId", id, setFormData)}
+              language="en"
+              dropdownKey="courses"
+              showDropdown={showDropdown}
+              setShowDropdown={setShowDropdown}
+            />
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+            <InputField
+              label="Meta Title (English)"
+              type="text"
+              name="seo.metaTitle.en"
+              placeholder="Enter Meta Title in English"
+              value={formData?.seo?.metaTitle?.en}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            <InputField
+              label="Meta Title (العنوان التعريفي)"
+              type="text"
+              name="seo.metaTitle.ar"
+              placeholder="أدخل العنوان التعريفي"
+              value={formData?.seo?.metaTitle?.ar}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            <div className="col-span-2">
               <InputField
-                label="University Main Image URL (رابط الصورة الرئيسية للجامعة)"
-                type="text"
-                name="uniMainImage"
-                placeholder="Upload or enter image URL"
-                value={formData.uniMainImage || ""}
+                label="Meta Description (English)"
+                type="textarea"
+                name="seo.metaDescription.en"
+                placeholder="Enter Meta Description in English"
+                value={formData?.seo?.metaDescription?.en}
                 onChange={handleInputChange}
-                autoComplete="off"
+                autoComplete="metaDescription"
                 variant={3}
               />
             </div>
 
-            <div className="mt-6 whitespace-nowrap">
-              <UploadWidget
-                uwConfig={{
-                  cloudName: "edubrink",
-                  uploadPreset: "EduBrinkImages",
-                  multiple: false,
-                  maxImageFileSize: 2000000,
-                  folder: "university/MainImages",
-                }}
+            <div className="col-span-2">
+              <InputField
+                label="Meta Description (الوصف التعريفي)"
+                type="textarea"
+                name="seo.metaDescription.ar"
+                placeholder="أدخل الوصف التعريفي"
+                value={formData?.seo?.metaDescription?.ar}
+                onChange={handleInputChange}
+                autoComplete="metaDescription"
+                variant={3}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-3">
+              <MetaArrayFields
+                field="seo.metaKeywords.en"
+                label="Keywords (English)"
+                icon={<Tag className="w-4 h-4" />}
+                placeholder="Add New Keyword..."
+                formData={formData}
                 setFormData={setFormData}
-                field="uniMainImage"
-                uploadName="Upload Main Image"
-                id="upload_widget_mainImage"
-                className=" text-blue-500 border border-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
+              />
+              <MetaArrayFields
+                field="seo.metaKeywords.ar"
+                label="Keywords (Arabic)"
+                icon={<Tag className="w-4 h-4" />}
+                placeholder="أضف كلمة مفتاحية جديدة..."
+                formData={formData}
+                setFormData={setFormData}
               />
             </div>
           </div>
 
-          <ArrayFieldAndPhotos
-            title="Student Lifestyle in University (نمط حياة الطالب في الجامعة)"
-            fields={[
-              {
-                label: "Lifestyle Description (English)",
-                name: "studentLifeStyleInUni.lifestyleDescription.en",
-                placeholder: "Lifestyle Description (English)",
-              },
-              {
-                label: "وصف أسلوب الحياة (عربي)",
-                name: "studentLifeStyleInUni.lifestyleDescription.ar",
-                placeholder: "وصف أسلوب الحياة (عربي)",
-              },
-            ]}
-            photosTitle={"Life Style"}
-            fieldName="studentLifeStyleInUni"
-            formData={formData}
-            setFormData={setFormData}
-            handleInputChange={handleInputChange}
-            handleMainPhotoChange={handleMainPhotoChange}
-            uploadConfig={{
-              cloudName: "edubrink",
-              fieldName: "lifestylePhotos",
-              uploadPreset: "EduBrinkImages",
-              multiple: true,
-              maxImageFileSize: 2000000,
-              folder: "university/lifestyleImages",
-              uploadName: "Upload Lifestyle Photo",
-            }}
-            photosKey={"lifestylePhotos"}
-          />
-
-          <ArrayFieldAndPhotos
-            title="University Sports (الرياضة الجامعية)"
-            fields={[
-              {
-                label: "Sports Description (English)",
-                name: "uniSports.sportsDescription.en",
-                placeholder: "Sports Description (English)",
-              },
-              {
-                label: "وصف الرياضة (عربي)",
-                name: "uniSports.sportsDescription.ar",
-                placeholder: "وصف الرياضة (عربي)",
-              },
-            ]}
-            fieldName="uniSports"
-            photosTitle={"Sports"}
-            formData={formData}
-            setFormData={setFormData}
-            handleInputChange={handleInputChange}
-            handleMainPhotoChange={handleMainPhotoChange}
-            uploadConfig={{
-              cloudName: "edubrink",
-              fieldName: "sportsPhotos",
-              uploadPreset: "EduBrinkImages",
-              multiple: true,
-              maxImageFileSize: 2000000,
-              folder: "university/sportsImage",
-              uploadName: "Upload Sports Photo",
-            }}
-            photosKey={"sportsPhotos"}
-          />
-
-          <ArrayFieldAndPhotos
-            title="University Library (مكتبة الجامعة)"
-            fields={[
-              {
-                label: "Library Description (English)",
-                name: "uniLibrary.libraryDescription.en",
-                placeholder: "Library Description (English)",
-              },
-              {
-                label: "وصف المكتبة (عربي)",
-                name: "uniLibrary.libraryDescription.ar",
-                placeholder: "وصف المكتبة (عربي)",
-              },
-            ]}
-            fieldName="uniLibrary"
-            photosTitle={"Library"}
-            formData={formData}
-            setFormData={setFormData}
-            handleInputChange={handleInputChange}
-            handleMainPhotoChange={handleMainPhotoChange}
-            uploadConfig={{
-              cloudName: "edubrink",
-              uploadPreset: "EduBrinkImages",
-              fieldName: "libraryPhotos",
-              multiple: true,
-              maxImageFileSize: 2000000,
-              folder: "university/libraryImages",
-              uploadName: "Upload Library Photo",
-            }}
-            photosKey="libraryPhotos"
-          />
-
-          <DropdownSelect
-            label="Enroll Faculty (التسجيل بالكلية)"
-            placeholder="Select a Faculty"
-            icon={BookOpen}
-            selectedItems={formData?.faculty}
-            searchKey="facultyName"
-            options={filteredData.faculties}
-            onSearch={(value) =>
-              setSearchInput((prev) => ({ ...prev, facultyname: value }))
-            }
-            onSelect={(faculty) =>
-              handleAdd("faculty", faculty, setFormData, setShowDropdown)
-            }
-            onRemove={(id) => handleRemove("faculty", id, setFormData)}
-            language="en"
-            dropdownKey="faculty"
-            showDropdown={showDropdown}
-            setShowDropdown={setShowDropdown}
-          />
-
-          <DropdownSelect
-            label="Enroll Course (التسجيل في الدورة)"
-            placeholder="Select a Course"
-            icon={BookOpen}
-            selectedItems={formData?.courseId}
-            searchKey="CourseName"
-            options={filteredData.courses}
-            onSearch={(value) =>
-              setSearchInput((prev) => ({ ...prev, coursename: value }))
-            }
-            onSelect={(course) =>
-              handleAdd("courseId", course, setFormData, setShowDropdown)
-            }
-            onRemove={(id) => handleRemove("courseId", id, setFormData)}
-            language="en"
-            dropdownKey="courses"
-            showDropdown={showDropdown}
-            setShowDropdown={setShowDropdown}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 mt-10 mb-7 md:grid-cols-3 gap-6">
-          <div className="flex items-center space-x-2">
-            <InputField
-              label="Preparatory Year Available"
-              type="checkbox"
-              name="preparatory_year"
-              value={formData?.preparatory_year}
-              onChange={handleInputChange}
-              variant={3}
-            />
+          <div className="bg-white rounded-lg shadow-md ">
+            <CampusSection formData={formData} setFormData={setFormData} />
           </div>
 
-          <div className="flex items-center space-x-2">
-            <InputField
-              label="Scholarship Availability "
-              type="checkbox"
-              name="scholarshipAvailability"
-              value={formData?.scholarshipAvailability}
-              onChange={handleInputChange}
-              variant={3}
-            />
-          </div>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="grid grid-cols-1  mt-10 mb-7 md:grid-cols-3 gap-6">
+              <div className="flex items-center space-x-2">
+                <InputField
+                  label="Preparatory Year Available"
+                  type="checkbox"
+                  name="preparatory_year"
+                  value={formData?.preparatory_year}
+                  onChange={handleInputChange}
+                  variant={3}
+                />
+              </div>
 
-          <div className="flex items-center space-x-2">
-            <InputField
-              label="Student Housing Available"
-              type="checkbox"
-              name="housing_available"
-              value={formData?.housing_available}
-              onChange={handleInputChange}
-              variant={3}
-            />
-          </div>
+              <div className="flex items-center space-x-2">
+                <InputField
+                  label="Scholarship Availability "
+                  type="checkbox"
+                  name="scholarshipAvailability"
+                  value={formData?.scholarshipAvailability}
+                  onChange={handleInputChange}
+                  variant={3}
+                />
+              </div>
 
-          <div className="flex items-center space-x-2">
-            <InputField
-              label="Entrance Exam Required"
-              type="checkbox"
-              name="entranceExamRequired"
-              value={formData.entranceExamRequired}
-              onChange={handleInputChange}
-              variant={3}
-            />
-          </div>
+              <div className="flex items-center space-x-2">
+                <InputField
+                  label="Student Housing Available"
+                  type="checkbox"
+                  name="housing_available"
+                  value={formData?.housing_available}
+                  onChange={handleInputChange}
+                  variant={3}
+                />
+              </div>
 
-          <div className="flex items-center space-x-2">
-            <InputField
-              label="Featured University"
-              type="checkbox"
-              name="uniFeatured"
-              value={formData?.uniFeatured}
-              onChange={handleInputChange}
-              variant={3}
-            />
-          </div>
-        </div>
+              <div className="flex items-center space-x-2">
+                <InputField
+                  label="Entrance Exam Required"
+                  type="checkbox"
+                  name="entranceExamRequired"
+                  value={formData.entranceExamRequired}
+                  onChange={handleInputChange}
+                  variant={3}
+                />
+              </div>
 
-        {formData.preparatory_year && (
-          <div>
-            <InputField
-              label="Preparatory Year Fees"
-              type="text"
-              name="preparatory_year_fees"
-              placeholder="e.g., $15,000"
-              value={formData?.preparatory_year_fees}
-              onChange={handleInputChange}
-              autoComplete="preparatoryYearFees"
-              variant={3}
-            />
-          </div>
-        )}
+              <div className="flex items-center space-x-2">
+                <InputField
+                  label="Featured University"
+                  type="checkbox"
+                  name="uniFeatured"
+                  value={formData?.uniFeatured}
+                  onChange={handleInputChange}
+                  variant={3}
+                />
+              </div>
+            </div>
 
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={() => navigate(`/${language}/admin/universities`)}
-            className="mr-4 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center"
-          >
-            {loading ? (
-              "Saving..."
-            ) : (
-              <>
-                <Plus className="w-4 h-4 mr-2" />
-                Save University
-              </>
+            {formData.preparatory_year && (
+              <div>
+                <InputField
+                  label="Preparatory Year Fees"
+                  type="text"
+                  name="preparatory_year_fees"
+                  placeholder="e.g., $15,000"
+                  value={formData?.preparatory_year_fees}
+                  onChange={handleInputChange}
+                  autoComplete="preparatoryYearFees"
+                  variant={3}
+                />
+              </div>
             )}
-          </button>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate(`/${language}/admin/universities`)}
+                className="mr-4 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center"
+              >
+                {loading ? (
+                  "Saving..."
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Save University
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>

@@ -262,7 +262,7 @@ export default function EditMajor() {
     }));
   };
 
-  const filterFacultyData = filteredFaculty.filter(
+  const filterFacultyData = filteredFaculty?.filter(
     (country) =>
       country.facultyName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
       country.facultyName.ar.toLowerCase().includes(flagSearch.toLowerCase())

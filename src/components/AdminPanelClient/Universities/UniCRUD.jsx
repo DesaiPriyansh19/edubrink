@@ -18,16 +18,17 @@ import Loader from "../../../../utils/Loader";
 import { useLanguage } from "../../../../context/LanguageContext";
 import useApiData from "../../../../hooks/useApiData";
 import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+import useDropdownData from "../../../../hooks/useDropdownData";
 
 export default function UniCRUD() {
   const navigate = useNavigate();
+  const { filteredData } = useDropdownData();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCountry, setFilterCountry] = useState("");
   const [filterType, setFilterType] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
   const [error, setError] = useState(null);
-  const [countries, setCountries] = useState([]);
   const { language } = useLanguage();
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery); // Store debounced value
 
@@ -151,7 +152,7 @@ export default function UniCRUD() {
               />
             </div>
             <div className="flex gap-4">
-              <select
+              {/* <select
                 value={filterCountry}
                 onChange={(e) => setFilterCountry(e.target.value)}
                 className="border rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 min-w-[200px]"
@@ -162,7 +163,7 @@ export default function UniCRUD() {
                     {country.name}
                   </option>
                 ))}
-              </select>
+              </select> */}
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
@@ -329,9 +330,9 @@ export default function UniCRUD() {
               <p className="text-sm text-gray-500">Active institutions</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">{universities.length}</p>
+          <p className="text-3xl font-bold">{universities?.length}</p>
           <div className="mt-2 text-sm text-gray-500">
-            Across {countries.length} countries
+            Across {filteredData?.countries?.length} countries
           </div>
         </div>
 
@@ -345,7 +346,7 @@ export default function UniCRUD() {
               <p className="text-sm text-gray-500">Global presence</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">{countries.length}</p>
+          <p className="text-3xl font-bold">{filteredData?.countries?.length}</p>
           <div className="mt-2 text-sm text-gray-500">
             Educational destinations
           </div>
@@ -361,7 +362,7 @@ export default function UniCRUD() {
               <p className="text-sm text-gray-500">Study opportunities</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">500+</p>
+          <p className="text-3xl font-bold">{filteredData?.courses?.length}+</p>
           <div className="mt-2 text-sm text-gray-500">Available courses</div>
         </div>
       </div>

@@ -11,9 +11,11 @@ import {
 import { useLanguage } from "../../../../context/LanguageContext";
 import Loader from "../../../../utils/Loader";
 import useApiData from "../../../../hooks/useApiData";
+import useDropdownData from "../../../../hooks/useDropdownData";
 
 export default function CountryCRUD() {
   const navigate = useNavigate();
+  const { filteredData } = useDropdownData();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
@@ -132,7 +134,7 @@ export default function CountryCRUD() {
                   ISO Code
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Language
+                  Available Study Language
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Currency
@@ -250,7 +252,9 @@ export default function CountryCRUD() {
               <p className="text-sm text-gray-500">Total institutions</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">150+</p>
+          <p className="text-3xl font-bold">
+            {filteredData?.universities?.length}+
+          </p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
@@ -263,7 +267,7 @@ export default function CountryCRUD() {
               <p className="text-sm text-gray-500">Available courses</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">500+</p>
+          <p className="text-3xl font-bold">{filteredData?.courses?.length}+</p>
         </div>
       </div>
     </div>

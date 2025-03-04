@@ -46,13 +46,11 @@ export default function MajorCRUD() {
   const filteredMajors = majors.filter(
     (major) =>
       major.majorName.en.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      major.majorName.ar.toLowerCase().includes(searchQuery.toLowerCase())
-    // major.faculty?.university?.name
-    //   .toLowerCase()
-    //   .includes(searchQuery.toLowerCase()) ||
-    // major.faculty?.university?.country?.name
-    //   .toLowerCase()
-    //   .includes(searchQuery.toLowerCase())
+      major.majorName.ar.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      major.faculty?.universities?.some(
+        (item) => item.uniName.en.toLowerCase() === searchQuery.toLowerCase()
+      ) ||
+      major.faculty.facultyName.en.toLowerCase() === searchQuery.toLowerCase()
   );
 
   if (loading) {
@@ -89,7 +87,7 @@ export default function MajorCRUD() {
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search majors..."
+                placeholder="Search Majors, Faculty, and Universities name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
@@ -198,7 +196,7 @@ export default function MajorCRUD() {
             <h2 className="text-lg font-semibold">With Scholarships</h2>
           </div>
           <p className="text-3xl font-bold">
-            {majors.filter((m) => m.scholarships_available).length}
+            {majors.filter((m) => m.majorCheckBox.scholarshipsAvailable).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">
             Majors offering scholarships
@@ -211,7 +209,7 @@ export default function MajorCRUD() {
             <h2 className="text-lg font-semibold">Featured Majors</h2>
           </div>
           <p className="text-3xl font-bold">
-            {majors.filter((m) => m.featured).length}
+            {majors.filter((m) => m.majorCheckBox.featuredMajor).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Highlighted majors</p>
         </div>

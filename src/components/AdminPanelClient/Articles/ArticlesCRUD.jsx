@@ -68,6 +68,9 @@ export default function ArticlesCRUD() {
       article?.blogTitle?.en
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
+      article?.blogTitle?.ar
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
       article?.blogCategory
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||

@@ -123,10 +123,10 @@ export default function CourseCRUD() {
                     )}
                   </div>
                   <div className="flex items-center gap-4 mt-1">
-                    {/* <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-500">
                       <BookOpenCheck className="w-4 h-4 mr-1" />
-                      {course.university?.name}
-                    </div> */}
+                      {course.university?.uniName[language] || "N/A"}
+                    </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />
                       {course.CourseDuration}
@@ -181,7 +181,7 @@ export default function CourseCRUD() {
             <h2 className="text-lg font-semibold">With Scholarships</h2>
           </div>
           <p className="text-3xl font-bold">
-            {courses.filter((c) => c.scholarships_available).length}
+            {courses.filter((c) => c.scholarshipsAvailable).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">
             Courses offering scholarships
@@ -194,7 +194,7 @@ export default function CourseCRUD() {
             <h2 className="text-lg font-semibold">Most Popular</h2>
           </div>
           <p className="text-3xl font-bold">
-            {courses.filter((c) => c.most_popular).length}
+            {courses.filter((c) => c.MostPopular).length}
           </p>
           <p className="text-sm text-gray-500 mt-1">Popular courses</p>
         </div>

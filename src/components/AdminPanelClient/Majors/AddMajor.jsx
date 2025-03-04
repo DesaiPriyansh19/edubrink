@@ -470,7 +470,7 @@ export default function AddMajor() {
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
-                          <span className="text-gray-400 text-sm">
+                          <span className="text-gray-700 text-sm">
                             {faculty?.facultyName?.en} -{" "}
                             {faculty?.facultyName?.ar}
                           </span>

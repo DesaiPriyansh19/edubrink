@@ -19,7 +19,7 @@ const ArrayFieldAndPhotos = ({
   };
   
   return (
-    <div className="mb-20">
+    <div className="mb-10">
       <h2 className="text-lg font-semibold mb-2">{title}</h2>
 
       {/* Dynamic Input Fields */}
