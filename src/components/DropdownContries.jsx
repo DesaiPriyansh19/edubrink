@@ -20,6 +20,7 @@ const DropdownCountries = forwardRef(
   ({ setShowCountriesDropdown, navbarHeight, data }, ref) => {
     const navigate = useNavigate();
     const { language } = useLanguage();
+    console.log(data);
 
     // Initialize AOS
     useEffect(() => {
@@ -70,7 +71,7 @@ const DropdownCountries = forwardRef(
                       className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
                       <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">
-                        <img
+                        {/* <img
                           src={
                             country?.countryPhotos?.countryFlag ||
                             "https://placehold.co/20x20"
@@ -81,12 +82,11 @@ const DropdownCountries = forwardRef(
                               : country?.countryName?.en
                           } Flag`}
                           className="w-6 h-6 rounded-full"
-                        />
+                        /> */}
+                        <p>{country?.countryPhotos?.countryFlag}</p>
                       </span>
                       <p className="text-[.6rem] font-medium">
-                        {language === "ar"
-                          ? country?.countryName?.ar
-                          : country?.countryName?.en}
+                        {country?.countryName?.[language]}
                       </p>
                     </div>
                   ))}
@@ -101,7 +101,7 @@ const DropdownCountries = forwardRef(
                       className="w-full mb-3 flex cursor-pointer items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
                       <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">
-                        <img
+                        {/* <img
                           src={
                             country?.countryPhotos?.countryFlag ||
                             "https://placehold.co/20x20"
@@ -112,12 +112,11 @@ const DropdownCountries = forwardRef(
                               : country?.countryName?.en
                           } Flag`}
                           className="w-6 h-6 rounded-full"
-                        />
+                        /> */}
+                        <p>{country?.countryPhotos?.countryFlag}</p>
                       </span>
                       <p className="text-[.6rem] font-medium">
-                        {language === "ar"
-                          ? country?.countryName?.ar
-                          : country?.countryName?.en}
+                        {country?.countryName?.[language]}
                       </p>
                     </div>
                   ))}
@@ -132,7 +131,7 @@ const DropdownCountries = forwardRef(
                   className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                 >
                   <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">
-                    <img
+                    {/* <img
                       src={
                         country?.countryPhotos?.countryFlag ||
                         "https://placehold.co/20x20"
@@ -143,12 +142,12 @@ const DropdownCountries = forwardRef(
                           : country?.countryName?.en
                       } Flag`}
                       className="w-6 h-6 rounded-full"
-                    />
+                    /> */}
+                    <p>{country?.countryPhotos?.countryFlag}</p>
                   </span>
+
                   <p className="text-[.6rem] font-medium">
-                    {language === "ar"
-                      ? country?.countryName?.ar
-                      : country?.countryName?.en}
+                    {country?.countryName?.[language]}
                   </p>
                 </div>
               ))}

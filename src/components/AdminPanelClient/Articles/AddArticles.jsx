@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -14,6 +14,7 @@ import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
 import useApiData from "../../../../hooks/useApiData";
+import MetaArrayFields from "../Universities/MetaArrayFields";
 
 const initialFormData = {
   blogTitle: {
@@ -37,6 +38,25 @@ const initialFormData = {
     ar: [],
   },
   blogPhoto: "",
+  status: "Draft", // Article Status
+  excerpt: { en: "", ar: "" },
+  scheduledPublishDate: null, // Scheduling future publish dates
+  allowComments: true, // Enable/Disable comments
+  visibility: "Public",
+  seo: {
+    metaTitle: {
+      en: "",
+      ar: "",
+    },
+    metaDescription: {
+      en: "",
+      ar: "",
+    },
+    metaKeywords: {
+      en: [], // Array of SEO Keywords in English
+      ar: [], // Array of SEO Keywords in Arabic
+    },
+  },
 };
 
 const categories = [
@@ -52,6 +72,9 @@ const categories = [
   "Education News",
 ];
 
+const Visibility = ["Public", "Private", "Password Protected"];
+const Status = ["Draft", "Pending Review", "Published"];
+
 export default function AddArticle() {
   const { language } = useLanguage();
   const navigate = useNavigate();
@@ -59,9 +82,17 @@ export default function AddArticle() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [newTag, setNewTag] = useState({ en: "", ar: "" });
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/blog?admin=true"
-  );
+  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/blog?admin=true");
+
+  useEffect(() => {
+    if (formData?.publishImmediately) {
+      setFormData((prev) => ({
+        ...prev,
+        status: "Published",
+        scheduledPublishDate: "",
+      }));
+    }
+  }, [formData?.publishImmediately]);
 
   const quillRef = useRef(null);
 
@@ -271,6 +302,7 @@ export default function AddArticle() {
               label: mode,
             }))}
           />
+
           <div>
             <InputField
               label="Blog Author"
@@ -441,6 +473,150 @@ export default function AddArticle() {
             </div>
           </div>
 
+          <div className="flex w-full col-span-2 gap-6 justify-between">
+            <div className="w-full">
+              <InputField
+                label="Excerpt (English)"
+                type="textarea"
+                name="excerpt.en"
+                placeholder="Write the summary"
+                value={formData?.excerpt.en}
+                onChange={handleInputChange}
+                autoComplete="excerpt_en"
+                variant={3}
+              />
+            </div>
+            <div className="w-full">
+              <InputField
+                label="مقتطفات (عربي)"
+                type="textarea"
+                name="excerpt.ar"
+                placeholder="اكتب الملخص"
+                value={formData?.excerpt.ar}
+                onChange={handleInputChange}
+                autoComplete="excerpt_ar"
+                variant={3}
+              />
+            </div>
+          </div>
+
+          <div>
+            <InputField
+              label="Visibility"
+              type="select"
+              name="visibility"
+              checked={formData?.visibility || ""}
+              onChange={handleInputChange}
+              options={Visibility.map((mode) => ({
+                value: mode,
+                label: mode,
+              }))}
+              variant={3}
+            />
+          </div>
+
+          {!formData?.publishImmediately && (
+            <div className="col-span-2">
+              {" "}
+              <InputField
+                label="Status"
+                type="select"
+                name="status"
+                value={formData?.status || ""}
+                onChange={handleInputChange}
+                options={Status.map((mode) => ({
+                  value: mode,
+                  label: mode,
+                }))}
+              />
+              {formData?.status === "Draft" && (
+                <div className=" col-span-2 mt-4 w-full">
+                  <InputField
+                    label="Scheduled Publish Date"
+                    type="date"
+                    name="scheduledPublishDate"
+                    value={
+                      formData?.scheduledPublishDate
+                        ? formData?.scheduledPublishDate.slice(0, 10)
+                        : ""
+                    }
+                    onChange={handleInputChange}
+                    autoComplete="scheduled_publish_date"
+                    variant={3}
+                  />
+                </div>
+              )}{" "}
+            </div>
+          )}
+
+          <div className="col-span-2 mb-4 flex flex-col gap-4">
+            <InputField
+              label="Meta Title (English)"
+              type="text"
+              name="seo.metaTitle.en"
+              placeholder="Enter Meta Title in English"
+              value={formData?.seo?.metaTitle?.en}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            <InputField
+              label="Meta Title (العنوان التعريفي)"
+              type="text"
+              name="seo.metaTitle.ar"
+              placeholder="أدخل العنوان التعريفي"
+              value={formData?.seo?.metaTitle?.ar}
+              onChange={handleInputChange}
+              autoComplete="metaTitle"
+              variant={3}
+            />
+
+            <div className="col-span-2">
+              <InputField
+                label="Meta Description (English)"
+                type="textarea"
+                name="seo.metaDescription.en"
+                placeholder="Enter Meta Description in English"
+                value={formData?.seo?.metaDescription?.en}
+                onChange={handleInputChange}
+                autoComplete="metaDescription"
+                variant={3}
+              />
+            </div>
+
+            <div className="col-span-2">
+              <InputField
+                label="Meta Description (الوصف التعريفي)"
+                type="textarea"
+                name="seo.metaDescription.ar"
+                placeholder="أدخل الوصف التعريفي"
+                value={formData?.seo?.metaDescription?.ar}
+                onChange={handleInputChange}
+                autoComplete="metaDescription"
+                variant={3}
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-3">
+              <MetaArrayFields
+                field="seo.metaKeywords.en"
+                label="Keywords (English)"
+                icon={<Tag className="w-4 h-4" />}
+                placeholder="Add New Keyword..."
+                formData={formData}
+                setFormData={setFormData}
+              />
+              <MetaArrayFields
+                field="seo.metaKeywords.ar"
+                label="Keywords (Arabic)"
+                icon={<Tag className="w-4 h-4" />}
+                placeholder="أضف كلمة مفتاحية جديدة..."
+                formData={formData}
+                setFormData={setFormData}
+              />
+            </div>
+          </div>
+
           <div className="flex items-center col-span-2 space-x-6">
             <InputField
               label="Publish Immediately"
@@ -459,6 +635,16 @@ export default function AddArticle() {
               checked={formData?.featuredBlog || false}
               onChange={handleInputChange}
               autoComplete="publishImmediately"
+              variant={3}
+            />
+
+            <InputField
+              label="Allow Comments"
+              type="checkbox"
+              name="allowComments"
+              checked={formData?.allowComments || false}
+              onChange={handleInputChange}
+              autoComplete="allow_comments"
               variant={3}
             />
           </div>

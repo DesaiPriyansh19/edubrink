@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import Search from "../../svg/caplogo/Logo/Search";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import SideBar from "./SideBar";
 import FilterLogo from "../../svg/FilterLogo";
 import DropdowneCourses from "./DropdowneCourses";
@@ -13,6 +15,7 @@ import FilterSidebar from "./FilterSidevbar/FilterSidebar";
 import useFetch from "../../hooks/useFetch";
 import { useSearch } from "../../context/SearchContext";
 import useClickOutside from "../../hooks/useClickOutside";
+import { SearchDropdown } from "../../utils/SearchDropDown";
 
 const NavBar = () => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
@@ -23,6 +26,7 @@ const NavBar = () => {
     searchState,
     initialState,
   } = useSearch();
+
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
   const [showAboutDropdown, setShowAboutDropdown] = useState(false);
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
@@ -56,6 +60,7 @@ const NavBar = () => {
     "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryPhotos"
   );
   const navigate = useNavigate();
+  const location = useLocation();
   const keywords = data || [];
 
   const languageLabels = {
@@ -78,6 +83,159 @@ const NavBar = () => {
       window.removeEventListener("resize", updateNavbarHeight); // Cleanup event listener
     };
   }, []);
+
+  const getIconForType = (type) => {
+    switch (type) {
+      case "blog":
+        return (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0"
+          >
+            <path
+              d="M13.3333 2H2.66667C2.29848 2 2 2.29848 2 2.66667V13.3333C2 13.7015 2.29848 14 2.66667 14H13.3333C13.7015 14 14 13.7015 14 13.3333V2.66667C14 2.29848 13.7015 2 13.3333 2Z"
+              stroke="#3A86FF"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5.33334 4.66667H10.6667"
+              stroke="#3A86FF"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5.33334 8H10.6667"
+              stroke="#3A86FF"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5.33334 11.3333H8.00001"
+              stroke="#3A86FF"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      case "country":
+        return (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0"
+          >
+            <path
+              d="M8 8.66667C9.10457 8.66667 10 7.77124 10 6.66667C10 5.5621 9.10457 4.66667 8 4.66667C6.89543 4.66667 6 5.5621 6 6.66667C6 7.77124 6.89543 8.66667 8 8.66667Z"
+              stroke="#FF3B30"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8 14.6667C10.6667 12 13.3333 9.61333 13.3333 6.66667C13.3333 3.72 10.9467 1.33334 8 1.33334C5.05333 1.33334 2.66667 3.72 2.66667 6.66667C2.66667 9.61333 5.33333 12 8 14.6667Z"
+              stroke="#FF3B30"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      case "university":
+        return (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0"
+          >
+            <path
+              d="M1.33334 6.66667L8 2L14.6667 6.66667L8 11.3333L1.33334 6.66667Z"
+              stroke="#34C759"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M3.33334 8V12"
+              stroke="#34C759"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M12.6667 8V12"
+              stroke="#34C759"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M1.33334 12H14.6667"
+              stroke="#34C759"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      case "course":
+        return (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0"
+          >
+            <path
+              d="M2.66667 2H13.3333C14.0667 2 14.6667 2.6 14.6667 3.33333V12.6667C14.6667 13.4 14.0667 14 13.3333 14H2.66667C1.93333 14 1.33333 13.4 1.33333 12.6667V3.33333C1.33333 2.6 1.93333 2 2.66667 2Z"
+              stroke="#AF52DE"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M5.33333 1.33334V2.66667"
+              stroke="#AF52DE"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M10.6667 1.33334V2.66667"
+              stroke="#AF52DE"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M1.33333 5.33334H14.6667"
+              stroke="#AF52DE"
+              strokeWidth="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      default:
+        return <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />;
+    }
+  };
   const handleDropdownToggle = (dropdownType) => {
     setShowCountriesDropdown((prev) =>
       dropdownType === "countries" ? !prev : false
@@ -133,11 +291,17 @@ const NavBar = () => {
     }
   };
 
-  const handleSearchInput = (e) => {
-    const value = e.target.value.toLowerCase();
+  const handleSearchInput = (eventOrValue) => {
+    const value =
+      typeof eventOrValue === "string"
+        ? eventOrValue
+        : eventOrValue?.target?.value;
+
+    if (value === undefined) return; // Prevents errors if value is missing
+
     setSearchState((prevState) => ({
       ...prevState,
-      searchTerm: value,
+      searchTerm: value.toLowerCase(),
     }));
 
     // Process keywords for standard structures (blog, country, university, course)
@@ -262,7 +426,7 @@ const NavBar = () => {
         selectedIndex: 0, // Set to the first item
       }));
     }
-  }, [searchState.filteredResults]);
+  }, [searchState.filteredResults, searchState.selectedIndex, setSearchState]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -277,6 +441,10 @@ const NavBar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const onSelectResult = (result) => {
+    handleSelectTerm(result);
+  };
 
   return (
     <>
@@ -303,52 +471,16 @@ const NavBar = () => {
             dir={language === "ar" ? "rtl" : "ltl"}
             className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative"
           >
-            <Link to={`/${language}/searchresults`}>
-              <div
-                className={`md:w-6 md:h-6 ${
-                  language === "ar" ? "ml-2" : "mr-2"
-                }`}
-              >
-                <Search />
-              </div>
-            </Link>
-            <input
-              type="text"
+            <SearchDropdown
+              searchTerm={searchState.searchTerm}
+              onSearch={handleSearchInput}
+              onSelectResult={handleSelectTerm}
+              getIconForType={getIconForType}
+              results={searchState.filteredResults}
               placeholder={t("search_placeholder")}
-              value={searchState.searchTerm}
-              onChange={handleSearchInput}
-              onKeyDown={handleKeyDown} // Add the keydown event handler
-              className="bg-transparent outline-none placeholder:text-black text-black w-full"
-              ref={inputRef} // Assign ref to the input field
+              language={language}
+              dropdownRef={dropdownRef} // Pass ref to the SearchDropdown
             />
-
-            {/* Show suggestions */}
-            {searchState.searchTerm &&
-              searchState.filteredResults.length > 0 && (
-                <div
-                  ref={dropdownRef}
-                  className="fixed bg-white shadow-md text-left top-[72px] rounded-md mt-2 max-h-60 w-1/4 overflow-y-auto z-10"
-                >
-                  {searchState.filteredResults.map((item, index) => {
-                    // Function to highlight and bold the keystroke in the keyword
-                    const highlightedKeyword = item.keyword.replace(
-                      new RegExp(`(${searchState.searchTerm})`, "gi"),
-                      (match) => `<span class="font-bold">${match}</span>` // Bold and highlighted
-                    );
-
-                    return (
-                      <div
-                        key={index}
-                        className={`p-4 cursor-pointer border-b ${getItemClass(
-                          index
-                        )}`}
-                        dangerouslySetInnerHTML={{ __html: highlightedKeyword }} // Render the HTML with highlighted keyword
-                        onClick={() => handleSelectTerm(item)} // Pass both keyword and type to handleSelectTerm
-                      />
-                    );
-                  })}
-                </div>
-              )}
           </div>
 
           {/* Contry Dropdown in sm devices */}
@@ -368,8 +500,10 @@ const NavBar = () => {
             </div>
             {/* language Dropdown */}
             <div className="relative inline-block">
+              {" "}
+              {/* Updated: Added position: relative */}
               <button
-                className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
+                className="flex items-center space-x-2 px-3 py-2 rounded-full text-gray-800 hover:bg-gray-100 transition-all duration-200 ease-in-out hover:shadow-md"
                 onClick={() => handleDropdownToggle("flags")}
               >
                 <span>{languageLabels[language]}</span>
@@ -388,6 +522,33 @@ const NavBar = () => {
                   />
                 </svg>
               </button>
+              {showFlagsDropdown && (
+                <ul
+                  id="divshadow"
+                  ref={dropDownLanguageRef}
+                  className={`absolute top-10 mmd:top-8 z-30 ${
+                    language === "ar" ? "left-0" : " right-0 mmd:-right-[75px]"
+                  } mt-2 w-40 bg-white border rounded-xl shadow-xl
+    transform transition-all duration-300 ease-in-out opacity-100 scale-100 origin-top`}
+                >
+                  <li
+                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
+                    onClick={() => {
+                      changeLanguage("en");
+                    }}
+                  >
+                    <span className="mr-2">🇺🇸</span> English
+                  </li>
+                  <li
+                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
+                    onClick={() => {
+                      changeLanguage("ar");
+                    }}
+                  >
+                    <span className="mr-2">🇦🇪</span> العربية
+                  </li>
+                </ul>
+              )}
             </div>
           </div>
 
@@ -398,7 +559,7 @@ const NavBar = () => {
               onClick={() => handleDropdownToggle("courses")}
               className="relative cursor-pointer"
             >
-              <div className="flex items-center space-x-1 bg-white  hover:text-black hover:font-[20rem] text-gray-800">
+              <div className="flex items-center space-x-1 bg-white hover:text-black text-gray-800 transition-all duration-200 ease-in-out hover:scale-105 transform px-2 py-1 rounded-lg">
                 <p>
                   {" "}
                   <span className="bg-white font-medium">{t("courses")}</span>
@@ -422,7 +583,7 @@ const NavBar = () => {
             {/* Countries Dropdown */}
             <div className="relative bg-white rounded-full ">
               <div
-                className="flex items-center space-x-1 cursor-pointer bg-white text-gray-800"
+                className="flex items-center space-x-1 cursor-pointer bg-white text-gray-800 transition-all duration-200 ease-in-out hover:scale-105 transform px-2 py-1 rounded-lg"
                 onClick={() => handleDropdownToggle("countries")}
               >
                 <span className=" font-medium bg-white">{t("countries")}</span>
@@ -468,9 +629,11 @@ const NavBar = () => {
               )}
             </div>
             {/* language Dropdown */}
-            <div className="relative ">
+            <div className="relative">
+              {" "}
+              {/* Updated: Added position: relative */}
               <button
-                className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100"
+                className="flex  items-center space-x-2 px-3 py-2  rounded-full  text-gray-800 hover:bg-gray-100 transition-all duration-200 ease-in-out hover:shadow-md"
                 onClick={() => handleDropdownToggle("flags")}
               >
                 <span>{languageLabels[language]}</span>
@@ -489,6 +652,33 @@ const NavBar = () => {
                   />
                 </svg>
               </button>
+              {showFlagsDropdown && (
+                <ul
+                  id="divshadow"
+                  ref={dropDownLanguageRef}
+                  className={`absolute top-8 z-30 ${
+                    language === "ar" ? "left-0" : "right-0 mmd:-right-[75px]"
+                  } mt-2 w-40 bg-white border rounded-xl shadow-xl
+    transform transition-all duration-300 ease-in-out opacity-100 scale-100 origin-top`}
+                >
+                  <li
+                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
+                    onClick={() => {
+                      changeLanguage("en");
+                    }}
+                  >
+                    <span className="mr-2">🇺🇸</span> English
+                  </li>
+                  <li
+                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
+                    onClick={() => {
+                      changeLanguage("ar");
+                    }}
+                  >
+                    <span className="mr-2">🇦🇪</span> العربية
+                  </li>
+                </ul>
+              )}
             </div>
           </div>
 
@@ -502,36 +692,6 @@ const NavBar = () => {
       </div>
 
       {/*   All Dropdown Divs  */}
-
-      {showFlagsDropdown && (
-        <ul
-          id="divshadow"
-          ref={dropDownLanguageRef}
-          style={{ top: `${navbarHeight}px` }} // Dynamically set top value
-          className={`fixed mmd:absolute z-30 right-[3%] ${
-            language === "ar"
-              ? "left-[3%] mmd:left-[15%]"
-              : "right-[3%] mmd:right-[15%]"
-          }  mmd:right-[15%] overflow-hidden  mt-2 w-40 bg-white border rounded-2xl shadow-lg`}
-        >
-          <li
-            className="cursor-pointer flex items-center  px-4 py-2 hover:bg-gray-100"
-            onClick={() => {
-              changeLanguage("en");
-            }}
-          >
-            English
-          </li>
-          <li
-            className="cursor-pointer flex items-center px-4 py-2 hover:bg-gray-100"
-            onClick={() => {
-              changeLanguage("ar");
-            }}
-          >
-            العربية
-          </li>
-        </ul>
-      )}
 
       {showCountriesDropdown && (
         <DropdownContries
@@ -556,62 +716,67 @@ const NavBar = () => {
       {isSearchOpen && (
         <div
           id="divshadow"
-          dir={language === "ar" ? "rtl" : "ltl"}
-          className=" w-[95%] mx-auto mb-5   flex items-center justify-evenly mmd:hidden  bg-white rounded-3xl px-4 py-2 z-20 sticky top-[0%]"
+          dir={language === "ar" ? "rtl" : "ltr"}
+          className="w-[95%] mx-auto mb-5 flex items-center justify-between bg-white rounded-full px-4 py-3 shadow-lg ring-1 ring-gray-200 sticky top-0 z-20"
         >
-          <div className="flex w-full text-sm items-center justify-start  text-center rounded-full px-2 py-2">
-            <Link to={`/${language}/searchresults`}>
-              <div
-                className={`md:w-6 md:h-6 ${
-                  language === "ar" ? "ml-2" : "mr-2"
-                }`}
-              >
-                <Search />
-              </div>
-            </Link>
+          {/* 🔍 Search Input Section */}
+          <div className="relative flex items-center w-full">
+            <Search className="w-5 h-5 text-gray-500 mr-3" />
+
             <input
               type="text"
               placeholder={t("search_placeholder")}
               value={searchState.searchTerm}
               onChange={handleSearchInput}
-              onKeyDown={handleKeyDown} // Add the keydown event handler
-              ref={inputRef} // Assign ref to the input field
-              className="bg-transparent  text-start outline-none text-black w-full"
+              onKeyDown={handleKeyDown}
+              ref={inputRef}
+              className="bg-transparent outline-none text-gray-800 w-full text-sm placeholder-gray-500"
             />
+
+            {/* 🔽 Search Results Dropdown */}
             {searchState.searchTerm &&
               searchState.filteredResults.length > 0 && (
                 <div
                   ref={dropdownRef}
-                  className="fixed bg-white shadow-md text-left top-[150px]  mx-auto rounded-md mt-2 max-h-60 w-[80%] overflow-y-auto z-10"
+                  className="fixed left-0 top-[200px] w-full bg-white border border-gray-200 rounded-lg shadow-md max-h-60 overflow-y-auto z-30"
                 >
-                  {searchState.filteredResults.map((item, index) => {
-                    // Function to highlight and bold the keystroke in the keyword
-                    const highlightedKeyword = item.keyword.replace(
-                      new RegExp(`(${searchState.searchTerm})`, "gi"),
-                      (match) => `<span class="font-bold">${match}</span>` // Bold and highlighted
-                    );
-
-                    return (
-                      <div
-                        key={index}
-                        className={`p-4 cursor-pointer border-b ${getItemClass(
-                          index
-                        )}`}
-                        dangerouslySetInnerHTML={{ __html: highlightedKeyword }} // Render the HTML with highlighted keyword
-                        onClick={() => handleSelectTerm(item)} // Pass both keyword and type to handleSelectTerm
-                      />
-                    );
-                  })}
+                  {searchState.filteredResults.map((result, index) => (
+                    <div
+                      key={result._id}
+                      className={`dropdown-item flex items-center px-4 py-3 cursor-pointer transition-colors duration-150 ${
+                        index === searchState.selectedIndex
+                          ? "bg-blue-50"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => onSelectResult(result)}
+                    >
+                      {/* 🏛 Icon + Name */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100">
+                          {getIconForType(result.type)}
+                        </div>
+                        <span className="text-sm font-medium text-gray-900 truncate">
+                          {result.keyword}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
           </div>
-          <div
-            className="h-auto relative w-auto"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <FilterLogo />
+
+          {/* 🎛 Filter Button */}
+          <div className="relative">
+            <button
+              onClick={() => setShowFilter(!showFilter)}
+              className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+            >
+              <FilterLogo />
+            </button>
+
+            {/* 🔴 Filter Badge */}
             {activeFilters > 0 && (
-              <div className="absolute top-[-6px] right-[-6px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-[#5A1EB8] to-[#FF6B6B] rounded-full shadow-md border-2 border-white">
+              <div className="absolute top-[-5px] right-[-5px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-red-500 rounded-full shadow-md border-2 border-white">
                 {activeFilters}
               </div>
             )}

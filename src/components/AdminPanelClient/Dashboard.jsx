@@ -26,7 +26,7 @@ const Dashboard = () => {
     {
       icon: Users,
       label: "Total Users",
-      value: userCount,
+      value: userCount || 0,
       color: "bg-blue-500",
     },
     {
