@@ -26,8 +26,6 @@ export default function FacultyCRUD() {
   const baseUrl = `https://edu-brink-backend.vercel.app/api/faculty`;
   const { data: faculties, loading, deleteById } = useApiData(baseUrl);
 
-  console.log(faculties);
-
   const handleDelete = (university) => {
     setFacultyToDelete(university);
     setIsDeletePopupOpen(true);

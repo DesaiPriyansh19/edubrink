@@ -9,18 +9,19 @@ import {
   FileCheck,
   BookOpen,
   Tag,
+  Search,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
 import ArrayFieldAndPhotos from "../../../../utils/ArrayFieldAndPhotos";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import RichText from "../../../../utils/RichText";
 import DropdownSelect from "../../../../utils/DropdownSelect";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
 import CampusSection from "./CampusSection";
 import MetaArrayFields from "./MetaArrayFields";
+import FaqSection from "./FaqSection";
 
 const initialFormData = {
   uniName: {
@@ -32,25 +33,9 @@ const initialFormData = {
   courseId: [],
   uniTutionFees: "",
   uniMainImage: "",
-  uniLocation: {
-    uniAddress: {
-      en: "",
-      ar: "",
-    },
-    uniPincode: "",
-    uniCity: {
-      en: "",
-      ar: "",
-    },
-    uniState: {
-      en: "",
-      ar: "",
-    },
-    uniCountry: {
-      en: "",
-      ar: "",
-    },
-  },
+  uniCountry: {},
+  countryName: { en: "", ar: "" },
+  countryEmoji: "",
   uniOverview: {
     en: "",
     ar: "",
@@ -83,7 +68,6 @@ const initialFormData = {
   uniStartDate: "",
   uniDeadline: "",
   uniType: "",
-  studyLevel: [],
   spokenLanguage: [],
   scholarshipAvailability: false,
   admission_requirements: [],
@@ -96,30 +80,35 @@ const initialFormData = {
     {
       campusName: { en: "", ar: "" },
       campusLocation: {
-        uniAddress: { en: "", ar: "" },
-        uniPincode: "",
         uniCity: { en: "", ar: "" },
-        uniState: { en: "", ar: "" },
-        uniCountry: { en: "", ar: "" },
+        uniDescription: { en: "", ar: "" },
       },
       campusFacilities: [], // List of facilities available on the campus
     },
   ],
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
+  seo: {
+    metaTitle: {
+      en: "",
+      ar: "",
+    },
+    metaDescription: {
+      en: "",
+      ar: "",
+    },
+    metaKeywords: {
+      en: [], // Array of SEO Keywords in English
+      ar: [], // Array of SEO Keywords in Arabic
+    },
+  },
+  customURLSlug: {
+    en: "",
+    ar: "",
+  },
 };
 
 const universityTypes = ["Public", "Private", "Research", "Technical"];
-const studyLevels = [
-  {
-    value: "UnderGraduate",
-    label: "UnderGraduate (المرحلة الجامعية)",
-  },
-  {
-    value: "PostGraduate",
-    label: "PostGraduate (الدراسات العليا)",
-  },
-  { value: "Foundation", label: "Foundation (مؤسسة)" },
-  { value: "Doctorate", label: "Doctorate (دكتوراه)" },
-];
+
 const studyPrograms = [
   "Engineering",
   "Medicine",
@@ -153,6 +142,9 @@ const commonRequirements = [
 export default function EditUniversity() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [photosshow, setPhotosShow] = useState("LifeStyle");
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
   const { filteredData, setSearchInput, handleAdd, handleRemove } =
     useDropdownData();
   const [loading, setLoading] = useState(false);
@@ -166,38 +158,24 @@ export default function EditUniversity() {
 
   useEffect(() => {
     if (data) {
-      setFormData({
+      setFormData((prevData) => ({
+        ...initialFormData, // Start with the initial form structure
+
         uniName: {
           en: data?.uniName?.en || "",
           ar: data?.uniName?.ar || "",
         },
-        uniTutionFees: data?.uniTutionFees || "",
-        uniStartDate: data?.uniStartDate || "",
-        uniDeadline: data?.uniDeadline || "",
-        uniMainImage: data?.uniMainImage || "",
-        uniSymbol: data?.uniSymbol || "",
-        study_programs: data?.study_programs || [],
         faculty: data?.faculty || [],
         courseId: data?.courseId || [],
-        uniLocation: {
-          uniAddress: {
-            en: data?.uniLocation?.uniAddress?.en || "",
-            ar: data?.uniLocation?.uniAddress?.ar || "",
-          },
-          uniPincode: data?.uniLocation?.uniPincode || "",
-          uniCity: {
-            en: data?.uniLocation?.uniCity?.en || "",
-            ar: data?.uniLocation?.uniCity?.ar || "",
-          },
-          uniState: {
-            en: data?.uniLocation?.uniState?.en || "",
-            ar: data?.uniLocation?.uniState?.ar || "",
-          },
-          uniCountry: {
-            en: data?.uniLocation?.uniCountry?.en || "",
-            ar: data?.uniLocation?.uniCountry?.ar || "",
-          },
+
+        uniTutionFees: data?.uniTutionFees || "",
+        uniMainImage: data?.uniMainImage || "",
+        uniCountry: data?.uniCountry || null,
+        countryName: {
+          en: data?.uniCountry?.countryName?.en || "",
+          ar: data?.uniCountry?.countryName?.ar || "",
         },
+        countryEmoji: data?.uniCountry?.countryPhotos?.countryFlag || "",
         uniOverview: {
           en: data?.uniOverview?.en || "",
           ar: data?.uniOverview?.ar || "",
@@ -227,18 +205,35 @@ export default function EditUniversity() {
             ar: data?.studentLifeStyleInUni?.lifestyleDescription?.ar || "",
           },
         },
+        uniStartDate: data?.uniStartDate || "",
+        uniDeadline: data?.uniDeadline || "",
         uniType: data?.uniType || "",
-        studyLevel: data?.studyLevel || [],
         spokenLanguage: data?.spokenLanguage || [],
-        entranceExamRequired: data?.entranceExamRequired ?? false,
         scholarshipAvailability: data?.scholarshipAvailability ?? false,
         admission_requirements: data?.admission_requirements || [],
         preparatory_year: data?.preparatory_year ?? false,
         preparatory_year_fees: data?.preparatory_year_fees || "",
-        scholarships_available: data?.scholarships_available ?? false,
         housing_available: data?.housing_available ?? false,
         living_cost: data?.living_cost || "",
         uniFeatured: data?.uniFeatured ?? false,
+        faq: data?.faq?.length
+          ? data.faq.map((item) => ({
+              faqQuestions: {
+                en: item?.faqQuestions?.en || "",
+                ar: item?.faqQuestions?.ar || "",
+              },
+              faqAnswers: {
+                en: item?.faqAnswers?.en || "",
+                ar: item?.faqAnswers?.ar || "",
+              },
+            }))
+          : [
+              {
+                faqQuestions: { en: "", ar: "" },
+                faqAnswers: { en: "", ar: "" },
+              },
+            ],
+
         seo: {
           metaTitle: {
             en: data?.seo?.metaTitle?.en || "",
@@ -249,10 +244,15 @@ export default function EditUniversity() {
             ar: data?.seo?.metaDescription?.ar || "",
           },
           metaKeywords: {
-            en: data?.seo?.metaKeywords?.en || [], // Preserve existing keywords
+            en: data?.seo?.metaKeywords?.en || [],
             ar: data?.seo?.metaKeywords?.ar || [],
           },
         },
+        customURLSlug: {
+          en: data?.customURLSlug?.en || "",
+          ar: data?.customURLSlug?.ar || "",
+        },
+
         campuses: data?.campuses?.length
           ? data.campuses.map((campus) => ({
               campusName: {
@@ -260,22 +260,13 @@ export default function EditUniversity() {
                 ar: campus?.campusName?.ar || "",
               },
               campusLocation: {
-                uniAddress: {
-                  en: campus?.campusLocation?.uniAddress?.en || "",
-                  ar: campus?.campusLocation?.uniAddress?.ar || "",
-                },
-                uniPincode: campus?.campusLocation?.uniPincode || "",
                 uniCity: {
                   en: campus?.campusLocation?.uniCity?.en || "",
                   ar: campus?.campusLocation?.uniCity?.ar || "",
                 },
-                uniState: {
-                  en: campus?.campusLocation?.uniState?.en || "",
-                  ar: campus?.campusLocation?.uniState?.ar || "",
-                },
-                uniCountry: {
-                  en: campus?.campusLocation?.uniCountry?.en || "",
-                  ar: campus?.campusLocation?.uniCountry?.ar || "",
+                uniDescription: {
+                  en: campus?.campusLocation?.uniDescription?.en || "",
+                  ar: campus?.campusLocation?.uniDescription?.ar || "",
                 },
               },
               campusFacilities: campus?.campusFacilities || [],
@@ -284,16 +275,13 @@ export default function EditUniversity() {
               {
                 campusName: { en: "", ar: "" },
                 campusLocation: {
-                  uniAddress: { en: "", ar: "" },
-                  uniPincode: "",
                   uniCity: { en: "", ar: "" },
-                  uniState: { en: "", ar: "" },
-                  uniCountry: { en: "", ar: "" },
+                  uniDescription: { en: "", ar: "" },
                 },
                 campusFacilities: [],
               },
             ],
-      });
+      }));
     }
   }, [data]);
 
@@ -301,41 +289,16 @@ export default function EditUniversity() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [newItems, setNewItems] = useState({
-    studyLevel: "",
     study_programs: "",
     spokenLanguage: "",
     admission_requirements: "",
   });
 
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["link", "blockquote"],
-          [{ align: [] }],
-          ["clean"],
-        ],
-      },
-      clipboard: { matchVisual: false },
-    }),
-    []
+  const filterFacultyData = filteredData.countries?.filter(
+    (country) =>
+      country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
   );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -354,6 +317,27 @@ export default function EditUniversity() {
       }
       return acc[part];
     }, temp);
+
+    if (nameParts.includes("uniName")) {
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+
+      if (lang === "en") {
+        // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with hyphens
+            .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
+        };
+      } else if (lang === "ar") {
+        // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
+        };
+      }
+    }
 
     // Update formData state with the new temp object
     setFormData(temp);
@@ -374,11 +358,12 @@ export default function EditUniversity() {
     setError(null);
 
     try {
-      const updatedFormData = {
+      const { countryEmoji, countryName, ...updatedFormData } = {
         ...formData,
         courseId: formData.courseId.map((course) => course._id),
         faculty: formData.faculty.map((faculty) => faculty._id),
       };
+      console.log(updatedFormData);
 
       await updateWithOutById(updatedFormData);
       navigate(`/${language}/admin/universities`);
@@ -601,12 +586,9 @@ export default function EditUniversity() {
             </div>
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                University Description
-              </label>
-              <ReactQuill
-                theme="snow"
-                value={formData.uniOverview.en}
+              <RichText
+                label="University Description"
+                value={formData.uniOverview.en || ""}
                 onChange={(value) =>
                   setFormData((prevData) => ({
                     ...prevData,
@@ -616,20 +598,13 @@ export default function EditUniversity() {
                     },
                   }))
                 }
-                modules={modules}
-                formats={formats}
-                preserveWhitespace
-                className="h-52 pb-10"
               />
             </div>
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                وصف الجامعة
-              </label>
-              <ReactQuill
-                theme="snow"
-                value={formData.uniOverview.ar}
+              <RichText
+                label="وصف الجامعة"
+                value={formData.uniOverview.ar || ""}
                 onChange={(value) =>
                   setFormData((prevData) => ({
                     ...prevData,
@@ -639,10 +614,6 @@ export default function EditUniversity() {
                     },
                   }))
                 }
-                modules={modules}
-                formats={formats}
-                preserveWhitespace
-                className="h-52 pb-10"
               />
             </div>
           </div>
@@ -666,91 +637,6 @@ export default function EditUniversity() {
               variant={3}
             />
 
-            {/* UniLocation Start */}
-            <InputField
-              label="Address (English)"
-              type="text"
-              name="uniLocation.uniAddress.en"
-              placeholder="Address (English)"
-              value={formData.uniLocation.uniAddress.en}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="عنوان (عربي)"
-              type="text"
-              name="uniLocation.uniAddress.ar"
-              placeholder="عنوان (عربي)"
-              value={formData.uniLocation.uniAddress.ar}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="City (English)"
-              type="text"
-              name="uniLocation.uniCity.en"
-              placeholder="City (English)"
-              value={formData.uniLocation.uniCity.en}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="مدينة (عربي)"
-              type="text"
-              name="uniLocation.uniCity.ar"
-              placeholder="مدينة (عربي)"
-              value={formData.uniLocation.uniCity.ar}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="State (English)"
-              type="text"
-              name="uniLocation.uniState.en"
-              placeholder="State (English)"
-              value={formData.uniLocation.uniState.en}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="الدولة (عربي)"
-              type="text"
-              name="uniLocation.uniState.ar"
-              placeholder="الدولة (عربي)"
-              value={formData.uniLocation.uniState.ar}
-              onChange={handleInputChange}
-              variant={3}
-            />
-
-            <InputField
-              label="Country (English)"
-              type="text"
-              name="uniLocation.uniCountry.en"
-              placeholder="Country (English)"
-              value={formData.uniLocation.uniCountry.en}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <InputField
-              label="دولة (عربي)"
-              type="text"
-              name="uniLocation.uniCountry.ar"
-              placeholder="دولة (عربي)"
-              value={formData.uniLocation.uniCountry.ar}
-              onChange={handleInputChange}
-              variant={3}
-            />
-            <div className="col-span-2">
-              <InputField
-                label="Pincode (الرمز السري)"
-                type="text"
-                name="uniLocation.uniPincode"
-                placeholder="Pincode (الرمز السري)"
-                value={formData.uniLocation.uniPincode}
-                onChange={handleInputChange}
-                variant={3}
-              />
-            </div>
             {/* UniLocation End */}
 
             <InputField
@@ -791,16 +677,78 @@ export default function EditUniversity() {
               onChange={handleInputChange}
               variant={3}
             />
+
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Country
+              </label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowFlagPicker(!showFlagPicker)}
+                  className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
+                >
+                  <span className="flex gap-2 items-center">
+                    <span>{formData?.countryEmoji}</span>
+                    <span className="py-1 text-gray-600">
+                      {formData?.countryName?.en ||
+                        formData?.uniCountry?.countryName?.en ||
+                        "Select Country"}{" "}
+                      {/* Placeholder if name is empty */}
+                    </span>
+                  </span>
+                  <BookOpen className="w-5 h-5 text-gray-400" />
+                </button>
+
+                {showFlagPicker && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="p-2 border-b">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <input
+                          type="text"
+                          placeholder="Search countries..."
+                          value={flagSearch}
+                          onChange={(e) => setFlagSearch(e.target.value)}
+                          className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {filterFacultyData?.map((country) => (
+                        <button
+                          key={country._id}
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              uniCountry: country._id, // Updating faculty ID
+                              countryName: {
+                                ...prev.countryName, // Preserve existing values
+                                en: country.countryName.en,
+                                ar: country.countryName.ar,
+                              },
+                              countryEmoji: country.countryPhotos.countryFlag,
+                            }));
+                            setShowFlagPicker(false);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+                        >
+                          <span>{country?.countryPhotos?.countryFlag}</span>
+                          <span className="text-black text-sm">
+                            {country?.countryName?.en} -{" "}
+                            {country?.countryName?.ar}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="space-y-6 bg-white rounded-lg shadow-md p-6">
-            {renderArrayField(
-              "studyLevel",
-              "Study Levels",
-              <GraduationCap className="w-4 h-4" />,
-              "Add study level...",
-              studyLevels
-            )}
             {renderArrayField(
               "study_programs",
               "Study Programs",
@@ -857,105 +805,133 @@ export default function EditUniversity() {
               </div>
             </div>
 
-            <ArrayFieldAndPhotos
-              title="Student Lifestyle in University (نمط حياة الطالب في الجامعة)"
-              fields={[
-                {
-                  label: "Lifestyle Description (English)",
-                  name: "studentLifeStyleInUni.lifestyleDescription.en",
-                  placeholder: "Lifestyle Description (English)",
-                },
-                {
-                  label: "وصف أسلوب الحياة (عربي)",
-                  name: "studentLifeStyleInUni.lifestyleDescription.ar",
-                  placeholder: "وصف أسلوب الحياة (عربي)",
-                },
-              ]}
-              photosTitle={"Life Style"}
-              fieldName="studentLifeStyleInUni"
-              formData={formData}
-              setFormData={setFormData}
-              handleInputChange={handleInputChange}
-              handleMainPhotoChange={handleMainPhotoChange}
-              uploadConfig={{
-                cloudName: "edubrink",
-                fieldName: "lifestylePhotos",
-                uploadPreset: "EduBrinkImages",
-                multiple: true,
-                maxImageFileSize: 2000000,
-                folder: "university/lifestyleImages",
-                uploadName: "Upload Lifestyle Photo",
-              }}
-              photosKey={"lifestylePhotos"}
-            />
+            <div className="flex gap-4 justify-end">
+              {["LifeStyle", "Sports", "Library"].map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setPhotosShow(item)}
+                  className={`relative px-5 py-2 rounded-md font-medium transition-all duration-300 
+      ${
+        item === photosshow
+          ? "bg-[#eff6ff] text-[#294dd8] shadow-lg transform scale-105"
+          : "bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white"
+      }`}
+                >
+                  {item}
+                  {item === photosshow && (
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#294dd8] "></span>
+                  )}
+                </button>
+              ))}
+            </div>
 
-            <ArrayFieldAndPhotos
-              title="University Sports (الرياضة الجامعية)"
-              fields={[
-                {
-                  label: "Sports Description (English)",
-                  name: "uniSports.sportsDescription.en",
-                  placeholder: "Sports Description (English)",
-                },
-                {
-                  label: "وصف الرياضة (عربي)",
-                  name: "uniSports.sportsDescription.ar",
-                  placeholder: "وصف الرياضة (عربي)",
-                },
-              ]}
-              fieldName="uniSports"
-              photosTitle={"Sports"}
-              formData={formData}
-              setFormData={setFormData}
-              handleInputChange={handleInputChange}
-              handleMainPhotoChange={handleMainPhotoChange}
-              uploadConfig={{
-                cloudName: "edubrink",
-                fieldName: "sportsPhotos",
-                uploadPreset: "EduBrinkImages",
-                multiple: true,
-                maxImageFileSize: 2000000,
-                folder: "university/sportsImage",
-                uploadName: "Upload Sports Photo",
-              }}
-              photosKey={"sportsPhotos"}
-            />
+            {photosshow === "LifeStyle" && (
+              <ArrayFieldAndPhotos
+                title="Student Lifestyle in University (نمط حياة الطالب في الجامعة)"
+                fields={[
+                  {
+                    label: "Lifestyle Description (English)",
+                    name: "studentLifeStyleInUni.lifestyleDescription.en",
+                    placeholder: "Lifestyle Description (English)",
+                  },
+                  {
+                    label: "وصف أسلوب الحياة (عربي)",
+                    name: "studentLifeStyleInUni.lifestyleDescription.ar",
+                    placeholder: "وصف أسلوب الحياة (عربي)",
+                  },
+                ]}
+                photosTitle={"Life Style"}
+                fieldName="studentLifeStyleInUni"
+                formData={formData}
+                setFormData={setFormData}
+                handleInputChange={handleInputChange}
+                handleMainPhotoChange={handleMainPhotoChange}
+                uploadConfig={{
+                  cloudName: "edubrink",
+                  fieldName: "lifestylePhotos",
+                  uploadPreset: "EduBrinkImages",
+                  multiple: true,
+                  maxImageFileSize: 2000000,
+                  folder: "university/lifestyleImages",
+                  uploadName: "Upload Lifestyle Photo",
+                }}
+                photosKey={"lifestylePhotos"}
+              />
+            )}
 
-            <ArrayFieldAndPhotos
-              title="University Library (مكتبة الجامعة)"
-              fields={[
-                {
-                  label: "Library Description (English)",
-                  name: "uniLibrary.libraryDescription.en",
-                  placeholder: "Library Description (English)",
-                },
-                {
-                  label: "وصف المكتبة (عربي)",
-                  name: "uniLibrary.libraryDescription.ar",
-                  placeholder: "وصف المكتبة (عربي)",
-                },
-              ]}
-              fieldName="uniLibrary"
-              photosTitle={"Library"}
-              formData={formData}
-              setFormData={setFormData}
-              handleInputChange={handleInputChange}
-              handleMainPhotoChange={handleMainPhotoChange}
-              uploadConfig={{
-                cloudName: "edubrink",
-                uploadPreset: "EduBrinkImages",
-                fieldName: "libraryPhotos",
-                multiple: true,
-                maxImageFileSize: 2000000,
-                folder: "university/libraryImages",
-                uploadName: "Upload Library Photo",
-              }}
-              photosKey="libraryPhotos"
-            />
+            {photosshow === "Sports" && (
+              <ArrayFieldAndPhotos
+                title="University Sports (الرياضة الجامعية)"
+                fields={[
+                  {
+                    label: "Sports Description (English)",
+                    name: "uniSports.sportsDescription.en",
+                    placeholder: "Sports Description (English)",
+                  },
+                  {
+                    label: "وصف الرياضة (عربي)",
+                    name: "uniSports.sportsDescription.ar",
+                    placeholder: "وصف الرياضة (عربي)",
+                  },
+                ]}
+                fieldName="uniSports"
+                photosTitle={"Sports"}
+                formData={formData}
+                setFormData={setFormData}
+                handleInputChange={handleInputChange}
+                handleMainPhotoChange={handleMainPhotoChange}
+                uploadConfig={{
+                  cloudName: "edubrink",
+                  fieldName: "sportsPhotos",
+                  uploadPreset: "EduBrinkImages",
+                  multiple: true,
+                  maxImageFileSize: 2000000,
+                  folder: "university/sportsImage",
+                  uploadName: "Upload Sports Photo",
+                }}
+                photosKey={"sportsPhotos"}
+              />
+            )}
+
+            {photosshow === "Library" && (
+              <ArrayFieldAndPhotos
+                title="University Library (مكتبة الجامعة)"
+                fields={[
+                  {
+                    label: "Library Description (English)",
+                    name: "uniLibrary.libraryDescription.en",
+                    placeholder: "Library Description (English)",
+                  },
+                  {
+                    label: "وصف المكتبة (عربي)",
+                    name: "uniLibrary.libraryDescription.ar",
+                    placeholder: "وصف المكتبة (عربي)",
+                  },
+                ]}
+                fieldName="uniLibrary"
+                photosTitle={"Library"}
+                formData={formData}
+                setFormData={setFormData}
+                handleInputChange={handleInputChange}
+                handleMainPhotoChange={handleMainPhotoChange}
+                uploadConfig={{
+                  cloudName: "edubrink",
+                  uploadPreset: "EduBrinkImages",
+                  fieldName: "libraryPhotos",
+                  multiple: true,
+                  maxImageFileSize: 2000000,
+                  folder: "university/libraryImages",
+                  uploadName: "Upload Library Photo",
+                }}
+                photosKey="libraryPhotos"
+              />
+            )}
 
             <DropdownSelect
-              label="Enroll Faculty (التسجيل بالكلية)"
+              label="Enrolled Faculty"
               placeholder="Select a Faculty"
+              disabled={true}
               icon={BookOpen}
               selectedItems={formData?.faculty}
               searchKey="facultyName"
@@ -974,8 +950,9 @@ export default function EditUniversity() {
             />
 
             <DropdownSelect
-              label="Enroll Course (التسجيل في الدورة)"
+              label="Enrolled Course "
               placeholder="Select a Course"
+              disabled={true}
               icon={BookOpen}
               selectedItems={formData?.courseId}
               searchKey="CourseName"
@@ -1044,7 +1021,7 @@ export default function EditUniversity() {
             <div className="col-span-2 flex flex-col gap-3">
               <MetaArrayFields
                 field="seo.metaKeywords.en"
-                label="Keywords (English)"
+                label="Meta Keywords (English)"
                 icon={<Tag className="w-4 h-4" />}
                 placeholder="Add New Keyword..."
                 formData={formData}
@@ -1052,17 +1029,48 @@ export default function EditUniversity() {
               />
               <MetaArrayFields
                 field="seo.metaKeywords.ar"
-                label="Keywords (Arabic)"
+                label="Meta Keywords (Arabic)"
                 icon={<Tag className="w-4 h-4" />}
                 placeholder="أضف كلمة مفتاحية جديدة..."
                 formData={formData}
                 setFormData={setFormData}
               />
+
+              <div className="flex w-full gap-4 justify-between">
+                <div className="w-full">
+                  <InputField
+                    label="Custom URL (English)"
+                    type="text"
+                    name="customURLSlug.en"
+                    placeholder="Enter Custom Slug in English"
+                    value={formData?.customURLSlug?.en}
+                    onChange={handleInputChange}
+                    autoComplete="custom_url_slug_en"
+                    variant={3}
+                  />
+                </div>
+                <div className="w-full">
+                  <InputField
+                    label="Custom URL (Arabic)"
+                    type="text"
+                    name="customURLSlug.ar"
+                    placeholder="Enter Custom Slug in Arabic"
+                    value={formData?.customURLSlug?.ar}
+                    onChange={handleInputChange}
+                    autoComplete="custom_url_slug_ar"
+                    variant={3}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-md ">
             <CampusSection formData={formData} setFormData={setFormData} />
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md ">
+            <FaqSection formData={formData} setFormData={setFormData} />
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">

@@ -12,30 +12,38 @@ import { useLanguage } from "../../../../context/LanguageContext";
 import Loader from "../../../../utils/Loader";
 import useApiData from "../../../../hooks/useApiData";
 import useDropdownData from "../../../../hooks/useDropdownData";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 
 export default function CountryCRUD() {
   const navigate = useNavigate();
   const { filteredData } = useDropdownData();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState(null);
-  const [deleteLoad, setDeleteLoad] = useState(false);
+
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [countryToDelete, setCountryToDelete] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const { language } = useLanguage();
   const baseUrl = `https://edu-brink-backend.vercel.app/api/country`;
-  const { data, loading, deleteById } = useApiData(baseUrl);
+  const { data, loading, error, deleteById } = useApiData(baseUrl);
 
-  const handleDelete = async (id) => {
-    setDeleteLoad(true);
-    try {
-      await deleteById(id);
-    } catch (error) {
-    } finally {
-      setDeleteLoad(false);
-    }
+  const handleDelete = (major) => {
+    setCountryToDelete(major);
+    setIsDeletePopupOpen(true);
   };
 
+  const confirmDelete = async (id) => {
+    if (!countryToDelete) return;
+
+    try {
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setCountryToDelete(null);
+    } catch (error) {
+      console.error("Error deleting university:", error);
+    }
+  };
   const filteredCountries = data?.filter((country) => {
     const matchesSearch =
       country?.countryName?.[language]
@@ -49,7 +57,7 @@ export default function CountryCRUD() {
     return matchesSearch && matchesCountry;
   });
 
-  if (loading || deleteLoad) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader />
@@ -134,7 +142,7 @@ export default function CountryCRUD() {
                   ISO Code
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Available Study Language
+                  Teaching Language
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Currency
@@ -213,7 +221,7 @@ export default function CountryCRUD() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(country._id)}
+                        onClick={() => handleDelete(country)}
                         className="text-red-600 hover:text-red-900"
                       >
                         Delete
@@ -270,6 +278,13 @@ export default function CountryCRUD() {
           <p className="text-3xl font-bold">{filteredData?.courses?.length}+</p>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={countryToDelete?.countryName?.en || ""}
+        uniId={countryToDelete?._id || ""}
+      />
     </div>
   );
 }

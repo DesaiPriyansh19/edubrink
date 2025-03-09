@@ -20,9 +20,7 @@ export default function UsersCRUD() {
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  const baseUrl = isDeletePopupOpen
-    ? `https://edu-brink-backend.vercel.app/api/users`
-    : `https://edu-brink-backend.vercel.app/api/users/admin`;
+  const baseUrl = `https://edu-brink-backend.vercel.app/api/users`;
 
   const {
     data: users,
@@ -136,7 +134,7 @@ export default function UsersCRUD() {
                   <div className="flex items-center gap-4 mt-1">
                     <div className="flex items-center text-sm text-gray-500">
                       <Shield className="w-4 h-4 mr-1" />
-                      {user.isAdmin ? "Admin" : "Viewer"}
+                      {user.isAdmin ? "Admin" : user.ActionStatus || "Viewer"}
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />

@@ -104,7 +104,7 @@ export default function MajorCRUD() {
           ) : (
             filteredMajors.map((major) => (
               <div
-                key={major.id}
+                key={major._id}
                 className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
               >
                 <div className="flex-1">

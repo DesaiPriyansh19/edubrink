@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
@@ -7,31 +7,24 @@ import {
   CalendarPlus2,
   School,
 } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import DropdownSelect from "../../../../utils/DropdownSelect";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
-
-// Create a forwarded ref wrapper for ReactQuill
-const QuillWrapper = forwardRef((props, ref) => (
-  <ReactQuill ref={ref} {...props} />
-));
-
-QuillWrapper.displayName = "QuillWrapper";
+import RichText from "../../../../utils/RichText";
 
 const initialFormData = {
   facultyName: { en: "", ar: "" },
   major: [],
   universities: [],
   facultyDescription: { en: "", ar: "" },
-  studyLevel: [],
   featured: false,
+  customURLSlug: {
+    en: "",
+    ar: "",
+  },
 };
-
-const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
 
 export default function EditFaculty() {
   const { id } = useParams();
@@ -46,8 +39,6 @@ export default function EditFaculty() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
-  const [newStudyLevel, setNewStudyLevel] = useState("");
-  const quillRef = useRef(null);
   const { data, updateWithOutById } = useApiData(
     `https://edu-brink-backend.vercel.app/api/faculty/${id}`
   );
@@ -59,7 +50,6 @@ export default function EditFaculty() {
           en: data?.facultyName?.en || "",
           ar: data?.facultyName?.ar || "",
         },
-        studyLevel: data?.studyLevel || [],
         major: data?.major || [],
         universities: data?.universities || [],
         facultyDescription: {
@@ -67,36 +57,13 @@ export default function EditFaculty() {
           ar: data?.facultyDescription?.ar || "",
         },
         facultyFeatured: data?.facultyFeatured ?? false,
+        customURLSlug: {
+          en: data?.customURLSlug?.en || "",
+          ar: data?.customURLSlug?.ar || "",
+        },
       });
     }
   }, [data]);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "blockquote"],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -115,6 +82,27 @@ export default function EditFaculty() {
       }
       return acc[part];
     }, temp);
+
+    if (nameParts.includes("facultyName")) {
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+
+      if (lang === "en") {
+        // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with hyphens
+            .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
+        };
+      } else if (lang === "ar") {
+        // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
+        };
+      }
+    }
 
     // Update formData state with the new temp object
     setFormData(temp);
@@ -152,23 +140,6 @@ export default function EditFaculty() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const addStudyLevel = () => {
-    if (newStudyLevel && !formData.studyLevel.includes(newStudyLevel)) {
-      setFormData((prev) => ({
-        ...prev,
-        studyLevel: [...prev.studyLevel, newStudyLevel],
-      }));
-      setNewStudyLevel("");
-    }
-  };
-
-  const removeStudyLevel = (level) => {
-    setFormData((prev) => ({
-      ...prev,
-      studyLevel: prev.studyLevel.filter((l) => l !== level),
-    }));
   };
 
   return (
@@ -218,55 +189,11 @@ export default function EditFaculty() {
           />
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Study Levels
-            </label>
-            <div className="flex gap-2 mb-2">
-              <select
-                value={newStudyLevel}
-                onChange={(e) => setNewStudyLevel(e.target.value)}
-                className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="">Select Study Level</option>
-                {studyLevels.map((level) => (
-                  <option key={level} value={level}>
-                    {level}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={addStudyLevel}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.studyLevel.map((level) => (
-                <div
-                  key={level}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
-                  <GraduationCap className="w-4 h-4" />
-                  {level}
-                  <button
-                    type="button"
-                    onClick={() => removeStudyLevel(level)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-2">
             <DropdownSelect
-              label="Enroll Major (تسجيل الرائد)"
-              placeholder="Select a Major"
+              label="Enrolled Major "
+              placeholder="Major List"
               icon={CalendarPlus2}
+              disabled={true}
               selectedItems={formData?.major}
               searchKey="majorName"
               options={filteredData?.majors}
@@ -283,7 +210,8 @@ export default function EditFaculty() {
               setShowDropdown={setShowDropdown}
             />
           </div>
-          <div>
+
+          <div className="col-span-2">
             <DropdownSelect
               label="Enroll University (التسجيل في الجامعة)"
               placeholder="Select a university"
@@ -310,57 +238,56 @@ export default function EditFaculty() {
             />
           </div>
 
+          <InputField
+            label="Custom URL (English)"
+            type="text"
+            name="customURLSlug.en"
+            placeholder="Enter Custom Slug in English"
+            value={formData?.customURLSlug?.en}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_en"
+            variant={3}
+          />
+          <InputField
+            label="Custom URL (Arabic)"
+            type="text"
+            name="customURLSlug.ar"
+            placeholder="Enter Custom Slug in Arabic"
+            value={formData?.customURLSlug?.ar}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_ar"
+            variant={3}
+          />
+
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Faculty Description (English)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.facultyDescription.en}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      facultyDescription: {
-                        ...prev.facultyDescription,
-                        en: content,
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="Faculty Description (English)"
+              value={formData?.facultyDescription?.en || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  facultyDescription: {
+                    ...prev.facultyDescription,
+                    en: content,
+                  },
+                }))
+              }
+            />
           </div>
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              وصف الكلية (انجليزي)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.facultyDescription.ar}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      facultyDescription: {
-                        ...prev.facultyDescription,
-                        ar: content,
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="وصف الكلية (انجليزي)"
+              value={formData?.facultyDescription?.ar || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  facultyDescription: {
+                    ...prev.facultyDescription,
+                    ar: content,
+                  },
+                }))
+              }
+            />
           </div>
 
           <div className="flex items-center space-x-2">

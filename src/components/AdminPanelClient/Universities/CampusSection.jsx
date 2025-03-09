@@ -15,14 +15,10 @@ const CampusSection = ({ formData, setFormData }) => {
         {
           campusName: { en: "", ar: "" },
           campusLocation: {
-            uniAddress: { en: "", ar: "" },
-            uniPincode: "",
             uniCity: { en: "", ar: "" },
-            uniState: { en: "", ar: "" },
-            uniCountry: { en: "", ar: "" },
+            uniDescription: { en: "", ar: "" },
           },
           campusFacilities: [],
-          campusPhotos: [],
         },
       ],
     }));
@@ -83,16 +79,6 @@ const CampusSection = ({ formData, setFormData }) => {
       updatedCampuses[campusIndex].campusFacilities = updatedCampuses[
         campusIndex
       ].campusFacilities.filter((_, i) => i !== facilityIndex);
-      return { ...prevData, campuses: updatedCampuses };
-    });
-  };
-
-  const handlePhotoUpload = (index, photos) => {
-    setFormData((prevData) => {
-      const updatedCampuses = [...prevData.campuses];
-      // If photos is a string (single photo), convert to array
-      const photoArray = typeof photos === "string" ? [photos] : photos;
-      updatedCampuses[index].campusPhotos = photoArray;
       return { ...prevData, campuses: updatedCampuses };
     });
   };
@@ -198,42 +184,6 @@ campusName.ar`}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-lg border">
                 <InputField
-                  label="Address (English)"
-                  type="text"
-                  name={`
-campusLocation.uniAddress.en`}
-                  placeholder="Campus Address"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniAddress.en
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniAddress.en",
-                      e.target.value
-                    )
-                  }
-                  variant={3}
-                />
-                <InputField
-                  label="عنوان (عربي)"
-                  type="text"
-                  name={`
-campusLocation.uniAddress.ar`}
-                  placeholder="عنوان الحرم الجامعي"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniAddress.ar
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniAddress.ar",
-                      e.target.value
-                    )
-                  }
-                  variant={3}
-                />
-                <InputField
                   label="City (English)"
                   type="text"
                   name={`
@@ -269,97 +219,45 @@ campusLocation.uniCity.ar`}
                   }
                   variant={3}
                 />
+
                 <InputField
-                  label="State (English)"
-                  type="text"
+                  label="Description (English)"
+                  type="textarea"
                   name={`
-campusLocation.uniState.en`}
-                  placeholder="State/Province"
+campusLocation.uniDescription.en`}
+                  placeholder="Description"
                   value={
-                    formData.campuses[activeCampus].campusLocation.uniState.en
+                    formData.campuses[activeCampus].campusLocation
+                      .uniDescription.en
                   }
                   onChange={(e) =>
                     handleCampusChange(
                       activeCampus,
-                      "campusLocation.uniState.en",
+                      "campusLocation.uniDescription.en",
                       e.target.value
                     )
                   }
                   variant={3}
                 />
                 <InputField
-                  label="الولاية (عربي)"
-                  type="text"
+                  label="(الوصف (عربي"
+                  type="textarea"
                   name={`
-campusLocation.uniState.ar`}
-                  placeholder="الولاية/المقاطعة"
+campusLocation.uniDescription.ar`}
+                  placeholder="المدينة"
                   value={
-                    formData.campuses[activeCampus].campusLocation.uniState.ar
+                    formData.campuses[activeCampus].campusLocation
+                      .uniDescription.ar
                   }
                   onChange={(e) =>
                     handleCampusChange(
                       activeCampus,
-                      "campusLocation.uniState.ar",
+                      "campusLocation.uniDescription.ar",
                       e.target.value
                     )
                   }
                   variant={3}
                 />
-                <InputField
-                  label="Country (English)"
-                  type="text"
-                  name={`
-campusLocation.uniCountry.en`}
-                  placeholder="Country"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniCountry.en
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniCountry.en",
-                      e.target.value
-                    )
-                  }
-                  variant={3}
-                />
-                <InputField
-                  label="دولة (عربي)"
-                  type="text"
-                  name={`
-campusLocation.uniCountry.ar`}
-                  placeholder="الدولة"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniCountry.ar
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniCountry.ar",
-                      e.target.value
-                    )
-                  }
-                  variant={3}
-                />
-               <div className="col-span-2">
-               <InputField
-                  label="Pincode"
-                  type="text"
-                  name={`
-campusLocation.uniPincode`}
-                  placeholder="Postal/Zip Code"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniPincode
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniPincode",
-                      e.target.value
-                    )
-                  }
-                  variant={3}
-                /></div>
               </div>
             </div>
 
@@ -412,54 +310,6 @@ campusLocation.uniPincode`}
                 </div>
               </div>
             </div>
-
-            {/* <div className="md:col-span-2">
-              <div className="flex items-center mb-2">
-                <Camera className="w-4 h-4 mr-2 text-gray-600" />
-                <h4 className="text-md font-medium">Campus Photos</h4>
-              </div>
-              <div className="bg-white p-4 rounded-lg border">
-                <div className="mb-4">
-                  <UploadWidget
-                    uwConfig={{
-                      cloudName: "edubrink",
-                      uploadPreset: "EduBrinkImages",
-                      multiple: true,
-                      maxImageFileSize: 2000000,
-                      folder: "university/CampusPhotos",
-                    }}
-                    setFormData={setFormData}
-                    field="campuses"
-                    fieldName="campusPhotos"
-                    arrayIndex={activeCampus}
-                    uploadName="Upload Campus Photos"
-                    id={`upload_widget_campus_${activeCampus}`} // Simplified ID to avoid recreating widgets
-                    className="text-blue-500 border border-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition-colors duration-200 cursor-pointer"
-                  />
-                </div>
-
-                {formData.campuses[activeCampus].campusPhotos.length === 0 ? (
-                  <p className="text-gray-500 text-sm italic col-span-full">
-                    No photos uploaded yet
-                  </p>
-                ) : (
-                  <CampusPhotoGrid
-                    photos={formData.campuses[activeCampus].campusPhotos}
-                    campusIndex={activeCampus}
-                    onRemovePhoto={(photoIndex) => {
-                      setFormData((prevData) => {
-                        const updatedCampuses = [...prevData.campuses];
-                        updatedCampuses[activeCampus].campusPhotos =
-                          updatedCampuses[activeCampus].campusPhotos.filter(
-                            (_, i) => i !== photoIndex
-                          );
-                        return { ...prevData, campuses: updatedCampuses };
-                      });
-                    }}
-                  />
-                )}
-              </div>
-            </div> */}
           </div>
         </div>
       )}
@@ -481,32 +331,5 @@ campusLocation.uniPincode`}
     </div>
   );
 };
-
-// Memoized component for rendering campus photos
-const CampusPhotoGrid = React.memo(({ photos, campusIndex, onRemovePhoto }) => {
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-      {photos.map((photo, idx) => (
-        <div key={idx} className="relative group">
-          <img
-            src={photo || "/placeholder.svg"}
-            alt={`Campus \${campusIndex + 1} photo \${idx + 1}`}
-            className="w-full h-24 object-cover rounded-lg border"
-            loading="lazy" // Add lazy loading
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center rounded-lg">
-            <button
-              type="button"
-              onClick={() => onRemovePhoto(idx)}
-              className="p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-});
 
 export default CampusSection;

@@ -11,8 +11,7 @@ import {
   Flag,
   Search,
 } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import RichText from "../../../../utils/RichText";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import useDropdownData from "../../../../hooks/useDropdownData";
@@ -91,21 +90,6 @@ const months = [
   "December",
 ];
 
-// Create a properly typed wrapper for ReactQuill
-
-const QuillWrapper = forwardRef((props, ref) => (
-  <ReactQuill
-    ref={ref}
-    theme={props.theme || "snow"}
-    value={props.value}
-    onChange={props.onChange}
-    modules={props.modules}
-    formats={props.formats}
-    className={props.className}
-  />
-));
-
-QuillWrapper.displayName = "QuillWrapper";
 
 export default function AddMajor() {
   const { filteredData } = useDropdownData();
@@ -126,34 +110,6 @@ export default function AddMajor() {
     "https://edu-brink-backend.vercel.app/api/majors"
   );
   const [activeSection, setActiveSection] = useState(null);
-  const quillRef = useRef(null);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "blockquote"],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -430,7 +386,7 @@ export default function AddMajor() {
                     <span className="py-1 text-gray-600">
                       {formData?.facultyName?.en ||
                         formData?.faculty ||
-                        "Select Flag"}{" "}
+                        "Select Faculty"}{" "}
                       {/* Placeholder if name is empty */}
                     </span>
                   </span>
@@ -527,58 +483,35 @@ export default function AddMajor() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Major Description (English)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.majorDescription.en}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      majorDescription: {
-                        ...prev.majorDescription,
-                        en: content,
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="Major Description (English)"
+              value={formData.majorDescription.en || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  majorDescription: {
+                    ...prev.majorDescription,
+                    en: content,
+                  },
+                }))
+              }
+            />
           </div>
 
           <div>
-            {/* Arabic Major Description */}
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              وصف التخصص (عربي)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.majorDescription?.ar || ""} // Ensure it's a string
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      majorDescription: {
-                        ...prev.majorDescription,
-                        ar: content, // Update Arabic description
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64 " // Add RTL styling
-                />
-              </div>
-            </div>
+            <RichText
+              label="وصف التخصص (عربي)"
+              value={formData.majorDescription.ar || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  majorDescription: {
+                    ...prev.majorDescription,
+                    ar: content,
+                  },
+                }))
+              }
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

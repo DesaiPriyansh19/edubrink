@@ -1,23 +1,14 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Flag,
-  Search,
-  Languages,
-  School,
-  BookOpen,
-  Tag,
-} from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { ArrowLeft, Flag, Search, Languages, Tag } from "lucide-react";
 import { countryFlags } from "../../../../libs/countryFlags";
 import { useLanguage } from "../../../../context/LanguageContext";
 import useApiData from "../../../../hooks/useApiData";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
-import useDropdownData from "../../../../hooks/useDropdownData";
 import DropdownSelect from "../../../../utils/DropdownSelect";
+import RichText from "../../../../utils/RichText";
+import MetaArrayFields from "../Universities/MetaArrayFields";
 
 // const countryTemplates = [
 //   {
@@ -100,7 +91,7 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-  countryStudentPopulation: 0, // Default population set to 0
+
   countryCurrency: "",
   countryLanguages: [], // Array for languages spoken in the country
   countryPhotos: {
@@ -111,17 +102,23 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-  metaTitle: {
-    en: "", // SEO Meta Title in English
-    ar: "", // SEO Meta Title in Arabic
+  seo: {
+    metaTitle: {
+      en: "",
+      ar: "",
+    },
+    metaDescription: {
+      en: "",
+      ar: "",
+    },
+    metaKeywords: {
+      en: [], // Array of SEO Keywords in English
+      ar: [], // Array of SEO Keywords in Arabic
+    },
   },
-  metaDescription: {
-    en: "", // SEO Meta Title in English
-    ar: "", // SEO Meta Description in Arabic
-  },
-  metakeywords: {
-    en: [], // Array of SEO Keywords in English
-    ar: [], // Array of SEO Keywords in Arabic
+  customURLSlug: {
+    en: "",
+    ar: "",
   },
   countryCode: "",
   universities: [], // Array to hold references to university IDs
@@ -132,52 +129,18 @@ const initialFormData = {
 
 export default function AddCountry() {
   const { language } = useLanguage();
-  const { filteredData, setSearchInput, handleAdd, handleRemove } =
-    useDropdownData();
   const { addNew } = useApiData(
     "https://edu-brink-backend.vercel.app/api/country"
   );
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
-  const [showDropdown, setShowDropdown] = useState({
-    universities: false,
-    blogs: false,
-  });
+
   const [error, setError] = useState(null);
   const [newItem, setNewItem] = useState("");
   const [activeSection, setActiveSection] = useState(null > null);
   const [showFlagPicker, setShowFlagPicker] = useState(false);
   const [flagSearch, setFlagSearch] = useState("");
-
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["link", "blockquote"],
-          [{ align: [] }],
-          ["clean"],
-        ],
-      },
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -225,6 +188,27 @@ export default function AddCountry() {
       }
       return acc[part];
     }, temp);
+
+    if (nameParts.includes("countryName")) {
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+
+      if (lang === "en") {
+        // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with hyphens
+            .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
+        };
+      } else if (lang === "ar") {
+        // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
+        };
+      }
+    }
 
     // Update formData state with the new temp object
     setFormData(temp);
@@ -454,18 +438,7 @@ export default function AddCountry() {
                 />
               </div>
             </div>
-            <div>
-              <InputField
-                label="Country Student Population (عدد الطلاب في الدولة)"
-                type="text"
-                name="countryStudentPopulation"
-                placeholder="E.g. 10,000"
-                value={formData?.countryStudentPopulation}
-                onChange={handleInputChange}
-                autoComplete="countryStudentPopulation"
-                variant={3}
-              />
-            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Flag
@@ -536,69 +509,99 @@ export default function AddCountry() {
               </div>
             </div>
 
-            <InputField
-              label="Meta Title (English)"
-              type="text"
-              name="metaTitle.en"
-              placeholder="Enter Meta Title in English"
-              value={formData?.metaTitle?.en}
-              onChange={handleInputChange}
-              autoComplete="metaTitle"
-              variant={3}
-            />
-
-            {/* Meta Title (Arabic) */}
-
-            <InputField
-              label="Meta Title (العنوان التعريفي)"
-              type="text"
-              name="metaTitle.ar"
-              placeholder="أدخل العنوان التعريفي"
-              value={formData?.metaTitle?.ar}
-              onChange={handleInputChange}
-              autoComplete="metaTitle"
-              variant={3}
-            />
-
-            <div className="col-span-2">
+            <div className="bg-white rounded-lg col-span-2 space-y-6">
               <InputField
-                label="Meta Description (English)"
-                type="textarea"
-                name="metaDescription.en"
-                placeholder="Enter Meta Description in English"
-                value={formData?.metaDescription?.en}
+                label="Meta Title (English)"
+                type="text"
+                name="seo.metaTitle.en"
+                placeholder="Enter Meta Title in English"
+                value={formData?.seo?.metaTitle?.en}
                 onChange={handleInputChange}
-                autoComplete="metaDescription"
+                autoComplete="metaTitle"
                 variant={3}
               />
-            </div>
 
-            {/* Meta Description (Arabic) */}
-            <div className="col-span-2">
               <InputField
-                label="Meta Description (الوصف التعريفي)"
-                type="textarea"
-                name="metaDescription.ar"
-                placeholder="أدخل الوصف التعريفي"
-                value={formData?.metaDescription?.ar}
+                label="Meta Title (العنوان التعريفي)"
+                type="text"
+                name="seo.metaTitle.ar"
+                placeholder="أدخل العنوان التعريفي"
+                value={formData?.seo?.metaTitle?.ar}
                 onChange={handleInputChange}
-                autoComplete="metaDescription"
+                autoComplete="metaTitle"
                 variant={3}
               />
-            </div>
-            <div className="col-span-2 flex flex-col gap-3">
-              {renderArrayField(
-                "metakeywords.en", // Pass the nested field
-                "Keywords (English)",
-                <Tag className="w-4 h-4" />,
-                "Add New Keyword..."
-              )}
-              {renderArrayField(
-                "metakeywords.ar",
-                "Keywords (Arabic)",
-                <Tag className="w-4 h-4" />,
-                "أضف كلمة مفتاحية جديدة..."
-              )}
+
+              <div className="col-span-2">
+                <InputField
+                  label="Meta Description (English)"
+                  type="textarea"
+                  name="seo.metaDescription.en"
+                  placeholder="Enter Meta Description in English"
+                  value={formData?.seo?.metaDescription?.en}
+                  onChange={handleInputChange}
+                  autoComplete="metaDescription"
+                  variant={3}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <InputField
+                  label="Meta Description (الوصف التعريفي)"
+                  type="textarea"
+                  name="seo.metaDescription.ar"
+                  placeholder="أدخل الوصف التعريفي"
+                  value={formData?.seo?.metaDescription?.ar}
+                  onChange={handleInputChange}
+                  autoComplete="metaDescription"
+                  variant={3}
+                />
+              </div>
+              <div className="col-span-2 flex flex-col gap-3">
+                <MetaArrayFields
+                  field="seo.metaKeywords.en"
+                  label="Meta Keywords (English)"
+                  icon={<Tag className="w-4 h-4" />}
+                  placeholder="Add New Keyword..."
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+                <MetaArrayFields
+                  field="seo.metaKeywords.ar"
+                  label="Meta Keywords (Arabic)"
+                  icon={<Tag className="w-4 h-4" />}
+                  placeholder="أضف كلمة مفتاحية جديدة..."
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+
+                <div className="flex w-full gap-4 justify-between">
+                  <div className="w-full">
+                    <InputField
+                      label="Custom URL (English)"
+                      type="text"
+                      name="customURLSlug.en"
+                      placeholder="Enter Custom Slug in English"
+                      value={formData?.customURLSlug?.en}
+                      onChange={handleInputChange}
+                      autoComplete="custom_url_slug_en"
+                      variant={3}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <InputField
+                      label="Custom URL (Arabic)"
+                      type="text"
+                      name="customURLSlug.ar"
+                      placeholder="Enter Custom Slug in Arabic"
+                      value={formData?.customURLSlug?.ar}
+                      onChange={handleInputChange}
+                      autoComplete="custom_url_slug_ar"
+                      variant={3}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className=" col-span-2">
@@ -662,7 +665,7 @@ export default function AddCountry() {
           <div className="space-y-6">
             {renderArrayField(
               "countryLanguages",
-              "Language",
+              "Teaching Language",
               <Languages className="w-4 h-4" />,
               "Add New Language..."
             )}
@@ -699,54 +702,32 @@ export default function AddCountry() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Country Description (English)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <ReactQuill
-                  theme="snow"
-                  value={formData.countryOverview.en}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      countryOverview: { ...prev.countryOverview, en: content },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                  preserveWhitespace
-                />
-              </div>
-            </div>
+            <RichText
+              label="Country Description (English)"
+              value={formData.countryOverview.en}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  countryOverview: { ...prev.countryOverview, en: content },
+                }))
+              }
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              وصف البلد (Arabic)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <ReactQuill
-                  theme="snow"
-                  value={formData.countryOverview.ar}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      countryOverview: { ...prev.countryOverview, ar: content },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                  preserveWhitespace
-                />
-              </div>
-            </div>
+            <RichText
+              label="وصف البلد (Arabic)"
+              value={formData.countryOverview.ar}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  countryOverview: { ...prev.countryOverview, ar: content },
+                }))
+              }
+            />
           </div>
 
-          <DropdownSelect
+          {/* <DropdownSelect
             label="Enroll University (التسجيل في الجامعة)"
             placeholder="Select a university"
             icon={School}
@@ -771,7 +752,7 @@ export default function AddCountry() {
             setShowDropdown={setShowDropdown}
           />
 
-          {/* Blog Dropdown */}
+
           <DropdownSelect
             label="Enroll Blog (سجل في المدونة)"
             placeholder="Select a blog"
@@ -790,7 +771,7 @@ export default function AddCountry() {
             dropdownKey="blogs"
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
-          />
+          /> */}
 
           <InputField
             label="Hot Destination"

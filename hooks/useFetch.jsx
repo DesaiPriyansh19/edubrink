@@ -10,37 +10,35 @@ export default function useFetch(url) {
     setLoading(true);
     setError(null);
 
-    // Retrieve and parse user info from localStorage
-    const storedUserInfo = localStorage.getItem("eduuserInfo");
-    const eduuserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
-    const token = eduuserInfo?.token; // Extract the token safely
-
-    // if (!token) {
-    //   console.error("No token found! User may not be authenticated.");
-    //   setError("Authentication required");
-    //   setLoading(false);
-    //   return;
-    // }
-
     try {
+      // Retrieve and parse user info from localStorage dynamically
+      const storedUserInfo = localStorage.getItem("eduuserInfo");
+      const eduuserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
+      const token = eduuserInfo?.token;
+
+      if (!token) {
+        throw new Error("Authentication required. No token found.");
+      }
+
+      // Make API request with Authorization header
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`, // Attach token correctly
+          Authorization: `Bearer ${token}`,
         },
       });
 
       setData(response.data.data);
     } catch (error) {
-      console.error("Error fetching data:", error.response || error);
-      setError(error);
+      console.error("Error fetching data:", error?.response?.data || error.message);
+      setError(error?.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    getData();
+    if (url) getData(); // Only fetch if URL is provided
   }, [url]);
 
-  return { data, error, loading };
+  return { data, error, loading, refetch: getData }; // Add refetch function
 }

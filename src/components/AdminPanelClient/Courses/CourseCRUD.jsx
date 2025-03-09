@@ -53,8 +53,6 @@ export default function CourseCRUD() {
     );
   }
 
-  console.log(filteredCourses);
-
   return (
     <div>
       <div className="flex justify-between items-center mb-6">

@@ -265,7 +265,7 @@ export default function UniCRUD() {
                       </h3>
                       <div className="flex items-center text-white/90 text-sm">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {university.countryName?.en || "USA"}
+                        {university.countryName?.en || "N/A"}
                       </div>
                     </div>
                   </div>
@@ -346,7 +346,9 @@ export default function UniCRUD() {
               <p className="text-sm text-gray-500">Global presence</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">{filteredData?.countries?.length}</p>
+          <p className="text-3xl font-bold">
+            {filteredData?.countries?.length}
+          </p>
           <div className="mt-2 text-sm text-gray-500">
             Educational destinations
           </div>

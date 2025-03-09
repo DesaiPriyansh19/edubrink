@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, forwardRef, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
@@ -10,22 +10,15 @@ import {
   FileCheck,
   BookOpen,
   Search,
-  CalendarPlus2,
   X,
   Tag,
   Landmark,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
-import ReactQuill from "react-quill";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
-
-const QuillWrapper = forwardRef((props, ref) => (
-  <ReactQuill ref={ref} {...props} />
-));
-
-QuillWrapper.displayName = "QuillWrapper";
+import RichText from "../../../../utils/RichText";
 
 const initialFormData = {
   CourseName: {
@@ -111,8 +104,6 @@ export default function EditCourse() {
     `https://edu-brink-backend.vercel.app/api/course/${id}`
   );
 
-  console.log(data);
-
   useEffect(() => {
     if (!data) return; // Ensure `data` is available
 
@@ -130,8 +121,8 @@ export default function EditCourse() {
       DeadLine: data?.DeadLine || null,
       university: data?.university?._id || null,
       uniName: {
-        en: data?.uniName?.en || "",
-        ar: data?.uniName?.ar || "",
+        en: data?.university?.uniName?.en || "",
+        ar: data?.university?.uniName?.ar || "",
       },
       CourseType: data?.CourseType || "",
       ModeOfStudy: {
@@ -224,6 +215,16 @@ export default function EditCourse() {
       tag.toLowerCase().includes(searchInput.tagAr.toLowerCase())
     ),
   };
+
+  const filteredUniData = filteredData.universities.filter((item) => {
+    if (!flagSearch.trim()) {
+      return true; // Show all universities when flagSearch is empty
+    }
+    return (
+      item.uniName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
+      item.uniName.ar.toLowerCase().includes(flagSearch.toLowerCase())
+    );
+  });
 
   // Toggle dropdown visibility
   const toggleDropdown = (key) => {
@@ -527,54 +528,34 @@ export default function EditCourse() {
             </div>
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Course Description (English)
-              </label>
-              <div className="prose max-w-none">
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <QuillWrapper
-                    theme="snow"
-                    value={formData.CourseDescription.en}
-                    onChange={(content) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        CourseDescription: {
-                          ...prev.CourseDescription,
-                          en: content,
-                        },
-                      }))
-                    }
-                    modules={modules}
-                    formats={formats}
-                    className="h-64"
-                  />
-                </div>
-              </div>
+              <RichText
+                label="Course Description (English)"
+                value={formData.CourseDescription.en}
+                onChange={(content) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    CourseDescription: {
+                      ...prev.CourseDescription,
+                      en: content,
+                    },
+                  }))
+                }
+              />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                وصف الدورة (باللغة الإنجليزية)
-              </label>
-              <div className="prose max-w-none">
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <QuillWrapper
-                    theme="snow"
-                    value={formData.CourseDescription.ar}
-                    onChange={(content) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        CourseDescription: {
-                          ...prev.CourseDescription,
-                          ar: content,
-                        },
-                      }))
-                    }
-                    modules={modules}
-                    formats={formats}
-                    className="h-64"
-                  />
-                </div>
-              </div>
+              <RichText
+                label="وصف الدورة (باللغة الإنجليزية)"
+                value={formData.CourseDescription.ar}
+                onChange={(content) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    CourseDescription: {
+                      ...prev.CourseDescription,
+                      ar: content,
+                    },
+                  }))
+                }
+              />
             </div>
 
             <div className=" w-full">
@@ -660,7 +641,7 @@ export default function EditCourse() {
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filteredData.universities.map((university) => (
+                      {filteredUniData.map((university) => (
                         <button
                           key={university._id}
                           type="button"
@@ -678,7 +659,7 @@ export default function EditCourse() {
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
-                          <span className="text-gray-400 text-sm">
+                          <span className="text-black text-sm">
                             {university?.uniName?.en} -{" "}
                             {university?.uniName?.ar}
                           </span>

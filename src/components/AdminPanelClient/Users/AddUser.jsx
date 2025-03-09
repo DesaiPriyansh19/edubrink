@@ -6,12 +6,9 @@ import {
   Mail,
   User,
   Shield,
-  Phone,
-  Calendar,
-  MapPin,
-  Heart,
   Users,
   ShieldCheck,
+  UserCog,
 } from "lucide-react";
 import useApiData from "../../../../hooks/useApiData";
 import { useLanguage } from "../../../../context/LanguageContext";
@@ -21,17 +18,14 @@ const initialFormData = {
   FullName: "",
   Email: "",
   Password: "",
-  MobileNumber: "",
-  DateOfBirth: "",
   isAdmin: false,
+  ActionStatus: "Viewer",
   verified: false,
-  Address: "",
-  Status: "",
-  MaritalStatus: "Not-Married",
+  Status: "Active",
   Gender: "Male",
 };
 
-const maritalStatuses = ["Married", "Not-Married"];
+const actionStatus = ["Viewer", "Admin", "Editor"];
 const genders = ["Male", "Female", "Non-Binary"];
 const status = ["Active", "Not Active"];
 
@@ -64,18 +58,13 @@ export default function AddUser() {
       return;
     }
 
-    if (!formData.MobileNumber.trim()) {
-      setError("Mobile Number is required");
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
       const updatedFormData = {
-        Status: formData.Status === "Active" ? true : false,
         ...formData,
+        isAdmin: formData.ActionStatus === "Admin" ? true : false,
       };
 
       await addNew(updatedFormData);
@@ -183,80 +172,6 @@ export default function AddUser() {
 
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mobile Number
-            </label>
-            <div className="relative">
-              <Phone className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="tel"
-                value={formData.MobileNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, MobileNumber: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Date of Birth
-            </label>
-            <div className="relative">
-              <Calendar className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="date"
-                value={formData.DateOfBirth}
-                onChange={(e) =>
-                  setFormData({ ...formData, DateOfBirth: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-              />
-            </div>
-          </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Address
-            </label>
-            <div className="relative">
-              <MapPin className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={formData.Address}
-                onChange={(e) =>
-                  setFormData({ ...formData, Address: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-              />
-            </div>
-          </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Marital Status
-            </label>
-            <div className="relative">
-              <Heart className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <select
-                value={formData.MaritalStatus}
-                onChange={(e) =>
-                  setFormData({ ...formData, MaritalStatus: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
-              >
-                {maritalStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
               Gender
             </label>
             <div className="relative">
@@ -277,18 +192,18 @@ export default function AddUser() {
             </div>
           </div>
 
-          <div className="transition-all duration-300 col-span-2 transform hover:translate-y-[-2px]">
+          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Status
             </label>
             <div className="relative">
               <ShieldCheck className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
-                value={formData.Status ? "Active" : "Not Active"}
+                value={formData.Status || "Active"}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    Status: e.target.value === "Active",
+                    Status: e.target.value,
                   })
                 }
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
@@ -301,37 +216,47 @@ export default function AddUser() {
               </select>
             </div>
           </div>
-
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.isAdmin}
-                onChange={(e) =>
-                  setFormData({ ...formData, isAdmin: e.target.checked })
-                }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-300"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Admin User
-              </span>
+          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Action Restrict
             </label>
+            <div className="relative">
+              <UserCog className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <select
+                value={formData.ActionStatus}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    ActionStatus: e.target.value,
+                  })
+                }
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
+              >
+                {actionStatus.map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.verified}
-                onChange={(e) =>
-                  setFormData({ ...formData, verified: e.target.checked })
-                }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-300"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Verified User
-              </span>
-            </label>
+          <div className="col-span-2 flex gap-4">
+            <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.verified}
+                  onChange={(e) =>
+                    setFormData({ ...formData, verified: e.target.checked })
+                  }
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-300"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Verified User
+                </span>
+              </label>
+            </div>
           </div>
         </div>
 

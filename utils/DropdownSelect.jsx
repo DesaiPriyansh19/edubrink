@@ -15,6 +15,7 @@ export default function DropdownSelect({
   dropdownKey,
   showDropdown,
   setShowDropdown,
+  disabled = false, // New prop to disable the dropdown
 }) {
   const [searchInput, setSearchInput] = useState("");
 
@@ -35,9 +36,10 @@ export default function DropdownSelect({
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {label}
         </label>
-        <div className="relative">
+        <div className={`relative ${disabled ? "hidden" : "block"}`}>
           <button
             type="button"
+            disabled={disabled}
             onClick={toggleDropdown}
             className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
           >
@@ -45,7 +47,7 @@ export default function DropdownSelect({
             <Icon className="w-5 h-5 text-gray-400" />
           </button>
 
-          {showDropdown[dropdownKey] && (
+          {!disabled && showDropdown[dropdownKey] && (
             <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
               <div className="p-2 border-b">
                 <div className="relative">

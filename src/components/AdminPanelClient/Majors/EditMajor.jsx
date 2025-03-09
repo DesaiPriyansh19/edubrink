@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
@@ -8,15 +8,13 @@ import {
   FileCheck,
   Calendar,
   BookOpen,
-  Flag,
   Search,
 } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
+import RichText from "../../../../utils/RichText";
 
 const initialFormData = {
   majorName: {
@@ -91,25 +89,10 @@ const months = [
   "December",
 ];
 
-// Create a properly typed wrapper for ReactQuill
-
-const QuillWrapper = forwardRef((props, ref) => (
-  <ReactQuill
-    ref={ref}
-    theme={props.theme || "snow"}
-    value={props.value}
-    onChange={props.onChange}
-    modules={props.modules}
-    formats={props.formats}
-    className={props.className}
-  />
-));
-
-QuillWrapper.displayName = "QuillWrapper";
 
 export default function EditMajor() {
   const { id } = useParams();
-  const { filteredFaculty } = useDropdownData();
+  const { filteredData } = useDropdownData();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -127,7 +110,6 @@ export default function EditMajor() {
     `https://edu-brink-backend.vercel.app/api/majors/${id}`
   );
   const [activeSection, setActiveSection] = useState(null);
-  const quillRef = useRef(null);
   useEffect(() => {
     if (data) {
       setFormData({
@@ -165,33 +147,6 @@ export default function EditMajor() {
       });
     }
   }, [data]);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "blockquote"],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -262,7 +217,7 @@ export default function EditMajor() {
     }));
   };
 
-  const filterFacultyData = filteredFaculty?.filter(
+  const filterFacultyData = filteredData.faculties?.filter(
     (country) =>
       country.facultyName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
       country.facultyName.ar.toLowerCase().includes(flagSearch.toLowerCase())
@@ -427,7 +382,7 @@ export default function EditMajor() {
 
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Faculty
+                Enroll Faculty
               </label>
               <div className="relative">
                 <button
@@ -439,7 +394,7 @@ export default function EditMajor() {
                     <span className="py-1 text-gray-600">
                       {formData?.facultyName?.en ||
                         formData?.faculty ||
-                        "Select Flag"}{" "}
+                        "Select Faculty"}{" "}
                       {/* Placeholder if name is empty */}
                     </span>
                   </span>
@@ -453,7 +408,7 @@ export default function EditMajor() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                         <input
                           type="text"
-                          placeholder="Search countries..."
+                          placeholder="Search Faculty..."
                           value={flagSearch}
                           onChange={(e) => setFlagSearch(e.target.value)}
                           className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
@@ -461,7 +416,7 @@ export default function EditMajor() {
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filterFacultyData.map((faculty) => (
+                      {filterFacultyData?.map((faculty) => (
                         <button
                           key={faculty._id}
                           type="button"
@@ -479,7 +434,7 @@ export default function EditMajor() {
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
-                          <span className="text-gray-400 text-sm">
+                          <span className="text-black text-sm">
                             {faculty?.facultyName?.en} -{" "}
                             {faculty?.facultyName?.ar}
                           </span>
@@ -536,58 +491,35 @@ export default function EditMajor() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Major Description (English)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.majorDescription.en}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      majorDescription: {
-                        ...prev.majorDescription,
-                        en: content,
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="Major Description (English)"
+              value={formData.majorDescription.en || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  majorDescription: {
+                    ...prev.majorDescription,
+                    en: content,
+                  },
+                }))
+              }
+            />
           </div>
 
           <div>
-            {/* Arabic Major Description */}
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              وصف التخصص (عربي)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <QuillWrapper
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.majorDescription?.ar || ""} // Ensure it's a string
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      majorDescription: {
-                        ...prev.majorDescription,
-                        ar: content, // Update Arabic description
-                      },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64 " // Add RTL styling
-                />
-              </div>
-            </div>
+            <RichText
+              label="وصف التخصص (عربي)"
+              value={formData.majorDescription.ar || ""}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  majorDescription: {
+                    ...prev.majorDescription,
+                    ar: content,
+                  },
+                }))
+              }
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

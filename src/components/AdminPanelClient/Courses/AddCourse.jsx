@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, forwardRef, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -16,15 +16,11 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
-import ReactQuill from "react-quill";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
+import RichText from "../../../../utils/RichText";
 
-const QuillWrapper = forwardRef((props, ref) => (
-  <ReactQuill ref={ref} {...props} />
-));
 
-QuillWrapper.displayName = "QuillWrapper";
 
 const initialFormData = {
   CourseName: {
@@ -436,54 +432,34 @@ export default function AddCourse() {
             </div>
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Course Description (English)
-              </label>
-              <div className="prose max-w-none">
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <QuillWrapper
-                    theme="snow"
-                    value={formData.CourseDescription.en}
-                    onChange={(content) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        CourseDescription: {
-                          ...prev.CourseDescription,
-                          en: content,
-                        },
-                      }))
-                    }
-                    modules={modules}
-                    formats={formats}
-                    className="h-64"
-                  />
-                </div>
-              </div>
+              <RichText
+                label="Course Description (English)"
+                value={formData.CourseDescription.en}
+                onChange={(content) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    CourseDescription: {
+                      ...prev.CourseDescription,
+                      en: content,
+                    },
+                  }))
+                }
+              />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                وصف الدورة (باللغة الإنجليزية)
-              </label>
-              <div className="prose max-w-none">
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <QuillWrapper
-                    theme="snow"
-                    value={formData.CourseDescription.ar}
-                    onChange={(content) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        CourseDescription: {
-                          ...prev.CourseDescription,
-                          ar: content,
-                        },
-                      }))
-                    }
-                    modules={modules}
-                    formats={formats}
-                    className="h-64"
-                  />
-                </div>
-              </div>
+              <RichText
+                label="وصف الدورة (باللغة الإنجليزية)"
+                value={formData.CourseDescription.ar}
+                onChange={(content) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    CourseDescription: {
+                      ...prev.CourseDescription,
+                      ar: content,
+                    },
+                  }))
+                }
+              />
             </div>
 
             <div className=" w-full">

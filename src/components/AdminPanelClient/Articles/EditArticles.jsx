@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Plus, ArrowLeft, Tag, X } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Plus, ArrowLeft, Tag, X, BookOpen, Search } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
 import UploadWidget from "../../../../utils/UploadWidget";
 import useApiData from "../../../../hooks/useApiData";
 import MetaArrayFields from "../Universities/MetaArrayFields";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import RichText from "../../../../utils/RichText";
 
 const initialFormData = {
   blogTitle: {
@@ -30,6 +30,9 @@ const initialFormData = {
     en: [],
     ar: [],
   },
+  blogCountry: null,
+  countryName: { en: "", ar: "" },
+  countryEmoji: "",
   blogPhoto: "",
   status: "Draft", // Article Status
   excerpt: { en: "", ar: "" },
@@ -50,8 +53,11 @@ const initialFormData = {
       ar: [], // Array of SEO Keywords in Arabic
     },
   },
+  customURLSlug: {
+    en: "",
+    ar: "",
+  },
 };
-
 
 const categories = [
   "Study Abroad",
@@ -66,22 +72,23 @@ const categories = [
   "Education News",
 ];
 
-
 const Visibility = ["Public", "Private", "Password Protected"];
 const Status = ["Draft", "Pending Review", "Published"];
 
 export default function EditArticle() {
   const { language } = useLanguage();
+  const { filteredData } = useDropdownData();
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [newTag, setNewTag] = useState({ en: "", ar: "" });
   const { data, updateWithOutById } = useApiData(
     `https://edu-brink-backend.vercel.app/api/blog/${id}`
   );
-
   useEffect(() => {
     if (data) {
       setFormData({
@@ -105,6 +112,12 @@ export default function EditArticle() {
           en: Array.isArray(data?.blogTags?.en) ? data.blogTags.en : [],
           ar: Array.isArray(data?.blogTags?.ar) ? data.blogTags.ar : [],
         },
+        blogCountry: data?.blogCountry?.id || null,
+        countryName: {
+          en: data?.blogCountry?.countryName?.en || "",
+          ar: data?.blogCountry?.countryName?.ar || "",
+        },
+        countryEmoji: data?.blogCountry?.countryPhotos?.countryFlag || "",
         blogPhoto: data?.blogPhoto || "",
         status: data?.status || "Draft", // Default to "Draft"
         excerpt: {
@@ -132,41 +145,21 @@ export default function EditArticle() {
               : [],
           },
         },
+        customURLSlug: {
+          en: data?.customURLSlug?.en || "",
+          ar: data?.customURLSlug?.ar || "",
+        },
       });
     } else {
       setFormData(initialFormData); // Reset to initial state when `data` is empty
     }
   }, [data]);
-  
 
-  const quillRef = useRef(null);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "blockquote"],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
+  const filterFacultyData = filteredData.countries?.filter(
+    (country) =>
+      country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
   );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -185,6 +178,27 @@ export default function EditArticle() {
       }
       return acc[part];
     }, temp);
+
+    if (nameParts.includes("blogTitle")) {
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+
+      if (lang === "en") {
+        // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with hyphens
+            .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
+        };
+      } else if (lang === "ar") {
+        // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
+        };
+      }
+    }
 
     // Update formData state with the new temp object
     setFormData(temp);
@@ -278,7 +292,7 @@ export default function EditArticle() {
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Articles
         </button>
-        <h1 className="text-2xl font-bold">Add New Article</h1>
+        <h1 className="text-2xl font-bold">Edit Article</h1>
       </div>
 
       {error && (
@@ -362,52 +376,29 @@ export default function EditArticle() {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Content (English)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <ReactQuill
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.blogDescription.en}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      blogDescription: { ...prev.blogDescription, en: content },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="Content (English)"
+              value={formData.blogDescription.en}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  blogDescription: { ...prev.blogDescription, en: content },
+                }))
+              }
+            />
           </div>
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              المحتوى (عربي)
-            </label>
-            <div className="prose max-w-none">
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
-                <ReactQuill
-                  ref={quillRef}
-                  theme="snow"
-                  value={formData.blogDescription.ar}
-                  onChange={(content) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      blogDescription: { ...prev.blogDescription, ar: content },
-                    }))
-                  }
-                  modules={modules}
-                  formats={formats}
-                  className="h-64"
-                />
-              </div>
-            </div>
+            <RichText
+              label="المحتوى (عربي)"
+              value={formData.blogDescription.ar}
+              onChange={(content) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  blogDescription: { ...prev.blogDescription, ar: content },
+                }))
+              }
+            />
           </div>
-
           {[
             { id: 1, label: "Blog Tags (English)", lang: "en" },
             { id: 2, label: "Blog Tags (Arabic)", lang: "ar" },
@@ -560,6 +551,75 @@ export default function EditArticle() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Country
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowFlagPicker(!showFlagPicker)}
+                className="w-full flex items-center justify-between px-4 py-1 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
+              >
+                <span className="flex gap-2 items-center">
+                  <span>{formData?.countryEmoji}</span>
+                  <span className="py-1 text-gray-600">
+                    {formData?.countryName?.en ||
+                      formData?.uniCountry ||
+                      "Select Country"}{" "}
+                    {/* Placeholder if name is empty */}
+                  </span>
+                </span>
+                <BookOpen className="w-5 h-5 text-gray-400" />
+              </button>
+
+              {showFlagPicker && (
+                <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+                  <div className="p-2 border-b">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="text"
+                        placeholder="Search countries..."
+                        value={flagSearch}
+                        onChange={(e) => setFlagSearch(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto">
+                    {filterFacultyData?.map((country) => (
+                      <button
+                        key={country._id}
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            blogCountry: country._id, // Updating faculty ID
+                            countryName: {
+                              ...prev.countryName, // Preserve existing values
+                              en: country.countryName.en,
+                              ar: country.countryName.ar,
+                            },
+                            countryEmoji: country.countryPhotos.countryFlag,
+                          }));
+                          setShowFlagPicker(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+                      >
+                        <span>{country?.countryPhotos?.countryFlag}</span>
+                        <span className="text-black text-sm">
+                          {country?.countryName?.en} -{" "}
+                          {country?.countryName?.ar}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           {!formData?.publishImmediately && (
             <div className="col-span-2">
               {" "}
@@ -645,7 +705,7 @@ export default function EditArticle() {
             <div className="col-span-2 flex flex-col gap-3">
               <MetaArrayFields
                 field="seo.metaKeywords.en"
-                label="Keywords (English)"
+                label="Meta Keywords (English)"
                 icon={<Tag className="w-4 h-4" />}
                 placeholder="Add New Keyword..."
                 formData={formData}
@@ -653,7 +713,7 @@ export default function EditArticle() {
               />
               <MetaArrayFields
                 field="seo.metaKeywords.ar"
-                label="Keywords (Arabic)"
+                label="Meta Keywords (Arabic)"
                 icon={<Tag className="w-4 h-4" />}
                 placeholder="أضف كلمة مفتاحية جديدة..."
                 formData={formData}
@@ -661,6 +721,27 @@ export default function EditArticle() {
               />
             </div>
           </div>
+
+          <InputField
+            label="Custom URL (English)"
+            type="text"
+            name="customURLSlug.en"
+            placeholder="Enter Custom Slug in English"
+            value={formData?.customURLSlug?.en}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_en"
+            variant={3}
+          />
+          <InputField
+            label="Custom URL (Arabic)"
+            type="text"
+            name="customURLSlug.ar"
+            placeholder="Enter Custom Slug in Arabic"
+            value={formData?.customURLSlug?.ar}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_ar"
+            variant={3}
+          />
 
           <div className="flex items-center col-span-2 space-x-6">
             <InputField
