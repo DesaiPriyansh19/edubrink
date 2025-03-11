@@ -91,7 +91,10 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-
+  countrySummary: {
+    en: "",
+    ar: "",
+  },
   countryCurrency: "",
   countryLanguages: [], // Array for languages spoken in the country
   countryPhotos: {
@@ -439,7 +442,7 @@ export default function AddCountry() {
               </div>
             </div>
 
-            <div>
+            <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Flag
               </label>
@@ -508,6 +511,28 @@ export default function AddCountry() {
                 )}
               </div>
             </div>
+
+            <InputField
+              label="Country Summary (English)"
+              type="textarea"
+              name="countrySummary.en"
+              placeholder="Country Summary"
+              value={formData?.countrySummary?.en}
+              onChange={handleInputChange}
+              autoComplete="country_summary_en"
+              variant={3}
+            />
+
+            <InputField
+              label="ملخص الدولة (عربي)"
+              type="textarea"
+              name="countrySummary.ar"
+              placeholder="ملخص الدولة"
+              value={formData?.countrySummary?.ar}
+              onChange={handleInputChange}
+              autoComplete="country_summary_ar"
+              variant={3}
+            />
 
             <div className="bg-white rounded-lg col-span-2 space-y-6">
               <InputField

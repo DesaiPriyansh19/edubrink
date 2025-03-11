@@ -1,23 +1,20 @@
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
-import img from "../../../src/assets/image 3.png";
 import UniversityRightLayoutCard from "../UniversityPage/UniversityRightLayoutCard";
 import RelatedBlogs from "./RelatedBlogs";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useSearch } from "../../../context/SearchContext";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 const MoreInfo = () => {
-  const [searchParams] = useSearchParams();
   const { language } = useLanguage();
   const { t } = useTranslation();
   const { slug } = useParams();
-  const country = searchParams.get("country"); // Access the 'country' query parameter
   const { data } = useFetch(
     `https://edu-brink-backend.vercel.app/api/blog/name/${encodeURIComponent(
       slug
-    )}?country=${encodeURIComponent(country)}`
+    )}`
   );
 
   const { setFilterProp, setSearchState } = useSearch();
@@ -115,10 +112,16 @@ const MoreInfo = () => {
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-semibold"> {t("BlogInnerPage.Intro")}</h3>
-              <p className="text-sm font-medium mt-2 mb-3">
-                {data?.blogDescription[language]}
-              </p>
+              <h3 className="text-2xl font-semibold">
+                {" "}
+                {t("BlogInnerPage.Intro")}
+              </h3>
+              <div
+                className="text-sm font-medium mt-2 mb-3"
+                dangerouslySetInnerHTML={{
+                  __html: data?.blogDescription?.[language],
+                }}
+              />
             </div>
           </div>
 
@@ -207,7 +210,7 @@ const MoreInfo = () => {
       </div>
       <div className="px-4">
         {" "}
-        <RelatedBlogs data={data?.countryData} />
+        <RelatedBlogs data={data?.blogCountry} />
       </div>
     </div>
   );

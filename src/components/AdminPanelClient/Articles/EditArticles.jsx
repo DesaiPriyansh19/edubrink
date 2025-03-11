@@ -112,7 +112,7 @@ export default function EditArticle() {
           en: Array.isArray(data?.blogTags?.en) ? data.blogTags.en : [],
           ar: Array.isArray(data?.blogTags?.ar) ? data.blogTags.ar : [],
         },
-        blogCountry: data?.blogCountry?.id || null,
+        blogCountry: data?.blogCountry?._id || null,
         countryName: {
           en: data?.blogCountry?.countryName?.en || "",
           ar: data?.blogCountry?.countryName?.ar || "",
@@ -240,9 +240,11 @@ export default function EditArticle() {
     setError(null);
 
     try {
-      const { ...updatedFormData } = {
+      const {  countryName, countryEmoji, ...updatedFormData } = {
         ...formData,
       };
+
+      console.log(updatedFormData);
 
       await updateWithOutById(updatedFormData);
 

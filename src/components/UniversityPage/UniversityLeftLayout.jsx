@@ -9,6 +9,7 @@ const UniversityLeftLayout = ({ data, language }) => {
           {language === "ar" ? data?.uniName?.ar : data?.uniName?.en}
         </h2>
         <p className="text-lg sm:text-xl font-semibold text-purple-800 mt-2">
+          {data?.countryFlag}{" "}
           {language === "ar" ? data?.countryName?.ar : data?.countryName?.en}
         </p>
       </div>
@@ -20,28 +21,33 @@ const UniversityLeftLayout = ({ data, language }) => {
         <div className="mt-4">
           <p className="text-sm font-semibold">STUDY LEVEL</p>
           <div className="flex flex-wrap gap-2 mt-8 mb-8">
-            <span className="bg-[rgba(243,244,246,1)] px-3 py-1 rounded-full text-sm">
-              {data?.studyLevel}
-            </span>
+            {[
+              ...new Set(
+                data?.courses?.flatMap(
+                  (course) => course?.ModeOfStudy?.[language] || []
+                ) // Flatten all modeOfStudy values
+              ),
+            ].map((item, idx) => (
+              <span
+                key={idx}
+                className="bg-[rgba(243,244,246,1)] px-3 py-1 rounded-full text-sm"
+              >
+                {item}
+              </span>
+            ))}
           </div>
         </div>
         <div className="mt-6">
           <p className="text-sm font-semibold">SUBJECTS</p>
           <div className="flex flex-wrap gap-2 mt-2">
-            {[
-              ...new Map(
-                data?.courses?.flatMap(
-                  (course) => course?.Tags?.map((tag) => [tag._id, tag]) // Use `_id` as a unique key
-                )
-              ).values(),
-            ]?.map((subject) => (
+            {data?.faculties?.map((subject) => (
               <span
-                key={subject._id}
+                key={subject?._id}
                 className="bg-[rgba(243,244,246,1)] px-3 py-1 rounded-full text-sm"
               >
                 {language === "ar"
-                  ? subject?.TagName?.ar
-                  : subject?.TagName?.en}
+                  ? subject?.facultyName?.ar
+                  : subject?.facultyName?.en}
               </span>
             ))}
           </div>

@@ -16,10 +16,12 @@ import {
 import useFetch from "../../../hooks/useFetch";
 import AOS from "aos";
 import axios from "axios";
+import SearchBar from "./SearchBar";
 
 const Header = ({ data: notifications, refetch }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [searchBar, setSearchBar] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
@@ -141,14 +143,19 @@ const Header = ({ data: notifications, refetch }) => {
       <div className="px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Search Bar */}
-          <div className="flex-1 max-w-xl">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search anything..."
-                className="w-full pl-10 pr-4 py-2 bg-gray-50 border-0 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-              />
+          <div className="flex-1">
+            <div
+              onClick={() => setSearchBar(true)}
+              className="inline-flex items-center cursor-pointer gap-2"
+            >
+              <Search className="text-gray-400 w-5 h-5" />
+              <button
+                type="button"
+                className=" border-0 rounded-lg text-gray-400 focus:bg-white transition-all duration-200"
+              >
+                {" "}
+                Search anything...
+              </button>
             </div>
           </div>
 
@@ -436,6 +443,8 @@ const Header = ({ data: notifications, refetch }) => {
           </div>
         </div>
       </div>
+
+      <SearchBar searchBar={searchBar} setSearchBar={setSearchBar} />
     </header>
   );
 };

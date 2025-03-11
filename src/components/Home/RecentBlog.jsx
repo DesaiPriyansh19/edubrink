@@ -9,10 +9,12 @@ import { useTranslation } from "react-i18next";
 function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const { data, loading } = useFetch(`https://edu-brink-backend.vercel.app/api/blog/`);
+  const { data, loading } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/blog/`
+  );
 
-  const handleNaviagte = (name, country) => {
-    navigate(`/${language}/blog/${name}?country=${country}`);
+  const handleNaviagte = (name) => {
+    navigate(`/${language}/blog/${name}`);
   };
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -89,12 +91,7 @@ function RecentBlog() {
             <div
               key={idx}
               onClick={() => {
-                handleNaviagte(
-                  language === "ar" ? card?.blogTitle?.ar : card?.blogTitle?.en,
-                  language === "ar"
-                    ? card?.countries[0]?.countryName[0]?.ar
-                    : card?.countries[0]?.countryName[0]?.en
-                );
+                handleNaviagte(card.customURLSlug[language]);
               }}
               className="max-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
               dir={language === "ar" ? "rtl" : "ltr"}
@@ -110,9 +107,9 @@ function RecentBlog() {
               <p className="text-[#E82448] text-sm font-semibold mt-4">
                 {language === "ar"
                   ? `الدراسة في ${
-                      card?.countries[0]?.countryName[0]?.ar || "غير متوفر"
+                      card?.blogCountry?.countryName?.ar || "غير متوفر"
                     }`
-                  : `Study in ${card?.countries[0]?.countryName[0]?.en || "N/A"}`}
+                  : `Study in ${card?.blogCountry?.countryName?.en || "N/A"}`}
               </p>
 
               <h4 className="font-semibold text-lg text-black mt-2 mb-1">

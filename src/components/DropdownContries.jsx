@@ -20,7 +20,6 @@ const DropdownCountries = forwardRef(
   ({ setShowCountriesDropdown, navbarHeight, data }, ref) => {
     const navigate = useNavigate();
     const { language } = useLanguage();
-    console.log(data);
 
     // Initialize AOS
     useEffect(() => {
@@ -32,8 +31,9 @@ const DropdownCountries = forwardRef(
       });
     }, []);
 
-    const handleNavigate = (name) => {
-      navigate(`${language}/country/${name}`);
+    const handleNavigate = (term) => {
+      const customSlug = term.customURLSlug?.[language] || term.countryName.en;
+      navigate(`${language}/country/${customSlug}`);
       setShowCountriesDropdown(false);
     };
 
@@ -67,7 +67,7 @@ const DropdownCountries = forwardRef(
                   .map((country, idx) => (
                     <div
                       key={idx}
-                      onClick={() => handleNavigate(country.countryName.en)}
+                      onClick={() => handleNavigate(country)}
                       className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
                       <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">
@@ -97,7 +97,7 @@ const DropdownCountries = forwardRef(
                   .map((country, indx) => (
                     <div
                       key={indx}
-                      onClick={() => handleNavigate(country.countryName.en)}
+                      onClick={() => handleNavigate(country)}
                       className="w-full mb-3 flex cursor-pointer items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
                       <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">
@@ -127,7 +127,7 @@ const DropdownCountries = forwardRef(
               {data?.map((country, idx) => (
                 <div
                   key={idx}
-                  onClick={() => handleNavigate(country.countryName.en)}
+                  onClick={() => handleNavigate(country)}
                   className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                 >
                   <span className="h-auto w-auto text-sm rounded-md bg-white p-[.3rem]">

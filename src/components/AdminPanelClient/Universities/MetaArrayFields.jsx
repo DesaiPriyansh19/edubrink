@@ -29,8 +29,21 @@ export default function MetaArrayFields({
 
   const addItem = () => {
     if (!newItem.trim()) return;
-    updateFieldData((prev) => (prev.includes(newItem) ? prev : [...prev, newItem]));
-    setNewItem("");
+
+    // Split the input by commas and trim each item
+    const itemsToAdd = newItem
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item); // Remove empty strings
+
+    if (itemsToAdd.length === 0) return;
+
+    updateFieldData((prev) => {
+      const newItems = itemsToAdd.filter((item) => !prev.includes(item)); // Avoid duplicates
+      return [...prev, ...newItems];
+    });
+
+    setNewItem(""); // Clear the input after adding
   };
 
   const removeItem = (itemToRemove) => {

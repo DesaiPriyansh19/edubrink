@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 const UniversityRightLayout = ({ data, language }) => {
   const { t } = useTranslation();
+  console.log(data);
   return (
     <>
       <div className="mt-5">
@@ -111,8 +112,8 @@ const UniversityRightLayout = ({ data, language }) => {
                       <div>
                         <p className="text-lg font-medium leading-5">
                           {language === "ar"
-                            ? data?.courses[0]?.ModeOfStudy[0]?.ar
-                            : data?.courses[0]?.ModeOfStudy[0]?.en}
+                            ? data?.courses[0]?.ModeOfStudy?.ar?.[0]
+                            : data?.courses[0]?.ModeOfStudy?.en?.[0]}
                         </p>
 
                         <p className="text-sm font-sans font-normal leading-5">

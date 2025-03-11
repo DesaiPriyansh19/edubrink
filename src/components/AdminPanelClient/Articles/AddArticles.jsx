@@ -187,7 +187,7 @@ export default function AddArticle() {
     setError(null);
 
     try {
-      const { uniName, countryName, countryEmoji, ...updatedFormData } = {
+      const {  countryName, countryEmoji, ...updatedFormData } = {
         ...formData,
       };
 

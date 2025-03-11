@@ -40,7 +40,7 @@ function RelatedBlogs({ data }) {
             </p>
 
             <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-              {card?.blogTitle[language]}
+              {card?.blogTitle?.[language]}
             </h4>
             <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
               <Calander />

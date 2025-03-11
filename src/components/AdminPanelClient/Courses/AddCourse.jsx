@@ -19,8 +19,7 @@ import InputField from "../../../../utils/InputField";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
 import RichText from "../../../../utils/RichText";
-
-
+import MetaArrayFields from "../Universities/MetaArrayFields";
 
 const initialFormData = {
   CourseName: {
@@ -69,6 +68,10 @@ const initialFormData = {
       ar: [], // Array of SEO Keywords in Arabic
     },
   },
+  customURLSlug: {
+    en: "",
+    ar: "",
+  },
 };
 
 const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
@@ -82,19 +85,6 @@ const admissionRequirements = [
   "Master's Degree",
   "IELTS",
   "TOEFL",
-];
-
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "list",
-  "bullet",
-  "link",
-  "blockquote",
-  "align",
 ];
 
 export default function AddCourse() {
@@ -163,20 +153,6 @@ export default function AddCourse() {
     }));
   };
 
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["link", "blockquote"],
-        [{ align: [] }],
-        ["clean"],
-      ],
-    }),
-    []
-  );
-
   const [activeSection, setActiveSection] = useState(null);
 
   const handleInputChange = (event) => {
@@ -196,6 +172,27 @@ export default function AddCourse() {
       }
       return acc[part];
     }, temp);
+
+    if (nameParts.includes("CourseName")) {
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+
+      if (lang === "en") {
+        // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value
+            .toLowerCase()
+            .replace(/\s+/g, "-") // Replace spaces with hyphens
+            .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
+        };
+      } else if (lang === "ar") {
+        // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
+        temp.customURLSlug = {
+          ...temp.customURLSlug,
+          [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
+        };
+      }
+    }
 
     // Update formData state with the new temp object
     setFormData(temp);
@@ -667,19 +664,43 @@ export default function AddCourse() {
             />
           </div>
           <div className="col-span-2 flex flex-col gap-3">
-            {renderArrayField(
-              "seo.metaKeywords.en", // Pass the nested field
-              "Keywords (English)",
-              <Tag className="w-4 h-4" />,
-              "Add New Keyword..."
-            )}
-            {renderArrayField(
-              "seo.metaKeywords.ar",
-              "Keywords (Arabic)",
-              <Tag className="w-4 h-4" />,
-              "أضف كلمة مفتاحية جديدة..."
-            )}
+            <MetaArrayFields
+              field="seo.metaKeywords.en"
+              label="Meta Keywords (English)"
+              icon={<Tag className="w-4 h-4" />}
+              placeholder="Add New Keyword..."
+              formData={formData}
+              setFormData={setFormData}
+            />
+            <MetaArrayFields
+              field="seo.metaKeywords.ar"
+              label="Meta Keywords (Arabic)"
+              icon={<Tag className="w-4 h-4" />}
+              placeholder="أضف كلمة مفتاحية جديدة..."
+              formData={formData}
+              setFormData={setFormData}
+            />
           </div>
+          <InputField
+            label="Custom URL (English)"
+            type="text"
+            name="customURLSlug.en"
+            placeholder="Enter Custom Slug in English"
+            value={formData?.customURLSlug?.en}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_en"
+            variant={3}
+          />
+          <InputField
+            label="Custom URL (Arabic)"
+            type="text"
+            name="customURLSlug.ar"
+            placeholder="Enter Custom Slug in Arabic"
+            value={formData?.customURLSlug?.ar}
+            onChange={handleInputChange}
+            autoComplete="custom_url_slug_ar"
+            variant={3}
+          />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">

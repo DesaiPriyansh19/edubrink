@@ -9,7 +9,6 @@ import bg3 from "../../assets/HowWe3.png";
 import bg4 from "../../assets/HowWe4.png";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../context/LanguageContext";
-import TextBlock from "../../../utils/TextBlock";
 function HowWeWork() {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -53,7 +52,10 @@ function HowWeWork() {
   ];
 
   return (
-    <div className="max-w-[1240px] mb-20 px-0 md:px-4 mx-auto">
+    <div
+      dir={language === "ar" ? "rtl" : "ltl"}
+      className="max-w-[1240px] mb-20 px-0 md:px-4 mx-auto"
+    >
       <h1 className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-4">
         {t("HowWeWorkSection.title")}
         <img className="w-8 h-8 sm:w-auto sm:h-auto" src={ManSticker}></img>
@@ -78,18 +80,12 @@ function HowWeWork() {
                 />
               </div>
               <div>
-                <TextBlock
-                  className={`mt-4 font-semibold sm:font-medium text-black`}
-                  language={language}
-                >
+                <p className={`mt-4 font-semibold  sm:font-medium text-black`}>
                   {card.title}
-                </TextBlock>
-                <TextBlock
-                  className={`text-black  text-[.8rem] font-light `}
-                  language={language}
-                >
+                </p>
+                <p className={`text-black  text-[.8rem] font-light `}>
                   {card.description}
-                </TextBlock>
+                </p>
               </div>
             </div>
           ))}

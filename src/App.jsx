@@ -81,7 +81,7 @@ function App() {
                   <Route path="/:lang/about" element={<AboutPage />} />
                   <Route path="/:lang/blog" element={<MoreInfo />} />
                   <Route path="/:lang/contact" element={<ContactUs />} />
-                  <Route path="/:lang/blog/:slug" element={<Blog />} />
+
                   <Route
                     path="/:lang/country/:slug"
                     element={<CountryPage />}
@@ -92,6 +92,7 @@ function App() {
                     element={<UniversityPage />}
                   />
                   <Route path="/:lang/courses/:id" element={<CoursePage />} />
+                  <Route path="/:lang/blog/:slug" element={<Blog />} />
                   <Route
                     path="/:lang/searchresults/*"
                     element={<SearchResults />}

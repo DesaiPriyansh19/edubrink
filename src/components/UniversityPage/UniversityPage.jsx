@@ -1,6 +1,5 @@
 import React from "react";
 import UniversityChicago from "../../assets/CountryPage/UniversityChicago.png";
-import University from "../../assets/CountryPage/University.png";
 import TickMark from "../../../svg/TickMark";
 import UniversityRightLayout from "./UniversityRightLayout";
 import UniversityLeftLayout from "./UniversityLeftLayout";
@@ -17,13 +16,12 @@ const UniversityPage = () => {
     `https://edu-brink-backend.vercel.app/api/university/name/${slug}`
   );
 
-  console.log(data);
   return (
     <div className="container mx-auto px-4 sm:px-3 md:px-0 lg:px-8">
       <div className="relative">
         <div className="h-[426px]">
           <img
-            src={data?.uniMainImage}
+            src={data?.uniMainImage || "https://placehold.co/1376x426"}
             alt="University"
             className="w-full h-full object-cover rounded-lg"
           />

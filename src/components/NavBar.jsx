@@ -50,18 +50,24 @@ const NavBar = () => {
   const { language, setLanguage } = useLanguage();
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
-  const { data } = useFetch(`https://edu-brink-backend.vercel.app/api/keyword`);
+  const { data: KeywordData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/keyword`
+  );
 
   const { data: CoursesData } = useFetch(
     `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
   );
 
+  const { data: FacultyData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/faculty`
+  );
+
   const { data: CountryData } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryPhotos"
+    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryPhotos,customURLSlug"
   );
   const navigate = useNavigate();
   const location = useLocation();
-  const keywords = data || [];
+  const keywords = KeywordData || [];
 
   const languageLabels = {
     en: "English",
@@ -260,6 +266,7 @@ const NavBar = () => {
   };
 
   const handleSelectTerm = (term) => {
+    const customSlug = term.customURLSlug?.[language] || term.keyword;
     setSearchState({
       ...searchState,
       searchTerm: term.keyword, // Keep the selected keyword in search input
@@ -268,7 +275,7 @@ const NavBar = () => {
     });
 
     if (term.type === "country") {
-      navigate(`/${language}/country/${term.keyword}`);
+      navigate(`/${language}/country/${customSlug}`);
     } else if (term.type === "tag") {
       setFilterProp((prev) => ({
         ...prev,
@@ -279,9 +286,11 @@ const NavBar = () => {
       }));
       navigate(`/${language}/searchresults`);
     } else if (term.type === "university") {
-      navigate(`/${language}/university/${term.keyword}`);
+      navigate(`/${language}/university/${customSlug}`);
     } else if (term.type === "course") {
-      navigate(`/${language}/courses/${term.keyword}`);
+      navigate(`/${language}/courses/${customSlug}`);
+    } else if (term.type === "blog") {
+      navigate(`/${language}/blog/${customSlug}`);
     } else {
       navigate(`/${language}/searchresults`);
     }
@@ -307,39 +316,39 @@ const NavBar = () => {
     // Process keywords for standard structures (blog, country, university, course)
     const matchedKeywords = keywords
       .filter((item) => item.type !== "tag") // Exclude "tag" for now
-      .map((item) => ({
-        type: item.type,
-        keywords: item.keywords.filter((keyword) =>
-          keyword.toLowerCase().includes(value.toLowerCase())
-        ),
-      }))
-      .filter((item) => item.keywords.length > 0);
+      .flatMap((item) =>
+        item.data
+          .filter((entry) =>
+            entry.keywords.some((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            )
+          )
+          .map((entry) => ({
+            type: item.type,
+            keyword: entry.keywords.find((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            ), // Keep matched keyword
+            customURLSlug: entry.customURLSlug, // Include the slug
+          }))
+      );
 
     // Process keywords for "tag" structure (inside `data`)
     const tagData = keywords.find((item) => item.type === "tag");
     const tagKeywords = tagData
       ? tagData.data.flatMap((tag) =>
-          [...tag.en, ...tag.ar] // Merge English & Arabic tags
+          [...tag.keywords.en, ...tag.keywords.ar] // Merge English & Arabic tags
             .filter((keyword) =>
               keyword.toLowerCase().includes(value.toLowerCase())
             )
             .map((keyword) => ({
               keyword,
               type: "tag",
+              customURLSlug: tag.customURLSlug || null,
             }))
         )
       : [];
 
-    // Flatten and merge both standard and tag-based results
-    const filteredResults = [
-      ...matchedKeywords.flatMap((item) =>
-        item.keywords.map((keyword) => ({
-          keyword,
-          type: item.type,
-        }))
-      ),
-      ...tagKeywords, // Add processed tag keywords
-    ];
+    const filteredResults = [...matchedKeywords, ...tagKeywords];
 
     setSearchState((prevState) => ({
       ...prevState,
@@ -388,12 +397,6 @@ const NavBar = () => {
         return { ...prevState, selectedIndex: newIndex };
       });
     }
-  };
-
-  const getItemClass = (index) => {
-    return index === searchState.selectedIndex
-      ? "bg-gray-200"
-      : "hover:bg-gray-200";
   };
 
   const changeLanguage = (lang) => {
@@ -704,6 +707,7 @@ const NavBar = () => {
       {showCoursesDropdown && (
         <DropdowneCourses
           data={CoursesData}
+          facultyData={FacultyData}
           ref={dropDownCourseRef}
           setShowCoursesDropdown={setShowCoursesDropdown}
           navbarHeight={navbarHeight}

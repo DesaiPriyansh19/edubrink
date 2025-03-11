@@ -14,7 +14,6 @@ const CollegeCard = ({ college, idx }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  console.log(college);
   const features = [
     {
       icon: <BookOpen />,
@@ -43,8 +42,6 @@ const CollegeCard = ({ college, idx }) => {
   const handleLearnMore = (uniName) => {
     navigate(`/${language}/university/${uniName}`);
   };
-
-  console.log(college);
 
   return (
     <div
@@ -92,12 +89,12 @@ const CollegeCard = ({ college, idx }) => {
               {language === "ar" ? college?.uniName?.ar : college?.uniName?.en}
               {/* <img src={college.svgIcon} alt="SVG Icon" className="w-4 h-4 ml-2" /> */}
             </h1>
-            <p className="text-[.8rem] font-medium gap-1 text-black  flex items-center mt-1">
+            <div className="text-[.8rem] font-medium gap-1 text-black  flex items-center mt-1">
               <p>{college?.countryFlag}</p>
               {language === "ar"
                 ? college?.countryName?.ar
                 : college?.countryName?.en}
-            </p>
+            </div>
             <div className="flex items-center mt-1">
               <span className="w-5 h-5 rounded-full mr-1">
                 <PrivetUniLogo />
@@ -199,7 +196,7 @@ const CollegeCarousel = () => {
           }`}
         >
           {data?.map((college, idx) => (
-            <div className="snap-start">
+            <div key={idx} className="snap-start">
               <CollegeCard
                 key={`${college._id}-${
                   college.countryName?.en || college.countryName?.ar

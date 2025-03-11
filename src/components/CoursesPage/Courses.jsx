@@ -33,8 +33,6 @@ const CoursePage = () => {
 
   const { data } = useFetch(apiUrl);
 
-  console.log(data);
-
   return (
     <div
       dir={language === "ar" ? "rtl" : "ltl"}
@@ -55,15 +53,17 @@ const CoursePage = () => {
       </div>
       <div className="">
         <h1 className="text-2xl font-bold text-black mb-4">
-          📚 {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
+          📚 {data?.CourseName?.[language]}
           <div className="flex me-4 items-center mt-4">
             <img
-              src={"https://placehold.co/24x24" || data?.uniSymbol}
+              src={data?.university?.uniSymbol || "https://placehold.co/24x24"}
               alt="University Logo"
               className="w-[28px] h-[28px] rounded-full relative"
             />
             <p className="text-lg font-sans font-normal ms-2">
-              {language === "ar" ? data?.uniName?.ar : data?.uniName?.en}
+              {language === "ar"
+                ? data?.university?.uniName?.ar
+                : data?.university?.uniName?.en}
             </p>
           </div>
         </h1>
@@ -160,25 +160,37 @@ const CoursePage = () => {
         </div>
 
         <div className="order-2 md:order-1 flex-1">
-          <div className="ml-[4%] mr-[4%]">
-            <ul className="list-disc space-y-3">
-              {data?.CourseDescription?.[language]
-                ? data.CourseDescription[language]
-                    .split(".")
-                    .filter((desc) => desc.trim())
-                    .map((desc, index) => <li key={index}>{desc.trim()}.</li>)
-                : "No description available."}
-            </ul>
-            {data?.CourseDescription?.en &&
-              data.CourseDescription.en.split(".").filter((desc) => desc.trim())
-                .length > 1 && (
+          <div className="mx-[4%]">
+            {data?.CourseDescription?.[language] ? (
+              <>
+                <div
+                  className={`relative transition-all duration-300 ease-in-out ${
+                    isExpanded ? "max-h-full" : "max-h-40 overflow-hidden"
+                  }`}
+                >
+                  {/* Display Course Description using dangerouslySetInnerHTML */}
+                  <div
+                    className="prose max-w-none text-gray-700 text-lg leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: data.CourseDescription[language],
+                    }}
+                  />
+                  {!isExpanded && (
+                    <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent"></div>
+                  )}
+                </div>
+
+                {/* Read More / Read Less Button */}
                 <button
                   onClick={toggleReadMore}
-                  className="mt-3 px-4 py-2 bg-blue-500 text-white rounded"
+                  className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-md transition duration-200"
                 >
                   {isExpanded ? "Read Less" : "Read More"}
                 </button>
-              )}
+              </>
+            ) : (
+              <p className="text-gray-500 italic">No description available.</p>
+            )}
           </div>
         </div>
       </div>

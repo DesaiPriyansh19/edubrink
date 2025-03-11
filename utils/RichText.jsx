@@ -7,6 +7,7 @@ const RichText = ({ value, onChange, label, className = "h-64" }) => {
     () => ({
       toolbar: [
         [{ header: [1, 2, 3, false] }],
+        [{ size: ["small", false, "large", "huge"] }], // Text size options
         ["bold", "italic", "underline", "strike"],
         [{ list: "ordered" }, { list: "bullet" }],
         ["link", "blockquote"],
@@ -19,6 +20,7 @@ const RichText = ({ value, onChange, label, className = "h-64" }) => {
 
   const formats = [
     "header",
+    "size",
     "bold",
     "italic",
     "underline",
