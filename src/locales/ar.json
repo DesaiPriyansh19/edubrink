@@ -187,5 +187,70 @@
   "searchResult": {
     "uniTitle": "الجامعات المفضلة",
     "uniDesc": "اكتشف أفضل وجهات الدراسة في الخارج، حيث توفر كل منها تجارب ثقافية فريدة، وتفوقًا أكاديميًا، وفرصًا وظيفية. من المدن النابضة بالحياة."
+  },
+  "DropDownCourse": {
+    "Coursetitle": "الدورة العليا",
+    "FacultyTitle": "كلية شعبية"
+  },
+  "DropDownCountry": {
+    "title": "أفضل المؤسسات في"
+  },
+  "UniversitySlugPage": {
+    "Courses": "الدورات",
+    "Year": "سنة",
+    "StudyLevel": "مستوى الدراسة",
+    "Subjects": "المواضيع",
+    "TuitionFees": "الرسوم الدراسية",
+    "Deadline": "الموعد النهائي",
+    "ModeOfStudy": "نظام الدراسة",
+    "Discount": "تخفيض",
+    "InterFees": "رسوم التعليم للطلاب الدوليين",
+    "Language": "اللغة",
+    "PerYear": "سنوياً",
+    "Duration": "المدة",
+    "StartMonth": "شهر البدء",
+    "ApplicationDeadline": "الموعد النهائي للتقديم",
+    "CounsellorTitle": "مستشار مخصص",
+    "CounsellorName": "جون سميث",
+    "CounsellorDesc": "شكرًا على التواصل! أنا متحمس للتواصل مع محترفين في [المجال]. أتطلع إلى تبادل الأفكار والتعلم من بعضنا البعض. إذا كان هناك أي شيء يمكنني المساعدة فيه، لا تتردد في التواصل.",
+    "CallNow": "اتصل الآن",
+    "ChatNow": "تحدث الآن",
+    "Highlight": "إبراز",
+    "HighlightArray": [
+      "نظرة عامة",
+      "الإقامة",
+      "المكتبة",
+      "الرياضة",
+      "حياة الطالب"
+    ],
+    "Campus": "الحرم الجامعي",
+    "Facilities": "المرافق"
+  },
+  "CourseSlugPage": {
+    "Country": "دولة",
+    "Requirements": "متطلبات",
+    "ScholarshipAva": "متاح",
+    "ScholarshipOptions": "خيارات المنح الدراسية"
+  },
+  "Footer": {
+    "SubscribeMessage": "ابقَ على اطلاع بكل شيء عن إديوبرينك من خلال الاشتراك معنا!",
+    "PrivacyConsent": "من خلال الاشتراك، فإنك توافق على <1>سياسة الخصوصية</1> وتمنح الموافقة على تلقي التحديثات.",
+    "PrivacyPolicy": "سياسة الخصوصية",
+    "YourEmailPlaceholder": "أدخل بريدك الإلكتروني هنا",
+    "Universities": "الجامعات",
+    "Countries": "الدول",
+    "Courses": "الدورات",
+    "SocialMedia": "وسائل التواصل الاجتماعي",
+    "Pages": "الصفحات",
+    "University": "الجامعة",
+    "Destination": "الوجهة",
+    "Copyright": "جميع الحقوق محفوظة@ 2023",
+    "EdubrinkYear": "إديوبرينك @ 2024",
+    "Submit": "إرسال",
+    "SocialLinks": {
+      "Facebook": "فيسبوك",
+      "Twitter": "تويتر",
+      "Instagram": "إنستغرام"
+    }
   }
 }

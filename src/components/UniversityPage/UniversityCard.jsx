@@ -20,15 +20,25 @@ const UniversityCard = ({ data, language }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-[8px] text-sm">
                   <div className="bg-[rgba(248,248,248,1)] p-[16px] rounded-tl-[1.2rem]">
-                    <p className="font-semibold">Tuition Fees</p>
-                    <p>${item.CourseFees}/Year</p>
+                    <p className="font-semibold">
+                      {t("UniversitySlugPage.TuitionFees")}
+                    </p>
+                    <p>
+                      ${item.CourseFees}/ {t("UniversitySlugPage.Year")}
+                    </p>
                   </div>
                   <div className="bg-[rgba(248,248,248,1)] p-[16px] rounded-tr-[1.2rem]">
-                    <p className="font-semibold ">Language</p>
+                    <p className="font-semibold ">
+                      {" "}
+                      {t("UniversitySlugPage.Language")}
+                    </p>
                     <p>{data?.spokenLanguage[0] || "English"}</p>
                   </div>
                   <div className="bg-[rgba(248,248,248,1)] p-[16px] rounded-bl-[1.2rem]">
-                    <p className="font-semibold">Deadline</p>
+                    <p className="font-semibold">
+                      {" "}
+                      {t("UniversitySlugPage.Deadline")}
+                    </p>
                     <p>
                       {" "}
                       {item?.DeadLine
@@ -41,7 +51,9 @@ const UniversityCard = ({ data, language }) => {
                     </p>
                   </div>
                   <div className="bg-[rgba(248,248,248,1)] p-[16px] rounded-br-[1.2rem]">
-                    <p className="font-semibold">Mode Of Study</p>
+                    <p className="font-semibold">
+                      {t("UniversitySlugPage.ModeOfStudy")}
+                    </p>
                     <p>
                       {language === "ar"
                         ? item?.ModeOfStudy?.ar?.[0]

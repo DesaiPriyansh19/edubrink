@@ -13,6 +13,8 @@ import Loader from "../../../../utils/Loader";
 import useApiData from "../../../../hooks/useApiData";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+import { getEmoji } from "../../../../libs/countryFlags";
+const isWindows = navigator.userAgent.includes("Windows");
 
 export default function CountryCRUD() {
   const navigate = useNavigate();
@@ -168,20 +170,27 @@ export default function CountryCRUD() {
                   <tr key={country._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 flex-shrink-0">
-                          {!country?.countryPhotos?.countryFlag ? (
-                            <img
-                              src={
-                                country?.countryPhotos?.countryFlag ||
-                                "https://placehold.co/20x20"
-                              }
-                              alt={country?.countryName[language]}
-                              className="h-10 w-10 rounded-lg object-cover"
-                            />
+                        <div
+                          className={`${
+                            isWindows ? "h-auto w-auto" : "h-10 w-10"
+                          } flex-shrink-0`}
+                        >
+                          {isWindows ? (
+                            <>
+                              <img
+                                src={`https://flagcdn.com/w320/${getEmoji(
+                                  country.countryCode
+                                )}.png`}
+                                alt="Country Flag"
+                                className="w-8 h-8  object-cover rounded-full"
+                              />
+                            </>
                           ) : (
-                            <p className="text-center text-4xl">
-                              {country?.countryPhotos?.countryFlag}
-                            </p>
+                            <>
+                              <p className="text-center text-4xl">
+                                {country?.countryPhotos?.countryFlag}
+                              </p>
+                            </>
                           )}
                         </div>
                       </div>

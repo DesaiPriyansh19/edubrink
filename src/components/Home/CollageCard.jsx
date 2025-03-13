@@ -1,16 +1,15 @@
 import React from "react";
 import Book from "../../assets/Book.png";
-import DollerRounded from "../../../svg/DollerRounded/Index";
-import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
-import DiscountLogo from "../../../svg/DiscountLogo/Index";
+
 import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, GraduationCap } from "lucide-react";
+import { getEmoji } from "../../../libs/countryFlags";
 
-const CollegeCard = ({ college, idx }) => {
+const CollegeCard = ({ college, idx, isWindows }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -39,8 +38,9 @@ const CollegeCard = ({ college, idx }) => {
     // },
   ];
 
-  const handleLearnMore = (uniName) => {
-    navigate(`/${language}/university/${uniName}`);
+  const handleLearnMore = (customURLSlug) => {
+    console.log(customURLSlug);
+    navigate(`/${language}/university/${customURLSlug}`);
   };
 
   return (
@@ -90,10 +90,25 @@ const CollegeCard = ({ college, idx }) => {
               {/* <img src={college.svgIcon} alt="SVG Icon" className="w-4 h-4 ml-2" /> */}
             </h1>
             <div className="text-[.8rem] font-medium gap-1 text-black  flex items-center mt-1">
-              <p>{college?.countryFlag}</p>
-              {language === "ar"
-                ? college?.countryName?.ar
-                : college?.countryName?.en}
+              {isWindows ? (
+                college?.countryCode ? (
+                  <img
+                    src={`https://flagcdn.com/w320/${getEmoji(
+                      college.countryCode
+                    )}.png`}
+                    alt="Country Flag"
+                    className="w-3 h-3 object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-[.6rem] font-medium">No flag</span>
+                )
+              ) : (
+                <span className="text-base filter transition-all duration-300 group-hover:rotate-12">
+                  <p>{college?.countryFlag}</p>
+                </span>
+              )}
+
+              <p>{college?.countryName?.[language]}</p>
             </div>
             <div className="flex items-center mt-1">
               <span className="w-5 h-5 rounded-full mr-1">
@@ -136,7 +151,7 @@ const CollegeCard = ({ college, idx }) => {
           {t("applyNow")}
         </button>
         <button
-          onClick={() => handleLearnMore(college?.uniName?.en)}
+          onClick={() => handleLearnMore(college?.customURLSlug?.[language])}
           className="  text-black text-sm px-3 py-2 hover:font-medium  rounded-full border-2 border-gray-800"
         >
           {t("learnMore")}
@@ -147,10 +162,12 @@ const CollegeCard = ({ college, idx }) => {
 };
 
 const CollegeCarousel = () => {
+  const isWindows = navigator.userAgent.includes("Windows");
   const API_URL = import.meta.env.VITE_API_URL;
   const { data } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/university`
+    `https://edu-brink-backend.vercel.app/api/university/fields/query?limit=5&fields=uniName,uniSymbol,scholarshipAvailability,uniType,countryName,countryFlag,courseId,customURLSlug`
   );
+
   const { t } = useTranslation();
   const { language } = useLanguage();
   return (
@@ -201,6 +218,7 @@ const CollegeCarousel = () => {
                 key={`${college._id}-${
                   college.countryName?.en || college.countryName?.ar
                 }`}
+                isWindows={isWindows}
                 college={college}
                 idx={idx}
               />

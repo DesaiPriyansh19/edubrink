@@ -9,7 +9,7 @@ import {
   BookOpen,
   Tag,
 } from "lucide-react";
-import { countryFlags } from "../../../../libs/countryFlags";
+import { countryFlags, getEmoji } from "../../../../libs/countryFlags";
 import { useLanguage } from "../../../../context/LanguageContext";
 import useApiData from "../../../../hooks/useApiData";
 import InputField from "../../../../utils/InputField";
@@ -19,6 +19,7 @@ import DropdownSelect from "../../../../utils/DropdownSelect";
 import Loader from "../../../../utils/Loader";
 import MetaArrayFields from "../Universities/MetaArrayFields";
 import RichText from "../../../../utils/RichText";
+const isWindows = navigator.userAgent.includes("Windows");
 
 // const countryTemplates = [
 //   {
@@ -214,36 +215,7 @@ export default function EditCountry() {
   const [activeSection, setActiveSection] = useState(null > null);
   const [showFlagPicker, setShowFlagPicker] = useState(false);
   const [flagSearch, setFlagSearch] = useState("");
-
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          ["link", "blockquote"],
-          [{ align: [] }],
-          ["clean"],
-        ],
-      },
-    }),
-    []
-  );
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "link",
-    "blockquote",
-    "align",
-  ];
-
+  const { filteredData, handleRemove, handleAdd } = useDropdownData();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -546,14 +518,39 @@ export default function EditCountry() {
                   className="w-full flex items-center justify-between px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
                 >
                   <span className="flex items-center">
-                    <span className="text-2xl mr-2">
-                      {formData.countryPhotos.countryFlag || "🏳"}{" "}
-                      {/* White flag if empty */}
-                    </span>
-                    <span className="text-gray-600">
-                      {formData?.countryName?.en || "Select Flag"}{" "}
-                      {/* Placeholder if name is empty */}
-                    </span>
+                    {isWindows ? (
+                      formData?.countryCode ? (
+                        <>
+                          <img
+                            src={`https://flagcdn.com/w320/${getEmoji(
+                              formData.countryCode
+                            )}.png`}
+                            alt="Country Flag"
+                            className="w-4 h-4  object-cover rounded-full"
+                          />
+
+                          <span className="ml-2 text-gray-600">
+                            {formData.countryName?.en || "Select Flag"}{" "}
+                            {/* Placeholder if name is empty */}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-[.6rem] font-medium">
+                          No flag
+                        </span>
+                      )
+                    ) : (
+                      <>
+                        <span className="text-2xl mr-2">
+                          {formData.countryPhotos.countryFlag || "🏳"}{" "}
+                          {/* White flag if empty */}
+                        </span>
+                        <span className="text-gray-600">
+                          {formData.countryName.en || "Select Flag"}{" "}
+                          {/* Placeholder if name is empty */}
+                        </span>
+                      </>
+                    )}
                   </span>
                   <Flag className="w-5 h-5 text-gray-400" />
                 </button>
@@ -592,11 +589,35 @@ export default function EditCountry() {
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
-                          <span className="text-2xl">{country.emoji}</span>
-                          <span>{country.name}</span>
-                          <span className="text-gray-400 text-sm">
-                            ({country.alpha3})
-                          </span>
+                          {isWindows ? (
+                            country?.alpha3 ? (
+                              <>
+                                <img
+                                  src={`https://flagcdn.com/w320/${getEmoji(
+                                    country.alpha3
+                                  )}.png`}
+                                  alt="Country Flag"
+                                  className="w-4 h-4 object-cover  rounded-full"
+                                />
+                                <span>{country.name}</span>
+                                <span className="text-gray-400 text-sm">
+                                  ({country.alpha3})
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-[.6rem] font-medium">
+                                No flag
+                              </span>
+                            )
+                          ) : (
+                            <>
+                              <span className="text-2xl">{country.emoji}</span>
+                              <span>{country.name}</span>
+                              <span className="text-gray-400 text-sm">
+                                ({country.alpha3})
+                              </span>
+                            </>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -858,10 +879,11 @@ export default function EditCountry() {
             />
           </div>
 
-          {/* <DropdownSelect
-            label="Enroll University (التسجيل في الجامعة)"
+          <DropdownSelect
+            label="Enrolled University (التسجيل في الجامعة)"
             placeholder="Select a university"
             icon={School}
+            disabled={true}
             selectedItems={formData?.universities}
             searchKey="uniName"
             options={filteredData?.universities}
@@ -883,12 +905,12 @@ export default function EditCountry() {
             setShowDropdown={setShowDropdown}
           />
 
-
           <DropdownSelect
-            label="Enroll Blog (سجل في المدونة)"
+            label="Enrolled Blog (سجل في المدونة)"
             placeholder="Select a blog"
             icon={BookOpen}
             selectedItems={formData?.blog}
+            disabled={true}
             searchKey="blogTitle"
             options={filteredData?.blogs}
             onSearch={(value) =>
@@ -902,7 +924,7 @@ export default function EditCountry() {
             dropdownKey="blogs"
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
-          /> */}
+          />
 
           <InputField
             label="Hot Destination"

@@ -17,6 +17,8 @@ import useFetch from "../../../hooks/useFetch";
 import AOS from "aos";
 import axios from "axios";
 import SearchBar from "./SearchBar";
+import { useLanguage } from "../../../context/LanguageContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = ({ data: notifications, refetch }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -28,16 +30,19 @@ const Header = ({ data: notifications, refetch }) => {
   const [currentLanguage, setCurrentLanguage] = useState("en");
   const notificationRef = useRef(null);
   const allNotificationsRef = useRef(null);
+  const { setLanguage } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const languages = [
     { code: "en", name: "English" },
-    { code: "es", name: "Español" },
-    { code: "fr", name: "Français" },
+    { code: "ar", name: "Arabic" },
   ];
 
-  const handleLanguageChange = (langCode) => {
-    setCurrentLanguage(langCode);
-    // Here you would typically call a function to change the app's language
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    setCurrentLanguage(lang);
+    navigate(`/${lang}${location.pathname.substring(3)}`); // Update URL while keeping the existing path
   };
 
   const getNotificationTitle = (message, item) => {
@@ -425,7 +430,7 @@ const Header = ({ data: notifications, refetch }) => {
                                 ? "bg-blue-100 text-blue-700"
                                 : "text-gray-700 hover:bg-gray-200"
                             }`}
-                            onClick={() => handleLanguageChange(lang.code)}
+                            onClick={() => changeLanguage(lang.code)}
                           >
                             {lang.name}
                           </button>

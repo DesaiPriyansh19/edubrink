@@ -32,10 +32,7 @@ const CountryPage = () => {
   }
 
   return (
-    <div
-      dir={language === "ar" ? "rtl" : "ltl"}
-      className="max-w-[1240px] px-10  mx-auto py-8 font-sans"
-    >
+    <div className="max-w-[1240px] px-10  mx-auto py-8 font-sans">
       <div className="text-sm mb-4 flex items-center">
         <div className="flex items-center">
           <CountryHome />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Download from "../../../svg/Download";
 import DatePicker from "../../../svg/DatePicker";
 import Seconds from "../../../svg/Seconds";
@@ -8,18 +8,24 @@ import TicketDiscount from "../../../svg/TicketDiscount";
 import Watch from "../../../svg/Watch";
 import UniversityRightLayoutCard from "./UniversityRightLayoutCard";
 import { useTranslation } from "react-i18next";
+import { Share2 } from "lucide-react";
+import ShareCard from "../../../utils/ShareCard";
 
 const UniversityRightLayout = ({ data, language }) => {
+  const courseUrl = typeof window !== "undefined" ? window.location.href : "";
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { t } = useTranslation();
-  console.log(data);
   return (
     <>
       <div className="mt-5">
         <div className="container">
           <div className="flex gap-[22px] items-center">
             {/* Download Button - Fixed Size */}
-            <div className="w-[52px] h-[52px] rounded-full border-[1.5px] flex items-center justify-center border-black">
-              <Download />
+            <div
+              onClick={() => setIsShareModalOpen(true)}
+              className="w-[50px] h-[50px] rounded-full border-[1.5px] flex items-center justify-center border-black"
+            >
+              <Share2 />
             </div>
 
             {/* Apply Now Button - Takes Remaining Space */}
@@ -39,10 +45,11 @@ const UniversityRightLayout = ({ data, language }) => {
                       </div>
                       <div>
                         <p className="text-lg font-medium leading-5">
-                          ${data?.uniTutionFees} Per Year
+                          ${data?.uniTutionFees}{" "}
+                          {t("UniversitySlugPage.PerYear")}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          International Student tutition fee
+                          {t("UniversitySlugPage.InterFees")}
                         </p>
                       </div>
                     </div>
@@ -56,7 +63,7 @@ const UniversityRightLayout = ({ data, language }) => {
                           {data?.uniDuration}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          Duration
+                          {t("UniversitySlugPage.Duration")}
                         </p>
                       </div>
                     </div>
@@ -78,7 +85,7 @@ const UniversityRightLayout = ({ data, language }) => {
                             : ""}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          Start Month
+                          {t("UniversitySlugPage.StartMonth")}
                         </p>
                       </div>
                     </div>
@@ -100,7 +107,7 @@ const UniversityRightLayout = ({ data, language }) => {
                             : ""}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          Application Deadline
+                          {t("UniversitySlugPage.ApplicationDeadline")}
                         </p>
                       </div>
                     </div>
@@ -117,7 +124,7 @@ const UniversityRightLayout = ({ data, language }) => {
                         </p>
 
                         <p className="text-sm font-sans font-normal leading-5">
-                          Mode Of Study
+                          {t("UniversitySlugPage.ModeOfStudy")}
                         </p>
                       </div>
                     </div>
@@ -128,7 +135,7 @@ const UniversityRightLayout = ({ data, language }) => {
                       </div>
                       <div>
                         <p className="text-lg font-medium leading-5">
-                          Discount
+                          {t("UniversitySlugPage.Discount")}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
                           {language === "ar"
@@ -145,6 +152,13 @@ const UniversityRightLayout = ({ data, language }) => {
         </div>
         <UniversityRightLayoutCard />
       </div>
+      <ShareCard
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        contentTitle={data?.uniName?.[language] || "University"}
+        contentType={"university"}
+        contentUrl={courseUrl}
+      />
     </>
   );
 };

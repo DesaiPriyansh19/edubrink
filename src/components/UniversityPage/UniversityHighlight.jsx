@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import Star from "../../../svg/StarLogo";
 import UniversityLogo from "../../../svg/UniversityLogo";
+import { useTranslation } from "react-i18next";
 
 const UniversityHighlight = ({ data, language }) => {
   const [activeSection, setActiveSection] = useState("overview"); // Track active section
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false); // Track if content is expanded
   const contentRef = useRef(null); // Ref to measure content height
   const [showFullDescription, setShowFullDescription] = useState(false); // State for "Read More"
@@ -40,6 +42,10 @@ const UniversityHighlight = ({ data, language }) => {
     }
   }, [activeSection, data, language]);
 
+  const highlights = t("UniversitySlugPage.HighlightArray", {
+    returnObjects: true,
+  });
+
   return (
     <div className="container ml-5 mt-5">
       <div className="layout-wrapper">
@@ -47,7 +53,9 @@ const UniversityHighlight = ({ data, language }) => {
           <span>
             <Star />
           </span>
-          <p className="font-medium font-sans text-lg leading-7">Highlight</p>
+          <p className="font-medium font-sans text-lg leading-7">
+            {t("UniversitySlugPage.Highlight")}
+          </p>
         </div>
 
         {/* Section Buttons */}
@@ -60,7 +68,7 @@ const UniversityHighlight = ({ data, language }) => {
                 : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
             }`}
           >
-            Overview
+            {highlights[0]}
           </button>
           <button
             onClick={() => handleSectionClick("accommodation")}
@@ -70,7 +78,7 @@ const UniversityHighlight = ({ data, language }) => {
                 : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
             }`}
           >
-            Accommodation
+            {highlights[1]}
           </button>
           <button
             onClick={() => handleSectionClick("library")}
@@ -80,7 +88,7 @@ const UniversityHighlight = ({ data, language }) => {
                 : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
             }`}
           >
-            Library
+            {highlights[2]}
           </button>
           <button
             onClick={() => handleSectionClick("sports")}
@@ -90,7 +98,7 @@ const UniversityHighlight = ({ data, language }) => {
                 : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
             }`}
           >
-            Sports
+            {highlights[3]}
           </button>
           <button
             onClick={() => handleSectionClick("studentLife")}
@@ -100,7 +108,7 @@ const UniversityHighlight = ({ data, language }) => {
                 : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
             }`}
           >
-            Student Life
+            {highlights[4]}
           </button>
         </div>
 
@@ -153,7 +161,7 @@ const UniversityHighlight = ({ data, language }) => {
           <div className="flex gap-4">
             <UniversityLogo />
             <p className="font-sans font-medium text-lg leading-7 text-[#652986]">
-              Campus
+              {t("UniversitySlugPage.Campus")}
             </p>
           </div>
           <div className="flex gap-4 mt-[1.5rem]">
@@ -187,7 +195,13 @@ const UniversityHighlight = ({ data, language }) => {
                         }
                         className="text-[#d65458] text-sm mt-1 hover:text-[#652986]"
                       >
-                        {showFullDescription ? "Read Less" : "Read More"}
+                        {showFullDescription
+                          ? language === "ar"
+                            ? "اقرأ أقل"
+                            : "Read Less"
+                          : language === "ar"
+                          ? "اقرأ المزيد"
+                          : "Read More"}
                       </button>
                     )}
                   </div>
@@ -195,7 +209,9 @@ const UniversityHighlight = ({ data, language }) => {
                   {/* Campus Facilities */}
                   {campus?.campusFacilities?.length > 0 && (
                     <div className="mt-4">
-                      <p className="font-medium text-[#652986]">Facilities:</p>
+                      <p className="font-medium text-[#652986]">
+                        {t("UniversitySlugPage.Facilities")}:
+                      </p>
                       <ul className="list-disc list-inside text-sm text-[#652986]">
                         {campus.campusFacilities.map(
                           (facility, facilityIndex) => (

@@ -1,16 +1,15 @@
 import React from "react";
 import Calander from "../../../../svg/caplogo/Logo/Calander/Index";
 import { Link } from "react-router-dom";
-import useFetch from "../../../../hooks/useFetch";
 import Loader from "../../../../utils/Loader";
-import { useSearch } from "../../../../context/SearchContext";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../../context/LanguageContext";
+
 function ResultsBlog({ filteredData, loading }) {
   const { t } = useTranslation();
   const { language } = useLanguage();
 
-  if (loading) {
+  if (loading && (!filteredData || filteredData.length === 0)) {
     return <Loader />;
   }
 
@@ -39,7 +38,7 @@ function ResultsBlog({ filteredData, loading }) {
           </Link>{" "}
         </div>
       </div>
-      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto  gap-6   py-6 ">
+      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6 py-6">
         {filteredData?.map((card, idx) => (
           <div
             key={idx}
@@ -56,8 +55,8 @@ function ResultsBlog({ filteredData, loading }) {
 
             <p className="text-[#E82448] text-sm font-semibold mt-4 ">
               {language === "ar"
-                ? `الدراسة في ${card?.countryName?.ar || "غير متوفر"}`
-                : `Study in ${card?.countryName?.en || "N/A"}`}
+                ? `الدراسة في ${card?.blogCountry?.countryName?.ar || "غير متوفر"}`
+                : `Study in ${card?.blogCountry?.countryName?.en || "N/A"}`}
             </p>
 
             <h4 className="font-semibold text-lg text-black mt-2 mb-1">

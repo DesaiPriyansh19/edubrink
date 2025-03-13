@@ -7,10 +7,14 @@ import { useLanguage } from "../../../context/LanguageContext";
 import { useSearch } from "../../../context/SearchContext";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Share2 } from "lucide-react";
+import ShareCard from "../../../utils/ShareCard";
+import useDropdownData from "../../../hooks/useDropdownData";
 const MoreInfo = () => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const { slug } = useParams();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { data } = useFetch(
     `https://edu-brink-backend.vercel.app/api/blog/name/${encodeURIComponent(
       slug
@@ -24,10 +28,10 @@ const MoreInfo = () => {
     duration: "",
   });
   const navigate = useNavigate();
+  const blogUrl = typeof window !== "undefined" ? window.location.href : "";
 
-  const { data: Tags } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/tags"
-  );
+  const { addTags } = useDropdownData();
+  console.log(addTags);
 
   const handleChange = (e) => {
     setFilters({
@@ -57,7 +61,7 @@ const MoreInfo = () => {
   };
 
   return (
-    <div dir={language === "ar" ? "rtl" : "ltl"}>
+    <div>
       <div className="max-w-5xl mx-auto px-4 space-y-6">
         {/* Header Section */}
         <div className="flex items-center space-x-2">
@@ -72,6 +76,15 @@ const MoreInfo = () => {
                 })
               : ""}
           </p>
+          <div>
+            <button
+              className="flex items-center justify-center bg-white border border-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-50 transition-all"
+              aria-label="Share course"
+              onClick={() => setIsShareModalOpen(true)}
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
+          </div>
         </div>
         <h1
           className={`text-2xl md:text-3xl lg:text-4xl font-semibold flex justify-start items-start ${
@@ -168,11 +181,9 @@ const MoreInfo = () => {
                   className="w-full mb-5 border-[1.5px] py-2 text-[.755rem] text-gray-700 rounded-xl px-3 bg-white"
                 >
                   <option value="">{t("findCourses.select")}</option>
-                  {Tags?.map((option, idx) => (
-                    <option key={idx} value={option?.TagName?.en}>
-                      {language === "ar"
-                        ? option?.TagName?.ar
-                        : option?.TagName?.en}
+                  {addTags[0]?.tags?.[language]?.map((option, idx) => (
+                    <option key={idx} value={option}>
+                      {option}
                     </option>
                   ))}
                 </select>
@@ -212,6 +223,13 @@ const MoreInfo = () => {
         {" "}
         <RelatedBlogs data={data?.blogCountry} />
       </div>
+      <ShareCard
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        contentTitle={data?.blogTitle?.[language] || "blog"}
+        contentType={"blog"}
+        contentUrl={blogUrl}
+      />
     </div>
   );
 };

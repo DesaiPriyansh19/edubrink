@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
 import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../../svg/DiscountLogo/Index";
@@ -9,6 +9,8 @@ import TickMark from "../../../../svg/TickMark";
 import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
 import ReactGA from "react-ga4";
+import axios from "axios";
+import { useSearch } from "../../../../context/SearchContext";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -40,7 +42,7 @@ const CollegeCard = ({ data, loading }) => {
   };
 
   // Skeleton loader
-  if (loading) {
+  if (loading && (!data || data.length === 0)) {
     return (
       <div
         className={`${
@@ -112,14 +114,14 @@ const CollegeCard = ({ data, loading }) => {
             {
               icon: <DollerRounded />,
               title: language === "ar" ? "الرسوم الدراسية" : "Tuition Fees",
-              description: university?.uniTutionFees || "N/A",
+              description: `$ ${university?.uniTutionFees}` || "N/A",
             },
 
             {
               icon: <ScholerShipLogo />,
               title: language === "ar" ? "المنح الدراسية" : "Scholarship",
               description:
-                university.scholarshipAvailability === true
+                university?.scholarshipAvailability === true
                   ? language === "ar"
                     ? "متاح"
                     : "Available"
@@ -130,7 +132,7 @@ const CollegeCard = ({ data, loading }) => {
             {
               icon: <DiscountLogo />,
               title: language === "ar" ? "الخصم" : "Discount",
-              description: university.uniDiscount
+              description: university?.uniDiscount
                 ? language === "ar"
                   ? "متاح"
                   : "Available"
@@ -181,10 +183,12 @@ const CollegeCard = ({ data, loading }) => {
                     </h1>
 
                     <div className="text-sm font-medium gap-1 text-gray-700 flex items-center mt-1">
-                      <p>{university?.countryPhotos?.countryFlag}</p>
+                      <p>
+                        {university?.uniCountry?.countryPhotos?.countryFlag}
+                      </p>
                       {language === "ar"
-                        ? university?.countryName?.ar
-                        : university?.countryName?.en || "N/A"}
+                        ? university?.uniCountry?.countryName?.ar
+                        : university?.uniCountry?.countryName?.en || "N/A"}
                     </div>
 
                     <div className="flex items-center mt-1">
@@ -231,13 +235,13 @@ const CollegeCard = ({ data, loading }) => {
 
               <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                 <button
-                  onClick={() =>
-                    handleApplyClick(
-                      university._id,
-                      university.uniName,
-                      university.countryName
-                    )
-                  }
+                  // onClick={() =>
+                  //   handleApplyClick(
+                  //     university._id,
+                  //     university.uniName,
+                  //     university.countryName
+                  //   )
+                  // }
                   className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
                 >
                   {t("applyNow")}
@@ -262,9 +266,113 @@ const CollegeCard = ({ data, loading }) => {
   );
 };
 
-function Univrsiry({ filteredData, loading }) {
+function Univrsiry({
+  loading: initialLoading,
+  filteredData: initialData,
+  countryIds,
+}) {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const { filterProp } = useSearch();
+  const [universities, setUniversities] = useState(initialData || []);
+  const [loading, setLoading] = useState(initialLoading);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loaderRef = useRef(null);
+
+  const filterPropRef = useRef(filterProp);
+
+  // API base URL
+  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
+
+  useEffect(() => {
+    if (JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp)) {
+      filterPropRef.current = filterProp;
+      // Reset pagination state
+      setPage(1);
+      setHasMore(true);
+    }
+    if (initialData) {
+      setUniversities(initialData);
+      setPage(1);
+      setHasMore(initialData.length > 0);
+    }
+  }, [filterProp, initialData]);
+
+  useEffect(() => {
+    // Set loading state based on initialLoading
+    setLoading(initialLoading);
+  }, [initialLoading]);
+
+  // Function to fetch more courses
+  const fetchMoreUniversities = async () => {
+    if (!hasMore || loadingMore) return;
+
+    try {
+      setLoadingMore(true);
+
+      // Create course filters object with all the necessary filters
+
+      const universityFilters = {
+        countryIds: countryIds?.length ? countryIds.join(",") : "",
+        StudyLevel: filterProp.StudyLevel,
+        EntranceExam: filterProp.EntranceExam,
+        UniType: filterProp.UniType,
+        IntakeYear: filterProp.IntakeYear,
+        IntakeMonth: filterProp.IntakeMonth,
+        Destination: filterProp.Destination, // Required to filter universities by country
+        page: page + 1, // Next page
+      };
+
+      // Make API request with all filters
+      const response = await axios.get(`${API_BASE_URL}/university`, {
+        params: universityFilters,
+      });
+
+      // Check if we got data back
+      if (response.data.data && response.data.data.length > 0) {
+        console.log(response.data.data);
+        setUniversities((prevUniversities) => [
+          ...prevUniversities, // ✅ Preserve old data
+          ...response.data.data, // ✅ Append new data
+        ]);
+        setPage(page + 1);
+        setHasMore(response.data.pagination.hasMore);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more courses:", error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Set up Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          fetchMoreUniversities();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoaderRef = loaderRef.current;
+
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
+    }
+
+    return () => {
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
+      }
+    };
+  }, [hasMore, loadingMore, countryIds, filterProp]); // Added filterProp to dependencies
+
   return (
     <>
       <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-20">
@@ -290,7 +398,29 @@ function Univrsiry({ filteredData, loading }) {
         dir={language === "ar" ? "rtl" : "ltr"}
         className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}
       >
-        <CollegeCard data={filteredData?.flat()} loading={loading} />
+        <CollegeCard data={universities} loading={loading} />
+        {hasMore && universities?.length > 0 && (
+          <div className="flex justify-center w-full py-4">
+            <div
+              ref={loaderRef}
+              className={`flex items-center justify-center ${
+                loadingMore ? "block" : "hidden"
+              }`}
+            >
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        )}
+
+        {/* No results message */}
+        {!loading && universities?.length === 0 && (
+          <div className="col-span-full text-center py-8">
+            <p className="text-lg text-gray-500">
+              {t("noUniversitiesFound") ||
+                "No univeristies found. Try adjusting your filters."}
+            </p>
+          </div>
+        )}
       </div>
     </>
   );

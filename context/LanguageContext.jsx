@@ -12,6 +12,11 @@ export const LanguageProvider = ({ children }) => {
   useEffect(() => {
     i18n.changeLanguage(language);
     localStorage.setItem("language", language);
+
+    document.documentElement.setAttribute(
+      "dir",
+      language === "ar" ? "rtl" : "ltr"
+    );
   }, [language]);
 
   return (

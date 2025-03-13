@@ -1,26 +1,121 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import DollerRounded from "../../../svg/DollerRounded/Index";
 import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
 import DiscountLogo from "../../../svg/DiscountLogo/Index";
 import TickMark from "../../../svg/TickMark";
 import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { getEmoji } from "../../../libs/countryFlags";
+const isWindows = navigator.userAgent.includes("Windows");
 
-function ExploreTopUniversity({ filteredData, language }) {
+function ExploreTopUniversity({ language }) {
   const { t } = useTranslation();
-  // Array of buttons and corresponding content
-  // const items = [
-  //   { id: 1, label: "Button", content: "Content for Button" },
-  //   { id: 2, label: "Button", content: "Content for Button" },
-  //   { id: 3, label: "Button", content: "Content for Button" },
-  //   { id: 4, label: "Button", content: "Content for Button" },
-  //   { id: 5, label: "Button", content: "Content for Button" },
-  //   { id: 6, label: "Button", content: "Content for Button" },
-  //   { id: 7, label: "Button", content: "Content for Button" },
-  //   { id: 8, label: "Button", content: "Content for Button" },
-  //   { id: 9, label: "Button", content: "Content for Button" },
-  //   { id: 10, label: "Button", content: "Content for Button" },
-  // ];
+  const navigate = useNavigate();
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [lastId, setLastId] = useState(null);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [initialFetch, setInitialFetch] = useState(true);
+  const observer = useRef(null);
+  const loadingRef = useRef(null);
+
+  const handleNavigate = (universityName) => {
+    navigate(`/${language}/university/${universityName}`);
+  };
+
+  const handleApplyClick = (universityId, countryName) => {
+    // Your apply logic here
+    console.log(
+      "Applied for university:",
+      universityId,
+      "in country:",
+      countryName
+    );
+  };
+
+  const fetchUniversities = useCallback(async () => {
+    // Don't fetch if we're already loading or there's no more data (except for initial fetch)
+    if (loading || (!hasNextPage && !initialFetch)) return;
+
+    try {
+      setLoading(true);
+      const limit = initialFetch ? 3 : 5;
+
+      console.log(
+        "Fetching universities with lastId:",
+        lastId,
+        "initialFetch:",
+        initialFetch
+      );
+
+      const url = `https://edu-brink-backend.vercel.app/api/university/getAll/User/Insta?limit=${limit}${
+        lastId ? `&lastId=${lastId}` : ""
+      }`;
+
+      console.log("Fetching:", url); // ✅ Debugging URL
+
+      const response = await fetch(url);
+
+      const result = await response.json();
+
+      if (initialFetch) {
+        setUniversities(result.data);
+        setInitialFetch(false);
+      } else {
+        setUniversities((prev) => [...prev, ...result.data]);
+      }
+
+      setLastId(result.meta.lastId);
+      setHasNextPage(result.meta.hasNextPage);
+    } catch (error) {
+      console.error("Error fetching universities:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [lastId, hasNextPage, initialFetch, loading]);
+
+  useEffect(() => {
+    // Only fetch initial data once when component mounts
+    if (initialFetch) {
+      fetchUniversities();
+    }
+  }, [initialFetch]);
+
+  // Set up intersection observer for infinite scrolling
+  useEffect(() => {
+    // Don't set up observer if we're already loading or there's no more data
+    if (loading || !hasNextPage) return;
+
+    // Disconnect previous observer if it exists
+    if (observer.current) observer.current.disconnect();
+
+    const callback = (entries) => {
+      // Only fetch more if we're not already loading, there's more data, and the element is intersecting
+      if (
+        entries[0].isIntersecting &&
+        hasNextPage &&
+        !loading &&
+        !initialFetch
+      ) {
+        fetchUniversities();
+      }
+    };
+
+    observer.current = new IntersectionObserver(callback, {
+      rootMargin: "100px",
+    });
+
+    if (loadingRef.current) {
+      observer.current.observe(loadingRef.current);
+    }
+
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [loading, hasNextPage, fetchUniversities, initialFetch]);
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -36,94 +131,117 @@ function ExploreTopUniversity({ filteredData, language }) {
 
       {/* Dynamic Buttons */}
       <h3 className="text-4xl font-semibold mb-11">
-        {" "}
         {t("explore_university.top_university")}
       </h3>
-      <div className={` grid grid-cols-1 sm:grid-cols-2 gap-4`}>
-        {filteredData?.map((university, idx) => {
-          const dynamicFeatures = [
-            {
-              icon: <DollerRounded />,
-              title: language === "ar" ? "الرسوم الدراسية" : "Tuition Fees",
-              description: university?.uniTutionFees || "N/A",
-            },
 
-            {
-              icon: <ScholerShipLogo />,
-              title: language === "ar" ? "المنح الدراسية" : "Scholarship",
-              description:
-                university.scholarshipAvailability === true
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {universities.length > 0 &&
+          universities.map((university, idx) => {
+            const dynamicFeatures = [
+              {
+                icon: <DollerRounded />,
+                title: language === "ar" ? "الرسوم الدراسية" : "Tuition Fees",
+                description: university?.uniTutionFees || "N/A",
+              },
+              {
+                icon: <ScholerShipLogo />,
+                title: language === "ar" ? "المنح الدراسية" : "Scholarship",
+                description:
+                  university.scholarshipAvailability === true
+                    ? language === "ar"
+                      ? "متاح"
+                      : "Available"
+                    : language === "ar"
+                    ? "غير متاح"
+                    : "Not Available",
+              },
+              {
+                icon: <DiscountLogo />,
+                title: language === "ar" ? "الخصم" : "Discount",
+                description: university.uniDiscount
                   ? language === "ar"
                     ? "متاح"
                     : "Available"
                   : language === "ar"
                   ? "غير متاح"
                   : "Not Available",
-            },
-            {
-              icon: <DiscountLogo />,
-              title: language === "ar" ? "الخصم" : "Discount",
-              description: university.uniDiscount
-                ? language === "ar"
-                  ? "متاح"
-                  : "Available"
-                : language === "ar"
-                ? "غير متاح"
-                : "Not Available",
-            },
-          ];
-          return (
-            <div
-              key={idx}
-              dir={language === "ar" ? "rtl" : "ltr"}
-              className={`relative mt-6 border rounded-xl shadow-md bg-white max-w-full `}
-            >
-              <div className="p-4 sm:p-6">
-                <div
-                  className={`absolute top-0 ${
-                    language === "ar"
-                      ? "left-0 rounded-br-[4px]  rounded-tl-xl"
-                      : "right-0 rounded-bl-[4px] rounded-tr-xl"
-                  }  bg-red-500 text-white text-xs sm:text-sm px-2 py-1 `}
-                >
-                  {t("mostPopular")}
-                </div>
+              },
+            ];
 
-                <div className="flex gap-3 sm:gap-4 items-center mb-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20">
-                    <img
-                      src={"https://placehold.co/80x80"}
-                      alt="Logo"
-                      className="w-full h-full rounded-full object-cover"
-                    />
+            return (
+              <div
+                key={idx}
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full"
+              >
+                <div className="p-4 sm:p-6">
+                  <div
+                    className={`absolute top-0 ${
+                      language === "ar"
+                        ? "left-0 rounded-br-[4px] rounded-tl-xl"
+                        : "right-0 rounded-bl-[4px] rounded-tr-xl"
+                    } bg-red-500 text-white text-xs sm:text-sm px-2 py-1`}
+                  >
+                    {t("mostPopular")}
                   </div>
-                  <div className="flex-1">
-                    <h1 className="text-lg font-semibold gap-1 flex">
-                      {language === "ar"
-                        ? university?.uniName?.ar
-                        : university?.uniName?.en || "N/A"}
-                      <span>
-                        <TickMark />
-                      </span>
-                    </h1>
 
-                    <p className="text-sm font-medium text-gray-700 flex items-center mt-1">
+                  <div className="flex gap-3 sm:gap-4 items-center mb-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20">
                       <img
-                        src={"https://placehold.co/20x20"}
-                        alt="Flag"
-                        className="w-4 h-4 sm:w-5 sm:h-5 rounded-full mr-2"
+                        src={
+                          university.uniSymbol || "https://placehold.co/80x80"
+                        }
+                        alt="Logo"
+                        className="w-full h-full rounded-full object-cover"
                       />
-                      {language === "ar"
-                        ? university?.countryName?.ar
-                        : university?.countryName?.en || "N/A"}
-                    </p>
+                    </div>
+                    <div className="flex-1">
+                      <h1 className="text-lg font-semibold gap-1 flex">
+                        {language === "ar"
+                          ? university?.uniName?.ar
+                          : university?.uniName?.en || "N/A"}
+                        <span>
+                          <TickMark />
+                        </span>
+                      </h1>
 
-                    <div className="flex items-center mt-1">
-                      <span className="w-5 h-5 rounded-full mr-2">
-                        <PrivetUniLogo />
-                      </span>
+                      {isWindows ? (
+                        university?.uniCountry?.countryCode ? (
+                          <div className="flex gap-1 items-center">
+                            <img
+                              src={`https://flagcdn.com/w320/${getEmoji(
+                                university?.uniCountry?.countryCode
+                              )}.png`}
+                              alt="Country Flag"
+                              className="w-3 h-3 object-cover rounded-full"
+                            />
+                            <p className="text-sm font-medium text-gray-700 flex items-center ">
+                              {university?.uniCountry
+                                ? university?.uniCountry?.countryName?.[
+                                    language
+                                  ]
+                                : "N/A"}
+                            </p>
+                          </div>
+                        ) : (
+                          <span className="text-[.6rem] font-medium">
+                            No flag
+                          </span>
+                        )
+                      ) : (
+                        <p className="text-sm font-medium text-gray-700 flex items-center mt-1">
+                          {university?.uniCountry?.countryPhotos?.countryFlag}{" "}
+                          {university?.uniCountry
+                            ? university?.uniCountry?.countryName?.[language]
+                            : "N/A"}
+                        </p>
+                      )}
 
-                      <p className="text-sm capitalize font-medium text-gray-700">
+                      <div className="flex items-center mt-1">
+                        <span className="w-5 h-5 rounded-full mr-2">
+                          <PrivetUniLogo />
+                        </span>
+
                         <p className="text-sm capitalize font-medium text-gray-700">
                           {language === "ar"
                             ? university?.uniType === "Private"
@@ -133,25 +251,89 @@ function ExploreTopUniversity({ filteredData, language }) {
                             ? "Private University"
                             : "Public University"}
                         </p>
-                      </p>
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
+                    {dynamicFeatures.flat().map((feature, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 justify-center"
+                      >
+                        <span className="rounded-full w-10 flex items-center justify-center h-10 border">
+                          {feature.icon}
+                        </span>
+                        <div>
+                          <p className="text-xs font-medium">{feature.title}</p>
+                          <p className="text-xs font-medium">
+                            {feature.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="w-full h-[1px] bg-gray-300"></div>
+
+                <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
+                  <button
+                    onClick={() =>
+                      handleApplyClick(university._id, university.countryName)
+                    }
+                    className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
+                  >
+                    {t("applyNow")}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleNavigate(
+                        language === "ar"
+                          ? university.uniName.ar
+                          : university.uniName.en
+                      );
+                    }}
+                    className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
+                  >
+                    {t("learnMore")}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+        {/* Loading skeletons */}
+        {loading &&
+          Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full animate-pulse"
+            >
+              <div className="p-4 sm:p-6">
+                <div
+                  className={`absolute top-0 right-0 rounded-bl-[4px] rounded-tr-xl bg-gray-300 h-6 w-24`}
+                ></div>
+
+                <div className="flex gap-3 sm:gap-4 items-center mb-6">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full"></div>
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-300 rounded-md w-40 mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded-md w-32 mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded-md w-36"></div>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                  {dynamicFeatures.flat().map((feature, index) => (
+                  {Array.from({ length: 3 }).map((_, i) => (
                     <div
-                      key={index}
+                      key={i}
                       className="flex items-center gap-2 justify-center"
                     >
-                      <span className="rounded-full w-10 flex items-center justify-center h-10 border ">
-                        {feature.icon}
-                      </span>
+                      <div className="rounded-full w-10 h-10 bg-gray-300"></div>
                       <div>
-                        <p className="text-xs font-medium">{feature.title}</p>
-                        <p className="text-xs font-medium">
-                          {feature.description}
-                        </p>
+                        <div className="h-3 bg-gray-300 rounded-md w-16 mb-1"></div>
+                        <div className="h-3 bg-gray-300 rounded-md w-12"></div>
                       </div>
                     </div>
                   ))}
@@ -161,31 +343,34 @@ function ExploreTopUniversity({ filteredData, language }) {
               <div className="w-full h-[1px] bg-gray-300"></div>
 
               <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                <button
-                  onClick={() =>
-                    handleApplyClick(university._id, university.countryName)
-                  }
-                  className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
-                >
-                  {t("applyNow")}
-                </button>
-                <button
-                  onClick={() => {
-                    handleNavigate(
-                      language === "ar"
-                        ? university.uniName.ar
-                        : university.uniName.en
-                    );
-                  }}
-                  className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
-                >
-                  {t("learnMore")}
-                </button>
+                <div className="h-10 bg-gray-300 rounded-full"></div>
+                <div className="h-10 bg-gray-300 rounded-full"></div>
               </div>
             </div>
-          );
-        })}
+          ))}
+
+        {/* Loading reference element - this is what the IntersectionObserver watches */}
+        {hasNextPage && <div ref={loadingRef} className="h-10 w-full" />}
       </div>
+
+      {/* Load more button (optional alternative to infinite scroll) */}
+      {hasNextPage && !loading && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={fetchUniversities}
+            className="px-6 py-2 bg-gradient-to-r from-[#380C95] to-[#E15754] text-white rounded-full"
+          >
+            {t("loadMore")}
+          </button>
+        </div>
+      )}
+
+      {/* No more universities message */}
+      {!hasNextPage && universities.length > 0 && (
+        <p className="text-center mt-8 text-gray-500">
+          {t("No More Universities")}
+        </p>
+      )}
     </div>
   );
 }

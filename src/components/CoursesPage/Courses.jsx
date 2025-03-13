@@ -1,30 +1,42 @@
-import React, { useState } from "react";
-import CountryHome from "../../../svg/CountryHome";
-import Phone from "../../../svg/Phone";
-import VuesaxDocumentText from "../../../svg/VuesaxDocumentText";
-import JhonSmith from "../../assets/CoursePage/JhonSmith.png";
-import Watch from "../../../svg/Watch";
-import DatePicker from "../../../svg/DatePicker";
-import Seconds from "../../../svg/Seconds";
-import CourseBook from "../../../svg/CourseBook";
-import TicketDiscount from "../../../svg/TicketDiscount";
-import CourseDiscount from "../../../svg/CourseDiscount";
-import Consolidation from "../../../svg/Consolidation";
+"use client";
+
+import { useState, useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { useParams } from "react-router-dom";
+import {
+  Home,
+  FileText,
+  Clock,
+  Calendar,
+  Timer,
+  BookOpen,
+  Ticket,
+  Tag,
+  CheckCircle,
+  Share2,
+} from "lucide-react";
 import useFetch from "../../../hooks/useFetch";
+import ShareCard from "../../../utils/ShareCard";
+import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../context/LanguageContext";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { language } = useLanguage();
-  const API_URL = import.meta.env.VITE_API_URL;
+
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { id } = useParams();
-  const toggleReadMore = () => {
-    setIsExpanded(!isExpanded);
-  };
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: false,
+    });
+  }, []);
 
   const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
-
   const apiUrl = isObjectId
     ? `https://edu-brink-backend.vercel.app/api/course/${id}`
     : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
@@ -33,231 +45,324 @@ const CoursePage = () => {
 
   const { data } = useFetch(apiUrl);
 
+  const toggleReadMore = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const toggleShareModal = () => {
+    setIsShareModalOpen(!isShareModalOpen);
+  };
+
+  // Get the current URL for sharing
+  const courseUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  if (!data)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
+
   return (
-    <div
-      dir={language === "ar" ? "rtl" : "ltl"}
-      className="bg-gray-50 p-6 md:p-10 rounded-lg shadow-lg max-w-5xl mx-auto"
-    >
-      <div className="text-sm mb-4 flex items-center">
-        <div className="flex items-center">
-          <CountryHome />
-          <span className="mx-2">&gt;</span>
-        </div>
-        <div className="flex items-center font-medium">
-          <span>Country</span>
-          <span className="mx-2">&gt;</span>
-          <span className="font-medium">
-            {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
-          </span>
-        </div>
-      </div>
-      <div className="">
-        <h1 className="text-2xl font-bold text-black mb-4">
-          📚 {data?.CourseName?.[language]}
-          <div className="flex me-4 items-center mt-4">
-            <img
-              src={data?.university?.uniSymbol || "https://placehold.co/24x24"}
-              alt="University Logo"
-              className="w-[28px] h-[28px] rounded-full relative"
-            />
-            <p className="text-lg font-sans font-normal ms-2">
-              {language === "ar"
-                ? data?.university?.uniName?.ar
-                : data?.university?.uniName?.en}
-            </p>
+    <div className="bg-gray-50 min-h-screen font-sans">
+      {/* Breadcrumb Navigation */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div
+          className="flex items-center text-sm text-gray-600 mb-6"
+          data-aos="fade-right"
+          data-aos-delay="100"
+        >
+          <div className="flex items-center">
+            <Home className="w-4 h-4" />
+            <span className="mx-2">&gt;</span>
           </div>
-        </h1>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="order-1 md:order-2 w-full md:w-[45.33%] p-6 rounded-lg">
-          <div className="bg-[rgba(232,36,72,1)] text-xl font-bold mb-4 text-white rounded-t-[1.5rem] p-4">
-            <div className="flex items-center gap-4">
-              <span>
-                <TicketDiscount />
-              </span>
-              <h4 className="text-white font-sans font-medium text-base leading-5">
-                {data?.CourseFees} Per Year
-              </h4>
-            </div>
-            <p className="text-white font-sans font-normal text-sm mt-2">
-              International student tuition fee
-            </p>
-          </div>
-          <div className="gap-4 bg-white pl-[4%] pr-[4%] rounded-b-[1.5rem]">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center">
-                <Watch />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-5">
-                  {data?.CourseDuration || "N/A"}
-                </p>
-                <p className="text-sm font-sans font-normal leading-5">
-                  Duration
-                </p>
-              </div>
-            </div>
-            <div className="border-t-2 mt-4"></div>
-            <div className="flex items-center gap-4 mt-5 mb-5">
-              <div className="flex items-center justify-center">
-                <DatePicker />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-5">N/A</p>
-                <p className="text-sm font-sans font-normal leading-5">
-                  Start Month
-                </p>
-              </div>
-            </div>
-            <div className="border-t-2 mt-4"></div>
-            <div className="flex items-center gap-4 mt-5 mb-5">
-              <div className="flex items-center justify-center">
-                <Seconds />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-5">
-                  {new Date(data?.DeadLine).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                  }) || "N/A"}
-                </p>
-                <p className="text-sm font-sans font-normal leading-5">
-                  Application Deadline
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 mt-5">
-              <div className="flex items-center justify-center">
-                <CourseBook />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-5">
-                  {language === "ar"
-                    ? data?.ModeOfStudy?.ar?.[0]
-                    : data?.ModeOfStudy?.en?.[0] || "N/A"}
-                </p>
-                <p className="text-sm font-sans font-normal leading-5">
-                  Mode Of Study
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 mt-5">
-              <div className="flex items-center justify-center">
-                <CourseDiscount />
-              </div>
-              <div>
-                <p className="text-lg font-bold leading-5">Discount</p>
-                <p className="text-sm font-sans font-normal leading-5">
-                  Free Scholarship
-                </p>
-              </div>
-            </div>
-            <button className="mt-6 w-full bg-gradient-to-r from-red-500 to-purple-500 text-white py-3 rounded-full font-semibold text-lg mb-5">
-              Apply Now
-            </button>
-          </div>
-        </div>
-
-        <div className="order-2 md:order-1 flex-1">
-          <div className="mx-[4%]">
-            {data?.CourseDescription?.[language] ? (
-              <>
-                <div
-                  className={`relative transition-all duration-300 ease-in-out ${
-                    isExpanded ? "max-h-full" : "max-h-40 overflow-hidden"
-                  }`}
-                >
-                  {/* Display Course Description using dangerouslySetInnerHTML */}
-                  <div
-                    className="prose max-w-none text-gray-700 text-lg leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: data.CourseDescription[language],
-                    }}
-                  />
-                  {!isExpanded && (
-                    <div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent"></div>
-                  )}
-                </div>
-
-                {/* Read More / Read Less Button */}
-                <button
-                  onClick={toggleReadMore}
-                  className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg shadow-md transition duration-200"
-                >
-                  {isExpanded ? "Read Less" : "Read More"}
-                </button>
-              </>
-            ) : (
-              <p className="text-gray-500 italic">No description available.</p>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row gap-8 mt-10 ">
-        <div className="w-full mt-[-4%]">
-          <h3 className="text-xl font-bold text-gray-800 mb-4 flex">
-            <span className="me-2">
-              <VuesaxDocumentText />
+          <div className="flex items-center">
+            <span>{t("CourseSlugPage.Country")}</span>
+            <span className="mx-2">&gt;</span>
+            <span className="font-medium text-gray-900">
+              {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
             </span>
-            Requirements
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data?.Requirements?.[language]?.length > 0
-              ? data.Requirements?.[language].map((req, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-4 flex gap-5 font-sans font-medium text-base leading-5"
-                  >
-                    <Consolidation />
-                    {req || "Requirement not specified."}
-                  </div>
-                ))
-              : "No requirements available."}
           </div>
         </div>
-        {/* md:w-[55.33%]
-        p-6 */}
-        <div className=" max-w-full md:max-w-[40%]  mb-[10%]">
-          <div className="bg-white shadow-lg rounded-lg p-6 w-full">
-            <div className="w-full flex md:justify-start justify-center">
-              {" "}
-              <div className="inline-flex  mt-4 bg-gray-200   font-sans font-medium text-lg leading-7 px-3 py-1 rounded-full">
-                Dedicated Counsellor
-              </div>
-            </div>
 
-            <div className="flex lg:flex-row flex-col md:items-start items-center mt-2 md:mt-[8%]">
-              <img
-                src={JhonSmith}
-                alt="Profile"
-                className="w-[4rem] h-[4rem] rounded-full mr-4 mt-[3%] mb-[3%]"
-              />
-              <div className=" md:mt-[5%] md:text-start text-center mb-[5%]">
-                <div className="font-sans font-semibold text-2xl leading-7 text-black">
-                  Jhon Smith
-                </div>
-                <p className="font-sans font-medium text-lg leading-7 mt-2">
-                  Thanks for connecting! I’m excited to connect with
-                  professionals in the [industry/field]. I look forward to
-                  sharing insights and learning from each other. If there's
-                  anything I can assist with, feel free to reach out.
+        {/* Course Header */}
+        <div className="mb-8" data-aos="fade-up" data-aos-delay="200">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                {data?.CourseName?.[language]}
+              </h1>
+              <div className="flex items-center gap-2 mb-2">
+                <img
+                  src={
+                    data?.university?.uniSymbol ||
+                    "/placeholder.svg?height=28&width=28" ||
+                    "/placeholder.svg"
+                  }
+                  alt="University Logo"
+                  className="rounded-full"
+                />
+                <p className="text-lg text-gray-700">
+                  {language === "ar"
+                    ? data?.university?.uniName?.ar
+                    : data?.university?.uniName?.en}
                 </p>
               </div>
             </div>
+            <div
+              className="hidden md:flex items-center gap-3"
+              data-aos="fade-left"
+              data-aos-delay="300"
+            >
+              <button
+                className="flex items-center justify-center bg-white border border-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-50 transition-all"
+                aria-label="Share course"
+                onClick={() => setIsShareModalOpen(true)}
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
 
-            {/* Buttons */}
-            <div className="flex gap-4 mt-4 justify-between">
-              <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white rounded-full">
-                Call Now
+              <button className="bg-[rgba(56,12,149,1)] hover:bg-[rgba(46,10,129,1)] text-white px-6 py-2.5 rounded-full font-semibold transition-all">
+                {t("applyNow")}
               </button>
-              <button className="w-full bg-white border border-gray-300 text-black rounded-full flex items-center justify-center gap-2  py-[0.5rem]">
-                Chat Now
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          {/* Course Description - 2/3 width on desktop */}
+          <div
+            className="lg:col-span-2 order-2 lg:order-1"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+              <div
+                className={`relative transition-all duration-300 ease-in-out ${
+                  isExpanded ? "max-h-full" : "max-h-40 overflow-hidden"
+                }`}
+              >
+                <div
+                  className="prose max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{
+                    __html: data.CourseDescription[language],
+                  }}
+                />
+                {!isExpanded && (
+                  <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
+                )}
+              </div>
+
+              <button
+                onClick={toggleReadMore}
+                className="mt-4 px-4 py-2 text-[rgba(56,12,149,1)] border border-[rgba(56,12,149,1)] hover:bg-[rgba(56,12,149,0.05)] font-medium rounded-lg transition-all"
+              >
+                {isExpanded
+                  ? language === "ar"
+                    ? "اقرأ أقل"
+                    : "Read Less"
+                  : language === "ar"
+                  ? "اقرأ المزيد"
+                  : "Read More"}
               </button>
+            </div>
+
+            {/* Requirements Section */}
+            <div
+              className="bg-white rounded-xl shadow-sm p-6"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                <FileText className="w-5 h-5 mr-2" />
+                {t("CourseSlugPage.Requirements")}
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data?.Requirements?.[language]?.length > 0 ? (
+                  data.Requirements?.[language].map((req, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 p-4 rounded-lg flex items-start gap-3"
+                      data-aos="fade-up"
+                      data-aos-delay={400 + index * 50}
+                    >
+                      <CheckCircle className="w-5 h-5 flex-shrink-0 mt-1 text-[rgba(56,12,149,1)]" />
+                      <span className="font-medium text-gray-700">
+                        {req || "Requirement not specified."}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">
+                    No requirements available.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Course Details Card - 1/3 width on desktop */}
+          <div
+            className="lg:col-span-1 order-1 lg:order-2"
+            data-aos="fade-left"
+            data-aos-delay="300"
+          >
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden sticky top-4">
+              {/* Price Header */}
+              <div className="bg-[rgba(232,36,72,1)] text-white p-6 rounded-t-xl">
+                <div className="flex items-center gap-3 mb-2">
+                  <Ticket className="w-5 h-5" />
+                  <h4 className="text-xl font-bold">
+                    {data?.CourseFees} {t("UniversitySlugPage.PerYear")}
+                  </h4>
+                </div>
+                <p className="text-white/90 text-sm">
+                  {t("UniversitySlugPage.InterFees")}
+                </p>
+              </div>
+
+              {/* Course Details */}
+              <div className="p-6 space-y-4">
+                {/* Duration */}
+                <div className="flex items-center gap-4 py-3 border-b border-gray-100">
+                  <div className="bg-gray-50 p-2 rounded-full">
+                    <Clock className="w-5 h-5 text-[rgba(56,12,149,1)]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">
+                      {data?.CourseDuration || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {" "}
+                      {t("UniversitySlugPage.Duration")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Start Month */}
+                <div className="flex items-center gap-4 py-3 border-b border-gray-100">
+                  <div className="bg-gray-50 p-2 rounded-full">
+                    <Calendar className="w-5 h-5 text-[rgba(56,12,149,1)]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">Sep 2025</p>
+                    <p className="text-sm text-gray-500">
+                      {" "}
+                      {t("UniversitySlugPage.StartMonth")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Application Deadline */}
+                <div className="flex items-center gap-4 py-3 border-b border-gray-100">
+                  <div className="bg-gray-50 p-2 rounded-full">
+                    <Timer className="w-5 h-5 text-[rgba(56,12,149,1)]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">
+                      {new Date(data?.DeadLine).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                      }) || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {t("UniversitySlugPage.ApplicationDeadline")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Mode of Study */}
+                <div className="flex items-center gap-4 py-3 border-b border-gray-100">
+                  <div className="bg-gray-50 p-2 rounded-full">
+                    <BookOpen className="w-5 h-5 text-[rgba(56,12,149,1)]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">
+                      {language === "ar"
+                        ? data?.ModeOfStudy?.ar?.[0]
+                        : data?.ModeOfStudy?.en?.[0] || "N/A"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {" "}
+                      {t("UniversitySlugPage.ModeOfStudy")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Discount */}
+                <div className="flex items-center gap-4 py-3">
+                  <div className="bg-gray-50 p-2 rounded-full">
+                    <Tag className="w-5 h-5 text-[rgba(56,12,149,1)]" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-gray-900">
+                      {" "}
+                      {t("CourseSlugPage.ScholarshipAva")}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {" "}
+                      {t("CourseSlugPage.ScholarshipOptions")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Apply Button */}
+                <button className="w-full mt-4 bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all">
+                  {t("applyNow")}
+                </button>
+              </div>
+            </div>
+
+            {/* Counselor Card */}
+            <div
+              className="bg-white rounded-xl shadow-sm p-6 mt-6"
+              data-aos="fade-up"
+              data-aos-delay="500"
+            >
+              <div className="inline-flex bg-gray-100 text-gray-800 font-medium px-4 py-1.5 rounded-full mb-4">
+                {t("UniversitySlugPage.CounsellorTitle")}
+              </div>
+
+              <div className="flex items-start gap-4 mb-4">
+                <img
+                  src="/placeholder.svg?height=64&width=64"
+                  alt="Counselor"
+                  className="rounded-full"
+                />
+                <div>
+                  <h4 className="font-bold text-xl mb-2">
+                    {" "}
+                    {t("UniversitySlugPage.CounsellorName")}
+                  </h4>
+                  <p className="text-gray-600 text-sm">
+                    {t("UniversitySlugPage.CounsellorDesc")}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                <button className="bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-2.5 rounded-full font-medium hover:shadow-md transition-all">
+                  {t("UniversitySlugPage.CallNow")}
+                </button>
+                <button className="bg-white border border-gray-200 text-gray-800 py-2.5 rounded-full font-medium hover:bg-gray-50 transition-all">
+                  {t("UniversitySlugPage.ChatNow")}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      <ShareCard
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        contentTitle={data?.CourseName?.[language] || "Course"}
+        contentType={"course"}
+        contentUrl={courseUrl}
+      />
     </div>
   );
 };

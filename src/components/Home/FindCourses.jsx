@@ -4,6 +4,7 @@ import { useSearch } from "../../../context/SearchContext";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import useDropdownData from "../../../hooks/useDropdownData";
 
 const FindCourses = () => {
   const { setFilterProp, setSearchState } = useSearch();
@@ -16,7 +17,7 @@ const FindCourses = () => {
   });
   const navigate = useNavigate();
 
-  const { data } = useFetch("https://edu-brink-backend.vercel.app/api/tags");
+  const { addTags: data } = useDropdownData();
 
   const handleChange = (e) => {
     setFilters({
@@ -92,9 +93,9 @@ const FindCourses = () => {
             focus:outline-none focus:ring-1 focus:ring-[#380C95]"
           >
             <option value="">{t("findCourses.select")}</option>
-            {data?.map((option, idx) => (
-              <option key={idx} value={option?.TagName?.en}>
-                {language === "ar" ? option?.TagName?.ar : option?.TagName?.en}
+            {data[0]?.tags?.[language]?.map((option, idx) => (
+              <option key={idx} value={option}>
+                {option}
               </option>
             ))}
           </select>
