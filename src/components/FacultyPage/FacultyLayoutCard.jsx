@@ -19,7 +19,7 @@ const FacultyRightLayoutCard = () => {
             <img
               src={JhonSmith}
               alt="Profile"
-              className="w-[4rem] h-[4rem] rounded-full mr-4 mt-[3%] mb-[3%]"
+              className="w-[11vw] h-[11vh] rounded-full mr-4 mt-[3%] mb-[3%]"
             />
             <div className=" md:mt-[5%] md:text-start text-center mb-[5%]">
               <div className="font-sans font-semibold text-2xl leading-7 text-black">

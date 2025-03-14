@@ -454,7 +454,7 @@ const NavBar = () => {
       <div className="w-full  my-3 h-auto sticky mmd:static top-0 z-30  bg-[#F8F8F8] mmd:bg-transparent">
         <nav
           id="navbar"
-          className="sticky mmd:static top-0 z-30 flex py-2 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-3xl shadow-md"
+          className="sticky mmd:static top-0 z-30 flex py-4 md:py-2 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-xl md:rounded-3xl shadow-md"
         >
           {/* Logo */}
 
@@ -467,7 +467,7 @@ const NavBar = () => {
             </h2>{" "}
           </div>
 
-          <div className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative">
+          <div className="hidden mmd:flex text-sm items-center  text-center rounded-full px-2 py-2 w-1/4 relative">
             <SearchDropdown
               searchTerm={searchState.searchTerm}
               onSearch={handleSearchInput}
