@@ -29,7 +29,7 @@ function HomePage() {
   return (
     <>
     <div className="space-y-12">
-   {/* <FacultyPage/> */}
+   <FacultyPage/>
       <div data-aos="fade-in" data-aos-delay="150">
         <Discover />
       </div>
