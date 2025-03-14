@@ -16,17 +16,18 @@ import { useSearch } from "../../../context/SearchContext";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import NoResultsFound from "../../../utils/NoResultsFound";
 
 function SearchResults() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [showFilter, setShowFilter] = useState(false);
   const location = useLocation();
-  const { filterProp, setSumData, sumData, initialState, cleanFilterProp } =
-    useSearch();
+  const { filterProp, setSumData, sumData, initialState } = useSearch();
   const { language } = useLanguage();
   const { t } = useTranslation();
   const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasResults, setHasResults] = useState(true); // New state to track if we have results
 
   // Keep track of previous filter props to prevent unnecessary API calls
   const prevFilterStringRef = useRef(null);
@@ -55,6 +56,13 @@ function SearchResults() {
       const universityFilters = {
         StudyLevel: filterProp.StudyLevel,
         EntranceExam: filterProp.EntranceExam,
+        ModeOfStudy: filterProp.ModeOfStudy,
+        minBudget: filterProp.minBudget,
+        maxBudget: filterProp.maxBudget,
+        searchQuery: filterProp.searchQuery
+          ? JSON.stringify(filterProp.searchQuery)
+          : undefined,
+        CourseDuration: filterProp.CourseDuration,
         UniType: filterProp.UniType,
         IntakeYear: filterProp.IntakeYear,
         IntakeMonth: filterProp.IntakeMonth,
@@ -134,20 +142,29 @@ function SearchResults() {
 
       // Show loading state
       setLoading(true);
+      setHasResults(true); // Reset hasResults state before fetching
 
       const data = await fetchSearchResults(filterProp);
       setSearchResults(data);
       setLoading(false);
 
+      // Calculate total results
+      const totalUniversities =
+        data?.pagination?.universities.totalUniversities || 0;
+      const totalBlogs = data?.pagination?.blogs.totalBlogs || 0;
+      const totalCourses = data?.pagination?.courses.totalCourses || 0;
+      const totalResults = totalUniversities + totalBlogs + totalCourses;
+
+      // Update sumData with the new counts
       setSumData({
-        sumResult:
-          (data?.pagination?.blogs.totalBlogs || 0) +
-          (data?.pagination?.courses.totalCourses || 0) +
-          (data?.pagination?.universities.totalUniversities || 0),
-        sumUniversities: data?.pagination?.universities.totalUniversities || 0,
-        sumBlogs: data?.pagination?.blogs.totalBlogs || 0,
-        sumCourses: data?.pagination?.courses.totalCourses || 0,
+        sumResult: totalResults,
+        sumUniversities: totalUniversities,
+        sumBlogs: totalBlogs,
+        sumCourses: totalCourses,
       });
+
+      // Set hasResults based on total count
+      setHasResults(totalResults > 0);
     };
 
     fetchData();
@@ -167,6 +184,101 @@ function SearchResults() {
 
   const activeFilters = countActiveFilters();
 
+  // If we have no results and we're not loading, show the NoResultsFound component
+  if (!hasResults && !loading && searchResults) {
+    return (
+      <>
+        <div className="relative p-4 px-5 sm:px-9 lg:px-16">
+          {/* Buttons */}
+          <div className="flex items-center sm:mb-16 md:mb-20 text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar">
+            <div className="flex space-x-4">
+              <Link to={`/${language}/searchresults`}>
+                <button
+                  className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
+                    location.pathname === `/${language}/searchresults`
+                      ? "bg-black text-white"
+                      : "text-black"
+                  }`}
+                >
+                  <span className="font-thin mr-1">0</span>
+                  {t("results")}
+                </button>
+              </Link>
+
+              <Link to={`/${language}/searchresults/courses`}>
+                <button
+                  className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
+                    location.pathname === `/${language}/searchresults/courses`
+                      ? "bg-black text-white"
+                      : "text-black"
+                  }`}
+                >
+                  <span className="font-thin mr-1">0</span>
+                  {t("courses")}
+                </button>
+              </Link>
+
+              <Link to={`/${language}/searchresults/university`}>
+                <button
+                  className={`text-sm font-medium flex justify-center rounded-full items-center px-4 py-2 ${
+                    location.pathname ===
+                    `/${language}/searchresults/university`
+                      ? "bg-black text-white"
+                      : "text-black"
+                  }`}
+                >
+                  <span className="font-thin mr-1">0</span>
+                  {t("universities")}
+                </button>
+              </Link>
+
+              <Link to={`/${language}/searchresults/article`}>
+                <button
+                  className={`text-sm font-medium rounded-full flex justify-center items-center px-4 py-2 ${
+                    location.pathname === `/${language}/searchresults/article`
+                      ? "bg-black text-white"
+                      : "text-black"
+                  }`}
+                >
+                  <span className="font-thin mr-1">0</span>
+                  {t("articles")}
+                </button>
+              </Link>
+            </div>
+
+            {/* Filter Button (Hidden on Small Screens) */}
+            <div className="hidden sm:block relative p-4">
+              <button
+                className="hidden sm:flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754]"
+                onClick={() => setShowFilter(!showFilter)}
+              >
+                <FilterLogo2 />
+                {t("filters")}
+              </button>
+              {activeFilters > 0 && (
+                <div className="absolute top-[8px] right-[9px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-gradient-to-r from-[#5A1EB8] to-[#FF6B6B] rounded-full shadow-md border-2 border-white">
+                  {activeFilters}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Filter Sidebar */}
+          {showFilter && (
+            <FilterSidebar
+              language={language}
+              showFilter={showFilter}
+              setShowFilter={setShowFilter}
+            />
+          )}
+
+          <NoResultsFound language={language} />
+        </div>
+        <ContactSection />
+      </>
+    );
+  }
+
   return (
     <>
       <div className="relative p-4 px-5 sm:px-9 lg:px-16">
@@ -181,7 +293,9 @@ function SearchResults() {
                     : "text-black"
                 }`}
               >
-                <span className="font-thin mr-1">{sumData?.sumResult}</span>
+                <span className="font-thin mr-1">
+                  {sumData?.sumResult || 0}
+                </span>
                 {t("results")}
               </button>
             </Link>
@@ -194,7 +308,9 @@ function SearchResults() {
                     : "text-black"
                 }`}
               >
-                <span className="font-thin mr-1">{sumData?.sumCourses}</span>
+                <span className="font-thin mr-1">
+                  {sumData?.sumCourses || 0}
+                </span>
                 {t("courses")}
               </button>
             </Link>
@@ -208,7 +324,7 @@ function SearchResults() {
                 }`}
               >
                 <span className="font-thin mr-1">
-                  {sumData?.sumUniversities}
+                  {sumData?.sumUniversities || 0}
                 </span>
                 {t("universities")}
               </button>
@@ -222,7 +338,7 @@ function SearchResults() {
                     : "text-black"
                 }`}
               >
-                <span className="font-thin mr-1">{sumData?.sumBlogs}</span>
+                <span className="font-thin mr-1">{sumData?.sumBlogs || 0}</span>
                 {t("articles")}
               </button>
             </Link>
@@ -264,7 +380,7 @@ function SearchResults() {
             element={
               <ResultsCorses
                 loading={loading || !searchResults}
-                filteredData={searchResults?.courses}
+                filteredData={searchResults?.courses || []}
                 uniIds={memoizedUniIds}
               />
             }
@@ -275,7 +391,7 @@ function SearchResults() {
               <Univrsiry
                 loading={loading || !searchResults}
                 language={language}
-                filteredData={searchResults?.universities}
+                filteredData={searchResults?.universities || []}
                 countryIds={memoizedCountryIds}
               />
             }
@@ -285,7 +401,7 @@ function SearchResults() {
             element={
               <Article
                 loading={loading || !searchResults}
-                filteredData={searchResults?.blogs}
+                filteredData={searchResults?.blogs || []}
                 countryIds={memoizedCountryIds}
               />
             }

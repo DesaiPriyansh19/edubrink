@@ -15,18 +15,21 @@ import {
   Tag,
   CheckCircle,
   Share2,
+  X,
 } from "lucide-react";
 import useFetch from "../../../hooks/useFetch";
 import ShareCard from "../../../utils/ShareCard";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../context/LanguageContext";
+import ApplyForm from "../../../utils/ApplyForm";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { language } = useLanguage();
-
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [showApplyForm, setShowApplyForm] = useState(false);
+  const [itemId, setItemId] = useState("");
   const { id } = useParams();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -51,6 +54,25 @@ const CoursePage = () => {
 
   const toggleShareModal = () => {
     setIsShareModalOpen(!isShareModalOpen);
+  };
+
+  const handleApplyNow = (id) => {
+    setShowApplyForm(true);
+    setItemId(id);
+  };
+
+  const handleFormClose = () => {
+    setShowApplyForm(false);
+  };
+
+  const handleFormSubmit = () => {
+    setShowApplyForm(false);
+    setShowVerifiedModal(true);
+
+    // Hide the verification modal after 3 seconds
+    setTimeout(() => {
+      setShowVerifiedModal(false);
+    }, 3000);
   };
 
   // Get the current URL for sharing
@@ -97,6 +119,7 @@ const CoursePage = () => {
                   src={
                     data?.university?.uniSymbol ||
                     "/placeholder.svg?height=28&width=28" ||
+                    "/placeholder.svg" ||
                     "/placeholder.svg"
                   }
                   alt="University Logo"
@@ -122,7 +145,12 @@ const CoursePage = () => {
                 <Share2 className="w-5 h-5" />
               </button>
 
-              <button className="bg-[rgba(56,12,149,1)] hover:bg-[rgba(46,10,129,1)] text-white px-6 py-2.5 rounded-full font-semibold transition-all">
+              <button
+                className="bg-[rgba(56,12,149,1)] hover:bg-[rgba(46,10,129,1)] text-white px-6 py-2.5 rounded-full font-semibold transition-all"
+                onClick={() => {
+                  handleApplyNow(data?._id);
+                }}
+              >
                 {t("applyNow")}
               </button>
             </div>
@@ -309,7 +337,12 @@ const CoursePage = () => {
                 </div>
 
                 {/* Apply Button */}
-                <button className="w-full mt-4 bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all">
+                <button
+                  className="w-full mt-4 bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all"
+                  onClick={() => {
+                    handleApplyNow(data?._id);
+                  }}
+                >
                   {t("applyNow")}
                 </button>
               </div>
@@ -363,6 +396,32 @@ const CoursePage = () => {
         contentType={"course"}
         contentUrl={courseUrl}
       />
+
+      {/* Apply Form Modal */}
+      {showApplyForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={handleFormClose}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              aria-label="Close form"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="p-6">
+              <ApplyForm
+                itemId={itemId}
+                category="Course"
+                onClose={handleFormClose}
+                onSubmitSuccess={handleFormSubmit}
+                isDesktop={true}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Verification Modal */}
     </div>
   );
 };

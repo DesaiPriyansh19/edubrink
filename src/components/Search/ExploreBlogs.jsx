@@ -1,22 +1,29 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import GradientSpinnerLoader, {
+  BouncingBarsLoader,
+} from "./Results/ImprovedLoaders";
 
 function ExploreBlogs({ language }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [blogs, setblogs] = useState([]);
+  const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // New state for initial loading
   const [lastId, setLastId] = useState(null);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [initialFetch, setInitialFetch] = useState(true);
   const observer = useRef(null);
   const loadingRef = useRef(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0); // Used to trigger fetches
 
-  const fetchblogs = useCallback(async () => {
-    // Don't fetch if we're already loading or there's no more data (except for initial fetch)
-    if (loading || (!hasNextPage && !initialFetch)) return;
+  const fetchBlogs = useCallback(async () => {
+    // Prevent multiple simultaneous fetches
+    if (loading) return;
 
     try {
       setLoading(true);
@@ -34,16 +41,33 @@ function ExploreBlogs({ language }) {
       }`;
 
       const response = await fetch(url);
-      console.log(response);
-
       const result = await response.json();
 
-      if (initialFetch) {
-        setblogs(result.data);
-        setInitialFetch(false);
-      } else {
-        setblogs((prev) => [...prev, ...result.data]);
+      // Check if we received valid data
+      if (!result.data || result.data.length === 0) {
+        setHasNextPage(false);
+        setLoading(false);
+        setInitialLoading(false);
+        return;
       }
+
+      // Process the new data
+      setBlogs((prevBlogs) => {
+        if (initialFetch) {
+          setInitialFetch(false);
+          return result.data;
+        } else {
+          // Create a map of existing IDs for faster lookup
+          const existingIds = new Map(
+            prevBlogs.map((blog) => [blog._id, true])
+          );
+          // Filter out duplicates
+          const newBlogs = result.data.filter(
+            (blog) => !existingIds.has(blog._id)
+          );
+          return [...prevBlogs, ...newBlogs];
+        }
+      });
 
       setLastId(result.meta.lastId);
       setHasNextPage(result.meta.hasNextPage);
@@ -51,38 +75,58 @@ function ExploreBlogs({ language }) {
       console.error("Error fetching blogs:", error);
     } finally {
       setLoading(false);
+      setInitialLoading(false);
     }
-  }, [lastId, hasNextPage, initialFetch, loading]);
+  }, [lastId, initialFetch, loading]);
 
+  // Initial data fetch
   useEffect(() => {
     // Only fetch initial data once when component mounts
     if (initialFetch) {
-      fetchblogs();
+      setInitialLoading(true);
+      fetchBlogs();
     }
-  }, [initialFetch]);
+
+    // Cleanup function
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [fetchBlogs, initialFetch]);
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
-    // Don't set up observer if we're already loading or there's no more data
-    if (loading || !hasNextPage) return;
+    // Don't set up observer if we're loading, there's no more data, or we're still in initial fetch
+    if (loading || !hasNextPage || initialFetch) {
+      return;
+    }
 
-    // Disconnect previous observer if it exists
-    if (observer.current) observer.current.disconnect();
+    // Clean up previous observer
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    // Use a debounced version of fetchBlogs to prevent multiple rapid calls
+    let timeoutId = null;
+    const debouncedFetch = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (!loading && hasNextPage && !initialFetch) {
+          setFetchTrigger((prev) => prev + 1); // Trigger a fetch
+        }
+      }, 300); // 300ms debounce
+    };
 
     const callback = (entries) => {
-      // Only fetch more if we're not already loading, there's more data, and the element is intersecting
-      if (
-        entries[0].isIntersecting &&
-        hasNextPage &&
-        !loading &&
-        !initialFetch
-      ) {
-        fetchblogs();
+      if (entries[0].isIntersecting) {
+        debouncedFetch();
       }
     };
 
     observer.current = new IntersectionObserver(callback, {
-      rootMargin: "100px",
+      rootMargin: "200px", // Increased margin to trigger earlier
+      threshold: 0.1,
     });
 
     if (loadingRef.current) {
@@ -90,11 +134,36 @@ function ExploreBlogs({ language }) {
     }
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       if (observer.current) {
         observer.current.disconnect();
       }
     };
-  }, [loading, hasNextPage, fetchblogs, initialFetch]);
+  }, [loading, hasNextPage, initialFetch, fetchBlogs]);
+
+  // Handle fetch trigger
+  useEffect(() => {
+    if (fetchTrigger > 0 && !loading && hasNextPage && !initialFetch) {
+      fetchBlogs();
+    }
+  }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchBlogs]);
+
+  // Reset component state when unmounting
+  useEffect(() => {
+    return () => {
+      // Clean up everything when component unmounts
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Show full page loader for initial loading
+  if (initialLoading) {
+    return (
+      <BouncingBarsLoader type="gradient" message={t("Loading Blogs...")} />
+    );
+  }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -112,9 +181,9 @@ function ExploreBlogs({ language }) {
       <h3 className="text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4  py-6 "
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 py-6"
       >
-        {/* First Slide */}
+        {/* Blog Cards */}
         {blogs?.map((blog, idx) => (
           <div
             key={idx}
@@ -124,7 +193,7 @@ function ExploreBlogs({ language }) {
             <div className="h-[55%] w-[100%]">
               <img
                 src={"https://placehold.co/260x220" || blog?.blogPhoto}
-                alt={`Slide ${idx + 1}`}
+                alt={`Blog ${idx + 1}`}
                 className="w-[100%] h-[100%] rounded-2xl object-cover"
               />
             </div>
@@ -148,60 +217,27 @@ function ExploreBlogs({ language }) {
             </div>
           </div>
         ))}
-        {/* Loading skeletons */}
-        {loading &&
-          Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={`skeleton-${index}`}
-              className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full animate-pulse"
-            >
-              <div className="p-4 sm:p-6">
-                <div
-                  className={`absolute top-0 right-0 rounded-bl-[4px] rounded-tr-xl bg-gray-300 h-6 w-24`}
-                ></div>
 
-                <div className="flex gap-3 sm:gap-4 items-center mb-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-6 bg-gray-300 rounded-md w-40 mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded-md w-32 mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded-md w-36"></div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 justify-center"
-                    >
-                      <div className="rounded-full w-10 h-10 bg-gray-300"></div>
-                      <div>
-                        <div className="h-3 bg-gray-300 rounded-md w-16 mb-1"></div>
-                        <div className="h-3 bg-gray-300 rounded-md w-12"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="w-full h-[1px] bg-gray-300"></div>
-
-              <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                <div className="h-10 bg-gray-300 rounded-full"></div>
-                <div className="h-10 bg-gray-300 rounded-full"></div>
-              </div>
-            </div>
-          ))}
+        {/* Loading indicator for more content */}
+        {loading && (
+          <div className="col-span-1 lg:col-span-3">
+            <GradientSpinnerLoader message={t("Loading more blogs...")} />
+          </div>
+        )}
 
         {/* Loading reference element - this is what the IntersectionObserver watches */}
-        {hasNextPage && <div ref={loadingRef} className="h-10 w-full" />}
+        {hasNextPage && !loading && (
+          <div
+            ref={loadingRef}
+            className="h-20 w-full col-span-1 lg:col-span-3"
+          />
+        )}
       </div>
 
       {hasNextPage && !loading && (
         <div className="flex justify-center mt-8">
           <button
-            onClick={fetchblogs}
+            onClick={() => setFetchTrigger((prev) => prev + 1)}
             className="px-6 py-2 bg-gradient-to-r from-[#380C95] to-[#E15754] text-white rounded-full"
           >
             {t("loadMore")}
@@ -209,7 +245,7 @@ function ExploreBlogs({ language }) {
         </div>
       )}
 
-      {/* No more universities message */}
+      {/* No more blogs message */}
       {!hasNextPage && blogs.length > 0 && (
         <p className="text-center mt-8 text-gray-500">{t("No More Blogs")}</p>
       )}

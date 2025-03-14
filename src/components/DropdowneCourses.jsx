@@ -21,9 +21,15 @@ const DropdowneCourses = forwardRef(
       });
     }, []);
 
-    const handleNavigate = (term) => {
-      const customSlug = term.customURLSlug?.[language] || term.CourseName.en;
-      navigate(`${language}/courses/${customSlug}`);
+    const handleNavigate = (term, type) => {
+      if (type === "course") {
+        const customSlug = term.customURLSlug?.[language] || term.CourseName.en;
+        navigate(`${language}/courses/${customSlug}`);
+      } else if (type === "faculty") {
+        const customSlug =
+          term.customURLSlug?.[language] || term.facultyName.en;
+        navigate(`${language}/faculty/${customSlug}`);
+      }
       setShowCoursesDropdown(false);
     };
 
@@ -51,7 +57,7 @@ const DropdowneCourses = forwardRef(
               return (
                 <div
                   key={idx}
-                  onClick={() => handleNavigate(course)}
+                  onClick={() => handleNavigate(course, "course")}
                   className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-3 pr-1 py-1 rounded-xl bg-[#f8f8f8]  justify-start text-black "
                 >
                   <span className=" h-auto w-auto text-sm rounded-md bg-white p-[.4rem]">
@@ -84,6 +90,7 @@ const DropdowneCourses = forwardRef(
             <ul className=" flex text-start flex-col gap-5">
               {facultyData?.map((item) => (
                 <li
+                  onClick={() => handleNavigate(item, "faculty")}
                   key={item._id}
                   className="text-[.7rem] cursor-pointer font-medium "
                 >

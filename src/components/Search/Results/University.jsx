@@ -6,7 +6,6 @@ import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import TickMark from "../../../../svg/TickMark";
-import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
 import ReactGA from "react-ga4";
 import axios from "axios";
@@ -18,24 +17,23 @@ const CollegeCard = ({ data, loading }) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const path = location.pathname;
-  const { addClickData } = useAnalysis();
 
-  const handleApplyClick = (uniId, uniName, countryName) => {
-    if (!window.gtag) return; // Prevent errors if GA4 isn't loaded
+  // const handleApplyClick = (uniId, uniName, countryName) => {
+  //   if (!window.gtag) return; // Prevent errors if GA4 isn't loaded
 
-    // Get the correct language label
-    const uniLabel = language === "ar" ? uniName.ar : uniName.en;
+  //   // Get the correct language label
+  //   const uniLabel = language === "ar" ? uniName.ar : uniName.en;
 
-    // Track event in GA4
-    ReactGA.event("Clicked on Apply", {
-      category: "University Click",
-      label: uniLabel, // University name in the correct language
-      value: uniId,
-    });
+  //   // Track event in GA4
+  //   ReactGA.event("Clicked on Apply", {
+  //     category: "University Click",
+  //     label: uniLabel, // University name in the correct language
+  //     value: uniId,
+  //   });
 
-    // Store click data in your backend
-    addClickData(uniId, "University", countryName);
-  };
+  //   // Store click data in your backend
+  //   addClickData(uniId, "University", countryName);
+  // };
 
   const handleNavigate = (uniname) => {
     navigate(`/${language}/university/${uniname}`);
@@ -54,7 +52,7 @@ const CollegeCard = ({ data, loading }) => {
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
-            className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg animate-pulse"
+            className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg"
           >
             <div className="p-4 sm:p-6">
               <div className="absolute top-0 right-0 bg-red-500 text-white text-xs sm:text-sm px-2 py-1 rounded-bl-md rounded-tr-xl">
@@ -273,6 +271,7 @@ function Univrsiry({
 }) {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const path = location.pathname;
   const { filterProp } = useSearch();
   const [universities, setUniversities] = useState(initialData || []);
   const [loading, setLoading] = useState(initialLoading);
@@ -285,6 +284,7 @@ function Univrsiry({
 
   // API base URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
+  const isSearchResultsPath = path === `/${language}/searchresults`;
 
   useEffect(() => {
     if (JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp)) {
@@ -307,7 +307,7 @@ function Univrsiry({
 
   // Function to fetch more courses
   const fetchMoreUniversities = async () => {
-    if (!hasMore || loadingMore) return;
+    if (!hasMore || loadingMore || isSearchResultsPath) return;
 
     try {
       setLoadingMore(true);
@@ -351,6 +351,9 @@ function Univrsiry({
 
   // Set up Intersection Observer for infinite scrolling
   useEffect(() => {
+    if (isSearchResultsPath) {
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loadingMore) {
@@ -371,7 +374,7 @@ function Univrsiry({
         observer.unobserve(currentLoaderRef);
       }
     };
-  }, [hasMore, loadingMore, countryIds, filterProp]); // Added filterProp to dependencies
+  }, [hasMore, loadingMore, countryIds, filterProp, isSearchResultsPath]); // Added filterProp to dependencies
 
   return (
     <>
@@ -413,7 +416,7 @@ function Univrsiry({
         )}
 
         {/* No results message */}
-        {!loading && universities?.length === 0 && (
+        {!loading && universities?.length === 0 && !isSearchResultsPath && (
           <div className="col-span-full text-center py-8">
             <p className="text-lg text-gray-500">
               {t("noUniversitiesFound") ||

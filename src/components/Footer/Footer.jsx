@@ -41,7 +41,6 @@ const Footer = () => {
     }
   };
 
-  console.log(filteredData);
   return (
     <div className="relative  max-w-[1240px] w-[95%]  my-3 mx-auto  ">
       <div className="bg-white rounded-[40px] w-full py-8 text-gray-800 px-10 mt-[5%] mb-[5%]  ">
@@ -84,8 +83,9 @@ const Footer = () => {
               {t("Footer.Universities")}
             </h3>
             <ul>
-              {filteredData.universities.slice(0, 3).map((item) => (
+              {filteredData.universities.slice(0, 3).map((item, idx) => (
                 <li
+                  key={idx}
                   onClick={() =>
                     handleNavigate(item.uniName[language], "universities")
                   }
@@ -100,8 +100,9 @@ const Footer = () => {
               {t("Footer.Countries")}
             </h3>
             <ul>
-              {filteredData.countries.slice(0, 3).map((item) => (
+              {filteredData.countries.slice(0, 3).map((item, idx) => (
                 <li
+                  key={idx}
                   onClick={() =>
                     handleNavigate(item.countryName[language], "countries")
                   }
@@ -116,8 +117,10 @@ const Footer = () => {
               {t("Footer.Courses")}
             </h3>
             <ul>
-              {addTags?.[0]?.tags?.[language]?.slice(0, 3).map((item) => (
-                <li onClick={() => handleNavigate(item, "tags")}>{item}</li>
+              {addTags?.[0]?.tags?.[language]?.slice(0, 3).map((item, idx) => (
+                <li key={idx} onClick={() => handleNavigate(item, "tags")}>
+                  {item}
+                </li>
               ))}
             </ul>
           </div>

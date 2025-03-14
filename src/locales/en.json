@@ -255,5 +255,16 @@
       "Twitter": "Twitter",
       "Instagram": "Instagram"
     }
-  }
+  },
+  "NoMoreCourses": "No More Courses",
+
+  "noResultsFound": "No Matches Found",
+  "noResultsDescription": "We couldn't find any matches for your current search criteria. Try adjusting your filters or search terms for better results.",
+  "searchTips": "Search Tips",
+  "tryBroaderSearch": "Try using more general keywords",
+  "checkSpelling": "Check your spelling",
+  "fewerFilters": "Use fewer filters",
+  "differentLocation": "Try a different location",
+  "clearFilters": "Clear All Filters",
+  "backToHome": "Back to Home"
 }

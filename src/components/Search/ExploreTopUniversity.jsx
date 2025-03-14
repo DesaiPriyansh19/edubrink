@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import DollerRounded from "../../../svg/DollerRounded/Index";
 import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
@@ -7,6 +9,10 @@ import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { getEmoji } from "../../../libs/countryFlags";
+import GradientSpinnerLoader, {
+  BouncingBarsLoader,
+} from "./Results/ImprovedLoaders";
+
 const isWindows = navigator.userAgent.includes("Windows");
 
 function ExploreTopUniversity({ language }) {
@@ -14,11 +20,13 @@ function ExploreTopUniversity({ language }) {
   const navigate = useNavigate();
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // New state for initial loading
   const [lastId, setLastId] = useState(null);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [initialFetch, setInitialFetch] = useState(true);
   const observer = useRef(null);
   const loadingRef = useRef(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0); // Used to trigger fetches
 
   const handleNavigate = (universityName) => {
     navigate(`/${language}/university/${universityName}`);
@@ -35,8 +43,8 @@ function ExploreTopUniversity({ language }) {
   };
 
   const fetchUniversities = useCallback(async () => {
-    // Don't fetch if we're already loading or there's no more data (except for initial fetch)
-    if (loading || (!hasNextPage && !initialFetch)) return;
+    // Prevent multiple simultaneous fetches
+    if (loading) return;
 
     try {
       setLoading(true);
@@ -53,18 +61,36 @@ function ExploreTopUniversity({ language }) {
         lastId ? `&lastId=${lastId}` : ""
       }`;
 
-      console.log("Fetching:", url); // ✅ Debugging URL
+      console.log("Fetching:", url);
 
       const response = await fetch(url);
-
       const result = await response.json();
 
-      if (initialFetch) {
-        setUniversities(result.data);
-        setInitialFetch(false);
-      } else {
-        setUniversities((prev) => [...prev, ...result.data]);
+      // Check if we received valid data
+      if (!result.data || result.data.length === 0) {
+        setHasNextPage(false);
+        setLoading(false);
+        setInitialLoading(false);
+        return;
       }
+
+      // Process the new data
+      setUniversities((prevUniversities) => {
+        if (initialFetch) {
+          setInitialFetch(false);
+          return result.data;
+        } else {
+          // Create a map of existing IDs for faster lookup
+          const existingIds = new Map(
+            prevUniversities.map((uni) => [uni._id, true])
+          );
+          // Filter out duplicates
+          const newUniversities = result.data.filter(
+            (uni) => !existingIds.has(uni._id)
+          );
+          return [...prevUniversities, ...newUniversities];
+        }
+      });
 
       setLastId(result.meta.lastId);
       setHasNextPage(result.meta.hasNextPage);
@@ -72,38 +98,58 @@ function ExploreTopUniversity({ language }) {
       console.error("Error fetching universities:", error);
     } finally {
       setLoading(false);
+      setInitialLoading(false);
     }
-  }, [lastId, hasNextPage, initialFetch, loading]);
+  }, [lastId, initialFetch, loading]);
 
+  // Initial data fetch
   useEffect(() => {
     // Only fetch initial data once when component mounts
     if (initialFetch) {
+      setInitialLoading(true);
       fetchUniversities();
     }
-  }, [initialFetch]);
+
+    // Cleanup function
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [fetchUniversities, initialFetch]);
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
-    // Don't set up observer if we're already loading or there's no more data
-    if (loading || !hasNextPage) return;
+    // Don't set up observer if we're loading, there's no more data, or we're still in initial fetch
+    if (loading || !hasNextPage || initialFetch) {
+      return;
+    }
 
-    // Disconnect previous observer if it exists
-    if (observer.current) observer.current.disconnect();
+    // Clean up previous observer
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    // Use a debounced version of fetchUniversities to prevent multiple rapid calls
+    let timeoutId = null;
+    const debouncedFetch = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (!loading && hasNextPage && !initialFetch) {
+          setFetchTrigger((prev) => prev + 1); // Trigger a fetch
+        }
+      }, 300); // 300ms debounce
+    };
 
     const callback = (entries) => {
-      // Only fetch more if we're not already loading, there's more data, and the element is intersecting
-      if (
-        entries[0].isIntersecting &&
-        hasNextPage &&
-        !loading &&
-        !initialFetch
-      ) {
-        fetchUniversities();
+      if (entries[0].isIntersecting) {
+        debouncedFetch();
       }
     };
 
     observer.current = new IntersectionObserver(callback, {
-      rootMargin: "100px",
+      rootMargin: "200px", // Increased margin to trigger earlier
+      threshold: 0.1,
     });
 
     if (loadingRef.current) {
@@ -111,11 +157,39 @@ function ExploreTopUniversity({ language }) {
     }
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       if (observer.current) {
         observer.current.disconnect();
       }
     };
-  }, [loading, hasNextPage, fetchUniversities, initialFetch]);
+  }, [loading, hasNextPage, initialFetch, fetchUniversities]);
+
+  // Handle fetch trigger
+  useEffect(() => {
+    if (fetchTrigger > 0 && !loading && hasNextPage && !initialFetch) {
+      fetchUniversities();
+    }
+  }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchUniversities]);
+
+  // Reset component state when unmounting
+  useEffect(() => {
+    return () => {
+      // Clean up everything when component unmounts
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Show full page loader for initial loading
+  if (initialLoading) {
+    return (
+      <BouncingBarsLoader
+        type="gradient"
+        message={t("Loading Universities...")}
+      />
+    );
+  }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -303,61 +377,27 @@ function ExploreTopUniversity({ language }) {
             );
           })}
 
-        {/* Loading skeletons */}
-        {loading &&
-          Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={`skeleton-${index}`}
-              className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full animate-pulse"
-            >
-              <div className="p-4 sm:p-6">
-                <div
-                  className={`absolute top-0 right-0 rounded-bl-[4px] rounded-tr-xl bg-gray-300 h-6 w-24`}
-                ></div>
-
-                <div className="flex gap-3 sm:gap-4 items-center mb-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-6 bg-gray-300 rounded-md w-40 mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded-md w-32 mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded-md w-36"></div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 justify-center"
-                    >
-                      <div className="rounded-full w-10 h-10 bg-gray-300"></div>
-                      <div>
-                        <div className="h-3 bg-gray-300 rounded-md w-16 mb-1"></div>
-                        <div className="h-3 bg-gray-300 rounded-md w-12"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="w-full h-[1px] bg-gray-300"></div>
-
-              <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                <div className="h-10 bg-gray-300 rounded-full"></div>
-                <div className="h-10 bg-gray-300 rounded-full"></div>
-              </div>
-            </div>
-          ))}
+        {/* Loading indicator for more content */}
+        {loading && (
+          <div className="col-span-1 sm:col-span-2">
+            <GradientSpinnerLoader message={t("Loading more universites...")} />
+          </div>
+        )}
 
         {/* Loading reference element - this is what the IntersectionObserver watches */}
-        {hasNextPage && <div ref={loadingRef} className="h-10 w-full" />}
+        {hasNextPage && !loading && (
+          <div
+            ref={loadingRef}
+            className="h-20 w-full col-span-1 sm:col-span-2"
+          />
+        )}
       </div>
 
       {/* Load more button (optional alternative to infinite scroll) */}
       {hasNextPage && !loading && (
         <div className="flex justify-center mt-8">
           <button
-            onClick={fetchUniversities}
+            onClick={() => setFetchTrigger((prev) => prev + 1)}
             className="px-6 py-2 bg-gradient-to-r from-[#380C95] to-[#E15754] text-white rounded-full"
           >
             {t("loadMore")}

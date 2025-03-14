@@ -143,7 +143,7 @@ function OurCourses() {
       {/* Header Section */}
       <div
         className={`max-w-[1240px] mb-10 mx-auto ${
-          isVisible ? "animate-fadeIn" : "opacity-0"
+          isVisible ? "animate_fade_in" : "opacity-0"
         }`}
         style={{ animationDelay: "0.2s" }}
       >
@@ -239,13 +239,13 @@ function OurCourses() {
               {/* Animated particle effects */}
               {isHovered && (
                 <>
-                  <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-float"></div>
+                  <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate_float"></div>
                   <div
-                    className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full animate-float"
+                    className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full animate_float"
                     style={{ animationDelay: "0.5s" }}
                   ></div>
                   <div
-                    className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate-float"
+                    className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-white rounded-full animate_float"
                     style={{ animationDelay: "1s" }}
                   ></div>
                 </>
@@ -279,7 +279,6 @@ function OurCourses() {
                   </div>
                 </div>
 
-                {/* Content with Dynamic Direction */}
                 <div
                   className={`${isEven ? "mt-6" : "mb-6"} text-white ${
                     language === "ar"
@@ -324,7 +323,7 @@ function OurCourses() {
                     >
                       {language === "ar" ? "سجل الآن" : "Enroll Now"}
                       {isHovered && (
-                        <ArrowRight className="inline-block ml-1 w-3 h-3 animate-pulse" />
+                        <ArrowRight className="inline-block ml-1 w-3 h-3 animate_pulse" />
                       )}
                     </button>
                   </div>
@@ -334,91 +333,6 @@ function OurCourses() {
           );
         })}
       </div>
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideInRight {
-          from {
-            transform: translateX(50px);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideInUp {
-          from {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0) translateX(0);
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(-10px) translateX(5px);
-            opacity: 0.7;
-          }
-          75% {
-            transform: translateY(-5px) translateX(10px);
-            opacity: 0.8;
-          }
-        }
-
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.7;
-            transform: scale(1.05);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease forwards;
-        }
-
-        .animate-slideInRight {
-          animation: slideInRight 0.8s ease forwards;
-        }
-
-        .animate-slideInUp {
-          animation: slideInUp 0.8s ease forwards;
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 }

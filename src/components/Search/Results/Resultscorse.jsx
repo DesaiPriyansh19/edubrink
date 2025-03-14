@@ -5,7 +5,6 @@ import DollerRounded from "../../../../svg/DollerRounded/Index";
 import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -17,7 +16,6 @@ function ResultsCorses({
   uniIds,
 }) {
   const { t } = useTranslation();
-  const { addClickData } = useAnalysis();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,41 +23,41 @@ function ResultsCorses({
   const { filterProp } = useSearch();
 
   // State for infinite scrolling
-  const [courses, setCourses] = useState(initialData || []);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(initialLoading);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const observerRef = useRef(null);
   const loaderRef = useRef(null);
 
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp);
+  const initialDataRef = useRef(null);
 
   // API base URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
 
+  // Check if we're on the searchresults path that should disable infinite scroll
+  const isSearchResultsPath = path === `/${language}/searchresults`;
+
   useEffect(() => {
     const isFilterChanged =
       JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
-    const isInitialDataChanged =
-      initialData && JSON.stringify(initialData) !== JSON.stringify(courses);
+
+    // Always update courses when initialData changes, even if it's empty
+    if (initialData !== initialDataRef.current) {
+      initialDataRef.current = initialData;
+      setCourses(initialData || []);
+      setPage(1);
+      setHasMore((initialData || []).length > 0);
+    }
 
     if (isFilterChanged) {
       filterPropRef.current = filterProp;
       setPage(1);
       setHasMore(true);
     }
-
-    if (isInitialDataChanged) {
-      setCourses(initialData);
-      setPage(1);
-      setHasMore(initialData.length > 0);
-    }
   }, [filterProp, initialData]);
-
-  console.log(filterProp);
-  console.log(initialData);
 
   useEffect(() => {
     // Set loading state based on initialLoading
@@ -68,7 +66,7 @@ function ResultsCorses({
 
   // Function to fetch more courses
   const fetchMoreCourses = async () => {
-    if (!hasMore || loadingMore) return;
+    if (!hasMore || loadingMore || isSearchResultsPath) return;
 
     try {
       setLoadingMore(true);
@@ -108,6 +106,11 @@ function ResultsCorses({
 
   // Set up Intersection Observer for infinite scrolling
   useEffect(() => {
+    // Don't set up the observer if we're on the searchresults path
+    if (isSearchResultsPath) {
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loadingMore) {
@@ -128,11 +131,7 @@ function ResultsCorses({
         observer.unobserve(currentLoaderRef);
       }
     };
-  }, [hasMore, loadingMore, uniIds, filterProp]); // Added filterProp to dependencies
-
-  const handleApplyClick = (courseId, countryName) => {
-    addClickData(courseId, "Course", countryName);
-  };
+  }, [hasMore, loadingMore, uniIds, filterProp, isSearchResultsPath]);
 
   const handleNavigate = (course) => {
     navigate(`/${language}/courses/${course}`);
@@ -173,7 +172,7 @@ function ResultsCorses({
           ? Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={index}
-                className="relative mt-3 border rounded-xl shadow-md bg-white animate-pulse"
+                className="relative mt-3 border rounded-xl shadow-md bg-white "
               >
                 <div className="px-3 pr-3 sm:pr-8 md:pr-9 lg:pr-16 p-4">
                   <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
@@ -298,9 +297,7 @@ function ResultsCorses({
                   </div>
                   <div className="grid gap-6 px-3 grid-cols-2 mb-4 mt-4">
                     <button
-                      onClick={() =>
-                        handleApplyClick(university._id, university.countryName)
-                      }
+                      // onClick={() => handleApplyClick(university._id, university.countryName)}
                       className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
                     >
                       {t("applyNow")}
@@ -318,8 +315,8 @@ function ResultsCorses({
               );
             })}
 
-        {/* Loading indicator at the bottom */}
-        {hasMore && courses?.length > 0 && (
+        {/* Loading indicator at the bottom - only show if not on searchresults path */}
+        {hasMore && courses?.length > 0 && !isSearchResultsPath && (
           <div
             ref={loaderRef}
             className={`col-span-full flex justify-center py-4 ${

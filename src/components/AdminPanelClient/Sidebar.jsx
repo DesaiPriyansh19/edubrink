@@ -9,6 +9,8 @@ import {
   FileText,
   Building2,
   BookOpenCheck,
+  Tag,
+  FilePlus2,
 } from "lucide-react";
 import { useLanguage } from "../../../context/LanguageContext";
 
@@ -35,6 +37,12 @@ const Sidebar = () => {
     },
     { icon: FileText, label: "Articles", path: `/${language}/admin/articles` },
     { icon: Users, label: "Users", path: `/${language}/admin/users` },
+    { icon: Tag, label: "Tags", path: `/${language}/admin/tags` },
+    {
+      icon: FilePlus2,
+      label: "Application",
+      path: `/${language}/admin/applications`,
+    },
   ];
 
   return (

@@ -1,176 +1,390 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Calendar,
-  BarChart2,
-  ShoppingCart,
-  FileText,
-  UserPlus,
-  Mail,
-  LogIn,
-  PieChart,
-  Search,
-  X,
-  Landmark,
-} from "lucide-react";
+"use client"
 
-import AOS from "aos";
-import "aos/dist/aos.css"; // Import AOS styles
+import { useEffect, useRef, useState } from "react"
+import { Search, X, FileText, Landmark, BookOpen, GraduationCap, Globe, Tag, TrendingUp, Clock } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import AOS from "aos"
+import "aos/dist/aos.css"
+import { useLanguage } from "../../../context/LanguageContext"
 
-const SearchBar = ({ searchBar, setSearchBar }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const inputRef = useRef(null);
-  const containerRef = useRef(null); // Ref for the entire search bar container
+const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeCategory, setActiveCategory] = useState(null)
+  const { language } = useLanguage()
+  const inputRef = useRef(null)
+  const containerRef = useRef(null)
+  const navigate = useNavigate()
 
+  // Group keywords by type - Fixed by initializing with an empty object and checking data structure
+  const groupedKeywords =
+    keywordData?.reduce((acc, item) => {
+      // Initialize the accumulator properly
+      if (!acc) acc = {}
+
+      // Check if the item has a type property
+      if (!item || !item.type) return acc
+
+      // Initialize the array for this type if it doesn't exist
+      if (!acc[item.type]) {
+        acc[item.type] = []
+      }
+
+      // Add the item to the appropriate type array
+      acc[item.type].push(item)
+      return acc
+    }, {}) || {} // Ensure we return an empty object if reduce returns undefined
+
+  // Define categories with icons and titles
+  const categories = [
+    {
+      id: "university",
+      icon: <Landmark className="w-5 h-5" />,
+      title: "Universities",
+    },
+    { id: "course", icon: <BookOpen className="w-5 h-5" />, title: "Courses" },
+    { id: "country", icon: <Globe className="w-5 h-5" />, title: "Countries" },
+    {
+      id: "faculty",
+      icon: <GraduationCap className="w-5 h-5" />,
+      title: "Faculties",
+    },
+    { id: "tag", icon: <Tag className="w-5 h-5" />, title: "Popular Tags" },
+    { id: "blog", icon: <FileText className="w-5 h-5" />, title: "Articles" },
+  ]
+
+  // Get trending keywords (most frequent ones)
+  const getTrendingKeywords = () => {
+    // Make sure we have valid data before slicing
+    return Array.isArray(keywordData) ? keywordData.slice(0, 6) : []
+  }
+
+  // Get recent searches (could be stored in localStorage in a real app)
+  const getRecentSearches = () => {
+    // Make sure we have valid data before slicing
+    return Array.isArray(keywordData) ? keywordData.slice(0, 4) : []
+  }
+
+  // Filter keywords based on search query - Fixed to handle potential undefined values
+  const getFilteredKeywords = () => {
+    if (!searchQuery.trim() || !groupedKeywords) return {}
+
+    const filtered = {}
+
+    Object.keys(groupedKeywords).forEach((type) => {
+      // Check if groupedKeywords[type] is an array before filtering
+      if (Array.isArray(groupedKeywords[type])) {
+        const matchingKeywords = groupedKeywords[type]
+          .filter((item) => item && item.keyword && item.keyword.toLowerCase().includes(searchQuery.toLowerCase()))
+          .slice(0, 5) // Limit to 5 results per category
+
+        if (matchingKeywords.length > 0) {
+          filtered[type] = matchingKeywords
+        }
+      }
+    })
+
+    return filtered
+  }
+
+  const filteredKeywords = getFilteredKeywords()
+  const hasFilteredResults = Object.keys(filteredKeywords).length > 0
+
+  // Handle keyword selection
+  const handleSelectKeyword = (keyword) => {
+    if (!keyword) return
+
+    const customSlug = keyword.customURLSlug?.[language] || keyword.keyword
+
+    switch (keyword.type) {
+      case "country":
+        navigate(`/${language}/country/${customSlug}`)
+        break
+      case "tag":
+        navigate(`/${language}/searchresults?tag=${customSlug}`)
+        break
+      case "university":
+        navigate(`/${language}/university/${customSlug}`)
+        break
+      case "course":
+        navigate(`/${language}/courses/${customSlug}`)
+        break
+      case "blog":
+        navigate(`/${language}/blog/${customSlug}`)
+        break
+      case "faculty":
+        navigate(`/${language}/faculty/${customSlug}`)
+        break
+      default:
+        navigate(`/${language}/searchresults?q=${keyword.keyword}`)
+    }
+
+    setSearchBar(false)
+  }
+
+  // Get icon for keyword type
+  const getIconForType = (type) => {
+    switch (type) {
+      case "university":
+        return <Landmark className="w-4 h-4 text-emerald-500" />
+      case "course":
+        return <BookOpen className="w-4 h-4 text-purple-500" />
+      case "country":
+        return <Globe className="w-4 h-4 text-red-500" />
+      case "faculty":
+        return <GraduationCap className="w-4 h-4 text-purple-500" />
+      case "tag":
+        return <Tag className="w-4 h-4 text-blue-500" />
+      case "blog":
+        return <FileText className="w-4 h-4 text-blue-500" />
+      default:
+        return <Search className="w-4 h-4 text-gray-400" />
+    }
+  }
+
+  // Handle click outside to close
   useEffect(() => {
     const handleEvent = (event) => {
-      // Close if Escape key is pressed
-
       if (searchBar && inputRef.current) {
-        inputRef.current.focus(); // Auto-focus the input when searchBar is true
+        inputRef.current.focus()
       }
 
       if (event.type === "keydown" && event.key === "Escape") {
-        setSearchBar(false);
+        setSearchBar(false)
       }
 
-      // Close if clicked outside the container
-      if (
-        event.type === "mousedown" &&
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        setSearchBar(false);
+      if (event.type === "mousedown" && containerRef.current && !containerRef.current.contains(event.target)) {
+        setSearchBar(false)
       }
-    };
+    }
 
     if (searchBar) {
-      document.addEventListener("keydown", handleEvent);
-      document.addEventListener("mousedown", handleEvent);
+      document.addEventListener("keydown", handleEvent)
+      document.addEventListener("mousedown", handleEvent)
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEvent);
-      document.removeEventListener("mousedown", handleEvent);
-    };
-  }, [searchBar]);
+      document.removeEventListener("keydown", handleEvent)
+      document.removeEventListener("mousedown", handleEvent)
+    }
+  }, [searchBar, setSearchBar])
 
-  const SearchBarOptions = [
-    {
-      title: "POPULAR SEARCHES",
-      items: [
-        {
-          name: "Add University",
-          icon: <Calendar className="w-4 h-4 text-gray-400" />,
-        },
-        {
-          name: "Add Countries",
-          icon: <BarChart2 className="w-4 h-4 text-gray-400" />,
-        },
-        {
-          name: "Add Faculty",
-          icon: <ShoppingCart className="w-4 h-4 text-gray-400" />,
-        },
-        {
-          name: "Add Major",
-          icon: <FileText className="w-4 h-4 text-gray-400" />,
-        },
-        {
-          name: "Add Article",
-          icon: <FileText className="w-4 h-4 text-gray-400" />,
-        },
-        {
-          name: "Add User",
-          icon: <UserPlus className="w-4 h-4 text-gray-400" />,
-        }, // Changed to UserPlus
-      ],
-    },
-    {
-      title: "APPS & PAGES",
-      items: [
-        {
-          name: "Universities",
-          icon: <Landmark className="w-4 h-4 text-gray-400" />,
-        }, // Chat icon
-        { name: "Emails", icon: <Mail className="w-4 h-4 text-gray-400" /> },
-        { name: "Sign Out", icon: <LogIn className="w-4 h-4 text-gray-400" /> },
-        {
-          name: "Analytics",
-          icon: <PieChart className="w-4 h-4 text-gray-400" />,
-        },
-      ],
-    },
-  ];
-
-  // Filter items based on search query
-  const filteredOptions = SearchBarOptions.map((section) => ({
-    ...section,
-    items: section.items.filter((item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ),
-  }));
-
+  // Initialize AOS
   useEffect(() => {
     AOS.init({
-      duration: 1000, // Animation duration
-      easing: "ease-in-out", // Easing type
-      once: false, // Whether animation should happen only once
-    });
-  }, []);
+      duration: 800,
+      easing: "ease-in-out",
+      once: false,
+    })
+  }, [])
+
+  // Debug logging to help identify data structure issues
+  useEffect(() => {
+    if (keywordData && keywordData.length > 0) {
+      // console.log("Sample keyword data item:", keywordData[0])
+      // console.log("Grouped keywords:", groupedKeywords)
+    }
+  }, [keywordData, groupedKeywords])
 
   if (!searchBar) {
-    return null;
+    return null
   }
 
   return (
-    <div className="bg-black bg-opacity-50 backdrop-blur-md fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div
         ref={containerRef}
-        className="relative w-[600px] bg-white rounded-lg shadow-lg p-6"
-        data-aos={searchBar ? "fade-up" : "fade-out"} // Add AOS animation
-        data-aos-duration="300" // Animation duration
+        className="relative w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden"
+        data-aos={searchBar ? "fade-up" : "fade-out"}
+        data-aos-duration="300"
       >
         {/* Search Input */}
-        <div className="flex items-center border-b border-gray-300 pb-2">
-          <Search className="text-gray-500 w-5 h-5 mr-2" />
+        <div className="flex items-center border-b border-gray-200 p-4">
+          <Search className="text-gray-500 w-5 h-5 mr-3 flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
             className="w-full outline-none text-lg"
-            placeholder="Search..."
+            placeholder="Search keywords, universities, courses..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
           />
-          <div className="flex justify-end items-center gap-1 ">
-            <p className="text-gray-500 text-sm">[esc]</p>
-            <button onClick={() => setSearchBar(false)}>
+          <div className="flex justify-end items-center gap-2 ml-2">
+            <span className="text-gray-400 text-sm px-2 py-1 bg-gray-100 rounded-md">[esc]</span>
+            <button
+              onClick={() => setSearchBar(false)}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            >
               <X className="text-gray-500 w-5 h-5" />
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mt-4 text-sm">
-          {filteredOptions.map((search, idx) => (
-            <div key={idx}>
-              <h3 className="text-gray-500 font-semibold mb-2">
-                {search.title}
-              </h3>
-              <ul className="space-y-1">
-                {search.items.map((item, itemidx) => (
-                  <li
-                    key={itemidx}
-                    className="flex items-center gap-2 cursor-pointer hover:text-blue-500"
-                  >
-                    {item.icon} {item.name}
-                  </li>
+        <div className="max-h-[70vh] overflow-y-auto">
+          {/* Search Results */}
+          {searchQuery && hasFilteredResults ? (
+            <div className="p-4">
+              <h3 className="text-sm font-semibold text-gray-500 mb-3">SEARCH RESULTS</h3>
+              <div className="space-y-4">
+                {Object.keys(filteredKeywords).map((type) => (
+                  <div key={type} className="space-y-2">
+                    <h4 className="text-xs font-medium text-gray-500 uppercase flex items-center">
+                      {getIconForType(type)}
+                      <span className="ml-2">{type}s</span>
+                    </h4>
+                    <ul className="space-y-1">
+                      {filteredKeywords[type].map((item, idx) => (
+                        <li
+                          key={`${type}-${idx}`}
+                          className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                          onClick={() => handleSelectKeyword(item)}
+                          data-aos="fade-up"
+                          data-aos-delay={idx * 50}
+                        >
+                          <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100">
+                            {getIconForType(item.type)}
+                          </div>
+                          <span className="text-gray-800">{item.keyword}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          ))}
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6 p-6">
+              {/* Categories */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-500 mb-3">CATEGORIES</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                        activeCategory === category.id ? "bg-blue-50 text-blue-600" : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                      onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
+                      data-aos="fade-up"
+                    >
+                      <div
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg ${
+                          activeCategory === category.id ? "bg-blue-100" : "bg-gray-100"
+                        }`}
+                      >
+                        {category.icon}
+                      </div>
+                      <span className="font-medium">{category.title}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Trending Searches */}
+                <div className="mt-6">
+                  <h3 className="text-sm font-semibold text-gray-500 mb-3 flex items-center">
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    TRENDING SEARCHES
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {getTrendingKeywords().map((keyword, idx) => (
+                      <button
+                        key={idx}
+                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm text-gray-700 transition-colors"
+                        onClick={() => handleSelectKeyword(keyword)}
+                        data-aos="fade-up"
+                        data-aos-delay={idx * 50}
+                      >
+                        {keyword.keyword}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Searches & Quick Links */}
+              <div>
+                {/* Recent Searches */}
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-500 mb-3 flex items-center">
+                    <Clock className="w-4 h-4 mr-2" />
+                    RECENT SEARCHES
+                  </h3>
+                  <ul className="space-y-2">
+                    {getRecentSearches().map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                        onClick={() => handleSelectKeyword(item)}
+                        data-aos="fade-up"
+                        data-aos-delay={idx * 50}
+                      >
+                        <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100">
+                          {getIconForType(item.type)}
+                        </div>
+                        <span className="text-gray-800">{item.keyword}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Quick Links */}
+                <div className="mt-6">
+                  <h3 className="text-sm font-semibold text-gray-500 mb-3">QUICK LINKS</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to={`/${language}/courses`}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      onClick={() => setSearchBar(false)}
+                      data-aos="fade-up"
+                    >
+                      <BookOpen className="w-4 h-4 text-purple-500" />
+                      <span>All Courses</span>
+                    </Link>
+                    <Link
+                      to={`/${language}/universities`}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      onClick={() => setSearchBar(false)}
+                      data-aos="fade-up"
+                      data-aos-delay="50"
+                    >
+                      <Landmark className="w-4 h-4 text-emerald-500" />
+                      <span>Universities</span>
+                    </Link>
+                    <Link
+                      to={`/${language}/countries`}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      onClick={() => setSearchBar(false)}
+                      data-aos="fade-up"
+                      data-aos-delay="100"
+                    >
+                      <Globe className="w-4 h-4 text-red-500" />
+                      <span>Countries</span>
+                    </Link>
+                    <Link
+                      to={`/${language}/blog`}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
+                      onClick={() => setSearchBar(false)}
+                      data-aos="fade-up"
+                      data-aos-delay="150"
+                    >
+                      <FileText className="w-4 h-4 text-blue-500" />
+                      <span>Blog Articles</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer with additional info */}
+        <div className="border-t border-gray-200 p-4 bg-gray-50 text-center text-sm text-gray-500">
+          Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Enter</kbd> to search or select a result
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SearchBar;
+export default SearchBar
+

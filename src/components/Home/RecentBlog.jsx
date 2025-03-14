@@ -1,10 +1,14 @@
-import React from "react";
+"use client";
+
+import { useEffect } from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { Link, useNavigate } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
-import "react-loading-skeleton/dist/skeleton.css"; // Import CSS for Skeleton
+import "react-loading-skeleton/dist/skeleton.css";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -12,31 +16,40 @@ function RecentBlog() {
   const { data, loading } = useFetch(
     `https://edu-brink-backend.vercel.app/api/blog/`
   );
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: false,
+    });
+  }, []);
 
   const handleNaviagte = (name) => {
     navigate(`/${language}/blog/${name}`);
   };
-  const { t } = useTranslation();
-  const { language } = useLanguage();
+
   const SkeletonLoader = () => {
     return (
-      <div className="flex gap-2 ">
-        <div className="min-w-[300px] h-[50vh] sm:v-[40vh] md:h-[30vh] lg:h-[70vh] bg-white p-5 pb-0  rounded-3xl shadow-md animate-pulse">
-          {/* Skeleton for Image */}
-          <div className="h-[55%] w-[100%] bg-gray-300 rounded-2xl"></div>
+      <div className="w-[280px] flex-shrink-0 bg-white rounded-xl shadow-md animate-pulse">
+        {/* Image skeleton */}
+        <div className="h-[160px] w-full bg-gray-200 rounded-t-xl"></div>
 
-          {/* Skeleton for 'Study in <Country Name>' Text */}
-          <p className="text-[#E82448] text-sm font-semibold mt-4 bg-gray-300 h-4 w-[70%] rounded"></p>
+        <div className="p-4">
+          {/* Country name skeleton */}
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
 
-          {/* Skeleton for Blog Title */}
-          <h4 className="font-semibold text-lg text-black mt-2 mb-1 bg-gray-300 h-5 w-[60%] rounded"></h4>
+          {/* Title skeleton */}
+          <div className="space-y-2 mt-3">
+            <div className="h-4 w-full bg-gray-200 rounded"></div>
+            <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+          </div>
 
-          {/* Skeleton for Date and Calendar */}
-          <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start">
-            {/* Skeleton for Calendar Icon */}
-            <div className="h-5 w-5 bg-gray-300 rounded-full mr-2"></div>
-            {/* Skeleton for Date */}
-            <div className="bg-gray-300 h-4 w-[50%] rounded"></div>
+          {/* Date skeleton */}
+          <div className="flex items-center mt-3">
+            <div className="h-4 w-4 bg-gray-200 rounded-full"></div>
+            <div className="h-4 w-24 bg-gray-200 rounded ml-2"></div>
           </div>
         </div>
       </div>
@@ -44,88 +57,111 @@ function RecentBlog() {
   };
 
   return (
-    <div className="mt-11 text-black">
-      <div className="max-w-[1240px] mx-auto">
-        <h1
-          className={`text-start text-3xl sm:text-4xl flex ${
-            language === "ar" ? "justify-end" : "justify-start"
-          } mb-4 font-semibold pl-4`}
-        >
-          {t("recentBlog.title")}
-        </h1>
+    <div className="mt-11 mb-16">
+      <div className="max-w-[1240px] mx-auto px-4">
+        {/* Header section */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex-1" data-aos="fade-right">
+            <div className="flex items-center gap-3 mb-2">
+              <h1
+                className={`text-2xl sm:text-3xl font-semibold ${
+                  language === "ar" ? "text-right" : "text-left"
+                }`}
+              >
+                {t("recentBlog.title")}
+              </h1>
+              <img
+                src="/placeholder.svg?height=32&width=32"
+                alt="Blog icon"
+                className="w-8 h-8 object-contain"
+              />
+            </div>
+            <p
+              className={`text-sm text-gray-600 ${
+                language === "ar" ? "text-right" : "text-left"
+              }`}
+            >
+              {t("recentBlog.description")}
+            </p>
+          </div>
 
-        <p
-          className={` font-normal w-full text-sm ${
-            language === "ar" ? "text-right" : "text-left"
-          } sm:text-[.8rem] px-0 pl-4 pr-1 `}
-        >
-          {t("recentBlog.description")}
-        </p>
-        <div
-          className={`w-full hidden sm:flex  ${
-            language === "ar" ? "justify-start" : "justify-end "
-          } items-center px-4`}
-        >
-          <Link to={"AllBlogs"}>
-            {" "}
-            <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-              {t("viewAll")}
-            </button>
-          </Link>{" "}
+          <div className="hidden sm:block" data-aos="fade-left">
+            <Link to="AllBlogs">
+              <button className="px-6 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-50">
+                {t("viewAll")}
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
-      {loading ? (
-        <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6 py-6">
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <SkeletonLoader key={idx} />
-          ))}
-        </div>
-      ) : (
+
+        {/* Blog cards section */}
         <div
           dir={language === "ar" ? "rtl" : "ltr"}
-          className={`flex sm:flex-row py-4 flex-col px-4 ${
-            language === "ar" ? "1xl:pr-28" : "1xl:pl-28"
-          }  gap-6 scrollbar-hide overflow-x-auto`}
+          className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
         >
-          {data?.map((card, idx) => (
-            <div
-              key={idx}
-              onClick={() => {
-                handleNaviagte(card.customURLSlug[language]);
-              }}
-              className="max-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
-              dir={language === "ar" ? "rtl" : "ltr"}
-            >
-              <div className="h-[55%] w-[100%]">
-                <img
-                  src={"https://placehold.co/260x220" || card?.blogPhoto}
-                  alt={`Slide ${idx + 1}`}
-                  className="w-[100%] h-[100%] rounded-2xl object-cover"
-                />
-              </div>
+          {loading
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <SkeletonLoader key={idx} />
+              ))
+            : data?.map((blog, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleNaviagte(blog.customURLSlug[language])}
+                  className="w-[280px] flex-shrink-0 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
+                  data-aos="fade-up"
+                  data-aos-delay={idx * 100}
+                >
+                  {/* Image container */}
+                  <div className="h-[160px] w-full rounded-t-xl overflow-hidden">
+                    <img
+                      src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                      alt={blog?.blogTitle?.[language]}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
 
-              <p className="text-[#E82448] text-sm font-semibold mt-4">
-                {language === "ar"
-                  ? `الدراسة في ${
-                      card?.blogCountry?.countryName?.ar || "غير متوفر"
-                    }`
-                  : `Study in ${card?.blogCountry?.countryName?.en || "N/A"}`}
-              </p>
+                  <div className="p-4">
+                    {/* Country name */}
+                    <p className="text-[#E82448] text-xs font-medium truncate">
+                      {language === "ar"
+                        ? `الدراسة في ${
+                            blog?.blogCountry?.countryName?.ar || "غير متوفر"
+                          }`
+                        : `Study in ${
+                            blog?.blogCountry?.countryName?.en || "N/A"
+                          }`}
+                    </p>
 
-              <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-                {language === "ar" ? card?.blogTitle?.ar : card?.blogTitle?.en}
-              </h4>
+                    {/* Blog title */}
+                    <h4 className="font-medium text-base text-gray-800 mt-2 mb-3 line-clamp-2 h-[48px] group-hover:text-[#380C95] transition-colors duration-300">
+                      {language === "ar"
+                        ? blog?.blogTitle?.ar
+                        : blog?.blogTitle?.en}
+                    </h4>
 
-              <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-                <Calander />
-                {card.blogAdded
-                  ? new Date(card.blogAdded).toLocaleDateString()
-                  : "Date not available"}
-              </div>
-            </div>
-          ))}
+                    {/* Date */}
+                    <div className="flex items-center text-xs text-gray-500 mt-auto">
+                      <Calander />
+                      <span className="ml-2">
+                        {blog.blogAdded
+                          ? new Date(blog.blogAdded).toLocaleDateString()
+                          : "Date not available"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
-      )}
+
+        {/* Mobile view all button */}
+        <div className="sm:hidden flex justify-center mt-6">
+          <Link to="AllBlogs">
+            <button className="px-8 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#380C95] to-[#E15754] rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+              {t("viewAll")}
+            </button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

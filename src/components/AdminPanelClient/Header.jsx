@@ -19,11 +19,14 @@ import axios from "axios";
 import SearchBar from "./SearchBar";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { adaptKeywordData } from "../../../utils/keyword-adapter";
 
 const Header = ({ data: notifications, refetch }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
+  const [keywordData, setKeywordData] = useState([]);
+
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
@@ -33,6 +36,8 @@ const Header = ({ data: notifications, refetch }) => {
   const { setLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // const { data } = useFetch("https://edu-brink-backend.vercel.app/api/keyword");
 
   const languages = [
     { code: "en", name: "English" },
@@ -55,6 +60,24 @@ const Header = ({ data: notifications, refetch }) => {
     }
     return null;
   };
+
+  // Fetch and adapt keyword data
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      try {
+        const response = await axios.get(
+          `https://edu-brink-backend.vercel.app/api/keyword`
+        );
+        const adaptedData = adaptKeywordData(response.data.data);
+        setKeywordData(adaptedData);
+      } catch (error) {
+        console.error("Error fetching keywords:", error);
+        setKeywordData([]);
+      }
+    };
+
+    fetchKeywords();
+  }, []);
 
   const getRelativeTime = (timestamp) => {
     const now = new Date();
@@ -214,7 +237,6 @@ const Header = ({ data: notifications, refetch }) => {
                   <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
                     {todayNotifications.length > 0 ? (
                       todayNotifications.map((notification) => {
-                        console.log(notification);
                         return (
                           <div
                             key={notification._id}
@@ -449,7 +471,11 @@ const Header = ({ data: notifications, refetch }) => {
         </div>
       </div>
 
-      <SearchBar searchBar={searchBar} setSearchBar={setSearchBar} />
+      <SearchBar
+        searchBar={searchBar}
+        setSearchBar={setSearchBar}
+        keywordData={keywordData}
+      />
     </header>
   );
 };

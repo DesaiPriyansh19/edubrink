@@ -4,13 +4,12 @@ import UniversityLogo from "../../../svg/UniversityLogo";
 import { useTranslation } from "react-i18next";
 
 const UniversityHighlight = ({ data, language }) => {
-  const [activeSection, setActiveSection] = useState("overview"); // Track active section
+  const [activeSection, setActiveSection] = useState("overview");
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false); // Track if content is expanded
-  const contentRef = useRef(null); // Ref to measure content height
-  const [showFullDescription, setShowFullDescription] = useState(false); // State for "Read More"
+  const [expanded, setExpanded] = useState(false);
+  const contentRef = useRef(null);
+  const [showFullDescription, setShowFullDescription] = useState({});
 
-  // Check if content exceeds 3 lines or 300 words
   const isContentOverflowing = () => {
     if (!contentRef.current) return false;
     const content = contentRef.current;
@@ -18,27 +17,31 @@ const UniversityHighlight = ({ data, language }) => {
       window.getComputedStyle(content).lineHeight,
       10
     );
-    const maxHeight = lineHeight * 3; // 3 lines
+    const maxHeight = lineHeight * 3;
     const isOverflowing = content.scrollHeight > maxHeight;
     const wordCount = content.textContent.split(/\s+/).length;
     return isOverflowing || wordCount > 300;
   };
 
-  // Toggle expanded state
   const toggleExpand = () => {
     setExpanded((prev) => !prev);
   };
 
-  // Set active section
   const handleSectionClick = (section) => {
     setActiveSection(section);
-    setExpanded(false); // Reset expanded state when switching sections
+    setExpanded(false);
   };
 
-  // Effect to check overflow on content change
+  const toggleCampusDescription = (campusId) => {
+    setShowFullDescription((prev) => ({
+      ...prev,
+      [campusId]: !prev[campusId]
+    }));
+  };
+
   useEffect(() => {
     if (contentRef.current) {
-      setExpanded(false); // Reset expanded state when content changes
+      setExpanded(false);
     }
   }, [activeSection, data, language]);
 
@@ -47,183 +50,189 @@ const UniversityHighlight = ({ data, language }) => {
   });
 
   return (
-    <div className="container ml-5 mt-5">
+    <div className="bg-[#652986] bg-opacity-5 rounded-xl p-6 mb-8">
       <div className="layout-wrapper">
-        <div className="flex gap-4">
-          <span>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-[#652986] bg-opacity-10 flex items-center justify-center text-[#652986]">
             <Star />
-          </span>
-          <p className="font-medium font-sans text-lg leading-7">
+          </div>
+          <h2 className="font-semibold text-xl text-[#652986]">
             {t("UniversitySlugPage.Highlight")}
-          </p>
+          </h2>
         </div>
 
         {/* Section Buttons */}
-        <div className="flex flex-wrap gap-4 mt-5 mb-5">
-          <button
-            onClick={() => handleSectionClick("overview")}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              activeSection === "overview"
-                ? "bg-[#d65458] text-white"
-                : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
-            }`}
-          >
-            {highlights[0]}
-          </button>
-          <button
-            onClick={() => handleSectionClick("accommodation")}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              activeSection === "accommodation"
-                ? "bg-[#d65458] text-white"
-                : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
-            }`}
-          >
-            {highlights[1]}
-          </button>
-          <button
-            onClick={() => handleSectionClick("library")}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              activeSection === "library"
-                ? "bg-[#d65458] text-white"
-                : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
-            }`}
-          >
-            {highlights[2]}
-          </button>
-          <button
-            onClick={() => handleSectionClick("sports")}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              activeSection === "sports"
-                ? "bg-[#d65458] text-white"
-                : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
-            }`}
-          >
-            {highlights[3]}
-          </button>
-          <button
-            onClick={() => handleSectionClick("studentLife")}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              activeSection === "studentLife"
-                ? "bg-[#d65458] text-white"
-                : "bg-[#f5ebeb] text-[#652986] hover:bg-[#d65458] hover:text-white"
-            }`}
-          >
-            {highlights[4]}
-          </button>
+        <div className="flex flex-wrap gap-3 mb-6">
+          {highlights.map((highlight, index) => {
+            const sectionName = 
+              index === 0 ? "overview" : 
+              index === 1 ? "accommodation" : 
+              index === 2 ? "library" : 
+              index === 3 ? "sports" : "studentLife";
+            
+            const isActive = activeSection === sectionName;
+            
+            return (
+              <button
+                key={index}
+                onClick={() => handleSectionClick(sectionName)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  isActive
+                    ? "bg-gradient-to-r from-[#652986] to-[#873299] text-white shadow-md"
+                    : "bg-white text-[#652986] hover:bg-[#652986] hover:bg-opacity-10"
+                }`}
+              >
+                {highlight}
+              </button>
+            );
+          })}
         </div>
 
         {/* Content Section */}
-        <div className="font-sans text-base font-normal leading-6 py-6 rounded-3xl md:max-w-[90%] bg-[#f5ebeb] p-4">
+        <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
           <div
             ref={contentRef}
-            className={`overflow-hidden transition-all ${
-              expanded ? "max-h-[1000px]" : "max-h-[4.5rem]"
+            className={`overflow-hidden transition-all duration-300 ${
+              expanded ? "max-h-[2000px]" : "max-h-[4.5rem]"
             }`}
           >
             {activeSection === "overview" && (
               <div
+                className="prose prose-sm max-w-none text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: data?.uniOverview?.[language],
+                  __html: data?.uniOverview?.[language] || "No overview available",
                 }}
               />
             )}
             {activeSection === "accommodation" && (
-              <p>{data?.uniAccomodation?.[language]}</p>
+              <p className="text-gray-700">{data?.uniAccomodation?.[language] || "No accommodation information available"}</p>
             )}
             {activeSection === "library" && (
-              <p>{data?.uniLibrary?.libraryDescription?.[language]}</p>
+              <p className="text-gray-700">{data?.uniLibrary?.libraryDescription?.[language] || "No library information available"}</p>
             )}
             {activeSection === "sports" && (
-              <p>{data?.uniSports?.sportsDescription?.[language]}</p>
+              <p className="text-gray-700">{data?.uniSports?.sportsDescription?.[language] || "No sports information available"}</p>
             )}
             {activeSection === "studentLife" && (
-              <p>
-                {data?.studentLifeStyleInUni?.lifestyleDescription?.[language]}
+              <p className="text-gray-700">
+                {data?.studentLifeStyleInUni?.lifestyleDescription?.[language] || "No student life information available"}
               </p>
             )}
           </div>
 
-          {/* Show "Read more" button if content overflows */}
           {isContentOverflowing() && (
             <button
               onClick={toggleExpand}
-              className="inline-flex justify-between items-center text-left font-semibold text-[#652986] text-lg py-2 hover:text-[#d65458]"
+              className="mt-2 flex items-center gap-2 font-medium text-[#652986] hover:text-[#873299] transition-colors"
             >
               <span>{expanded ? "Read less" : "Read more"}</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className={`transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
           )}
         </div>
       </div>
 
       {/* Campus Section */}
-      {data?.campuses?.[0]?.campusName.en && (
-        <div className="footer mt-6">
-          <div className="flex gap-4">
-            <UniversityLogo />
-            <p className="font-sans font-medium text-lg leading-7 text-[#652986]">
+      {data?.campuses?.length > 0 && data?.campuses?.[0]?.campusName?.en && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-[#652986] bg-opacity-10 flex items-center justify-center text-[#652986]">
+              <UniversityLogo />
+            </div>
+            <h2 className="font-semibold text-xl text-[#652986]">
               {t("UniversitySlugPage.Campus")}
-            </p>
+            </h2>
           </div>
-          <div className="flex gap-4 mt-[1.5rem]">
-            {data?.campuses.map((campus, index) => {
-              return (
-                <div
-                  key={index}
-                  className="bg-[#f5ebeb] p-4 rounded-3xl md:max-w-[90%] shadow-sm"
-                >
-                  <button className="bg-white px-3 py-1 rounded-full text-sm mb-2 text-[#652986] hover:bg-[#d65458] hover:text-white transition-all">
-                    {campus?.campusName?.[language]}
-                  </button>
+          
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {data?.campuses.map((campus, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl md:col-span-1 col-span-1 p-6 shadow-sm transition-all hover:shadow-md"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium text-[#652986] text-lg">
+                    {campus?.campusName?.[language] || "Campus"}
+                  </h3>
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#652986] bg-opacity-10 text-[#652986]">
+                    {campus?.campusLocation?.uniCity?.[language] || "Location"}
+                  </span>
+                </div>
 
-                  {/* Campus Location and Description */}
-                  <div className="mt-2">
-                    <p className="font-medium text-[#652986]">
-                      {campus?.campusLocation?.uniCity?.[language]}
-                    </p>
-                    <p className="text-[#652986] text-sm mt-1">
-                      {showFullDescription
-                        ? campus?.campusLocation?.uniDescription?.[language]
-                        : campus?.campusLocation?.uniDescription?.[
-                            language
-                          ]?.slice(0, 100) + "..."}
-                    </p>
-                    {campus?.campusLocation?.uniDescription?.[language]
-                      ?.length > 100 && (
-                      <button
-                        onClick={() =>
-                          setShowFullDescription(!showFullDescription)
-                        }
-                        className="text-[#d65458] text-sm mt-1 hover:text-[#652986]"
-                      >
-                        {showFullDescription
+                {/* Campus Description */}
+                <div className="mt-4">
+                  <p className="text-gray-600 text-sm mb-2">
+                    {showFullDescription[index]
+                      ? campus?.campusLocation?.uniDescription?.[language]
+                      : campus?.campusLocation?.uniDescription?.[language]?.slice(0, 100) + 
+                        (campus?.campusLocation?.uniDescription?.[language]?.length > 100 ? "..." : "")}
+                  </p>
+                  
+                  {campus?.campusLocation?.uniDescription?.[language]?.length > 100 && (
+                    <button
+                      onClick={() => toggleCampusDescription(index)}
+                      className="flex items-center gap-1 text-[#652986] text-sm font-medium hover:text-[#873299] transition-colors"
+                    >
+                      <span>
+                        {showFullDescription[index]
                           ? language === "ar"
                             ? "اقرأ أقل"
                             : "Read Less"
                           : language === "ar"
                           ? "اقرأ المزيد"
                           : "Read More"}
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Campus Facilities */}
-                  {campus?.campusFacilities?.length > 0 && (
-                    <div className="mt-4">
-                      <p className="font-medium text-[#652986]">
-                        {t("UniversitySlugPage.Facilities")}:
-                      </p>
-                      <ul className="list-disc list-inside text-sm text-[#652986]">
-                        {campus.campusFacilities.map(
-                          (facility, facilityIndex) => (
-                            <li key={facilityIndex}>{facility}</li>
-                          )
-                        )}
-                      </ul>
-                    </div>
+                      </span>
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className={`transition-transform duration-300 ${showFullDescription[index] ? "rotate-180" : ""}`}
+                      >
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
                   )}
                 </div>
-              );
-            })}
+
+                {/* Campus Facilities */}
+                {campus?.campusFacilities?.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <h4 className="font-medium text-[#652986] mb-3">
+                      {t("UniversitySlugPage.Facilities")}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {campus.campusFacilities.map((facility, facilityIndex) => (
+                        <span 
+                          key={facilityIndex}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#652986] bg-opacity-5 text-[#652986]"
+                        >
+                          {facility}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}

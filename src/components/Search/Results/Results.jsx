@@ -31,12 +31,7 @@ function Results({ filteredData, loading }) {
         loading={loading}
       />
       <ResultsBlog
-        // filteredData={filteredData?.flatMap((item) =>
-        //   item?.blog?.map((blogs) => ({
-        //     ...blogs,
-        //     countryName: item?.countryName,
-        //   }))
-        // )}
+     
         filteredData={filteredData?.blogs}
         loading={loading}
       />

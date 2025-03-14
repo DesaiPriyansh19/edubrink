@@ -31,7 +31,6 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
   const handleClose = (Link) => {
     navigate(`${Link}`); // Correct string interpolation
     setIsMenuOpen(false);
-    console.log("Navigating to:", Link); // Debug log
   };
   const countries = [
     { name: "United State of America", flag: usa },
