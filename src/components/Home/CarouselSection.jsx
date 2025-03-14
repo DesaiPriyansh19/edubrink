@@ -61,7 +61,7 @@ const CarouselSection = () => {
   const shouldUseMarquee = countries.length >= 8 || isMobile;
 
   return (
-    <section className="bg-gradient-to-r from-[#6439a2]/10 to-[#d76a6b]/10 w-full py-16 md:px-4">
+    <section className="bg-gradient-to-r  w-full py-16 md:px-4">
       <div className="flex items-center justify-center mb-12">
         <h1 className="text-3xl sm:text-4xl text-center font-semibold text-gray-800">
           🎓 {t("Find out the best study destination")}

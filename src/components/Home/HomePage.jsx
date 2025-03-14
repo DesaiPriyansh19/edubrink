@@ -12,6 +12,7 @@ import OurCourses from './OurCourses';
 import FindCourses from './FindCourses';
 import RecentBlog from './RecentBlog';
 import ContactSection from '../ContactSection';
+import FacultyPage from '../FacultyPage/FacultyPage';
 
 
 function HomePage() {
@@ -28,7 +29,7 @@ function HomePage() {
   return (
     <>
     <div className="space-y-12">
-   
+   {/* <FacultyPage/> */}
       <div data-aos="fade-in" data-aos-delay="150">
         <Discover />
       </div>

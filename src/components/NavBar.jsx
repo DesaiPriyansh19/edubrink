@@ -457,7 +457,7 @@ const NavBar = () => {
       >
         <nav
           id="navbar"
-          className="sticky mmd:static top-0 z-30 flex py-4 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-3xl shadow-md"
+          className="sticky mmd:static top-0 z-30 flex py-2 mb-2 items-center w-[98%] mx-auto  mmd:justify-between px-4 text-sm bg-white rounded-3xl shadow-md"
         >
           {/* Logo */}
 
@@ -465,14 +465,14 @@ const NavBar = () => {
             <span className="flex mmd:hidden " onClick={toggleSidebar}>
               {isMenuOpen ? <TogelMenuTwo /> : <TogelMenu />}
             </span>
-            <h2 className=" text-xl mmd:text-2xl font-bold bg-white cursor-pointer pointer text-gray-800">
+            <h2 className=" text-xl mmd:text-2xl font-semibold bg-white cursor-pointer pointer text-gray-800">
               <Link to={`/${language}`}>Edubrink</Link>
             </h2>{" "}
           </div>
 
-          <div
+          <div 
             dir={language === "ar" ? "rtl" : "ltl"}
-            className="hidden mmd:flex text-sm items-center bg-[#F8F8F8] text-center rounded-full px-2 py-2 w-1/4 relative"
+            className="hidden mmd:flex text-sm items-center   text-center rounded-full px-2 py-2 w-1/4 relative "
           >
             <SearchDropdown
               searchTerm={searchState.searchTerm}
