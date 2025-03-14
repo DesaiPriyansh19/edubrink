@@ -127,7 +127,7 @@ export default function CourseCRUD() {
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />
-                      {course.CourseDuration}
+                      {course.CourseDuration} {course.CourseDurationUnits}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-2">

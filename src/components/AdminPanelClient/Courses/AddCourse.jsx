@@ -43,6 +43,7 @@ const initialFormData = {
   },
   Tags: { en: [], ar: [] },
   CourseDuration: "",
+  CourseDurationUnits: "Years",
   StudyLevel: [],
   Languages: [],
   Requirements: [],
@@ -86,6 +87,7 @@ const admissionRequirements = [
   "IELTS",
   "TOEFL",
 ];
+const durationUnits = ["Years", "Months", "Weeks"];
 
 export default function AddCourse() {
   const { language } = useLanguage();
@@ -459,7 +461,7 @@ export default function AddCourse() {
               />
             </div>
 
-            <div className=" w-full">
+            <div className=" w-full col-span-2">
               <InputField
                 label="Deadline"
                 type="date"
@@ -478,10 +480,26 @@ export default function AddCourse() {
                 label="Course Duration"
                 type="text"
                 name="CourseDuration"
-                placeholder="e.g., 6 months, 1 year"
+                placeholder="e.g., 6,8"
                 value={formData?.CourseDuration || ""}
                 onChange={handleInputChange}
                 autoComplete="courseDuration"
+                variant={3}
+              />
+            </div>
+
+            <div className=" w-full">
+              <InputField
+                label="Course Duration Units"
+                type="select"
+                name="CourseDurationUnits"
+                placeholder="e.g., Course Figure"
+                value={formData?.CourseDurationUnits || ""}
+                onChange={handleInputChange}
+                options={durationUnits.map((mode) => ({
+                  value: mode,
+                  label: mode,
+                }))}
                 variant={3}
               />
             </div>

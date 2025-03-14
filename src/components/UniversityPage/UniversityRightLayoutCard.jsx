@@ -1,7 +1,9 @@
 import React from "react";
 import JhonSmith from "../../assets/CoursePage/JhonSmith.png";
 import Phone from "../../../svg/Phone";
+import { useTranslation } from "react-i18next";
 const UniversityRightLayoutCard = () => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="container mt-[10%] mb-[10%]">
@@ -9,7 +11,7 @@ const UniversityRightLayoutCard = () => {
           <div className="w-full flex md:justify-start justify-center">
             {" "}
             <div className="inline-flex  mt-4 bg-[#F8F8F8]   font-sans font-medium text-[1rem] leading-7 px-3 py-1 rounded-full">
-              Dedicated Counsellor
+              {t("UniversitySlugPage.CounsellorTitle")}
             </div>
           </div>
 
@@ -21,10 +23,10 @@ const UniversityRightLayoutCard = () => {
             />
             <div className=" md:mt-[5%] md:text-start text-center mb-[5%]">
               <div className="font-sans font-semibold text-2xl leading-7 text-black">
-                Jhon Smith
+                {t("UniversitySlugPage.CounsellorName")}
               </div>
               <p className="font-sans text-[#595959] font-medium text-[.9rem] mt-2">
-              Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out. Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out.
+                {t("UniversitySlugPage.CounsellorDesc")}
               </p>
             </div>
           </div>
@@ -32,10 +34,10 @@ const UniversityRightLayoutCard = () => {
           {/* Buttons */}
           <div className="flex gap-4 mt-4 justify-between">
             <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white font-medium text-sm rounded-full">
-              Call Now
+              {t("UniversitySlugPage.CallNow")}
             </button>
             <button className="w-full bg-white border-[1.5px] font-medium text-sm border-black text-black rounded-full flex items-center justify-center gap-2  py-[0.5rem]">
-              Chat Now
+              {t("UniversitySlugPage.ChatNow")}
             </button>
           </div>
         </div>

@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+"use client";
+
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 import FilterSidebar from "../FilterSidevbar/FilterSidebar";
 import FilterLogo2 from "../../../svg/FilterLogo2";
@@ -11,182 +13,145 @@ import ExploreTopCorse from "./ExploreTopCorse";
 import ExploreTopUniversity from "./ExploreTopUniversity";
 import ExploreBlogs from "./ExploreBlogs";
 import { useSearch } from "../../../context/SearchContext";
-import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 function SearchResults() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [showFilter, setShowFilter] = useState(false);
   const location = useLocation();
-  const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/country/getAll/DepthData`
-  );
-
-  const { filterProp, setSumData, sumData, initialState } = useSearch();
+  const { filterProp, setSumData, sumData, initialState, cleanFilterProp } =
+    useSearch();
   const { language } = useLanguage();
   const { t } = useTranslation();
+  const [searchResults, setSearchResults] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const filteredData = useMemo(() => {
-    return data
-      ?.map((country) => {
-        // 1. Country-level filtering (Destination)
-        const matchesDestination =
-          filterProp.Destination.length > 0
-            ? filterProp.Destination.includes(country?.countryName?.en)
-            : true;
-        if (!matchesDestination) return null;
+  // Keep track of previous filter props to prevent unnecessary API calls
+  const prevFilterStringRef = useRef(null);
 
-        // 2. Filter universities within the country
-        const filteredUniversities = country?.universities
-          ?.map((university) => {
-            // 3. University-level filtering
-            if (
-              filterProp.EntranceExam &&
-              university.entranceExamRequired !== filterProp.EntranceExam
-            )
-              return null;
-            if (
-              filterProp.StudyLevel &&
-              filterProp.StudyLevel !== "All" &&
-              !university?.studyLevel?.some(
-                (level) =>
-                  level?.toLowerCase() === filterProp.StudyLevel.toLowerCase()
-              )
-            )
-              return null;
-            if (
-              filterProp.UniType &&
-              university.uniType?.toLowerCase() !==
-                filterProp.UniType.toLowerCase()
-            )
-              return null;
-            if (
-              filterProp.IntakeYear &&
-              university.inTakeYear?.toString() !==
-                filterProp.IntakeYear.toString()
-            )
-              return null;
-            if (
-              filterProp.IntakeMonth &&
-              university.inTakeMonth?.toString() !==
-                filterProp.IntakeMonth.toString()
-            )
-              return null;
+  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search"; // Base API URL
 
-            // 4. Filter courses within the university
-            const filteredCourses = university?.courseId?.filter(
-              (courseItem) => {
-                // 5. Match Tags (Keywords)
-                const tags = [
-                  ...(courseItem?.Tags?.en || []),
-                  ...(courseItem?.Tags?.ar || []),
-                ];
-                const hasMatchingTag =
-                  !filterProp?.searchQuery?.en && !filterProp?.searchQuery?.ar
-                    ? true // No tag filter applied
-                    : tags.includes(filterProp?.searchQuery?.en) ||
-                      tags.includes(filterProp?.searchQuery?.ar);
+  // Memoize derived values to prevent unnecessary re-renders
+  const memoizedUniIds = useMemo(
+    () => searchResults?.universities?.map((item) => item._id) || [],
+    [searchResults?.universities]
+  );
 
-                // 6. Match Budget
-                const minBudget = Number(filterProp.minBudget) || 0;
-                const maxBudget =
-                  filterProp.maxBudget !== undefined &&
-                  filterProp.maxBudget !== ""
-                    ? Number(filterProp.maxBudget)
-                    : Infinity;
-                const courseFees = Number(courseItem?.CourseFees);
-                const isWithinBudget =
-                  !isNaN(courseFees) &&
-                  courseFees >= minBudget &&
-                  courseFees <= maxBudget;
+  const memoizedCountryIds = useMemo(
+    () => searchResults?.countries?.map((item) => item._id) || [],
+    [searchResults?.countries]
+  );
 
-                // 7. Match Mode of Study
-                const matchesModeOfStudy = filterProp.ModeOfStudy
-                  ? [
-                      ...(courseItem?.ModeOfStudy?.en || []),
-                      ...(courseItem?.ModeOfStudy?.ar || []),
-                    ].some((mode) =>
-                      mode
-                        ?.toLowerCase()
-                        .includes(filterProp.ModeOfStudy.toLowerCase())
-                    )
-                  : true;
+  const fetchSearchResults = async (filterProp) => {
+    try {
+      // ✅ Extract only the relevant filters for each API
+      const countryFilters = {
+        Destination: filterProp.Destination || [],
+      };
+      const queryParam = encodeURIComponent(JSON.stringify(countryFilters));
 
-                // 8. Match Course Duration
-                const parseDuration = (duration) => {
-                  const monthsRegex = /(\d+(\.\d+)?)\s*month/i;
-                  const yearsRegex = /(\d+(\.\d+)?)\s*year/i;
-                  const months = duration.match(monthsRegex)?.[1] || 0;
-                  const years = duration.match(yearsRegex)?.[1] || 0;
-                  return Number(months) + Number(years) * 12;
-                };
-                const matchesDuration = filterProp.CourseDuration
-                  ? (() => {
-                      const durationMonths = parseDuration(
-                        courseItem?.CourseDuration
-                      );
-                      if (filterProp.CourseDuration === "60+") {
-                        return durationMonths >= 60;
-                      }
-                      const [min, max] =
-                        filterProp.CourseDuration.split("-").map(Number);
-                      return durationMonths >= min && durationMonths <= max;
-                    })()
-                  : true;
+      const universityFilters = {
+        StudyLevel: filterProp.StudyLevel,
+        EntranceExam: filterProp.EntranceExam,
+        UniType: filterProp.UniType,
+        IntakeYear: filterProp.IntakeYear,
+        IntakeMonth: filterProp.IntakeMonth,
+        Destination: filterProp.Destination, // Required to filter universities by country
+      };
 
-                // 9. Course must pass all filters
-                return (
-                  hasMatchingTag &&
-                  isWithinBudget &&
-                  matchesModeOfStudy &&
-                  matchesDuration
-                );
-              }
-            );
+      const courseFilters = {
+        universityIds: "", // This will be updated after fetching universities
+        ModeOfStudy: filterProp.ModeOfStudy,
+        CourseDuration: filterProp.CourseDuration,
+        minBudget: filterProp.minBudget,
+        maxBudget: filterProp.maxBudget,
+        searchQuery: filterProp.searchQuery
+          ? JSON.stringify(filterProp.searchQuery)
+          : undefined,
+      };
 
-            // 10. Only keep universities with matching courses
-            return filteredCourses?.length > 0
-              ? { ...university, courseId: filteredCourses }
-              : null;
-          })
-          .filter(Boolean);
+      // ✅ Step 1: Fetch Countries First
+      const { data: countryData } = await axios.get(
+        `${API_BASE_URL}?filterProp=${queryParam}`
+      );
 
-        // 11. Only keep countries with matching universities
-        return filteredUniversities?.length > 0
-          ? { ...country, universities: filteredUniversities }
-          : null;
-      })
-      .filter(Boolean);
-  }, [data, filterProp]);
+      // Extract country IDs
+      const countryIds = countryData.data.map((country) => country._id);
 
-  const getTotalCounts = (data) => {
-    const totalCountries = data?.length || 0;
-    const totalUniversities = data?.reduce(
-      (acc, country) => acc + (country?.universities?.length || 0),
-      0
-    );
-    const totalCourses = data?.reduce(
-      (acc, country) =>
-        acc +
-        (country?.universities?.reduce(
-          (uniAcc, university) => uniAcc + (university?.courseId?.length || 0),
-          0
-        ) || 0),
-      0
-    );
-    const totalBlogs = data?.reduce(
-      (acc, country) => acc + (country?.blog?.length || 0),
-      0
-    );
+      // ✅ Step 2: Fetch Universities Based on Country IDs
+      const { data: universityData } = await axios.get(
+        `${API_BASE_URL}/university`,
+        {
+          params: { ...universityFilters, countryIds: countryIds.join(",") },
+        }
+      );
 
-    return {
-      totalCountries,
-      totalUniversities,
-      totalBlogs,
-      totalCourses,
-    };
+      // Extract university IDs
+      const universityIds = universityData.data.map((uni) => uni._id);
+      courseFilters.universityIds = universityIds.join(",");
+
+      // ✅ Step 3: Fetch Courses Based on University IDs
+      const [courseData, blogData] = await Promise.all([
+        axios.get(`${API_BASE_URL}/course`, { params: courseFilters }),
+        axios.get(`${API_BASE_URL}/blog`, {
+          params: { countryIds: countryIds.join(",") },
+        }),
+      ]);
+
+      // ✅ Return Final Combined Data
+      return {
+        countries: countryData.data,
+        universities: universityData.data,
+        courses: courseData.data.data,
+        blogs: blogData.data.data,
+        pagination: {
+          universities: universityData.pagination,
+          courses: courseData.data.pagination,
+          blogs: blogData.data.pagination,
+        },
+      };
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      return { error: error.response?.data || "Something went wrong" };
+    }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Create a stable reference for the current filter props
+      const currentFilterString = JSON.stringify(filterProp);
+
+      // Skip fetch if the filter hasn't actually changed
+      if (prevFilterStringRef.current === currentFilterString) {
+        console.log("Skipping fetch - filter hasn't changed");
+        return;
+      }
+
+      console.log("Fetching data with new filters");
+      prevFilterStringRef.current = currentFilterString;
+
+      // Show loading state
+      setLoading(true);
+
+      const data = await fetchSearchResults(filterProp);
+      setSearchResults(data);
+      setLoading(false);
+
+      setSumData({
+        sumResult:
+          (data?.pagination?.blogs.totalBlogs || 0) +
+          (data?.pagination?.courses.totalCourses || 0) +
+          (data?.pagination?.universities.totalUniversities || 0),
+        sumUniversities: data?.pagination?.universities.totalUniversities || 0,
+        sumBlogs: data?.pagination?.blogs.totalBlogs || 0,
+        sumCourses: data?.pagination?.courses.totalCourses || 0,
+      });
+    };
+
+    fetchData();
+  }, [filterProp]);
 
   const countActiveFilters = () => {
     let count = 0;
@@ -202,51 +167,11 @@ function SearchResults() {
 
   const activeFilters = countActiveFilters();
 
-  useEffect(() => {
-    if (!filteredData || filteredData?.length === 0) {
-      setSumData({
-        sumResult: 0,
-        sumUniversities: 0,
-        sumBlogs: 0,
-        sumCourses: 0,
-      });
-      return; // Exit early since there's no data to process
-    }
-
-    const sum = getTotalCounts(filteredData);
-
-    const newSumResult =
-      (sum?.totalBlogs || 0) +
-      (sum?.totalCourses || 0) +
-      (sum?.totalUniversities || 0);
-
-    setSumData((prev) => {
-      if (
-        prev.sumResult === newSumResult &&
-        prev.sumUniversities === (sum?.totalUniversities || 0) &&
-        prev.sumBlogs === (sum?.totalBlogs || 0) &&
-        prev.sumCourses === (sum?.totalCourses || 0)
-      ) {
-        return prev; // Prevent re-render if no change
-      }
-
-      return {
-        sumResult: newSumResult,
-        sumUniversities: sum?.totalUniversities || 0,
-        sumBlogs: sum?.totalBlogs || 0,
-        sumCourses: sum?.totalCourses || 0,
-      };
-    });
-  }, [filteredData]);
-
   return (
     <>
       <div className="relative p-4 px-5 sm:px-9 lg:px-16">
         {/* Buttons */}
-        <div
-          dir={language === "ar" ? "rtl" : "ltl"}
-          className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar"
-        >
+        <div className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar">
           <div className="flex space-x-4">
             <Link to={`/${language}/searchresults`}>
               <button
@@ -332,97 +257,50 @@ function SearchResults() {
         <Routes>
           <Route
             path=""
-            element={<Results filteredData={filteredData} loading={loading} />}
+            element={<Results filteredData={searchResults} loading={loading} />}
           />
           <Route
             path="courses"
             element={
               <ResultsCorses
-                language={language}
-                loading={loading}
-                filteredData={filteredData?.flatMap((item) =>
-                  item.universities.flatMap((university) =>
-                    university.courseId.map((course) => ({
-                      ...course,
-                      courseId: course,
-                      uniName: university.uniName,
-                      countryName: item.countryName,
-                    }))
-                  )
-                )}
+                loading={loading || !searchResults}
+                filteredData={searchResults?.courses}
+                uniIds={memoizedUniIds}
               />
             }
           />
           <Route
             path="university"
             element={
-              <Univrsiry filteredData={filteredData} loading={loading} />
+              <Univrsiry
+                loading={loading || !searchResults}
+                language={language}
+                filteredData={searchResults?.universities}
+                countryIds={memoizedCountryIds}
+              />
             }
           />
           <Route
             path="article"
             element={
               <Article
-                filteredData={filteredData?.flatMap((item) =>
-                  item?.blog?.map((blogs) => ({
-                    ...blogs,
-                    countryName: item?.countryName,
-                  }))
-                )}
-                loading={loading}
+                loading={loading || !searchResults}
+                filteredData={searchResults?.blogs}
+                countryIds={memoizedCountryIds}
               />
             }
           />
           <Route
             path="Allcorse"
-            element={
-              <ExploreTopCorse
-                language={language}
-                loading={loading}
-                filteredData={filteredData?.flatMap((item) =>
-                  item.universities.flatMap((university) =>
-                    university.courseId.map((course) => ({
-                      ...course,
-                      courseId: course,
-                      uniName: university.uniName,
-                      countryName: item.countryName,
-                    }))
-                  )
-                )}
-              />
-            }
+            element={<ExploreTopCorse language={language} />}
           />
           <Route
             path="AllUniversity"
-            element={
-              <ExploreTopUniversity
-                language={language}
-                filteredData={filteredData?.flatMap((item) =>
-                  item?.universities?.map((university) => ({
-                    ...university,
-                    countryName: item?.countryName,
-                    countryPhotos: item?.countryPhotos,
-                    countryCode: item?.countryCode,
-                  }))
-                )}
-                loading={loading}
-              />
-            }
+            element={<ExploreTopUniversity language={language} />}
           />
           <Route
             path="AllBlogs"
-            element={
-              <ExploreBlogs
-                language={language}
-                filteredData={filteredData?.flatMap((item) =>
-                  item?.blog?.map((blogs) => ({
-                    ...blogs,
-                    countryName: item?.countryName,
-                  }))
-                )}
-                loading={loading}
-              />
-            }
+            element={<ExploreBlogs language={language} />}
           />
         </Routes>
       </div>
@@ -432,4 +310,4 @@ function SearchResults() {
   );
 }
 
-export default SearchResults;
+export default React.memo(SearchResults);

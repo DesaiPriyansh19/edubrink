@@ -211,3 +211,11 @@ export const countryFlags = [
   { name: "Zambia", code: "ZM", alpha3: "ZMB", emoji: "🇿🇲" },
   { name: "Zimbabwe", code: "ZW", alpha3: "ZWE", emoji: "🇿🇼" },
 ];
+
+export const getEmoji = (alphacode) => {
+  const country = countryFlags.find((c) => c.alpha3 === alphacode);
+  if (!country) return null;
+
+  const countryCode = country.code.toLowerCase();
+  return countryCode;
+};

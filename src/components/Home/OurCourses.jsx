@@ -7,9 +7,10 @@ import ArrowTopRight from "../../../svg/ArrowTopRight/Index";
 import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useNavigate } from "react-router-dom";
 
 function OurCourses() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -19,6 +20,7 @@ function OurCourses() {
 
   const { language } = useLanguage();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const carouselRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -63,7 +65,7 @@ function OurCourses() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [activeIndex, data,hoveredCard]);
+  }, [activeIndex, data, hoveredCard]);
 
   // Intersection Observer to trigger animations when elements come into view
   useEffect(() => {
@@ -131,6 +133,10 @@ function OurCourses() {
         )
     );
   }
+
+  const handleLearnMore = (customURLSlug) => {
+    navigate(`/${language}/courses/${customURLSlug}`);
+  };
 
   return (
     <div className="relative overflow-hidden max-w-[1240px] mx-auto py-10">
@@ -312,6 +318,9 @@ function OurCourses() {
                           ? "bg-white/30  transform translate-y-[-2px]"
                           : "bg-white/20 "
                       }`}
+                      onClick={() => {
+                        handleLearnMore(course?.customURLSlug?.[language]);
+                      }}
                     >
                       {language === "ar" ? "سجل الآن" : "Enroll Now"}
                       {isHovered && (

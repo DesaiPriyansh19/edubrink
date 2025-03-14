@@ -3,9 +3,11 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
+import { useTranslation } from "react-i18next";
 const DropdowneCourses = forwardRef(
   ({ setShowCoursesDropdown, navbarHeight, facultyData, data }, ref) => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const API_URL = import.meta.env.VITE_API_URL;
     const { language } = useLanguage();
 
@@ -42,7 +44,9 @@ const DropdowneCourses = forwardRef(
           data-aos-duration="300"
         >
           <div className="bg-white rounded-3xl px-4 py-2 w-[70%] ">
-            <p className="mb-2 text-sm font-semibold pt-3 ">Top Courses</p>
+            <p className="mb-2 text-sm font-semibold pt-3 ">
+              {t("DropDownCourse.Coursetitle")}
+            </p>
             {data?.map((course, idx) => {
               return (
                 <div
@@ -74,7 +78,9 @@ const DropdowneCourses = forwardRef(
             })}
           </div>
           <div className="pl-3 w-[30%]  ] ">
-            <p className="mb-2 text-sm font-semibold pt-4 ">Popular Faculty</p>
+            <p className="mb-2 text-sm font-semibold pt-4 ">
+              {t("DropDownCourse.FacultyTitle")}
+            </p>
             <ul className=" flex text-start flex-col gap-5">
               {facultyData?.map((item) => (
                 <li

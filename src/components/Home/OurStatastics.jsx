@@ -3,9 +3,11 @@ import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import HomeLogo from "../../../svg/caplogo/Logo/HomeLogo/Index";
 import PeopleLogo from "../../../svg/caplogo/Logo/PeopleLogo";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../../context/LanguageContext";
 
 function OurStatastics() {
   const { t } = useTranslation();
+  const { language } = useLanguage();
   const sectionRef = useRef(null);
   const [counts, setCounts] = useState([0, 0, 0, 0]);
 

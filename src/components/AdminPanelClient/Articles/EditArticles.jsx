@@ -8,6 +8,8 @@ import useApiData from "../../../../hooks/useApiData";
 import MetaArrayFields from "../Universities/MetaArrayFields";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import RichText from "../../../../utils/RichText";
+import { getEmoji } from "../../../../libs/countryFlags";
+const isWindows = navigator.userAgent.includes("Windows");
 
 const initialFormData = {
   blogTitle: {
@@ -32,6 +34,7 @@ const initialFormData = {
   },
   blogCountry: null,
   countryName: { en: "", ar: "" },
+  countryCode: "",
   countryEmoji: "",
   blogPhoto: "",
   status: "Draft", // Article Status
@@ -117,6 +120,7 @@ export default function EditArticle() {
           en: data?.blogCountry?.countryName?.en || "",
           ar: data?.blogCountry?.countryName?.ar || "",
         },
+        countryCode: data?.blogCountry?.countryCode || "",
         countryEmoji: data?.blogCountry?.countryPhotos?.countryFlag || "",
         blogPhoto: data?.blogPhoto || "",
         status: data?.status || "Draft", // Default to "Draft"
@@ -240,7 +244,7 @@ export default function EditArticle() {
     setError(null);
 
     try {
-      const {  countryName, countryEmoji, ...updatedFormData } = {
+      const { countryName, countryEmoji, countryCode, ...updatedFormData } = {
         ...formData,
       };
 
@@ -564,13 +568,37 @@ export default function EditArticle() {
                 className="w-full flex items-center justify-between px-4 py-1 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white"
               >
                 <span className="flex gap-2 items-center">
-                  <span>{formData?.countryEmoji}</span>
-                  <span className="py-1 text-gray-600">
-                    {formData?.countryName?.en ||
-                      formData?.uniCountry ||
-                      "Select Country"}{" "}
-                    {/* Placeholder if name is empty */}
-                  </span>
+                  {isWindows ? (
+                    formData?.countryCode ? (
+                      <div className="flex gap-2  items-center">
+                        <img
+                          src={`https://flagcdn.com/w320/${getEmoji(
+                            formData?.countryCode
+                          )}.png`}
+                          alt="Country Flag"
+                          className="w-4 h-4 object-cover rounded-full"
+                        />
+                        <span className="py-1 text-gray-600">
+                          {formData?.countryName?.en ||
+                            formData?.uniCountry ||
+                            "Select Country"}{" "}
+                          {/* Placeholder if name is empty */}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="py-1 text-gray-600">Select Country</span>
+                    )
+                  ) : (
+                    <>
+                      <span>{formData?.countryEmoji}</span>
+                      <span className="py-1 text-gray-600">
+                        {formData?.countryName?.en ||
+                          formData?.uniCountry ||
+                          "Select Country"}{" "}
+                        {/* Placeholder if name is empty */}
+                      </span>
+                    </>
+                  )}
                 </span>
                 <BookOpen className="w-5 h-5 text-gray-400" />
               </button>
@@ -603,17 +631,43 @@ export default function EditArticle() {
                               en: country.countryName.en,
                               ar: country.countryName.ar,
                             },
+                            countryCode: country.countryCode,
                             countryEmoji: country.countryPhotos.countryFlag,
                           }));
                           setShowFlagPicker(false);
                         }}
                         className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                       >
-                        <span>{country?.countryPhotos?.countryFlag}</span>
-                        <span className="text-black text-sm">
-                          {country?.countryName?.en} -{" "}
-                          {country?.countryName?.ar}
-                        </span>
+                        {isWindows ? (
+                          country?.countryCode ? (
+                            <div className="flex gap-2 mt-2 items-center">
+                              <img
+                                src={`https://flagcdn.com/w320/${getEmoji(
+                                  country?.countryCode
+                                )}.png`}
+                                alt="Country Flag"
+                                className="w-4 h-4 object-cover rounded-full"
+                              />
+                              <p className="text-black text-sm">
+                                {language === "ar"
+                                  ? country?.countryName?.ar
+                                  : country?.countryName?.en}
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-[.6rem] font-medium">
+                              No flag
+                            </span>
+                          )
+                        ) : (
+                          <>
+                            <span>{country?.countryPhotos?.countryFlag}</span>
+                            <span className="text-black text-sm">
+                              {country?.countryName?.en} -{" "}
+                              {country?.countryName?.ar}
+                            </span>
+                          </>
+                        )}
                       </button>
                     ))}
                   </div>

@@ -33,34 +33,36 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
   }, []);
   const { filterProp, setFilterProp, initialState } = useSearch();
 
+  const [tempFilterProp, setTempFilterProp] = useState(filterProp);
+
   const sliderMin = 0; // Slider minimum value
   const sliderMax = 100000; // Slider maximum value
 
   const toggleCountrySelection = (country) => {
-    setFilterProp((prev) => ({
-      ...prev, // Spread the previous state to preserve other properties
+    setTempFilterProp((prev) => ({
+      ...prev,
       Destination: prev.Destination.includes(country)
-        ? prev.Destination.filter((item) => item !== country) // Remove the country if already selected
-        : [...prev.Destination, country], // Add the country if not already selected
+        ? prev.Destination.filter((item) => item !== country)
+        : [...prev.Destination, country],
     }));
   };
 
   const handleToggleSelection = (filterKey, value) => {
-    setFilterProp((prev) => ({
+    setTempFilterProp((prev) => ({
       ...prev,
-      [filterKey]: prev[filterKey] === value ? null : value, // Toggle between the selected value and null
+      [filterKey]: prev[filterKey] === value ? null : value,
     }));
   };
 
   const handleSliderChange = ([newMin, newMax]) => {
     if (newMax - newMin >= 100) {
-      setFilterProp((prev) => ({
+      setTempFilterProp((prev) => ({
         ...prev,
         minBudget: newMin,
         maxBudget: newMax,
       }));
     } else {
-      setFilterProp((prev) => ({
+      setTempFilterProp((prev) => ({
         ...prev,
         minBudget: newMin,
         maxBudget: newMin + 100 > sliderMax ? sliderMax : newMin + 100,
@@ -69,7 +71,14 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
   };
 
   const resetFilters = () => {
+    setTempFilterProp(initialState); // Reset temp filters, not actual filters
     setFilterProp(initialState);
+    setShowFilter(!showFilter);
+  };
+
+  const handleSubmit = () => {
+    setFilterProp(tempFilterProp); // Apply selected filters to main filter state
+    setShowFilter(!showFilter);
   };
 
   return (
@@ -123,7 +132,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             <div
               key={country.name}
               className={`flex items-center cursor-pointer  text-black justify-center py-2 text-sm px-3  rounded-full ${
-                filterProp?.Destination?.includes(country.name)
+                tempFilterProp?.Destination?.includes(country.name)
                   ? "bg-[#EDE9FE]  "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -152,10 +161,10 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             <button
               key={level}
               onClick={() =>
-                setFilterProp((prev) => ({ ...prev, StudyLevel: level }))
+                setTempFilterProp((prev) => ({ ...prev, StudyLevel: level }))
               }
               className={`px-4 py-2 rounded-full text-sm text-black ${
-                filterProp.StudyLevel === level
+                tempFilterProp.StudyLevel === level
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -178,8 +187,8 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
                 }))
               }
               className={`px-4 py-2 rounded-full text-sm text-black ${
-                (filterProp.EntranceExam && option === "Yes") ||
-                (!filterProp.EntranceExam && option === "No")
+                (tempFilterProp.EntranceExam && option === "Yes") ||
+                (!tempFilterProp.EntranceExam && option === "No")
                   ? "bg-[#EDE9FE]" // Highlight selected option
                   : "bg-[#F3F4F6] hover:bg-gray-200" // Default style
               }`}
@@ -197,7 +206,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
               key={option}
               onClick={() => handleToggleSelection("UniType", option)}
               className={`px-4 py-2 rounded-full text-sm text-black ${
-                filterProp.UniType === option
+                tempFilterProp.UniType === option
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -217,7 +226,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
               key={year}
               onClick={() => handleToggleSelection("IntakeYear", year)}
               className={`px-4 py-2 rounded-full text-sm ${
-                filterProp.IntakeYear === year
+                tempFilterProp.IntakeYear === year
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -248,7 +257,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
               key={short}
               onClick={() => handleToggleSelection("IntakeMonth", full)}
               className={`px-4 py-2 rounded-full text-sm ${
-                filterProp.IntakeMonth === full
+                tempFilterProp.IntakeMonth === full
                   ? "bg-[#EDE9FE] "
                   : "bg-[#F3F4F6]  hover:bg-gray-200"
               }`}
@@ -277,7 +286,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
                 key={mode}
                 onClick={() => handleToggleSelection("ModeOfStudy", mode)}
                 className={`px-4 py-2 rounded-full text-sm ${
-                  filterProp.ModeOfStudy === mode
+                  tempFilterProp.ModeOfStudy === mode
                     ? "bg-[#EDE9FE] "
                     : "bg-[#F3F4F6]  hover:bg-gray-200"
                 }`}
@@ -301,13 +310,13 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             <button
               key={label}
               onClick={() =>
-                setFilterProp((prev) => ({
+                setTempFilterProp((prev) => ({
                   ...prev,
                   CourseDuration: prev.CourseDuration === value ? "" : value, // Toggle between value and empty
                 }))
               }
               className={`px-4 py-2 rounded-full text-sm ${
-                filterProp.CourseDuration === value
+                tempFilterProp.CourseDuration === value
                   ? "bg-[#EDE9FE]"
                   : "bg-[#F3F4F6] hover:bg-gray-200"
               }`}
@@ -327,26 +336,26 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
           <div className="range-inputs">
             <input
               type="number"
-              value={filterProp.minBudget}
+              value={tempFilterProp.minBudget}
               onChange={(e) => {
                 let newValue = Math.min(
                   Number(e.target.value),
-                  filterProp.maxBudget - 1
+                  tempFilterProp.maxBudget - 1
                 );
-                setFilterProp((prev) => ({ ...prev, minBudget: newValue }));
+                setTempFilterProp((prev) => ({ ...prev, minBudget: newValue }));
               }}
               min={sliderMin}
               max={sliderMax}
             />
             <input
               type="number"
-              value={filterProp.maxBudget}
+              value={tempFilterProp.maxBudget}
               onChange={(e) => {
                 let newValue = Math.max(
                   Number(e.target.value),
-                  filterProp.minBudget + 1
+                  tempFilterProp.minBudget + 1
                 );
-                setFilterProp((prev) => ({ ...prev, maxBudget: newValue }));
+                setTempFilterProp((prev) => ({ ...prev, maxBudget: newValue }));
               }}
               min={sliderMin}
               max={sliderMax}
@@ -357,7 +366,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
           <ReactSlider
             min={sliderMin}
             max={sliderMax}
-            value={[filterProp.minBudget, filterProp.maxBudget]}
+            value={[tempFilterProp.minBudget, tempFilterProp.maxBudget]}
             onChange={handleSliderChange}
             className="react-slider"
             thumbClassName="thumb"
@@ -372,12 +381,12 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
                     className="active-range"
                     style={{
                       left: `${
-                        ((filterProp.minBudget - sliderMin) /
+                        ((tempFilterProp.minBudget - sliderMin) /
                           (sliderMax - sliderMin)) *
                         100
                       }%`,
                       width: `${
-                        ((filterProp.maxBudget - filterProp.minBudget) /
+                        ((tempFilterProp.maxBudget - tempFilterProp.minBudget) /
                           (sliderMax - sliderMin)) *
                         100
                       }%`,
@@ -398,7 +407,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             Reset Filter
           </button>
           <button
-            onClick={() => setShowFilter(!showFilter)}
+            onClick={handleSubmit}
             className="px-4 py-2 w-[50%] text-sm text-white rounded-full bg-gradient-to-r from-[#380C95] to-[#E15754] "
           >
             Show All Courses

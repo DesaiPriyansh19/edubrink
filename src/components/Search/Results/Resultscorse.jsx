@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
 import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
@@ -6,25 +8,135 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAnalysis } from "../../../../context/AnalysisContext";
 import { useLanguage } from "../../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
+import { useSearch } from "../../../../context/SearchContext";
 
-// Course Data
-
-function ResultsCorses({ loading, filteredData }) {
+function ResultsCorses({
+  loading: initialLoading,
+  filteredData: initialData,
+  uniIds,
+}) {
   const { t } = useTranslation();
-  const { addClickData, clicksData } = useAnalysis();
+  const { addClickData } = useAnalysis();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
+  const { filterProp } = useSearch();
+
+  // State for infinite scrolling
+  const [courses, setCourses] = useState(initialData || []);
+  const [loading, setLoading] = useState(initialLoading);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observerRef = useRef(null);
+  const loaderRef = useRef(null);
+
+  // Keep track of previous filter state to detect changes
+  const filterPropRef = useRef(filterProp);
+
+  // API base URL
+  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
+
+  useEffect(() => {
+    const isFilterChanged =
+      JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
+    const isInitialDataChanged =
+      initialData && JSON.stringify(initialData) !== JSON.stringify(courses);
+
+    if (isFilterChanged) {
+      filterPropRef.current = filterProp;
+      setPage(1);
+      setHasMore(true);
+    }
+
+    if (isInitialDataChanged) {
+      setCourses(initialData);
+      setPage(1);
+      setHasMore(initialData.length > 0);
+    }
+  }, [filterProp, initialData]);
+
+  console.log(filterProp);
+  console.log(initialData);
+
+  useEffect(() => {
+    // Set loading state based on initialLoading
+    setLoading(initialLoading);
+  }, [initialLoading]);
+
+  // Function to fetch more courses
+  const fetchMoreCourses = async () => {
+    if (!hasMore || loadingMore) return;
+
+    try {
+      setLoadingMore(true);
+
+      // Create course filters object with all the necessary filters
+      const courseFilters = {
+        universityIds: uniIds?.length ? uniIds.join(",") : "",
+        ModeOfStudy: filterProp.ModeOfStudy,
+        CourseDuration: filterProp.CourseDuration,
+        minBudget: filterProp.minBudget,
+        maxBudget: filterProp.maxBudget,
+        searchQuery: filterProp.searchQuery
+          ? JSON.stringify(filterProp.searchQuery)
+          : undefined,
+        page: page + 1, // Next page
+      };
+
+      // Make API request with all filters
+      const response = await axios.get(`${API_BASE_URL}/course`, {
+        params: courseFilters,
+      });
+
+      // Check if we got data back
+      if (response.data.data && response.data.data.length > 0) {
+        setCourses((prevCourses) => [...prevCourses, ...response.data.data]);
+        setPage(page + 1);
+        setHasMore(response.data.pagination.hasMore);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more courses:", error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Set up Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          fetchMoreCourses();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoaderRef = loaderRef.current;
+
+    if (currentLoaderRef) {
+      observer.observe(currentLoaderRef);
+    }
+
+    return () => {
+      if (currentLoaderRef) {
+        observer.unobserve(currentLoaderRef);
+      }
+    };
+  }, [hasMore, loadingMore, uniIds, filterProp]); // Added filterProp to dependencies
 
   const handleApplyClick = (courseId, countryName) => {
-    addClickData(courseId, "Course", countryName); // Add click data with countryName
+    addClickData(courseId, "Course", countryName);
   };
 
   const handleNavigate = (course) => {
     navigate(`/${language}/courses/${course}`);
   };
-
-  const location = useLocation();
-  const path = location.pathname;
 
   return (
     <>
@@ -57,7 +169,7 @@ function ResultsCorses({ loading, filteredData }) {
             : "flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row"
         }`}
       >
-        {loading
+        {loading && courses?.length === 0
           ? Array.from({ length: 4 }).map((_, index) => (
               <div
                 key={index}
@@ -94,7 +206,7 @@ function ResultsCorses({ loading, filteredData }) {
                 </div>
               </div>
             ))
-          : filteredData?.map((university, index) => {
+          : courses?.map((university, index) => {
               const dynamicFeatures = [
                 {
                   icon: <DollerRounded />,
@@ -138,7 +250,7 @@ function ResultsCorses({ loading, filteredData }) {
                       <div className="w-20 h-20">
                         <img
                           src={
-                            "https://placehold.co/80x80" || university.uniSymbol
+                            university.uniSymbol || "https://placehold.co/80x80"
                           }
                           alt="College Logo"
                           className="w-full h-full rounded-full"
@@ -152,8 +264,8 @@ function ResultsCorses({ loading, filteredData }) {
                         </h1>
                         <p className="text-[.8rem] font-medium text-black flex items-center mt-1">
                           {language === "ar"
-                            ? university?.uniName?.ar
-                            : university?.uniName?.en || "N/A"}
+                            ? university?.university?.uniName?.ar
+                            : university?.university?.uniName?.en || "N/A"}
                         </p>
                         <div className="flex items-center mt-1">
                           <span className="w-5 h-5 rounded-full mr-1">
@@ -184,7 +296,7 @@ function ResultsCorses({ loading, filteredData }) {
                       ))}
                     </div>
                   </div>
-                  <div className="grid gap-6 px-3 grid-cols-2  mt-4">
+                  <div className="grid gap-6 px-3 grid-cols-2 mb-4 mt-4">
                     <button
                       onClick={() =>
                         handleApplyClick(university._id, university.countryName)
@@ -205,6 +317,28 @@ function ResultsCorses({ loading, filteredData }) {
                 </div>
               );
             })}
+
+        {/* Loading indicator at the bottom */}
+        {hasMore && courses?.length > 0 && (
+          <div
+            ref={loaderRef}
+            className={`col-span-full flex justify-center py-4 ${
+              loadingMore ? "visible" : "invisible"
+            }`}
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        )}
+
+        {/* No results message */}
+        {!loading && courses?.length === 0 && (
+          <div className="col-span-full text-center py-8">
+            <p className="text-lg text-gray-500">
+              {t("noCoursesFound") ||
+                "No courses found. Try adjusting your filters."}
+            </p>
+          </div>
+        )}
       </div>
     </>
   );

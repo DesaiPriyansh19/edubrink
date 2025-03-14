@@ -189,5 +189,71 @@
   "searchResult": {
     "uniTitle": "Favourite Universities",
     "uniDesc": "Discover top study abroad destinations, each offering unique cultural experiences, academic excellence, and career opportunities. From vibrant cities."
+  },
+  "DropDownCourse": {
+    "Coursetitle": "Top Course",
+    "FacultyTitle": "Popular Faculty"
+  },
+  "DropDownCountry": {
+    "title": "Top Institutions in"
+  },
+  "UniversitySlugPage": {
+    "Courses": "Courses",
+    "Year": "Year",
+    "StudyLevel": "STUDY LEVEL",
+    "Subjects": "SUBJECTS",
+    "TuitionFees": "Tuition Fees",
+    "Deadline": "Deadline",
+    "ModeOfStudy": "Mode Of Study",
+    "Discount": "Discount",
+    "Language": "Language",
+    "InterFees": " International Student tutition fee",
+    "PerYear": "Per Year",
+    "Duration": "Duration",
+    "StartMonth": "Start Month",
+    "ApplicationDeadline": "Application Deadline",
+    "CounsellorTitle": "Dedicated Counsellor",
+    "CounsellorName": "Jhon Smith",
+    "CounsellorDesc": "Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out. Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out.",
+    "CallNow": "Call Now",
+    "ChatNow": "Chat Now",
+    "Highlight": "Highlight",
+    "HighlightArray": [
+      "Overview",
+      "Accomodation",
+      "Library",
+      "Sports",
+      "Student Life"
+    ],
+    "Campus": "Campus",
+    "Facilities": "Facilities"
+  },
+  "CourseSlugPage": {
+    "Country": "Country",
+    "Requirements": "Requirements",
+    "ScholarshipAva": "Available",
+    "ScholarshipOptions": "Scholarship Options"
+  },
+
+  "Footer": {
+    "SubscribeMessage": "Stay updated on all things Edubrink by subscribing to us!",
+    "PrivacyConsent": "By subscribing you agree with our <1>Privacy Policy</1> and provide consent to receive updates.",
+    "PrivacyPolicy": "Privacy Policy",
+    "YourEmailPlaceholder": "Your Email Here",
+    "Universities": "Universities",
+    "Countries": "Countries",
+    "Courses": "Courses",
+    "SocialMedia": "Social Media",
+    "Pages": "Pages",
+    "University": "University",
+    "Destination": "Destination",
+    "Copyright": "Copyright reserved@ 2023",
+    "EdubrinkYear": "Edubrink @ 2024",
+    "Submit": "Submit",
+    "SocialLinks": {
+      "Facebook": "Facebook",
+      "Twitter": "Twitter",
+      "Instagram": "Instagram"
+    }
   }
 }
