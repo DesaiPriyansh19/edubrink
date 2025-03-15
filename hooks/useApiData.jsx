@@ -1,15 +1,29 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const useApiData = (baseUrl) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Function to get the latest token dynamically
   const getToken = () => {
     const userInfo = JSON.parse(localStorage.getItem("eduuserInfo"));
     return userInfo?.token || "";
+  };
+
+  // Handle auth errors
+  const handleAuthError = (err) => {
+    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+      // Clear localStorage
+      localStorage.removeItem("eduuserInfo");
+      // Redirect to home page
+      navigate("/");
+      return true;
+    }
+    return false;
   };
 
   // Create axios instance with interceptor for Authorization
@@ -23,6 +37,19 @@ const useApiData = (baseUrl) => {
     return config;
   });
 
+  // Add response interceptor to handle auth errors globally
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (handleAuthError(error)) {
+        // If it was an auth error and handled, return a rejected promise
+        return Promise.reject(new Error("Authentication failed"));
+      }
+      // For other errors, just pass through
+      return Promise.reject(error);
+    }
+  );
+
   // Fetch all data
   const fetchData = async () => {
     setLoading(true);
@@ -31,7 +58,9 @@ const useApiData = (baseUrl) => {
       const response = await axiosInstance.get(baseUrl);
       setData(response.data.data);
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -45,7 +74,9 @@ const useApiData = (baseUrl) => {
       const response = await axiosInstance.get(`${baseUrl}/${id}`);
       return response.data.data;
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,7 +88,9 @@ const useApiData = (baseUrl) => {
       await axiosInstance.delete(`${baseUrl}/${id}`);
       setData((prevData) => prevData.filter((item) => item._id !== id));
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     }
   };
 
@@ -67,7 +100,9 @@ const useApiData = (baseUrl) => {
       setData(response.data.data);
       fetchData();
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     }
   };
 
@@ -77,7 +112,9 @@ const useApiData = (baseUrl) => {
       setData(response.data.data);
       fetchData();
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     }
   };
 
@@ -90,7 +127,9 @@ const useApiData = (baseUrl) => {
       );
       fetchData();
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
     }
   };
 
@@ -100,8 +139,12 @@ const useApiData = (baseUrl) => {
       const response = await axiosInstance.post(baseUrl, newData);
       setData((prevData) => [...prevData, response.data.data]);
       fetchData();
+      return response.data.data;
     } catch (err) {
-      setError(err.message);
+      if (!handleAuthError(err)) {
+        setError(err.message);
+      }
+      throw err; // Re-throw the error for the component to handle
     }
   };
 

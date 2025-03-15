@@ -266,5 +266,240 @@
   "fewerFilters": "Use fewer filters",
   "differentLocation": "Try a different location",
   "clearFilters": "Clear All Filters",
-  "backToHome": "Back to Home"
+  "backToHome": "Back to Home",
+  "applyForm": {
+    "common": {
+      "back": "Back",
+      "continue": "Continue",
+      "submit": "Submit Application",
+      "backTo": "Back to",
+      "course": "Course",
+      "university": "University",
+      "notProvided": "Not provided",
+      "stepOf": "Step {{current}} of {{total}}"
+    },
+    "header": {
+      "courseTitle": "Apply for this Course",
+      "universityTitle": "University Application",
+      "subtitle": "Complete the application below to take the first step toward your future. Our admissions team is ready to help you succeed."
+    },
+    "steps": {
+      "personalInfo": "Personal Information",
+      "education": {
+        "course": "Course Prerequisites",
+        "university": "Educational Background"
+      },
+      "skills": {
+        "course": "Relevant Skills",
+        "university": "Experience & Skills"
+      },
+      "preferences": {
+        "course": "Course Preferences",
+        "university": "Program Preferences"
+      },
+      "review": "Review & Submit"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "subtitle": "Tell us about yourself so we can get to know you better",
+      "fullName": {
+        "label": "Full Name",
+        "placeholder": "Enter your full name"
+      },
+      "email": {
+        "label": "Email Address",
+        "placeholder": "Enter your email address"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "Enter your phone number"
+      },
+      "dob": {
+        "label": "Date of Birth"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter your full address"
+      }
+    },
+    "education": {
+      "courseTitle": "Course Prerequisites",
+      "universityTitle": "Educational Background",
+      "courseSubtitle": "Tell us about your educational qualifications for this course",
+      "universitySubtitle": "Tell us about your educational qualifications for university admission",
+      "currentEducation": "Current Education Level",
+      "highestQualification": "Highest Qualification",
+      "institutionName": "Institution Name",
+      "institutionPlaceholder": "Enter institution name",
+      "completionYear": "Completion Year",
+      "graduationYear": "Graduation Year",
+      "yearPlaceholder": "YYYY",
+      "gpaGrade": "GPA / Grade",
+      "gpaPlaceholder": "Enter your GPA or grade",
+      "selectQualification": "Select qualification",
+      "qualifications": {
+        "highSchool": "High School",
+        "associatesDegree": "Associate's Degree",
+        "bachelorsDegree": "Bachelor's Degree",
+        "mastersDegree": "Master's Degree",
+        "doctorate": "Doctorate",
+        "other": "Other"
+      },
+      "courseRequirements": {
+        "title": "Course Requirements",
+        "description": "This course requires a minimum GPA of 2.5 and completion of basic prerequisites. Your educational background helps us determine your eligibility."
+      },
+      "universityRequirements": {
+        "title": "Why this matters",
+        "description": "Your educational background helps us determine your eligibility for university admission and tailor our offerings to your needs."
+      }
+    },
+    "skills": {
+      "courseTitle": "Relevant Skills",
+      "universityTitle": "Experience & Skills",
+      "courseSubtitle": "Tell us about your skills relevant to this course",
+      "universitySubtitle": "Tell us about your work experience and skills",
+      "yearsExperience": "Years of Experience",
+      "selectExperience": "Select experience",
+      "experienceOptions": {
+        "none": "No experience",
+        "lessThanOne": "Less than 1 year",
+        "oneToTwo": "1-2 years",
+        "threeToFive": "3-5 years",
+        "fivePlus": "5+ years"
+      },
+      "currentEmployer": "Current/Previous Employer",
+      "employerPlaceholder": "Enter employer name",
+      "jobTitle": "Job Title",
+      "jobTitlePlaceholder": "Enter your job title",
+      "languages": "Languages",
+      "languagesPlaceholder": "Languages you speak (e.g., English, Spanish)",
+      "technicalSkills": "Technical Skills",
+      "computerSkills": "Computer Skills",
+      "technicalSkillsPlaceholder": "List your technical skills relevant to this course",
+      "computerSkillsPlaceholder": "List your computer skills and proficiency levels",
+      "certifications": "Certifications",
+      "certificationsPlaceholder": "List any relevant certifications you have"
+    },
+    "preferences": {
+      "courseTitle": "Course Preferences",
+      "universityTitle": "Program Preferences",
+      "courseSubtitle": "Tell us about your preferences for this course",
+      "universitySubtitle": "Tell us about your university program preferences",
+      "startDate": "Preferred Start Date",
+      "courseFormat": "Course Format",
+      "programType": "Program Type",
+      "selectFormat": "Select format",
+      "selectType": "Select type",
+      "formatOptions": {
+        "online": "Online",
+        "inPerson": "In-person",
+        "hybrid": "Hybrid",
+        "selfPaced": "Self-paced",
+        "instructorLed": "Instructor-led"
+      },
+      "typeOptions": {
+        "fullTime": "Full-time",
+        "partTime": "Part-time",
+        "online": "Online",
+        "onCampus": "On-campus",
+        "distanceLearning": "Distance Learning"
+      },
+      "aboutYourself": {
+        "label": "Tell us about yourself and why you're interested",
+        "coursePlaceholder": "Tell us why you're interested in this course, your goals, and what you hope to achieve...",
+        "universityPlaceholder": "Tell us about your educational background, interests, goals, and why you're interested in this university program..."
+      },
+      "beforeSubmit": {
+        "title": "Before You Submit",
+        "checkFields": "Make sure all required fields are completed",
+        "verifyContact": "Verify your contact information is correct",
+        "reviewApplication": "Review your application for any errors"
+      }
+    },
+    "review": {
+      "title": "Review Your Application",
+      "subtitle": "Please review your information before submitting",
+      "sections": {
+        "personalInfo": "Personal Information",
+        "education": {
+          "course": "Course Prerequisites",
+          "university": "Educational Background"
+        },
+        "experience": "Experience",
+        "skills": "Skills",
+        "preferences": {
+          "course": "Course Preferences",
+          "university": "Program Preferences"
+        }
+      },
+      "fields": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "dob": "Date of Birth",
+        "address": "Address",
+        "qualification": {
+          "course": "Current Education Level",
+          "university": "Highest Qualification"
+        },
+        "institution": "Institution",
+        "year": {
+          "course": "Completion Year",
+          "university": "Graduation Year"
+        },
+        "gpa": "GPA / Grade",
+        "yearsExperience": "Years of Experience",
+        "employer": "Current/Previous Employer",
+        "jobTitle": "Job Title",
+        "languages": "Languages",
+        "skills": {
+          "technical": "Technical Skills",
+          "computer": "Computer Skills"
+        },
+        "certifications": "Certifications",
+        "startDate": "Preferred Start Date",
+        "format": {
+          "course": "Course Format",
+          "university": "Program Type"
+        }
+      }
+    },
+    "success": {
+      "processing": "Processing your application...",
+      "title": "Application Submitted!",
+      "subtitle": "Thank you for your application. We will review your information and contact you soon.",
+      "redirecting": "Redirecting to home page in {{seconds}} seconds...",
+      "nextSteps": {
+        "title": "What happens next?",
+        "review": "Our team will review your application within 3-5 business days",
+        "confirmation": "You'll receive an email confirmation with your application details",
+        "interview": "If selected, we'll schedule an interview or provide next steps"
+      },
+      "connect": {
+        "title": "Connect with us",
+        "goHome": "Go to Home Page"
+      }
+    },
+    "validation": {
+      "nameRequired": "Full name is required",
+      "nameLength": "Name must be at least 3 characters",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "addressRequired": "Address is required",
+      "addressLength": "Please enter your complete address",
+      "dobRequired": "Date of birth is required",
+      "dobFuture": "Date of birth cannot be in the future",
+      "dobAge": "You must be at least 16 years old",
+      "qualificationRequired": "Please select your qualification",
+      "institutionRequired": "Institution name is required",
+      "yearRequired": "Graduation year is required",
+      "yearRange": "Year must be between 1950 and {{maxYear}}",
+      "startDateRequired": "Please select your preferred start date",
+      "programTypeRequired": "Please select a program type",
+      "descriptionRequired": "Please tell us about yourself and why you are interested"
+    }
+  }
 }

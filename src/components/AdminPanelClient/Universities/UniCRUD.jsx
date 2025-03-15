@@ -13,6 +13,7 @@ import {
   SortAsc,
   Filter,
   Gem,
+  Loader2,
 } from "lucide-react";
 import Loader from "../../../../utils/Loader";
 import { useLanguage } from "../../../../context/LanguageContext";
@@ -105,11 +106,9 @@ export default function UniCRUD() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader />
-      </div>
-    );
+    <div className="flex items-center justify-center h-screen">
+      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+    </div>;
   }
 
   return (

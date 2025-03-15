@@ -17,7 +17,6 @@ const UniversityPage = () => {
     `https://edu-brink-backend.vercel.app/api/university/name/${slug}`
   );
 
-  // Update document head for SEO
   useEffect(() => {
     if (data && !loading) {
       // SEO data based on current language

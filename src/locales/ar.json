@@ -263,5 +263,240 @@
   "fewerFilters": "استخدم فلاتر أقل",
   "differentLocation": "حاول موقعًا مختلفًا",
   "clearFilters": "إزالة جميع الفلاتر",
-  "backToHome": "العودة إلى الصفحة الرئيسية"
+  "backToHome": "العودة إلى الصفحة الرئيسية",
+  "applyForm": {
+    "common": {
+      "back": "رجوع",
+      "continue": "متابعة",
+      "submit": "تقديم الطلب",
+      "backTo": "العودة إلى",
+      "course": "الدورة",
+      "university": "الجامعة",
+      "notProvided": "غير متوفر",
+      "stepOf": "الخطوة {{current}} من {{total}}"
+    },
+    "header": {
+      "courseTitle": "التقديم لهذه الدورة",
+      "universityTitle": "طلب الالتحاق بالجامعة",
+      "subtitle": "أكمل الطلب أدناه لاتخاذ الخطوة الأولى نحو مستقبلك. فريق القبول لدينا جاهز لمساعدتك على النجاح."
+    },
+    "steps": {
+      "personalInfo": "المعلومات الشخصية",
+      "education": {
+        "course": "متطلبات الدورة",
+        "university": "الخلفية التعليمية"
+      },
+      "skills": {
+        "course": "المهارات ذات الصلة",
+        "university": "الخبرة والمهارات"
+      },
+      "preferences": {
+        "course": "تفضيلات الدورة",
+        "university": "تفضيلات البرنامج"
+      },
+      "review": "المراجعة والتقديم"
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "subtitle": "أخبرنا عن نفسك حتى نتعرف عليك بشكل أفضل",
+      "fullName": {
+        "label": "الاسم الكامل",
+        "placeholder": "أدخل اسمك الكامل"
+      },
+      "email": {
+        "label": "البريد الإلكتروني",
+        "placeholder": "أدخل بريدك الإلكتروني"
+      },
+      "phone": {
+        "label": "رقم الهاتف",
+        "placeholder": "أدخل رقم هاتفك"
+      },
+      "dob": {
+        "label": "تاريخ الميلاد"
+      },
+      "address": {
+        "label": "العنوان",
+        "placeholder": "أدخل عنوانك الكامل"
+      }
+    },
+    "education": {
+      "courseTitle": "متطلبات الدورة",
+      "universityTitle": "الخلفية التعليمية",
+      "courseSubtitle": "أخبرنا عن مؤهلاتك التعليمية لهذه الدورة",
+      "universitySubtitle": "أخبرنا عن مؤهلاتك التعليمية للقبول الجامعي",
+      "currentEducation": "المستوى التعليمي الحالي",
+      "highestQualification": "أعلى مؤهل",
+      "institutionName": "اسم المؤسسة التعليمية",
+      "institutionPlaceholder": "أدخل اسم المؤسسة التعليمية",
+      "completionYear": "سنة الإتمام",
+      "graduationYear": "سنة التخرج",
+      "yearPlaceholder": "السنة",
+      "gpaGrade": "المعدل التراكمي / الدرجة",
+      "gpaPlaceholder": "أدخل المعدل التراكمي أو الدرجة",
+      "selectQualification": "اختر المؤهل",
+      "qualifications": {
+        "highSchool": "الثانوية العامة",
+        "associatesDegree": "درجة الزمالة",
+        "bachelorsDegree": "درجة البكالوريوس",
+        "mastersDegree": "درجة الماجستير",
+        "doctorate": "الدكتوراه",
+        "other": "أخرى"
+      },
+      "courseRequirements": {
+        "title": "متطلبات الدورة",
+        "description": "تتطلب هذه الدورة معدل تراكمي لا يقل عن 2.5 وإكمال المتطلبات الأساسية. تساعدنا خلفيتك التعليمية في تحديد أهليتك."
+      },
+      "universityRequirements": {
+        "title": "لماذا هذا مهم",
+        "description": "تساعدنا خلفيتك التعليمية في تحديد أهليتك للقبول الجامعي وتكييف عروضنا وفقًا لاحتياجاتك."
+      }
+    },
+    "skills": {
+      "courseTitle": "المهارات ذات الصلة",
+      "universityTitle": "الخبرة والمهارات",
+      "courseSubtitle": "أخبرنا عن مهاراتك ذات الصلة بهذه الدورة",
+      "universitySubtitle": "أخبرنا عن خبرتك العملية ومهاراتك",
+      "yearsExperience": "سنوات الخبرة",
+      "selectExperience": "اختر الخبرة",
+      "experienceOptions": {
+        "none": "لا توجد خبرة",
+        "lessThanOne": "أقل من سنة",
+        "oneToTwo": "1-2 سنوات",
+        "threeToFive": "3-5 سنوات",
+        "fivePlus": "5+ سنوات"
+      },
+      "currentEmployer": "صاحب العمل الحالي/السابق",
+      "employerPlaceholder": "أدخل اسم صاحب العمل",
+      "jobTitle": "المسمى الوظيفي",
+      "jobTitlePlaceholder": "أدخل مسماك الوظيفي",
+      "languages": "اللغات",
+      "languagesPlaceholder": "اللغات التي تتحدثها (مثل: العربية، الإنجليزية)",
+      "technicalSkills": "المهارات التقنية",
+      "computerSkills": "مهارات الكمبيوتر",
+      "technicalSkillsPlaceholder": "اذكر مهاراتك التقنية ذات الصلة بهذه الدورة",
+      "computerSkillsPlaceholder": "اذكر مهارات الكمبيوتر لديك ومستويات إتقانها",
+      "certifications": "الشهادات",
+      "certificationsPlaceholder": "اذكر أي شهادات ذات صلة حصلت عليها"
+    },
+    "preferences": {
+      "courseTitle": "تفضيلات الدورة",
+      "universityTitle": "تفضيلات البرنامج",
+      "courseSubtitle": "أخبرنا عن تفضيلاتك لهذه الدورة",
+      "universitySubtitle": "أخبرنا عن تفضيلاتك لبرنامج الجامعة",
+      "startDate": "تاريخ البدء المفضل",
+      "courseFormat": "صيغة الدورة",
+      "programType": "نوع البرنامج",
+      "selectFormat": "اختر الصيغة",
+      "selectType": "اختر النوع",
+      "formatOptions": {
+        "online": "عبر الإنترنت",
+        "inPerson": "حضوري",
+        "hybrid": "مختلط",
+        "selfPaced": "بالسرعة الذاتية",
+        "instructorLed": "بقيادة مدرب"
+      },
+      "typeOptions": {
+        "fullTime": "دوام كامل",
+        "partTime": "دوام جزئي",
+        "online": "عبر الإنترنت",
+        "onCampus": "في الحرم الجامعي",
+        "distanceLearning": "تعلم عن بعد"
+      },
+      "aboutYourself": {
+        "label": "أخبرنا عن نفسك ولماذا أنت مهتم",
+        "coursePlaceholder": "أخبرنا لماذا أنت مهتم بهذه الدورة، وأهدافك، وما تأمل في تحقيقه...",
+        "universityPlaceholder": "أخبرنا عن خلفيتك التعليمية، واهتماماتك، وأهدافك، ولماذا أنت مهتم ببرنامج الجامعة هذا..."
+      },
+      "beforeSubmit": {
+        "title": "قبل التقديم",
+        "checkFields": "تأكد من إكمال جميع الحقول المطلوبة",
+        "verifyContact": "تحقق من صحة معلومات الاتصال الخاصة بك",
+        "reviewApplication": "راجع طلبك بحثًا عن أي أخطاء"
+      }
+    },
+    "review": {
+      "title": "مراجعة طلبك",
+      "subtitle": "يرجى مراجعة معلوماتك قبل التقديم",
+      "sections": {
+        "personalInfo": "المعلومات الشخصية",
+        "education": {
+          "course": "متطلبات الدورة",
+          "university": "الخلفية التعليمية"
+        },
+        "experience": "الخبرة",
+        "skills": "المهارات",
+        "preferences": {
+          "course": "تفضيلات الدورة",
+          "university": "تفضيلات البرنامج"
+        }
+      },
+      "fields": {
+        "fullName": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "dob": "تاريخ الميلاد",
+        "address": "العنوان",
+        "qualification": {
+          "course": "المستوى التعليمي الحالي",
+          "university": "أعلى مؤهل"
+        },
+        "institution": "المؤسسة التعليمية",
+        "year": {
+          "course": "سنة الإتمام",
+          "university": "سنة التخرج"
+        },
+        "gpa": "المعدل التراكمي / الدرجة",
+        "yearsExperience": "سنوات الخبرة",
+        "employer": "صاحب العمل الحالي/السابق",
+        "jobTitle": "المسمى الوظيفي",
+        "languages": "اللغات",
+        "skills": {
+          "technical": "المهارات التقنية",
+          "computer": "مهارات الكمبيوتر"
+        },
+        "certifications": "الشهادات",
+        "startDate": "تاريخ البدء المفضل",
+        "format": {
+          "course": "صيغة الدورة",
+          "university": "نوع البرنامج"
+        }
+      }
+    },
+    "success": {
+      "processing": "جاري معالجة طلبك...",
+      "title": "تم تقديم الطلب!",
+      "subtitle": "شكرًا لتقديم طلبك. سنراجع معلوماتك ونتواصل معك قريبًا.",
+      "redirecting": "إعادة التوجيه إلى الصفحة الرئيسية في {{seconds}} ثوانٍ...",
+      "nextSteps": {
+        "title": "ماذا يحدث بعد ذلك؟",
+        "review": "سيقوم فريقنا بمراجعة طلبك في غضون 3-5 أيام عمل",
+        "confirmation": "ستتلقى تأكيدًا بالبريد الإلكتروني مع تفاصيل طلبك",
+        "interview": "إذا تم اختيارك، سنحدد موعدًا للمقابلة أو نقدم الخطوات التالية"
+      },
+      "connect": {
+        "title": "تواصل معنا",
+        "goHome": "الذهاب إلى الصفحة الرئيسية"
+      }
+    },
+    "validation": {
+      "nameRequired": "الاسم الكامل مطلوب",
+      "nameLength": "يجب أن يكون الاسم 3 أحرف على الأقل",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "phoneInvalid": "يرجى إدخال رقم هاتف صالح",
+      "addressRequired": "العنوان مطلوب",
+      "addressLength": "يرجى إدخال عنوانك الكامل",
+      "dobRequired": "تاريخ الميلاد مطلوب",
+      "dobFuture": "لا يمكن أن يكون تاريخ الميلاد في المستقبل",
+      "dobAge": "يجب أن يكون عمرك 16 عامًا على الأقل",
+      "qualificationRequired": "يرجى اختيار مؤهلك",
+      "institutionRequired": "اسم المؤسسة التعليمية مطلوب",
+      "yearRequired": "سنة التخرج مطلوبة",
+      "yearRange": "يجب أن تكون السنة بين 1950 و {{maxYear}}",
+      "startDateRequired": "يرجى اختيار تاريخ البدء المفضل",
+      "programTypeRequired": "يرجى اختيار نوع البرنامج",
+      "descriptionRequired": "يرجى إخبارنا عن نفسك ولماذا أنت مهتم"
+    }
+  }
 }

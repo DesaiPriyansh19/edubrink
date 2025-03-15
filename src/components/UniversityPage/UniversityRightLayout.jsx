@@ -10,11 +10,13 @@ import UniversityRightLayoutCard from "./UniversityRightLayoutCard";
 import { useTranslation } from "react-i18next";
 import { Share2 } from "lucide-react";
 import ShareCard from "../../../utils/ShareCard";
+import { useNavigate } from "react-router-dom";
 
 const UniversityRightLayout = ({ data, language }) => {
   const courseUrl = typeof window !== "undefined" ? window.location.href : "";
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <>
       <div className="mt-5">
@@ -29,7 +31,9 @@ const UniversityRightLayout = ({ data, language }) => {
             </div>
 
             {/* Apply Now Button - Takes Remaining Space */}
-            <button className="flex-1 bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white py-3 rounded-full">
+            <button
+            onClick={()=>navigate(`/${language}/applications/${data?._id}?category=University`)}
+            className="flex-1 bg-slateBlue text-white py-3 rounded-full">
               {t("applyNow")}
             </button>
           </div>

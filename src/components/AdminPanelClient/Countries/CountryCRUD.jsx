@@ -9,7 +9,6 @@ import {
   Building2,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
-import Loader from "../../../../utils/Loader";
 import useApiData from "../../../../hooks/useApiData";
 import useDropdownData from "../../../../hooks/useDropdownData";
 import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
@@ -19,9 +18,7 @@ const isWindows = navigator.userAgent.includes("Windows");
 export default function CountryCRUD() {
   const navigate = useNavigate();
   const { filteredData } = useDropdownData();
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [countryToDelete, setCountryToDelete] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("all");
@@ -62,7 +59,7 @@ export default function CountryCRUD() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader />
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
   }

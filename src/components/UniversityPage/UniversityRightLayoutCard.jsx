@@ -33,7 +33,7 @@ const UniversityRightLayoutCard = () => {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-4 justify-between">
-            <button className="w-full bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] text-white font-medium text-sm rounded-full">
+            <button className="w-full bg-slateBlue text-white font-medium text-sm rounded-full">
               {t("UniversitySlugPage.CallNow")}
             </button>
             <button className="w-full bg-white border-[1.5px] font-medium text-sm border-black text-black rounded-full flex items-center justify-center gap-2  py-[0.5rem]">

@@ -12,19 +12,26 @@ import {
   FileText,
   Eye,
   Edit,
+  Delete,
 } from "lucide-react";
 import useFetch from "../../../../hooks/useFetch";
 import { useLanguage } from "../../../../context/LanguageContext";
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+import useApiData from "../../../../hooks/useApiData";
 
 const ApplyCRUD = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const { data: ApplicationData, loading } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/apply"
-  );
+  const {
+    data: ApplicationData,
+    loading,
+    deleteById,
+  } = useApiData("https://edu-brink-backend.vercel.app/api/apply");
 
   // State for filters
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [applicationToDelete, setApplicationToDelete] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
@@ -67,6 +74,23 @@ const ApplyCRUD = () => {
   // Navigate to application details page
   const viewApplicationDetails = (id) => {
     navigate(`/${language}/admin/applications/${id}`);
+  };
+
+  const handleDelete = (application) => {
+    setApplicationToDelete(application);
+    setIsDeletePopupOpen(true);
+  };
+
+  const confirmDelete = async (id) => {
+    if (!applicationToDelete) return;
+
+    try {
+      await deleteById(id);
+      setIsDeletePopupOpen(false);
+      setApplicationToDelete(null);
+    } catch (error) {
+      console.error("Error deleting Application:", error);
+    }
   };
 
   return (
@@ -203,6 +227,9 @@ const ApplyCRUD = () => {
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -291,6 +318,15 @@ const ApplyCRUD = () => {
                         Edit
                       </button>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <button
+                        onClick={() => handleDelete(application)}
+                        className="text-red-600 hover:text-red-900 mr-4 transition-colors duration-150 inline-flex items-center"
+                      >
+                        Delete
+                        <Delete className="h-4 w-4  ml-1" />
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -298,6 +334,18 @@ const ApplyCRUD = () => {
           </table>
         </div>
       </div>
+      <DeleteConfirmationPopup
+        isOpen={isDeletePopupOpen}
+        onClose={() => setIsDeletePopupOpen(false)}
+        onConfirm={confirmDelete}
+        uniName={
+          applicationToDelete?.userDetails?.personName ||
+          applicationToDelete?.itemId?.CourseName?.[language] ||
+          applicationToDelete?.itemId?.uniName?.[language] ||
+          ""
+        }
+        uniId={applicationToDelete?._id || ""}
+      />
     </div>
   );
 };

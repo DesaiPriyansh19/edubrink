@@ -2,11 +2,25 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function useFetch(url, requiresAuth = true) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Handle auth errors
+  const handleAuthError = (err) => {
+    if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+      // Clear localStorage
+      localStorage.removeItem("eduuserInfo");
+      // Redirect to home page
+      navigate("/");
+      return true;
+    }
+    return false;
+  };
 
   async function getData() {
     setLoading(true);
@@ -40,7 +54,10 @@ export default function useFetch(url, requiresAuth = true) {
         "Error fetching data:",
         error?.response?.data || error.message
       );
-      setError(error?.response?.data?.message || error.message);
+      
+      if (!handleAuthError(error)) {
+        setError(error?.response?.data?.message || error.message);
+      }
     } finally {
       setLoading(false);
     }
