@@ -1,7 +1,9 @@
+"use client";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function useFetch(url) {
+export default function useFetch(url, requiresAuth = true) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -16,20 +18,28 @@ export default function useFetch(url) {
       const eduuserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
       const token = eduuserInfo?.token;
 
-      if (!token) {
+      // Check if authentication is required but no token exists
+      if (requiresAuth && !token) {
         throw new Error("Authentication required. No token found.");
       }
 
-      // Make API request with Authorization header
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Configure request headers
+      const headers = {};
+
+      // Add Authorization header if token exists
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      // Make API request with or without Authorization header
+      const response = await axios.get(url, { headers });
 
       setData(response.data.data);
     } catch (error) {
-      console.error("Error fetching data:", error?.response?.data || error.message);
+      console.error(
+        "Error fetching data:",
+        error?.response?.data || error.message
+      );
       setError(error?.response?.data?.message || error.message);
     } finally {
       setLoading(false);

@@ -25,9 +25,6 @@ function FacultyPage() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600 animate-pulse">
-            Loading faculty information...
-          </p>
         </div>
       </div>
     );

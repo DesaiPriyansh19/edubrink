@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Plus, ArrowLeft, GraduationCap, School } from "lucide-react";
-import { useLanguage } from "../../../../context/LanguageContext";
-import InputField from "../../../../utils/InputField";
-import DropdownSelect from "../../../../utils/DropdownSelect";
-import useDropdownData from "../../../../hooks/useDropdownData";
-import useApiData from "../../../../hooks/useApiData";
-import RichText from "../../../../utils/RichText";
+"use client"
+
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Plus, ArrowLeft, GraduationCap, School, AlertCircle } from "lucide-react"
+import { useLanguage } from "../../../../context/LanguageContext"
+import InputField from "../../../../utils/InputField"
+import DropdownSelect from "../../../../utils/DropdownSelect"
+import useDropdownData from "../../../../hooks/useDropdownData"
+import useApiData from "../../../../hooks/useApiData"
+import RichText from "../../../../utils/RichText"
 
 const initialFormData = {
   facultyName: { en: "", ar: "" },
@@ -19,48 +21,79 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-};
+}
 
-const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
+const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"]
 
 export default function AddFaculty() {
-  const { filteredData, setSearchInput, handleAdd, handleRemove } =
-    useDropdownData();
-  const { language } = useLanguage();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } = useDropdownData()
+  const { language } = useLanguage()
   const [showDropdown, setShowDropdown] = useState({
     major: false,
     universities: false,
-  });
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  const [newStudyLevel, setNewStudyLevel] = useState("");
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/faculty"
-  );
+  })
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [formData, setFormData] = useState(initialFormData)
+  const [newStudyLevel, setNewStudyLevel] = useState("")
+  const [validationErrors, setValidationErrors] = useState({})
+  const [touched, setTouched] = useState({})
+  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/faculty")
+
+  const validateField = (name, value) => {
+    let error = ""
+
+    if (name.includes("facultyName")) {
+      const lang = name.split(".")[1] // Extract language (en or ar)
+      if (!value || value.trim() === "") {
+        error = lang === "en" ? "Faculty name is required" : "اسم الكلية مطلوب"
+      } else if (value.length < 3) {
+        error = lang === "en" ? "Faculty name must be at least 3 characters" : "يجب أن يكون اسم الكلية 3 أحرف على الأقل"
+      }
+    }
+
+    if (name === "universities" && (!value || value.length === 0)) {
+      error = "At least one university must be selected"
+    }
+
+    if (name === "studyLevel" && (!value || value.length === 0)) {
+      error = "At least one study level must be selected"
+    }
+
+    if (name.includes("facultyDescription")) {
+      const lang = name.split(".")[1] // Extract language (en or ar)
+      if (!value || value.trim() === "") {
+        error = lang === "en" ? "Description is required" : "الوصف مطلوب"
+      } else if (value.length < 20) {
+        error = lang === "en" ? "Description must be at least 20 characters" : "يجب أن يكون الوصف 20 حرفًا على الأقل"
+      }
+    }
+
+    return error
+  }
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    const nameParts = name.split(/[\[\].]+/); // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target
+    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
 
-    let temp = { ...formData }; // Clone the form data to avoid direct mutation
+    const temp = { ...formData } // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value;
+        acc[part] = type === "checkbox" ? checked : value
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
       }
-      return acc[part];
-    }, temp);
+      return acc[part]
+    }, temp)
 
     if (nameParts.includes("facultyName")) {
-      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
-      
+      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
+
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
         temp.customURLSlug = {
@@ -69,69 +102,162 @@ export default function AddFaculty() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        };
+        }
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        };
+        }
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp);
+    setFormData(temp)
 
-    // setValidationErrors((prevErrors) => {
-    //   if (prevErrors[name]) {
-    //     const updatedErrors = { ...prevErrors };
-    //     delete updatedErrors[name]; // Remove the error for this field
-    //     return updatedErrors;
-    //   }
-    //   return prevErrors;
-    // });
-  };
+    // Mark field as touched
+    setTouched((prev) => ({ ...prev, [name]: true }))
+
+    // Validate the field
+    const error = validateField(name, value)
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }))
+  }
+
+  const handleBlur = (event) => {
+    const { name, value } = event.target
+    setTouched((prev) => ({ ...prev, [name]: true }))
+
+    const error = validateField(name, value)
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }))
+  }
+
+  const validateForm = () => {
+    const errors = {}
+
+    // Validate faculty names
+    errors["facultyName.en"] = validateField("facultyName.en", formData.facultyName.en)
+    errors["facultyName.ar"] = validateField("facultyName.ar", formData.facultyName.ar)
+
+    // Validate universities
+    errors["universities"] = validateField("universities", formData.universities)
+
+    // Validate study levels
+    errors["studyLevel"] = validateField("studyLevel", formData.studyLevel)
+
+    // Validate descriptions
+    errors["facultyDescription.en"] = validateField("facultyDescription.en", formData.facultyDescription.en)
+    errors["facultyDescription.ar"] = validateField("facultyDescription.ar", formData.facultyDescription.ar)
+
+    setValidationErrors(errors)
+
+    // Check if there are any errors
+    return !Object.values(errors).some((error) => error !== "")
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+
+    // Mark all fields as touched
+    const allFields = {
+      "facultyName.en": true,
+      "facultyName.ar": true,
+      universities: true,
+      studyLevel: true,
+      "facultyDescription.en": true,
+      "facultyDescription.ar": true,
+    }
+    setTouched(allFields)
+
+    // Validate all fields
+    const isValid = validateForm()
+
+    if (!isValid) {
+      window.scrollTo(0, 0)
+      return
+    }
+
+    setLoading(true)
+    setError(null)
 
     try {
       const updatedFormData = {
         ...formData,
-        universities: formData.universities.map(
-          (universities) => universities._id
-        ),
+        universities: formData.universities.map((universities) => universities._id),
         major: formData.major.map((major) => major._id),
-      };
-      await addNew(updatedFormData);
+      }
+      await addNew(updatedFormData)
 
-      navigate(`/${language}/admin/faculties`);
+      navigate(`/${language}/admin/faculties`)
     } catch (err) {
-      console.error("Error adding faculty:", err);
-      setError(err.message || "Failed to add faculty");
+      console.error("Error adding faculty:", err)
+      setError(err.message || "Failed to add faculty")
+      window.scrollTo(0, 0)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const addStudyLevel = () => {
     if (newStudyLevel && !formData.studyLevel.includes(newStudyLevel)) {
+      const updatedStudyLevels = [...formData.studyLevel, newStudyLevel]
       setFormData((prev) => ({
         ...prev,
-        studyLevel: [...prev.studyLevel, newStudyLevel],
-      }));
-      setNewStudyLevel("");
+        studyLevel: updatedStudyLevels,
+      }))
+      setNewStudyLevel("")
+
+      // Validate study levels
+      const error = validateField("studyLevel", updatedStudyLevels)
+      setValidationErrors((prev) => ({
+        ...prev,
+        studyLevel: error,
+      }))
+
+      // Mark as touched
+      setTouched((prev) => ({ ...prev, studyLevel: true }))
     }
-  };
+  }
 
   const removeStudyLevel = (level) => {
+    const updatedStudyLevels = formData.studyLevel.filter((l) => l !== level)
     setFormData((prev) => ({
       ...prev,
-      studyLevel: prev.studyLevel.filter((l) => l !== level),
-    }));
-  };
+      studyLevel: updatedStudyLevels,
+    }))
+
+    // Validate study levels
+    const error = validateField("studyLevel", updatedStudyLevels)
+    setValidationErrors((prev) => ({
+      ...prev,
+      studyLevel: error,
+    }))
+  }
+
+  const handleRichTextChange = (content, lang) => {
+    setFormData((prev) => ({
+      ...prev,
+      facultyDescription: {
+        ...prev.facultyDescription,
+        [lang]: content,
+      },
+    }))
+
+    // Mark as touched
+    setTouched((prev) => ({ ...prev, [`facultyDescription.${lang}`]: true }))
+
+    // Validate
+    const error = validateField(`facultyDescription.${lang}`, content)
+    setValidationErrors((prev) => ({
+      ...prev,
+      [`facultyDescription.${lang}`]: error,
+    }))
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -146,43 +272,57 @@ export default function AddFaculty() {
         <h1 className="text-2xl font-bold">Add New Faculty</h1>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-          {error}
+      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
+
+      {/* Form validation summary */}
+      {Object.values(validationErrors).some((error) => error !== "") && Object.values(touched).some((t) => t) && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg">
+          <div className="flex items-center mb-2">
+            <AlertCircle className="w-5 h-5 mr-2" />
+            <h3 className="font-medium">Please fix the following errors:</h3>
+          </div>
+          <ul className="list-disc pl-5">
+            {Object.entries(validationErrors).map(([field, error]) =>
+              error && touched[field] ? <li key={field}>{error}</li> : null,
+            )}
+          </ul>
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-6"
-      >
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
-          <InputField
-            label="Faculty Name (English)"
-            type="text"
-            name="facultyName.en"
-            placeholder="Faculty Name"
-            value={formData?.facultyName?.en}
-            onChange={handleInputChange}
-            autoComplete="facultyName"
-            variant={3}
-          />
+          <div>
+            <InputField
+              label="Faculty Name (English)"
+              type="text"
+              name="facultyName.en"
+              placeholder="Faculty Name"
+              value={formData?.facultyName?.en}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              autoComplete="facultyName"
+              variant={3}
+              error={touched["facultyName.en"] ? validationErrors["facultyName.en"] : ""}
+            />
+          </div>
 
-          <InputField
-            label="اسم الكلية (عربي)"
-            type="text"
-            name="facultyName.ar"
-            placeholder="اسم الكلية"
-            value={formData?.facultyName?.ar}
-            onChange={handleInputChange}
-            autoComplete="facultyName"
-            variant={3}
-          />
+          <div>
+            <InputField
+              label="اسم الكلية (عربي)"
+              type="text"
+              name="facultyName.ar"
+              placeholder="اسم الكلية"
+              value={formData?.facultyName?.ar}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              autoComplete="facultyName"
+              variant={3}
+              error={touched["facultyName.ar"] ? validationErrors["facultyName.ar"] : ""}
+            />
+          </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Study Levels
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Study Levels</label>
             <div className="flex gap-2 mb-2">
               <select
                 value={newStudyLevel}
@@ -206,10 +346,7 @@ export default function AddFaculty() {
             </div>
             <div className="flex flex-wrap gap-2">
               {formData.studyLevel.map((level) => (
-                <div
-                  key={level}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
+                <div key={level} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                   <GraduationCap className="w-4 h-4" />
                   {level}
                   <button
@@ -222,29 +359,11 @@ export default function AddFaculty() {
                 </div>
               ))}
             </div>
+            {touched["studyLevel"] && validationErrors["studyLevel"] && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors["studyLevel"]}</p>
+            )}
           </div>
-          {/* 
-          <div className="col-span-2">
-            <DropdownSelect
-              label="Enroll Major (تسجيل الرائد)"
-              placeholder="Select a Major"
-              icon={CalendarPlus2}
-              selectedItems={formData?.major}
-              searchKey="majorName"
-              options={filteredData?.majors}
-              onSearch={(value) =>
-                setSearchInput((prev) => ({ ...prev, majorname: value }))
-              }
-              onSelect={(major) =>
-                handleAdd("major", major, setFormData, setShowDropdown)
-              }
-              onRemove={(id) => handleRemove("major", id, setFormData)}
-              language="en"
-              dropdownKey="major"
-              showDropdown={showDropdown}
-              setShowDropdown={setShowDropdown}
-            />
-          </div> */}
+
           <div className="col-span-2">
             <DropdownSelect
               label="Enroll University (التسجيل في الجامعة)"
@@ -253,22 +372,37 @@ export default function AddFaculty() {
               selectedItems={formData?.universities}
               searchKey="uniName"
               options={filteredData?.universities}
-              onSearch={(value) =>
-                setSearchInput((prev) => ({ ...prev, univername: value }))
-              }
-              onSelect={(university) =>
-                handleAdd(
-                  "universities",
-                  university,
-                  setFormData,
-                  setShowDropdown
-                )
-              }
-              onRemove={(id) => handleRemove("universities", id, setFormData)}
+              onSearch={(value) => setSearchInput((prev) => ({ ...prev, univername: value }))}
+              onSelect={(university) => {
+                handleAdd("universities", university, setFormData, setShowDropdown)
+
+                // Mark as touched
+                setTouched((prev) => ({ ...prev, universities: true }))
+
+                // Validate
+                const updatedUniversities = [...formData.universities, university]
+                const error = validateField("universities", updatedUniversities)
+                setValidationErrors((prev) => ({
+                  ...prev,
+                  universities: error,
+                }))
+              }}
+              onRemove={(id) => {
+                handleRemove("universities", id, setFormData)
+
+                // Validate
+                const updatedUniversities = formData.universities.filter((uni) => uni._id !== id)
+                const error = validateField("universities", updatedUniversities)
+                setValidationErrors((prev) => ({
+                  ...prev,
+                  universities: error,
+                }))
+              }}
               language="en"
               dropdownKey="universities"
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
+              error={touched["universities"] ? validationErrors["universities"] : ""}
             />
           </div>
 
@@ -297,30 +431,16 @@ export default function AddFaculty() {
             <RichText
               label="Faculty Description (English)"
               value={formData.facultyDescription.en}
-              onChange={(content) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  facultyDescription: {
-                    ...prev.facultyDescription,
-                    en: content,
-                  },
-                }))
-              }
+              onChange={(content) => handleRichTextChange(content, "en")}
+              error={touched["facultyDescription.en"] ? validationErrors["facultyDescription.en"] : ""}
             />
           </div>
           <div className="col-span-2">
             <RichText
-              label="وصف الكلية (انجليزي)"
+              label="وصف الكلية (عربي)"
               value={formData.facultyDescription.ar}
-              onChange={(content) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  facultyDescription: {
-                    ...prev.facultyDescription,
-                    ar: content,
-                  },
-                }))
-              }
+              onChange={(content) => handleRichTextChange(content, "ar")}
+              error={touched["facultyDescription.ar"] ? validationErrors["facultyDescription.ar"] : ""}
             />
           </div>
 
@@ -329,15 +449,10 @@ export default function AddFaculty() {
               type="checkbox"
               id="featured"
               checked={formData.featured}
-              onChange={(e) =>
-                setFormData({ ...formData, featured: e.target.checked })
-              }
+              onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label
-              htmlFor="featured"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="featured" className="text-sm font-medium text-gray-700">
               Featured Faculty
             </label>
           </div>
@@ -368,5 +483,6 @@ export default function AddFaculty() {
         </div>
       </form>
     </div>
-  );
+  )
 }
+

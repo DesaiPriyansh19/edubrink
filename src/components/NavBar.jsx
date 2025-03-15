@@ -56,19 +56,23 @@ const NavBar = () => {
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
   const { data: KeywordData } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/keyword`
+    `https://edu-brink-backend.vercel.app/api/keyword`,
+    false
   );
 
   const { data: CoursesData } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`,
+    false
   );
 
   const { data: FacultyData } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/faculty?limit=5`
+    `https://edu-brink-backend.vercel.app/api/faculty?limit=5`,
+    false
   );
 
   const { data: CountryData } = useFetch(
-    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,countryPhotos,customURLSlug"
+    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,countryPhotos,customURLSlug",
+    false
   );
   const navigate = useNavigate();
   const location = useLocation();

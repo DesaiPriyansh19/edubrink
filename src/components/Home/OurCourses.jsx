@@ -15,7 +15,8 @@ import { useNavigate } from "react-router-dom";
 function OurCourses() {
   const API_URL = import.meta.env.VITE_API_URL;
   const { data } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse/?limit=5`
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse/?limit=5`,
+    false
   );
 
   const { language } = useLanguage();

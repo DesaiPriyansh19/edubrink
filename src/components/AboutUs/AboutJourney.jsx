@@ -21,10 +21,10 @@ const AboutJourney = () => {
   return (
     <div className="container mx-auto px-4 py-16 bg-[rgba(248,248,248,1)]">
       <div className="jour-layout-wrapper flex flex-col items-center justify-center max-w-[677px] h-[131px] gap-5 mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center">
+        <h2 className="text-5xl sm:text-3xl font-semibold text-center leading-[114.99%]">
           Journey to Success
         </h2>
-        <p className="font-sans text-xs sm:text-[14px] font-medium leading-[21.7px] text-center">
+        <p className="text-lg sm:text-[14px] font-medium leading-[21.7px] text-center">
           Easily explore global universities, discover programs suited to your
           goals, compare study options, and receive guidance throughout the
           application process.

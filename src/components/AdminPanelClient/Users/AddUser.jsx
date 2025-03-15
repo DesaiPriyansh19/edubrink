@@ -1,18 +1,10 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  ArrowLeft,
-  Mail,
-  User,
-  Shield,
-  Users,
-  ShieldCheck,
-  UserCog,
-} from "lucide-react";
-import useApiData from "../../../../hooks/useApiData";
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef } from "react"
+import { ArrowLeft, Mail, User, Shield, Users, ShieldCheck, UserCog } from "lucide-react"
+import useApiData from "../../../../hooks/useApiData"
+import { useLanguage } from "../../../../context/LanguageContext"
+import { useNavigate } from "react-router-dom"
 
 const initialFormData = {
   FullName: "",
@@ -23,66 +15,178 @@ const initialFormData = {
   verified: false,
   Status: "Active",
   Gender: "Male",
-};
+}
 
-const actionStatus = ["Viewer", "Admin", "Editor"];
-const genders = ["Male", "Female", "Non-Binary"];
-const status = ["Active", "Not Active"];
+const actionStatus = ["Viewer", "Admin", "Editor"]
+const genders = ["Male", "Female", "Non-Binary"]
+const status = ["Active", "Not Active"]
 
 export default function AddUser() {
-  const { language } = useLanguage();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
-  const { error: resError, addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/users/admin"
-  );
+  const { language } = useLanguage()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [formData, setFormData] = useState(initialFormData)
+  const [success, setSuccess] = useState(false)
+  const navigate = useNavigate()
+  const { error: resError, addNew } = useApiData("https://edu-brink-backend.vercel.app/api/users/admin")
+
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState({})
+  const [touchedFields, setTouchedFields] = useState({})
+  const formRef = useRef(null)
+
+  // Function to validate email format
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  // Function to validate password strength
+  const isStrongPassword = (password) => {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
+    return passwordRegex.test(password)
+  }
+
+  // Validate a specific field
+  const validateField = (name, value) => {
+    let error = ""
+
+    switch (name) {
+      case "FullName":
+        if (!value.trim()) {
+          error = "Full Name is required"
+        } else if (value.trim().length < 3) {
+          error = "Full Name must be at least 3 characters"
+        }
+        break
+      case "Email":
+        if (!value.trim()) {
+          error = "Email is required"
+        } else if (!isValidEmail(value)) {
+          error = "Please enter a valid email address"
+        }
+        break
+      case "Password":
+        if (!value.trim()) {
+          error = "Password is required"
+        } else if (value.length < 8) {
+          error = "Password must be at least 8 characters"
+        } else if (!isStrongPassword(value)) {
+          error = "Password must include uppercase, lowercase, and numbers"
+        }
+        break
+      default:
+        break
+    }
+
+    return error
+  }
+
+  // Handle field blur to mark as touched
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+
+    // Mark the field as touched
+    setTouchedFields((prev) => ({
+      ...prev,
+      [name]: true,
+    }))
+
+    // Validate the field
+    const error = validateField(name, value)
+
+    // Update validation errors
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }))
+  }
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    const newValue = type === "checkbox" ? checked : value
+
+    // Update form data
+    setFormData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }))
+
+    // If field has been touched, validate on change
+    if (touchedFields[name]) {
+      const error = validateField(name, newValue)
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: error,
+      }))
+    }
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!formData.FullName.trim()) {
-      setError("Full Name is required");
-      return;
+    // Mark all fields as touched
+    const allFields = ["FullName", "Email", "Password"]
+    const newTouchedFields = allFields.reduce((acc, field) => {
+      acc[field] = true
+      return acc
+    }, {})
+    setTouchedFields(newTouchedFields)
+
+    // Validate all fields
+    const errors = {}
+    let hasErrors = false
+
+    allFields.forEach((field) => {
+      const error = validateField(field, formData[field])
+      if (error) {
+        errors[field] = error
+        hasErrors = true
+      }
+    })
+
+    setValidationErrors(errors)
+
+    // If there are errors, scroll to the first error field and stop submission
+    if (hasErrors) {
+      const firstErrorField = allFields.find((field) => errors[field])
+      if (firstErrorField && formRef.current) {
+        const errorElement = formRef.current.querySelector(`[name="${firstErrorField}"]`)
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: "smooth", block: "center" })
+          errorElement.focus()
+        }
+      }
+      return
     }
 
-    if (!formData.Email.trim()) {
-      setError("Email is required");
-      return;
-    }
-
-    if (!formData.Password.trim()) {
-      setError("Password is required");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
     try {
       const updatedFormData = {
         ...formData,
         isAdmin: formData.ActionStatus === "Admin" ? true : false,
-      };
+      }
 
-      await addNew(updatedFormData);
+      await addNew(updatedFormData)
 
-      setSuccess(true);
+      setSuccess(true)
 
       setTimeout(() => {
-        setFormData(initialFormData);
-        setSuccess(false);
-      }, 3000);
-      navigate(`/${language}/admin/users`);
+        setFormData(initialFormData)
+        setSuccess(false)
+      }, 3000)
+      navigate(`/${language}/admin/users`)
     } catch (err) {
-      console.error("Error adding user:", err);
-      setError(err.message || "Failed to add user");
+      console.error("Error adding user:", err)
+      setError(err.message || "Failed to add user")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -100,9 +204,7 @@ export default function AddUser() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg animate-shake">
-          {error}
-        </div>
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg animate-shake">{error}</div>
       )}
 
       {success && (
@@ -112,75 +214,79 @@ export default function AddUser() {
       )}
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         className="bg-white rounded-lg shadow-md p-6 transition-all duration-500 hover:shadow-lg"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
             <div className="relative">
               <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
+                name="FullName"
                 value={formData.FullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, FullName: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-2 border ${
+                  validationErrors.FullName && touchedFields.FullName ? "border-red-500 bg-red-50" : "border-gray-300"
+                } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300`}
               />
             </div>
+            {validationErrors.FullName && touchedFields.FullName && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.FullName}</p>
+            )}
           </div>
 
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
             <div className="relative">
               <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
+                name="Email"
                 value={formData.Email}
-                onChange={(e) =>
-                  setFormData({ ...formData, Email: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-2 border ${
+                  validationErrors.Email && touchedFields.Email ? "border-red-500 bg-red-50" : "border-gray-300"
+                } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300`}
               />
             </div>
+            {validationErrors.Email && touchedFields.Email && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.Email}</p>
+            )}
           </div>
 
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <div className="relative">
               <Shield className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
+                name="Password"
                 value={formData.Password}
-                onChange={(e) =>
-                  setFormData({ ...formData, Password: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-2 border ${
+                  validationErrors.Password && touchedFields.Password ? "border-red-500 bg-red-50" : "border-gray-300"
+                } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300`}
               />
             </div>
+            {validationErrors.Password && touchedFields.Password && (
+              <p className="mt-1 text-sm text-red-600">{validationErrors.Password}</p>
+            )}
           </div>
 
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gender
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
             <div className="relative">
               <Users className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="Gender"
                 value={formData.Gender}
-                onChange={(e) =>
-                  setFormData({ ...formData, Gender: e.target.value })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
                 {genders.map((gender) => (
@@ -192,20 +298,14 @@ export default function AddUser() {
             </div>
           </div>
 
-          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
+          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <div className="relative">
               <ShieldCheck className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="Status"
                 value={formData.Status || "Active"}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    Status: e.target.value,
-                  })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
                 {status.map((status) => (
@@ -216,20 +316,14 @@ export default function AddUser() {
               </select>
             </div>
           </div>
-          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Action Restrict
-            </label>
+          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Action Restrict</label>
             <div className="relative">
               <UserCog className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="ActionStatus"
                 value={formData.ActionStatus}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    ActionStatus: e.target.value,
-                  })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
                 {actionStatus.map((status) => (
@@ -246,15 +340,12 @@ export default function AddUser() {
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
+                  name="verified"
                   checked={formData.verified}
-                  onChange={(e) =>
-                    setFormData({ ...formData, verified: e.target.checked })
-                  }
+                  onChange={handleInputChange}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-300"
                 />
-                <span className="text-sm font-medium text-gray-700">
-                  Verified User
-                </span>
+                <span className="text-sm font-medium text-gray-700">Verified User</span>
               </label>
             </div>
           </div>
@@ -283,14 +374,7 @@ export default function AddUser() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -308,12 +392,7 @@ export default function AddUser() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Save User
               </span>
@@ -322,5 +401,6 @@ export default function AddUser() {
         </div>
       </form>
     </div>
-  );
+  )
 }
+

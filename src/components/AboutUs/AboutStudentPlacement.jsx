@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import StudentTwo from "../../assets/AboutpageImage/StudentTwo.png";
-import StudentThree from "../../assets/AboutpageImage/StudentThree.png";
+import studentThree from "../../assets/AboutpageImage/studentThree.png";
+import studentOne from "../../assets/AboutpageImage/studentOne.png";
 
 const AboutStudentPlacement = () => {
   const cards = [
     {
       id: 1,
-      image: StudentThree,
+      image: studentThree,
       title: "MSc Advanced Computer Science",
       university: "TH KHONE - Cologne University of Applied Science",
       tuitionFees: "€3,867.00 / Year",
@@ -32,7 +33,7 @@ const AboutStudentPlacement = () => {
     },
     {
       id: 3,
-      image: StudentThree,
+      image: studentOne,
       title: "MSc Advanced Computer Science",
       university: "TH KHONE - Cologne University of Applied Science",
       tuitionFees: "€3,867.00 / Year",
@@ -51,9 +52,9 @@ const AboutStudentPlacement = () => {
       <div className="w-full mmd:w-1/2  relative h-[320px] esm:h-[350px] md:h-[400px]">
         {cards.map((card) => (
           <div
-          key={card.id}
-          className={`absolute top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here
-        >
+            key={card.id}
+            className={`absolute top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here
+          >
             <div className="flex items-center gap-2">
               <img
                 src={card.image}
@@ -64,7 +65,9 @@ const AboutStudentPlacement = () => {
                 <div className="font-semibold text-black text-xs sm:text-[1rem]">
                   {card.title}
                 </div>
-                <div className="text-xs sm:text-sm  text-black">{card.university}</div>
+                <div className="text-xs sm:text-sm  text-black">
+                  {card.university}
+                </div>
               </div>
             </div>
 
@@ -97,12 +100,12 @@ const AboutStudentPlacement = () => {
 
             <div className="mt-6 flex justify-between">
               <button
-                className={`px-1 py-2 text-sm text-white bg-gradient-to-r from-[rgba(56,12,149,1)] to-[rgba(225,87,84,1)] rounded-[1.5rem] ${card.buttonWidths[0]}`}
+                className={`w-[211.42px] h-[40.42px] pl-[21.76px] pr-[21.76px] text-sm text-[rgba(255,255,255,1)] bg-gradient-to-r from-[rgba(58,61,141,1)] to-[rgba(73,75,134,1)] rounded-[1.5rem] ${card.buttonWidths[0]}`}
               >
                 Apply Now
               </button>
               <button
-                className={`px-1 py-2 text-sm border border-black rounded-[1.5rem] ${card.buttonWidths[1]}`}
+                className={`w-[211.42px] h-[40.42px] pl-[21.76px] pr-[21.76px] text-sm border border-black rounded-[1.5rem] ${card.buttonWidths[1]}`}
               >
                 Learn More
               </button>
@@ -114,15 +117,15 @@ const AboutStudentPlacement = () => {
       {/* Right: Text Section */}
       <div className="w-full mmd:w-1/2 h-auto esm:h-[350px] md:h-[400px]">
         <div className="w-full mmd:max-w-xl">
-          <p className="text-3xl lg:text-4xl font-semibold text-gray-900">
+          <h2 className="text-3xl lg:text-5xl font-semibold text-[rgba(29,33,28,1)]">
             We make more than 20k+ successful students placement in the world
-          </p>
-          <p className="mt-4 text-gray-600 leading-relaxed">
+          </h2>
+          <p className="mt-4 text-[rgba(29,33,28,1)] font-medium text-lg leading-[155%]">
             Investigate courses, universities and their locations. Look upon the
             teaching modules, research opportunities, campus life and employment
             prospects before you narrow down your selection.
           </p>
-          <button className="mt-6 text-black bg-white px-6 py-3 rounded-3xl ">
+          <button className="mt-6 text-lg leafding-[155%] text-[rgba(29,33,28,1)] bg-[rgba(255,255,255,1)] px-6 py-3 rounded-3xl w-[175px] h-[52px] pl-[28px] pr-[28px]">
             Learn more →
           </button>
         </div>

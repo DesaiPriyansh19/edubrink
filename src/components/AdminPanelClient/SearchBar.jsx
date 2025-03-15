@@ -48,7 +48,6 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
       icon: <GraduationCap className="w-5 h-5" />,
       title: "Faculties",
     },
-    { id: "tag", icon: <Tag className="w-5 h-5" />, title: "Popular Tags" },
     { id: "blog", icon: <FileText className="w-5 h-5" />, title: "Articles" },
   ]
 
@@ -93,29 +92,51 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
   const handleSelectKeyword = (keyword) => {
     if (!keyword) return
 
-    const customSlug = keyword.customURLSlug?.[language] || keyword.keyword
-
-    switch (keyword.type) {
-      case "country":
-        navigate(`/${language}/country/${customSlug}`)
-        break
-      case "tag":
-        navigate(`/${language}/searchresults?tag=${customSlug}`)
-        break
-      case "university":
-        navigate(`/${language}/university/${customSlug}`)
-        break
-      case "course":
-        navigate(`/${language}/courses/${customSlug}`)
-        break
-      case "blog":
-        navigate(`/${language}/blog/${customSlug}`)
-        break
-      case "faculty":
-        navigate(`/${language}/faculty/${customSlug}`)
-        break
-      default:
-        navigate(`/${language}/searchresults?q=${keyword.keyword}`)
+    // For admin routes, use ID-based navigation
+    if (window.location.pathname.includes("/admin")) {
+      switch (keyword.type) {
+        case "country":
+          navigate(`/${language}/admin/countries/${keyword._id}`)
+          break
+        case "university":
+          navigate(`/${language}/admin/universities/${keyword._id}`)
+          break
+        case "course":
+          navigate(`/${language}/admin/courses/${keyword._id}`)
+          break
+        case "blog":
+          navigate(`/${language}/admin/articles/${keyword._id}`)
+          break
+        case "faculty":
+          navigate(`/${language}/admin/faculties/${keyword._id}`)
+          break
+        default:
+          navigate(`/${language}/admin/search?q=${keyword.keyword}`)
+      }
+    } else {
+      // For public routes, use keyword-based navigation
+      switch (keyword.type) {
+        case "country":
+          navigate(`/${language}/country/${keyword.keyword}`)
+          break
+        case "tag":
+          navigate(`/${language}/searchresults?tag=${keyword.keyword}`)
+          break
+        case "university":
+          navigate(`/${language}/university/${keyword.keyword}`)
+          break
+        case "course":
+          navigate(`/${language}/courses/${keyword.keyword}`)
+          break
+        case "blog":
+          navigate(`/${language}/blog/${keyword.keyword}`)
+          break
+        case "faculty":
+          navigate(`/${language}/faculty/${keyword.keyword}`)
+          break
+        default:
+          navigate(`/${language}/searchresults?q=${keyword.keyword}`)
+      }
     }
 
     setSearchBar(false)
@@ -177,13 +198,44 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
     })
   }, [])
 
-  // Debug logging to help identify data structure issues
+  // Add this useEffect to set the active category based on the URL
   useEffect(() => {
-    if (keywordData && keywordData.length > 0) {
-      // console.log("Sample keyword data item:", keywordData[0])
-      // console.log("Grouped keywords:", groupedKeywords)
+    const path = window.location.pathname.toLowerCase()
+
+    // Check for admin routes
+    if (path.includes("/admin/")) {
+      if (path.includes("/admin/countries")) {
+        setActiveCategory("country")
+      } else if (path.includes("/admin/universities")) {
+        setActiveCategory("university")
+      } else if (path.includes("/admin/courses")) {
+        setActiveCategory("course")
+      } else if (path.includes("/admin/faculties")) {
+        setActiveCategory("faculty")
+      } else if (path.includes("/admin/articles") || path.includes("/admin/blogs")) {
+        setActiveCategory("blog")
+      }
     }
-  }, [keywordData, groupedKeywords])
+    // Check for public routes
+    else {
+      if (path.includes("/university") || path.includes("/universities")) {
+        setActiveCategory("university")
+      } else if (path.includes("/course") || path.includes("/courses")) {
+        setActiveCategory("course")
+      } else if (path.includes("/country") || path.includes("/countries")) {
+        setActiveCategory("country")
+      } else if (path.includes("/faculty") || path.includes("/faculties")) {
+        setActiveCategory("faculty")
+      } else if (
+        path.includes("/blog") ||
+        path.includes("/blogs") ||
+        path.includes("/article") ||
+        path.includes("/articles")
+      ) {
+        setActiveCategory("blog")
+      }
+    }
+  }, [window.location.pathname])
 
   if (!searchBar) {
     return null
@@ -259,12 +311,11 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                 <h3 className="text-sm font-semibold text-gray-500 mb-3">CATEGORIES</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {categories.map((category) => (
-                    <button
+                    <div
                       key={category.id}
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        activeCategory === category.id ? "bg-blue-50 text-blue-600" : "hover:bg-gray-50 text-gray-700"
+                        activeCategory === category.id ? "bg-blue-50 text-blue-600" : "text-gray-700"
                       }`}
-                      onClick={() => setActiveCategory(activeCategory === category.id ? null : category.id)}
                       data-aos="fade-up"
                     >
                       <div
@@ -275,7 +326,7 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                         {category.icon}
                       </div>
                       <span className="font-medium">{category.title}</span>
-                    </button>
+                    </div>
                   ))}
                 </div>
 
@@ -332,7 +383,7 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                   <h3 className="text-sm font-semibold text-gray-500 mb-3">QUICK LINKS</h3>
                   <div className="grid grid-cols-2 gap-2">
                     <Link
-                      to={`/${language}/courses`}
+                      to={`/${language}/admin/courses`}
                       className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={() => setSearchBar(false)}
                       data-aos="fade-up"
@@ -341,7 +392,7 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                       <span>All Courses</span>
                     </Link>
                     <Link
-                      to={`/${language}/universities`}
+                      to={`/${language}/admin/universities`}
                       className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={() => setSearchBar(false)}
                       data-aos="fade-up"
@@ -351,7 +402,7 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                       <span>Universities</span>
                     </Link>
                     <Link
-                      to={`/${language}/countries`}
+                      to={`/${language}/admin/countries`}
                       className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={() => setSearchBar(false)}
                       data-aos="fade-up"
@@ -361,7 +412,7 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
                       <span>Countries</span>
                     </Link>
                     <Link
-                      to={`/${language}/blog`}
+                      to={`/${language}/admin/articles`}
                       className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={() => setSearchBar(false)}
                       data-aos="fade-up"

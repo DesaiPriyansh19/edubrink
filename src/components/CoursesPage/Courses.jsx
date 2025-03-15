@@ -46,7 +46,122 @@ const CoursePage = () => {
         id
       )}`;
 
-  const { data } = useFetch(apiUrl);
+  const { data, loading } = useFetch(apiUrl);
+
+  // Update document head for SEO
+  useEffect(() => {
+    if (data && !loading) {
+      // SEO data based on current language
+      const seoTitle =
+        data?.seo?.metaTitle?.[language] ||
+        data?.CourseName?.[language] ||
+        "Course Details";
+      const seoDescription =
+        data?.seo?.metaDescription?.[language] ||
+        data?.CourseDescription?.[language]
+          ?.substring(0, 160)
+          .replace(/<[^>]*>/g, "") + "..." ||
+        "Explore course details, requirements, and application information.";
+      const seoKeywords =
+        data?.seo?.metaKeywords?.[language]?.join(", ") ||
+        `${data?.CourseName?.[language]}, ${data?.university?.uniName?.[language]}, education, course`;
+
+      // Update document title
+      document.title = seoTitle;
+
+      // Update or create meta description
+      let metaDescription = document.querySelector('meta[name="description"]');
+      if (!metaDescription) {
+        metaDescription = document.createElement("meta");
+        metaDescription.setAttribute("name", "description");
+        document.head.appendChild(metaDescription);
+      }
+      metaDescription.setAttribute("content", seoDescription);
+
+      // Update or create meta keywords
+      if (seoKeywords) {
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (!metaKeywords) {
+          metaKeywords = document.createElement("meta");
+          metaKeywords.setAttribute("name", "keywords");
+          document.head.appendChild(metaKeywords);
+        }
+        metaKeywords.setAttribute("content", seoKeywords);
+      }
+
+      // Open Graph tags
+      updateMetaTag("og:title", seoTitle);
+      updateMetaTag("og:description", seoDescription);
+      updateMetaTag("og:type", "website");
+      updateMetaTag("og:url", window.location.href);
+
+      // Use university logo or course image if available
+      const imageUrl = data?.courseImage || data?.university?.uniSymbol || "";
+      if (imageUrl) {
+        updateMetaTag("og:image", imageUrl);
+      }
+
+      // Twitter Card tags
+      updateMetaTag("twitter:card", "summary_large_image");
+      updateMetaTag("twitter:title", seoTitle);
+      updateMetaTag("twitter:description", seoDescription);
+
+      if (imageUrl) {
+        updateMetaTag("twitter:image", imageUrl);
+      }
+
+      // Canonical URL
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement("link");
+        canonicalLink.setAttribute("rel", "canonical");
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute("href", window.location.href);
+
+      // Additional structured data for courses (Schema.org)
+      const courseSchema = {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        name: data?.CourseName?.[language],
+        description: seoDescription,
+        provider: {
+          "@type": "Organization",
+          name: data?.university?.uniName?.[language],
+          sameAs:
+            window.location.origin +
+            "/university/" +
+            (data?.university?.customURLSlug?.[language] ||
+              data?.university?._id),
+        },
+        timeRequired: data?.CourseDuration,
+        url: window.location.href,
+      };
+
+      // Add or update structured data
+      let structuredDataScript = document.querySelector(
+        "#course-structured-data"
+      );
+      if (!structuredDataScript) {
+        structuredDataScript = document.createElement("script");
+        structuredDataScript.id = "course-structured-data";
+        structuredDataScript.type = "application/ld+json";
+        document.head.appendChild(structuredDataScript);
+      }
+      structuredDataScript.textContent = JSON.stringify(courseSchema);
+    }
+  }, [data, loading, language]);
+
+  // Helper function to update or create meta tags
+  const updateMetaTag = (property, content) => {
+    let metaTag = document.querySelector(`meta[property="${property}"]`);
+    if (!metaTag) {
+      metaTag = document.createElement("meta");
+      metaTag.setAttribute("property", property);
+      document.head.appendChild(metaTag);
+    }
+    metaTag.setAttribute("content", content);
+  };
 
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
@@ -67,12 +182,6 @@ const CoursePage = () => {
 
   const handleFormSubmit = () => {
     setShowApplyForm(false);
-    setShowVerifiedModal(true);
-
-    // Hide the verification modal after 3 seconds
-    setTimeout(() => {
-      setShowVerifiedModal(false);
-    }, 3000);
   };
 
   // Get the current URL for sharing
@@ -120,10 +229,13 @@ const CoursePage = () => {
                     data?.university?.uniSymbol ||
                     "/placeholder.svg?height=28&width=28" ||
                     "/placeholder.svg" ||
+                    "/placeholder.svg" ||
                     "/placeholder.svg"
                   }
                   alt="University Logo"
                   className="rounded-full"
+                  width="28"
+                  height="28"
                 />
                 <p className="text-lg text-gray-700">
                   {language === "ar"
@@ -363,6 +475,8 @@ const CoursePage = () => {
                   src="/placeholder.svg?height=64&width=64"
                   alt="Counselor"
                   className="rounded-full"
+                  width="64"
+                  height="64"
                 />
                 <div>
                   <h4 className="font-bold text-xl mb-2">
@@ -420,8 +534,6 @@ const CoursePage = () => {
           </div>
         </div>
       )}
-
-      {/* Verification Modal */}
     </div>
   );
 };
