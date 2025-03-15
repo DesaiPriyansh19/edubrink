@@ -15,7 +15,7 @@ function RecentBlog() {
   const navigate = useNavigate();
   const { data, loading } = useFetch(
     `https://edu-brink-backend.vercel.app/api/blog/`
-  );
+  ,false);
   const { t } = useTranslation();
   const { language } = useLanguage();
 

@@ -165,7 +165,8 @@ const CollegeCarousel = () => {
   const isWindows = navigator.userAgent.includes("Windows");
   const API_URL = import.meta.env.VITE_API_URL;
   const { data } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/university/fields/query?limit=5&fields=uniName,uniSymbol,scholarshipAvailability,uniType,countryName,countryFlag,courseId,customURLSlug`
+    `https://edu-brink-backend.vercel.app/api/university/fields/query?limit=5&fields=uniName,uniSymbol,scholarshipAvailability,uniType,countryName,countryFlag,courseId,customURLSlug`,
+    false
   );
 
   const { t } = useTranslation();

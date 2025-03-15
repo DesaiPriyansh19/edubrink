@@ -10,7 +10,8 @@ const isWindows = navigator.userAgent.includes("Windows");
 
 const fetchCountries = async () => {
   const res = await fetch(
-    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,customURLSlug"
+    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,customURLSlug",
+    false
   );
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
@@ -113,7 +114,6 @@ const CountryCard = ({ country, handleNavigate, language }) => (
     className="flex-shrink-0 mx-5 cursor-pointer flex flex-col items-center group"
   >
     <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
-
       <div className="absolute inset-0 flex items-center justify-center transition-all  duration-300 group-hover:scale-110">
         {isWindows ? (
           country?.countryCode ? (
@@ -133,14 +133,14 @@ const CountryCard = ({ country, handleNavigate, language }) => (
           )
         ) : (
           <span
-          className="text-5xl  transition-all duration-300"
-          style={{
-            textShadow: '4px 4px 10px rgba(0, 0, 0, 0.6), -4px -4px 10px rgba(0, 0, 0, 0.3)'
-          }}
-        >
-          {getCountryEmoji(country?.countryCode)}
-        </span>
-        
+            className="text-5xl  transition-all duration-300"
+            style={{
+              textShadow:
+                "4px 4px 10px rgba(0, 0, 0, 0.6), -4px -4px 10px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            {getCountryEmoji(country?.countryCode)}
+          </span>
         )}
       </div>
     </div>
