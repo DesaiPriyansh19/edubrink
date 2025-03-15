@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import blogImage from "../../assets/Blog1.png";
 import blogImage2 from "../../assets/Blog2.png";
 import blogImage3 from "../../assets/Blog3.png";
@@ -19,43 +19,54 @@ function Article({
   const { language } = useLanguage();
   const { filterProp } = useSearch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  
+  // State for infinite scrolling
   const [blogs, setBlogs] = useState(initialData || []);
   const [loading, setLoading] = useState(initialLoading);
   const [page, setPage] = useState(1);
-  const navigate = useNavigate();
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const observerRef = useRef(null);
+  const [initialFetch, setInitialFetch] = useState(true);
+  const observer = useRef(null);
   const loaderRef = useRef(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp);
+  const initialDataRef = useRef(null);
 
   // API base URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
 
-  // Reset pagination and blogs when filters change
+  // Reset pagination and blogs when filters change or initialData updates
   useEffect(() => {
-    // Check if filterProp has changed
-    if (JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp)) {
-      // Update the ref
-      filterPropRef.current = filterProp;
+    const isFilterChanged = JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
 
-      // Reset pagination and blogs state
-      setBlogs([]); // Clear existing blogs
-      setPage(1); // Reset to the first page
-      setHasMore(true); // Assume there is more data to fetch
+    // Always update blogs when initialData changes, even if it's empty
+    if (initialData !== initialDataRef.current) {
+      initialDataRef.current = initialData;
+      setBlogs(initialData || []);
+      setPage(1);
+      setHasMore((initialData || []).length > 0);
+      setInitialFetch(false); // Mark initial fetch as complete when we get data
     }
 
-    // If initialData is provided, update the blogs state
-    if (initialData) {
-      setBlogs(initialData); // Set blogs to the new initialData
-      setPage(1); // Reset to the first page
-      setHasMore(initialData.length > 0); // Update hasMore based on initialData
+    if (isFilterChanged) {
+      filterPropRef.current = filterProp;
+      setPage(1);
+      setHasMore(true);
+      setInitialFetch(true); // Reset initial fetch when filters change
     }
   }, [filterProp, initialData]);
 
-  const fetchMoreBlog = async () => {
+  // Update loading state when initialLoading changes
+  useEffect(() => {
+    setLoading(initialLoading);
+  }, [initialLoading]);
+
+  // Function to fetch more blogs - use useCallback to maintain reference
+  const fetchMoreBlog = useCallback(async () => {
     if (!hasMore || loadingMore) return;
 
     try {
@@ -76,52 +87,104 @@ function Article({
       if (response.data.data && response.data.data.length > 0) {
         // Append new data to existing blogs, avoiding duplicates
         setBlogs((prevBlogs) => {
-          const newBlogs = response.data.data.filter(
-            (newBlog) =>
-              !prevBlogs.some((prevBlog) => prevBlog._id === newBlog._id)
-          );
+          // Create a map of existing IDs for faster lookup
+          const existingIds = new Map(prevBlogs.map((blog) => [blog._id, true]));
+          // Filter out duplicates
+          const newBlogs = response.data.data.filter((blog) => !existingIds.has(blog._id));
           return [...prevBlogs, ...newBlogs];
         });
 
-        setPage((prevPage) => prevPage + 1); // Increment page number
-        setHasMore(response.data.pagination.hasMore); // Update hasMore
+        setPage(page + 1);
+        setHasMore(response.data.pagination.hasMore);
       } else {
-        setHasMore(false); // No more data to fetch
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching more blogs:", error);
     } finally {
       setLoadingMore(false);
     }
-  };
+  }, [hasMore, loadingMore, countryIds, page]);
 
-  // Update loading state when initialLoading changes
+  // Set up intersection observer for infinite scrolling
   useEffect(() => {
-    setLoading(initialLoading);
-  }, [initialLoading]);
+    // Don't set up observer if loading, there's no more data, or we're still in initial fetch
+    if (!hasMore || initialFetch) {
+      return;
+    }
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore) {
-          fetchMoreBlog();
+    // Clean up previous observer
+    if (observer.current) {
+      observer.current.disconnect();
+    }
+
+    // Use a debounced version of fetchMoreBlog to prevent multiple rapid calls
+    let timeoutId = null;
+    const debouncedFetch = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (!loadingMore && hasMore) {
+          setFetchTrigger((prev) => prev + 1);
         }
-      },
-      { threshold: 0.1 }
-    );
+      }, 300);
+    };
 
-    const currentLoaderRef = loaderRef.current;
+    const callback = (entries) => {
+      if (entries[0].isIntersecting) {
+        debouncedFetch();
+      }
+    };
 
-    if (currentLoaderRef) {
-      observer.observe(currentLoaderRef);
+    observer.current = new IntersectionObserver(callback, {
+      rootMargin: "200px",
+      threshold: 0.1,
+    });
+
+    if (loaderRef.current) {
+      observer.current.observe(loaderRef.current);
     }
 
     return () => {
-      if (currentLoaderRef) {
-        observer.unobserve(currentLoaderRef);
+      if (timeoutId) clearTimeout(timeoutId);
+      if (observer.current) {
+        observer.current.disconnect();
       }
     };
-  }, [hasMore, loadingMore, countryIds, filterProp]);
+  }, [hasMore, loadingMore, initialFetch]);
+
+  // Handle fetch trigger
+  useEffect(() => {
+    if (fetchTrigger > 0 && !loadingMore && hasMore && !initialFetch) {
+      fetchMoreBlog();
+    }
+  }, [fetchTrigger, loadingMore, hasMore, initialFetch, fetchMoreBlog]);
+
+  // Force check for scroll position after initial data load
+  useEffect(() => {
+    if (!initialFetch && hasMore && !loadingMore) {
+      const timeoutId = setTimeout(() => {
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        
+        // If the content doesn't fill the viewport, trigger a fetch
+        if (scrollHeight <= clientHeight) {
+          setFetchTrigger((prev) => prev + 1);
+        }
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [initialFetch, hasMore, loadingMore]);
+
+  // Reset component state when unmounting
+  useEffect(() => {
+    return () => {
+      // Clean up everything when component unmounts
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, []);
 
   const SkeletonLoader = () => {
     return (
@@ -223,15 +286,12 @@ function Article({
       </div>
       {/* Loading indicator at the bottom */}
       {hasMore && blogs?.length > 0 && (
-        <div className="flex justify-center w-full py-4">
-          <div
-            ref={loaderRef}
-            className={`flex items-center justify-center ${
-              loadingMore ? "block" : "hidden"
-            }`}
-          >
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
+        <div
+          ref={loaderRef}
+          className="w-full flex justify-center py-4 mt-2"
+          style={{ minHeight: "80px" }}
+        >
+          <div className={`animate-spin rounded-full h-8 w-8 border-b-2 border-primary ${loadingMore ? "opacity-100" : "opacity-50"}`}></div>
         </div>
       )}
 

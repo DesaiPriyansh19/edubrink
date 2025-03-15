@@ -172,30 +172,32 @@ const CollegeCarousel = () => {
   const { language } = useLanguage();
   return (
     <>
-      <div className="max-w-[1240px] mx-auto ">
-        <div
-          className={`text-start text-3xl sm:text-4xl flex ${
-            language === "ar" ? "justify-end" : "justify-start"
-          } mb-4 font-semibold pl-4`}
-        >
-          <h1 className="text-start text-3xl sm:text-5xl font-semibold ">
-            {t("featuredUniversities.title")}
-          </h1>
-          <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" />{" "}
+      <div className="max-w-[1240px] mx-auto flex-1 flex">
+        <div className="w-full">
+          <div
+            className={`text-start text-3xl sm:text-4xl flex ${
+              language === "ar" ? "justify-end" : "justify-start"
+            } mb-4 font-semibold pl-4`}
+          >
+            <h1 className="text-start text-3xl sm:text-5xl font-semibold ">
+              {t("featuredUniversities.title")}
+            </h1>
+            <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" />{" "}
+          </div>
+          <p
+            className={` font-normal w-full text-sm ${
+              language === "ar" ? "text-right" : "text-left"
+            } sm:text-[.8rem] px-0 pl-4 pr-1 `}
+          >
+            {t("featuredUniversities.description")}
+          </p>
         </div>
-        <p
-          className={` font-normal w-full text-sm ${
-            language === "ar" ? "text-right" : "text-left"
-          } sm:text-[.8rem] px-0 pl-4 pr-1 `}
-        >
-          {t("featuredUniversities.description")}
-        </p>
         <div
-          className={`w-full hidden sm:flex  ${
+          className={`w-auto hidden sm:flex  ${
             language === "ar" ? "justify-start" : "justify-end "
           } items-center px-4`}
         >
-          <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
+          <button className="px-6 py-2 whitespace-nowrap text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-50">
             {t("viewAll")}
           </button>
         </div>

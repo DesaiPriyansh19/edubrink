@@ -1,55 +1,45 @@
-import React from "react";
+"use client"
+
+import { useEffect } from "react"
 import {
   Users,
   GraduationCap,
   Globe,
   FileText,
   Bell,
-  Book,
-  Flag,
   PenTool,
   FilePlus,
   Pencil,
-  Trash2,
   Trash,
-} from "lucide-react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { useLanguage } from "../../../context/LanguageContext";
-import useDropdownData from "../../../hooks/useDropdownData";
-import useFetch from "../../../hooks/useFetch";
+  Calendar,
+  Clock,
+  ArrowRight,
+  Plus,
+  UserPlus,
+  BookOpen,
+  Building2,
+} from "lucide-react"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import { useLanguage } from "../../../context/LanguageContext"
+import useDropdownData from "../../../hooks/useDropdownData"
 
-const SkeletonCard = () => (
-  <div className="bg-white rounded-lg shadow p-6 animate-pulse">
-    <div className="flex items-center justify-between">
-      <div>
-        <div className="h-4 bg-gray-300 rounded w-24 mb-2"></div>
-        <div className="h-6 bg-gray-300 rounded w-16"></div>
-      </div>
-      <div className="p-3 rounded-full bg-gray-300 w-10 h-10"></div>
-    </div>
-  </div>
-);
-
-const StatCard = ({ icon: Icon, label, value, color }) => (
-  <div className="bg-white rounded-lg shadow p-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-500 text-sm">{label}</p>
-        <h3 className="text-2xl font-bold mt-1">{value}</h3>
-      </div>
-      <div className={`p-3 rounded-full ${color}`}>
-        <Icon className="w-6 h-6 text-white" />
-      </div>
-    </div>
-  </div>
-);
+// Import AOS
+import AOS from "aos"
+import "aos/dist/aos.css"
 
 const Dashboard = () => {
-  const { data: notifications, loading } = useOutletContext();
+  const { data: notifications, loading } = useOutletContext()
+  const navigate = useNavigate()
+  const { userCount, filteredData } = useDropdownData()
+  const { language } = useLanguage()
 
-  const navigate = useNavigate();
-  const { userCount, filteredData } = useDropdownData();
-  const { language } = useLanguage();
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+      easing: "ease-in-out",
+    })
+  }, [])
 
   const stats = [
     {
@@ -57,171 +47,220 @@ const Dashboard = () => {
       label: "Total Users",
       value: userCount || 0,
       color: "bg-blue-500",
+      iconColor: "text-blue-500",
+      bgLight: "bg-blue-50",
     },
     {
       icon: GraduationCap,
       label: "Universities",
-      value: filteredData?.universities?.length,
-      color: "bg-green-500",
+      value: filteredData?.universities?.length || 0,
+      color: "bg-emerald-500",
+      iconColor: "text-emerald-500",
+      bgLight: "bg-emerald-50",
     },
     {
       icon: Globe,
       label: "Countries",
-      value: filteredData?.countries?.length,
+      value: filteredData?.countries?.length || 0,
       color: "bg-purple-500",
+      iconColor: "text-purple-500",
+      bgLight: "bg-purple-50",
     },
     {
       icon: FileText,
       label: "Articles",
-      value: filteredData?.blogs?.length,
+      value: filteredData?.blogs?.length || 0,
       color: "bg-orange-500",
+      iconColor: "text-orange-500",
+      bgLight: "bg-orange-50",
     },
-  ];
+  ]
+
+  const quickActions = [
+    {
+      label: "Add University",
+      value: "universities",
+      icon: Building2,
+      description: "Create a new university profile",
+      color: "bg-emerald-500",
+      iconColor: "text-emerald-500",
+    },
+    {
+      label: "New Article",
+      value: "articles",
+      icon: PenTool,
+      description: "Publish a new blog article",
+      color: "bg-orange-500",
+      iconColor: "text-orange-500",
+    },
+    {
+      label: "Add User",
+      value: "users",
+      icon: UserPlus,
+      description: "Register a new admin user",
+      color: "bg-blue-500",
+      iconColor: "text-blue-500",
+    },
+    {
+      label: "Add Major",
+      value: "majors",
+      icon: BookOpen,
+      description: "Create a new academic major",
+      color: "bg-purple-500",
+      iconColor: "text-purple-500",
+    },
+  ]
 
   const getNotificationIcon = (message) => {
     if (message?.en?.includes("created")) {
-      return <FilePlus className="w-5 h-5 text-blue-500" />; // Creation Icon
+      return <FilePlus className="w-4 h-4 text-blue-500" />
     } else if (message?.en?.includes("updated")) {
-      return <Pencil className="w-5 h-5 text-yellow-500" />; // Update Icon
+      return <Pencil className="w-4 h-4 text-amber-500" />
     } else if (message?.en?.includes("deleted")) {
-      return <Trash className="w-5 h-5 text-red-500" />; // Delete Icon
+      return <Trash className="w-4 h-4 text-red-500" />
     }
-    return null;
-  };
+    return <Bell className="w-4 h-4 text-gray-500" />
+  }
 
-  // utils/relativeTime.js
   const getRelativeTime = (timestamp) => {
-    const now = new Date();
-    const notificationTime = new Date(timestamp);
-    const timeDifference = now - notificationTime; // Difference in milliseconds
+    const now = new Date()
+    const notificationTime = new Date(timestamp)
+    const timeDifference = now - notificationTime
 
-    // Convert time difference to seconds, minutes, hours, etc.
-    const seconds = Math.floor(timeDifference / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    const seconds = Math.floor(timeDifference / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+    const days = Math.floor(hours / 24)
 
     if (days > 0) {
-      return `${days} day${days > 1 ? "s" : ""} ago`;
+      return `${days} day${days > 1 ? "s" : ""} ago`
     } else if (hours > 0) {
-      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+      return `${hours} hour${hours > 1 ? "s" : ""} ago`
     } else if (minutes > 0) {
-      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`
     } else {
-      return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
+      return `${seconds} second${seconds > 1 ? "s" : ""} ago`
     }
-  };
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard Overview</h1>
-
-      {/* Stats Section - Show Skeletons if Loading */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {loading
-          ? Array(4)
-              .fill(0)
-              .map((_, index) => <SkeletonCard key={index} />)
-          : stats.map((stat, index) => <StatCard key={index} {...stat} />)}
+    <div className="p-6 max-w-[1600px] mx-auto">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
+          <p className="text-gray-500 text-sm mt-1">Welcome back to your admin dashboard</p>
+        </div>
+        <div className="flex items-center text-sm text-gray-600">
+          <Calendar className="w-4 h-4 mr-2" />
+          {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+        </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activities - Show Skeleton */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Recent Activities</h2>
-          <div className="space-y-4 max-h-[200px] overflow-y-auto">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat, index) => (
+          <div key={index} className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500">{stat.label}</p>
+                <p className="text-2xl font-semibold mt-1 text-gray-900">{stat.value}</p>
+              </div>
+              <div className={`${stat.bgLight} p-3 rounded-lg`}>
+                <stat.icon className={`w-5 h-5 ${stat.iconColor}`} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Activities */}
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm">
+          <div className="p-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900 flex items-center">
+                <Bell className="w-4 h-4 mr-2 text-amber-500" />
+                Recent Activities
+              </h2>
+              <button className="text-sm text-blue-500 hover:text-blue-600">View All</button>
+            </div>
+          </div>
+
+          <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
             {loading ? (
-              // Show Skeleton Loader
-              Array(5)
-                .fill(0)
-                .map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center space-x-3 p-3 animate-pulse"
-                  >
-                    <div className="w-5 h-5 bg-gray-300 rounded-full"></div>
-                    <div>
-                      <div className="h-4 bg-gray-300 rounded w-48 mb-1"></div>
-                      <div className="h-3 bg-gray-300 rounded w-32"></div>
-                    </div>
-                  </div>
-                ))
+              <div className="p-4 text-center text-gray-500">Loading...</div>
             ) : notifications?.length > 0 ? (
-              // Show Notifications if Available
-              notifications.slice(0, 5).map((item, i) => (
-                <div
-                  key={i}
-                  className="group flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-all duration-300 ease-in-out cursor-pointer"
-                >
-                  {/* Notification Icon */}
-                  <div className="flex-shrink-0">
-                    {getNotificationIcon(item.message)}
-                  </div>
-
-                  {/* Notification Text */}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800 group-hover:text-gray-900 transition-colors duration-300">
-                      {item.message.en}
-                    </p>
-                    <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors duration-300">
-                      {getRelativeTime(item.notificationTime)}
-                    </p>
-                  </div>
-
-                  {/* Hover Arrow Indicator */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+              notifications.slice(0, 12).map((item, i) => (
+                <div key={i} className="p-4 hover:bg-gray-50">
+                  <div className="flex items-start">
+                    <div
+                      className={`rounded-lg p-2 ${
+                        item.message?.en?.includes("created")
+                          ? "bg-blue-50"
+                          : item.message?.en?.includes("updated")
+                            ? "bg-amber-50"
+                            : item.message?.en?.includes("deleted")
+                              ? "bg-red-50"
+                              : "bg-gray-50"
+                      }`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                      {getNotificationIcon(item.message)}
+                    </div>
+                    <div className="ml-3 flex-1 min-w-0">
+                      <p className="text-sm text-gray-900">{item.message.en}</p>
+                      <div className="flex items-center mt-1 text-xs text-gray-500">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {getRelativeTime(item.notificationTime)}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
             ) : (
-              // Show "No Notifications" Message
-              <div className="text-start text-gray-500">
-                No notifications available
+              <div className="p-4 text-center text-gray-500">
+                <Bell className="w-8 h-8 mx-auto text-gray-300 mb-2" />
+                <p className="text-sm">No recent activities</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { label: "Add University", value: "universities" },
-              { label: "New Article", value: "articles" },
-              { label: "Add User", value: "users" },
-              { label: "Add Major", value: "majors" },
-            ].map((action, i) => (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <Plus className="w-4 h-4 mr-2 text-purple-500" />
+              Quick Actions
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {quickActions.map((action, i) => (
               <button
                 key={i}
-                onClick={() => {
-                  navigate(`/${language}/admin/${action.value}/add`);
-                }}
-                className="p-4 text-left hover:bg-gray-50 rounded-lg border border-gray-200"
+                onClick={() => navigate(`/${language}/admin/${action.value}/add`)}
+                className="bg-white p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 text-left w-full"
               >
-                <p className="font-medium">{action.label}</p>
-                <p className="text-sm text-gray-500">Click to proceed</p>
+                <div className="flex items-center">
+                  <div className={`${action.color} bg-opacity-10 p-2 rounded-lg mr-3`}>
+                    <action.icon className={`w-4 h-4 ${action.iconColor}`} />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-sm text-gray-900">{action.label}</h3>
+                    <p className="text-xs text-gray-500">{action.description}</p>
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-gray-400" />
+                </div>
               </button>
             ))}
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
+
