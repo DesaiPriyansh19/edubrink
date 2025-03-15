@@ -10,10 +10,10 @@ const AboutGlobalJourney = () => {
   return (
     <div className="container mx-auto px-4 py-0 md:py-16 bg-[rgba(248,248,248,1)]">
       <div className="jour-layout-wrapper flex flex-col items-center justify-center max-w-[677px] h-[131px] gap-5 mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center">
+        <h2 className="text-5xl sm:text-3xl font-semibold text-center text-[rgba(29,33,28,1)]">
           {t("global_coverage")}
         </h2>
-        <p className="font-sans text-xs sm:text-[14px] font-medium leading-[21.7px] text-center">
+        <p className="text-lg sm:text-[14px] font-medium leading-[114.99%] text-center">
           {t("global_coverage_description")}
         </p>
       </div>
@@ -28,7 +28,7 @@ const AboutGlobalJourney = () => {
       <div className="flex flex-wrap justify-center gap-4 py-6 px-0 sm:px-4">
         {/* Card 1 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             1,00,00+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>
@@ -36,14 +36,14 @@ const AboutGlobalJourney = () => {
               </span>
             </div>
           </h2>
-          <p className="font-general-sans font-medium text-lg leading-7">
+          <p className="font-medium text-lg leading-[155%] text-[rgba(29,33,28,1)]">
             {t("total_students")}
           </p>
         </div>
 
         {/* Card 2 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             3230+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>
@@ -51,14 +51,14 @@ const AboutGlobalJourney = () => {
               </span>
             </div>
           </h2>
-          <p className=" font-general-sans font-medium  text-lg leading-7">
+          <p className="font-medium text-lg leading-[155%] text-[rgba(29,33,28,1)]">
             {t("partner_universities")}
           </p>
         </div>
 
         {/* Card 3 */}
         <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[55.2px] flex justify-between w-full">
+          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             160+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>
@@ -66,7 +66,7 @@ const AboutGlobalJourney = () => {
               </span>
             </div>
           </h2>
-          <p className="font-general-sans font-medium text-lg leading-7">
+          <p className="font-medium text-lg leading-[155%] text-[rgba(29,33,28,1)]">
             {t("student_ambassadors")}
           </p>
         </div>

@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import AlbertFlores from "../../assets/AboutpageImage/AlbertFlores.png"
-import WadeWarren from "../../assets/AboutpageImage/WadeWarren.png"
-import DSG from "../../assets/AboutpageImage/DSG.png"
-import RS from "../../assets/AboutpageImage/RS.png"
-import RobertFox from "../../assets/AboutpageImage/RobertFox.png"
-import AOS from "aos"
-import "aos/dist/aos.css"
+import { useEffect } from "react";
+import AlbertFlores from "../../assets/AboutpageImage/AlbertFlores.png";
+import WadeWarren from "../../assets/AboutpageImage/WadeWarren.png";
+import DSG from "../../assets/AboutpageImage/DSG.png";
+import RS from "../../assets/AboutpageImage/RS.png";
+import RobertFox from "../../assets/AboutpageImage/RobertFox.png";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const AboutTestimonal = () => {
   // Initialize AOS
@@ -16,20 +16,27 @@ const AboutTestimonal = () => {
       duration: 800,
       once: false,
       mirror: true,
-    })
-    AOS.refresh()
-  }, [])
+    });
+    AOS.refresh();
+  }, []);
 
   return (
     <div className="container mx-auto py-12 bg-[rgba(248,248,248,1)]">
       <div className="testi-wrapper flex flex-col items-center">
         <div className="header text-center mb-4" data-aos="fade-down">
-          <h1 className="text-3xl font-semibold leading-[55.2px] font-['General Sans']">Testimonial</h1>
+          <h1 className="text-5xl font-semibold leading-[114.9%] text-[rgba(29,33,28,1)]">
+            Testimonial
+          </h1>
         </div>
-        <div className="text text-center mb-10" data-aos="fade-up" data-aos-delay="100">
-          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto">
-            Hear from students who've successfully navigated their study abroad journeys. From cultural immersion to
-            academic growth, our testimonials
+        <div
+          className="text text-center mb-10"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <p className="font-medium text-lg sm:text-base text-[rgba(29,33,28,1)] max-w-2xl mx-auto leading-[155%]">
+            Hear from students who've successfully navigated their study abroad
+            journeys. From cultural immersion to academic growth, our
+            testimonials
           </p>
         </div>
 
@@ -51,22 +58,40 @@ const AboutTestimonal = () => {
                     data-aos="zoom-in"
                     data-aos-delay="400"
                   />
-                  <div className="flex justify-center mb-2" data-aos="fade-up" data-aos-delay="500">
+                  <div
+                    className="flex justify-center mb-2"
+                    data-aos="fade-up"
+                    data-aos-delay="500"
+                  >
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-500 text-lg">
                         ★
                       </span>
                     ))}
                   </div>
-                  <h5 className="font-semibold text-gray-800 mb-1" data-aos="fade-up" data-aos-delay="550">
+                  <h6
+                    className="font-semibold text-[rgba(29,33,28,1)] mb-1 text-[24px]"
+                    data-aos="fade-up"
+                    data-aos-delay="550"
+                  >
                     Albert Flores
-                  </h5>
-                  <p className="text-gray-600 text-sm mb-4" data-aos="fade-up" data-aos-delay="600">
+                  </h6>
+                  <p
+                    className="text-[rgba(29,33,28,1)] font-normal text-[14px] leading-[150%] mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="600"
+                  >
                     Head of Training & Dev, at Global Tech
                   </p>
-                  <p className="text-gray-700 text-center" data-aos="fade-up" data-aos-delay="650">
-                    ProctorTech has revolutionized our employee certification process. We can now deliver secure
-                    assessments has revolutionized our employee certification process now deliver secure assessments.
+                  <p
+                    className="text-[rgba(29,33,28,1)] text-center text-[16px] leading-[150%] font-normal"
+                    data-aos="fade-up"
+                    data-aos-delay="650"
+                  >
+                    ProctorTech has revolutionized our employee certification
+                    process. We can now deliver secure assessments has
+                    revolutionized our employee certification process now
+                    deliver secure assessments.
                   </p>
                 </div>
               </div>
@@ -85,22 +110,40 @@ const AboutTestimonal = () => {
                     data-aos="zoom-in"
                     data-aos-delay="500"
                   />
-                  <div className="flex justify-center mb-2" data-aos="fade-up" data-aos-delay="600">
+                  <div
+                    className="flex justify-center mb-2"
+                    data-aos="fade-up"
+                    data-aos-delay="600"
+                  >
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-500 text-lg">
                         ★
                       </span>
                     ))}
                   </div>
-                  <h5 className="font-semibold text-gray-800 mb-1" data-aos="fade-up" data-aos-delay="650">
+                  <h6
+                    className="font-semibold text-[rgba(29,33,28,1)] mb-1 text-[24px]"
+                    data-aos="fade-up"
+                    data-aos-delay="650"
+                  >
                     Wade Warren
-                  </h5>
-                  <p className="text-gray-600 text-sm mb-4" data-aos="fade-up" data-aos-delay="700">
+                  </h6>
+                  <p
+                    className="text-[rgba(29,33,28,1)] font-normal text-[14px] leading-[150%] mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="700"
+                  >
                     Head of Training & Dev, at Global Tech
                   </p>
-                  <p className="text-gray-700 text-center" data-aos="fade-up" data-aos-delay="750">
-                    ProctorTech has revolutionized our employee certification process. We can now deliver secure
-                    assessments has revolutionized our employee certification process now deliver secure assessments.
+                  <p
+                    className="text-[rgba(29,33,28,1)] text-center text-[16px] leading-[150%] font-normal"
+                    data-aos="fade-up"
+                    data-aos-delay="750"
+                  >
+                    ProctorTech has revolutionized our employee certification
+                    process. We can now deliver secure assessments has
+                    revolutionized our employee certification process now
+                    deliver secure assessments.
                   </p>
                 </div>
               </div>
@@ -113,16 +156,16 @@ const AboutTestimonal = () => {
                 data-aos="zoom-in"
                 data-aos-delay="100"
               >
-                <div
-                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 text-gray-700 rounded-full px-4 py-1 text-sm font-medium shadow-sm flex items-center"
+                <button
+                  className=" mal-[33%] mr-[33%] bg-white border border-gray-200 text-gray-700 rounded-full px-4 py-1 text-sm font-medium shadow-sm flex items-center"
                   data-aos="fade-down"
                   data-aos-delay="400"
                 >
                   <span className="inline-block w-2 h-2 bg-[rgba(248,145,1,1)] rounded-full mr-2"></span>
                   Student
-                </div>
+                </button>
 
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center mt-[12%] mb-[12%]">
                   <img
                     src={DSG || "/placeholder.svg"}
                     alt="Darlene Kane Robertson"
@@ -130,16 +173,24 @@ const AboutTestimonal = () => {
                     data-aos="flip-left"
                     data-aos-delay="300"
                   />
-                  <div className="flex justify-center mb-3" data-aos="fade-up" data-aos-delay="400">
+                  <div
+                    className="flex justify-center mb-3"
+                    data-aos="fade-up"
+                    data-aos-delay="400"
+                  >
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-500 text-xl">
                         ★
                       </span>
                     ))}
                   </div>
-                  <h5 className="font-semibold text-gray-800 text-lg mb-2" data-aos="fade-up" data-aos-delay="450">
+                  <h6
+                    className="font-semibold text-[rgba(29,33,28,1)] mb-1 text-[24px]"
+                    data-aos="fade-up"
+                    data-aos-delay="450"
+                  >
                     Darlene Kane Robertson
-                  </h5>
+                  </h6>
                   <div
                     className="bg-white border border-gray-200 text-gray-700 rounded-full px-4 py-1.5 text-sm font-medium shadow-sm flex items-center mb-6"
                     data-aos="fade-up"
@@ -149,18 +200,13 @@ const AboutTestimonal = () => {
                     University of Windsor
                   </div>
 
-                  <p className="text-gray-700 text-center mb-6" data-aos="fade-up" data-aos-delay="550">
-                    EduBrink made my dream of studying abroad a reality. Their personalized guidance helped me navigate
-                    the complex application process and secure admission to my dream university.
-                  </p>
-
-                  <button
+                  {/* <button
                     className="bg-gradient-to-r from-[#380C95] to-[#E15754] text-white px-5 py-2 rounded-full hover:shadow-md transition-all duration-300"
                     data-aos="fade-up"
                     data-aos-delay="600"
                   >
                     Read Full Story
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -181,22 +227,40 @@ const AboutTestimonal = () => {
                     data-aos="zoom-in"
                     data-aos-delay="400"
                   />
-                  <div className="flex justify-center mb-2" data-aos="fade-up" data-aos-delay="500">
+                  <div
+                    className="flex justify-center mb-2"
+                    data-aos="fade-up"
+                    data-aos-delay="500"
+                  >
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-500 text-lg">
                         ★
                       </span>
                     ))}
                   </div>
-                  <h5 className="font-semibold text-gray-800 mb-1" data-aos="fade-up" data-aos-delay="550">
+                  <h6
+                    className="font-semibold text-[rgba(29,33,28,1)] text-[24px] mb-1"
+                    data-aos="fade-up"
+                    data-aos-delay="550"
+                  >
                     Darlene Robertson
-                  </h5>
-                  <p className="text-gray-600 text-sm mb-4" data-aos="fade-up" data-aos-delay="600">
+                  </h6>
+                  <p
+                    className="text-[rgba(29,33,28,1)] font-normal text-[14px] leading-[150%] mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="600"
+                  >
                     Head of Training & Dev, at Global Tech
                   </p>
-                  <p className="text-gray-700 text-center" data-aos="fade-up" data-aos-delay="650">
-                    ProctorTech has revolutionized our employee certification process. We can now deliver secure
-                    assessments has revolutionized our employee certification process now deliver secure assessments.
+                  <p
+                    className="text-[rgba(29,33,28,1)] text-center text-[16px] leading-[150%] font-normal"
+                    data-aos="fade-up"
+                    data-aos-delay="650"
+                  >
+                    ProctorTech has revolutionized our employee certification
+                    process. We can now deliver secure assessments has
+                    revolutionized our employee certification process now
+                    deliver secure assessments.
                   </p>
                 </div>
               </div>
@@ -215,22 +279,40 @@ const AboutTestimonal = () => {
                     data-aos="zoom-in"
                     data-aos-delay="500"
                   />
-                  <div className="flex justify-center mb-2" data-aos="fade-up" data-aos-delay="600">
+                  <div
+                    className="flex justify-center mb-2"
+                    data-aos="fade-up"
+                    data-aos-delay="600"
+                  >
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-500 text-lg">
                         ★
                       </span>
                     ))}
                   </div>
-                  <h5 className="font-semibold text-gray-800 mb-1" data-aos="fade-up" data-aos-delay="650">
+                  <h6
+                    className="font-semibold text-[rgba(29,33,28,1)] text-[24px] mb-1"
+                    data-aos="fade-up"
+                    data-aos-delay="650"
+                  >
                     Robert Fox
-                  </h5>
-                  <p className="text-gray-600 text-sm mb-4" data-aos="fade-up" data-aos-delay="700">
+                  </h6>
+                  <p
+                    className="text-[rgba(29,33,28,1)] font-normal text-[14px] leading-[150%] mb-4"
+                    data-aos="fade-up"
+                    data-aos-delay="700"
+                  >
                     Head of Training & Dev, at Global Tech
                   </p>
-                  <p className="text-gray-700 text-center" data-aos="fade-up" data-aos-delay="750">
-                    ProctorTech has revolutionized our employee certification process. We can now deliver secure
-                    assessments has revolutionized our employee certification process now deliver secure assessments.
+                  <p
+                    className="text-[rgba(29,33,28,1)] text-center text-[16px] leading-[150%] font-normal"
+                    data-aos="fade-up"
+                    data-aos-delay="750"
+                  >
+                    ProctorTech has revolutionized our employee certification
+                    process. We can now deliver secure assessments has
+                    revolutionized our employee certification process now
+                    deliver secure assessments.
                   </p>
                 </div>
               </div>
@@ -239,8 +321,7 @@ const AboutTestimonal = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AboutTestimonal
-
+export default AboutTestimonal;
