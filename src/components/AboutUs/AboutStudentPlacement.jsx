@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import studentTwo from "../../assets/AboutpageImage/studentTwo.png";
-import studentThree from "../../assets/AboutpageImage/studentThree.png";
-import studentOne from "../../assets/AboutpageImage/studentOne.png";
+import React from "react";
+import studentTwo from "../../assets/AboutpageImage/StudentTwo.png";
+import studentThree from "../../assets/AboutpageImage/StudentThree.png";
+import studentOne from "../../assets/AboutpageImage/StudentOne.png";
 
 const AboutStudentPlacement = () => {
   const cards = [
