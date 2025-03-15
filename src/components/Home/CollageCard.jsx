@@ -145,7 +145,7 @@ const CollegeCard = ({ college, idx, isWindows }) => {
       {/* Action Row */}
       <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4 ">
         <button
-          className="bg-gradient-to-r  from-[#380C95] to-[#E15754] hover:bg-gradient-to-l
+          className="bg-[#3b3d8d] hover:bg-gradient-to-l
        text-white text-sm py-2 px-3  rounded-full"
         >
           {t("applyNow")}
@@ -179,15 +179,15 @@ const CollegeCarousel = () => {
               language === "ar" ? "justify-end" : "justify-start"
             } mb-4 font-semibold pl-4`}
           >
-            <h1 className="text-start text-3xl sm:text-5xl font-semibold ">
+            <h1 className="text-start text-3xl sm:text-4xl font-semibold ">
               {t("featuredUniversities.title")}
             </h1>
             <img src={Book} alt="Icon" className="w-10 h-10 mr-1 ml-3" />{" "}
           </div>
           <p
-            className={` font-normal w-full text-sm ${
+            className={` font-medium w-full text-[.9rem]  ${
               language === "ar" ? "text-right" : "text-left"
-            } sm:text-[.8rem] px-0 pl-4 pr-1 `}
+            } sm:text-[.8rem] px-0 pl-4 pr-2 md:pr-72 `}
           >
             {t("featuredUniversities.description")}
           </p>
