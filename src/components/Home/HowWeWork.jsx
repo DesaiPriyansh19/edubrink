@@ -77,14 +77,14 @@ function HowWeWork() {
   return (
     <div className="max-w-[1240px] mb-20 px-0 md:px-4 mx-auto">
       <h1
-        className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-4"
+        className="text-3xl sm:text-4xl font-semibold flex items-center gap-3 justify-center text-center mb-4"
         data-aos="fade-down"
       >
         {t("HowWeWorkSection.title")}
         <img className="w-8 h-8 sm:w-auto sm:h-auto" src={ManSticker || "/placeholder.svg"} alt="Man sticker" />
       </h1>
       <p
-        className="text-[.9rem] max-w-2xl mx-auto px-12 md:p-0 text-center mb-6"
+        className="text-[.8rem] font-medium max-w-2xl mx-auto px-10 md:px-12 md:p-0 text-center mb-6"
         data-aos="fade-up"
         data-aos-delay="100"
       >
