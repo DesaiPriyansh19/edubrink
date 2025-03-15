@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import StudentTwo from "../../assets/AboutpageImage/StudentTwo.png";
+import studentTwo from "../../assets/AboutpageImage/studentTwo.png";
 import studentThree from "../../assets/AboutpageImage/studentThree.png";
 import studentOne from "../../assets/AboutpageImage/studentOne.png";
 
@@ -20,7 +20,7 @@ const AboutStudentPlacement = () => {
     },
     {
       id: 2,
-      image: StudentTwo,
+      image: studentTwo,
       title: "MSc Advanced Computer Science",
       university: "TH KHONE - Cologne University of Applied Science",
       tuitionFees: "€3,867.00 / Year",
