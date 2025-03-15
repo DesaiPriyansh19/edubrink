@@ -1,34 +1,104 @@
-import React, { useState } from "react";
-import University from "../../assets/CountryPage/University.png";
-import KeyLogo from "../../../svg/KeyFact";
-import MillionLogo from "../../../svg/Millions";
-import LanguageLogo from "../../../svg/LanguageLogo";
-import UniversityLogo from "../../../svg/UniversityLogo";
-import DollerRounded from "../../../svg/DollerRounded/Index";
-import CountryHome from "../../../svg/CountryHome";
-import CountryPopularCourse from "./CountryPopularCourse";
-import CountryPopularUniversity from "./CountryPopularUniversity";
-import CountryBlogs from "./CountryBlogs";
-import { useParams } from "react-router-dom";
+"use client"
 
-import useFetch from "../../../hooks/useFetch";
-import { useTranslation } from "react-i18next";
-import CountrySkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useEffect } from "react"
+import KeyLogo from "../../../svg/KeyFact"
+import MillionLogo from "../../../svg/Millions"
+import LanguageLogo from "../../../svg/LanguageLogo"
+import UniversityLogo from "../../../svg/UniversityLogo"
+import DollerRounded from "../../../svg/DollerRounded/Index"
+import CountryHome from "../../../svg/CountryHome"
+import CountryPopularCourse from "./CountryPopularCourse"
+import CountryPopularUniversity from "./CountryPopularUniversity"
+import CountryBlogs from "./CountryBlogs"
+import { useParams } from "react-router-dom"
+
+import useFetch from "../../../hooks/useFetch"
+import { useTranslation } from "react-i18next"
+import CountrySkeletonLoader from "../SkeletonLoaders/CountrySkeletonLoader"
+import { useLanguage } from "../../../context/LanguageContext"
 
 const CountryPage = () => {
-  const { slug } = useParams();
-  const { t } = useTranslation();
-  const { language } = useLanguage();
-  const API_URL = import.meta.env.VITE_API_URL;
+  const { slug } = useParams()
+  const { t } = useTranslation()
+  const { language } = useLanguage()
+  const API_URL = import.meta.env.VITE_API_URL
 
-  const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/country/name/${slug}`
-  );
-  console.log(data);
+  const { data, loading } = useFetch(`https://edu-brink-backend.vercel.app/api/country/name/${slug}`)
+
+  // Update document head for SEO
+  useEffect(() => {
+    if (data && !loading) {
+      // SEO data based on current language
+      const seoTitle = data?.seo?.metaTitle?.[language] || `Study in ${data?.countryName?.[language]}`
+      const seoDescription = data?.seo?.metaDescription?.[language] || data?.countrySummary?.[language]
+      const seoKeywords = data?.seo?.metaKeywords?.[language]?.join(", ") || ""
+
+      // Update document title
+      document.title = seoTitle
+
+      // Update or create meta description
+      let metaDescription = document.querySelector('meta[name="description"]')
+      if (!metaDescription) {
+        metaDescription = document.createElement("meta")
+        metaDescription.setAttribute("name", "description")
+        document.head.appendChild(metaDescription)
+      }
+      metaDescription.setAttribute("content", seoDescription)
+
+      // Update or create meta keywords
+      if (seoKeywords) {
+        let metaKeywords = document.querySelector('meta[name="keywords"]')
+        if (!metaKeywords) {
+          metaKeywords = document.createElement("meta")
+          metaKeywords.setAttribute("name", "keywords")
+          document.head.appendChild(metaKeywords)
+        }
+        metaKeywords.setAttribute("content", seoKeywords)
+      }
+
+      // Open Graph tags
+      updateMetaTag("og:title", seoTitle)
+      updateMetaTag("og:description", seoDescription)
+      updateMetaTag("og:type", "website")
+      updateMetaTag("og:url", window.location.href)
+
+      if (data?.countryPhotos?.mainPagePhoto) {
+        updateMetaTag("og:image", data.countryPhotos.mainPagePhoto)
+      }
+
+      // Twitter Card tags
+      updateMetaTag("twitter:card", "summary_large_image")
+      updateMetaTag("twitter:title", seoTitle)
+      updateMetaTag("twitter:description", seoDescription)
+
+      if (data?.countryPhotos?.mainPagePhoto) {
+        updateMetaTag("twitter:image", data.countryPhotos.mainPagePhoto)
+      }
+
+      // Canonical URL
+      let canonicalLink = document.querySelector('link[rel="canonical"]')
+      if (!canonicalLink) {
+        canonicalLink = document.createElement("link")
+        canonicalLink.setAttribute("rel", "canonical")
+        document.head.appendChild(canonicalLink)
+      }
+      canonicalLink.setAttribute("href", window.location.href)
+    }
+  }, [data, loading, language])
+
+  // Helper function to update or create meta tags
+  const updateMetaTag = (property, content) => {
+    let metaTag = document.querySelector(`meta[property="${property}"]`)
+    if (!metaTag) {
+      metaTag = document.createElement("meta")
+      metaTag.setAttribute("property", property)
+      document.head.appendChild(metaTag)
+    }
+    metaTag.setAttribute("content", content)
+  }
 
   if (loading) {
-    return <CountrySkeletonLoader />;
+    return <CountrySkeletonLoader />
   }
 
   return (
@@ -41,20 +111,18 @@ const CountryPage = () => {
         <div className="flex items-center font-medium">
           <span>Country</span>
           <span className="mx-2">&gt;</span>
-          <span className="font-medium">
-            Study in {data?.countryName?.[language]}
-          </span>
+          <span className="font-medium">Study in {data?.countryName?.[language]}</span>
         </div>
       </div>
 
-      <div className="w-full rounded-lg overflow-hidden mb-6">
+      <div className="w-full rounded-lg overflow-hidden mb-6 max-w-[1376px] mx-auto">
         <img
-          src={
-            "https://placehold.co/1376x426" ||
-            data?.countryPhotos?.mainPagePhoto
-          }
-          alt="Australia University"
-          className="w-full object-cover"
+          src={data?.countryPhotos?.mainPagePhoto || "https://placehold.co/1376x426"}
+          alt={`Study in ${data?.countryName?.[language]}`}
+          className="w-full h-auto max-h-[426px] object-cover"
+          width="1376"
+          height="426"
+          style={{ aspectRatio: "1376/426" }}
         />
       </div>
       <div>
@@ -70,9 +138,7 @@ const CountryPage = () => {
           )}
         </div>
 
-        <p className="text-sm font-medium mt-2 mb-3">
-          {data?.countrySummary?.[language]}
-        </p>
+        <p className="text-sm font-medium mt-2 mb-3">{data?.countrySummary?.[language]}</p>
 
         <div className="text-sm mb-4 flex items-center">
           <div className="flex items-center me-4">
@@ -91,9 +157,7 @@ const CountryPage = () => {
               </span>
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5">
-                {data?.countryCurrency}
-              </p>
+              <p className="font-sans font-medium text-sm leading-5">{data?.countryCurrency}</p>
               <p className="font-semibold">Currency</p>
             </div>
           </div>
@@ -104,9 +168,7 @@ const CountryPage = () => {
               </span>
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5">
-                ${data?.livingCost}
-              </p>
+              <p className="font-sans font-medium text-sm leading-5">${data?.livingCost}</p>
               <p className="font-semibold">Living Cost</p>
             </div>
           </div>
@@ -117,9 +179,7 @@ const CountryPage = () => {
               </span>
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5">
-                {data?.countryLanguages[0]}
-              </p>
+              <p className="font-sans font-medium text-sm leading-5">{data?.countryLanguages[0]}</p>
               <p className="font-semibold">Language</p>
             </div>
           </div>
@@ -130,9 +190,7 @@ const CountryPage = () => {
               </span>
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5">
-                {data?.universities?.length}
-              </p>
+              <p className="font-sans font-medium text-sm leading-5">{data?.universities?.length}</p>
               <p className="font-semibold">University</p>
             </div>
           </div>
@@ -149,7 +207,8 @@ const CountryPage = () => {
       <CountryPopularUniversity data={data} />
       <CountryBlogs data={data} />
     </div>
-  );
-};
+  )
+}
 
-export default CountryPage;
+export default CountryPage
+

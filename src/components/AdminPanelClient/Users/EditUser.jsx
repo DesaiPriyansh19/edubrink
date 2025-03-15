@@ -1,22 +1,8 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  Mail,
-  User,
-  Shield,
-  Phone,
-  Calendar,
-  MapPin,
-  Heart,
-  Users,
-  ShieldCheck,
-  UserCog,
-} from "lucide-react";
-import useApiData from "../../../../hooks/useApiData";
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react"
+import { ArrowLeft, Mail, User, Users, ShieldCheck, UserCog, AlertCircle } from 'lucide-react'
+import useApiData from "../../../../hooks/useApiData"
+import { useLanguage } from "../../../../context/LanguageContext"
+import { useNavigate, useParams } from "react-router-dom"
 
 const initialFormData = {
   FullName: "",
@@ -26,25 +12,31 @@ const initialFormData = {
   verified: false,
   Status: "Active",
   Gender: "Male",
-};
+}
 
-const actionStatus = ["Viewer", "Admin", "Editor"];
-const genders = ["Male", "Female", "Non-Binary"];
-const status = ["Active", "Not Active"];
+const actionStatus = ["Viewer", "Admin", "Editor"]
+const genders = ["Male", "Female", "Non-Binary"]
+const status = ["Active", "Not Active"]
 
 export default function EditUser() {
-  const { id } = useParams();
-  const { language } = useLanguage();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+  const { id } = useParams()
+  const { language } = useLanguage()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [formData, setFormData] = useState(initialFormData)
+  const [success, setSuccess] = useState(false)
+  const navigate = useNavigate()
+  const formRef = useRef(null)
+
+  // Validation states
+  const [validationErrors, setValidationErrors] = useState({})
+  const [touchedFields, setTouchedFields] = useState({})
+
   const {
     data,
     error: resError,
     updateWithOutById,
-  } = useApiData(`https://edu-brink-backend.vercel.app/api/users/admin/${id}`);
+  } = useApiData(`https://edu-brink-backend.vercel.app/api/users/admin/${id}`)
 
   useEffect(() => {
     if (data) {
@@ -56,40 +48,135 @@ export default function EditUser() {
         Status: data?.Status || "",
         ActionStatus: data?.ActionStatus || "",
         Gender: data?.Gender || "Male",
-      });
+      })
     }
-  }, [data]);
+  }, [data])
+
+  // Validation function for individual fields
+  const validateField = (name, value) => {
+    let error = ""
+
+    switch (name) {
+      case "FullName":
+        if (!value.trim()) {
+          error = "Full Name is required"
+        } else if (value.trim().length < 3) {
+          error = "Full Name must be at least 3 characters"
+        } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = "Full Name should only contain letters and spaces"
+        }
+        break
+
+      case "Email":
+        if (!value.trim()) {
+          error = "Email is required"
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          error = "Please enter a valid email address"
+        }
+        break
+
+      default:
+        break
+    }
+
+    return error
+  }
+
+  // Handle field blur - mark field as touched and validate
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+
+    setTouchedFields((prev) => ({
+      ...prev,
+      [name]: true,
+    }))
+
+    const error = validateField(name, value)
+
+    setValidationErrors((prev) => ({
+      ...prev,
+      [name]: error,
+    }))
+  }
+
+  // Handle input change with validation
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    const newValue = type === "checkbox" ? checked : value
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }))
+
+    // Only validate if the field has been touched
+    if (touchedFields[name]) {
+      const error = validateField(name, newValue)
+
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: error,
+      }))
+    }
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    setLoading(true);
-    setError(null);
+    // Mark all fields as touched
+    const allFields = ["FullName", "Email"]
+    const newTouchedFields = allFields.reduce((acc, field) => {
+      acc[field] = true
+      return acc
+    }, {})
+    setTouchedFields(newTouchedFields)
+
+    // Validate all fields
+    const errors = {}
+    allFields.forEach((field) => {
+      const error = validateField(field, formData[field])
+      if (error) {
+        errors[field] = error
+      }
+    })
+
+    // Update validation errors
+    setValidationErrors(errors)
+
+    // If there are errors, scroll to the first error field and prevent submission
+    if (Object.keys(errors).length > 0) {
+      const firstErrorField = Object.keys(errors)[0]
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`)
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" })
+        errorElement.focus()
+      }
+      return
+    }
+
+    setLoading(true)
+    setError(null)
 
     try {
       const updatedFormData = {
         ...formData,
         isAdmin: formData.ActionStatus === "Admin" ? true : false,
-      };
+      }
 
-      console.log(updatedFormData);
+      await updateWithOutById(updatedFormData)
 
-      await updateWithOutById(updatedFormData);
-
-      setSuccess(true);
+      setSuccess(true)
 
       setTimeout(() => {
-        setFormData(initialFormData);
-        setSuccess(false);
-      }, 3000);
-      navigate(`/${language}/admin/users`);
+        setSuccess(false)
+        navigate(`/${language}/admin/users`)
+      }, 3000)
     } catch (err) {
-      console.error("Error adding user:", err);
-      setError(err.message || "Failed to add user");
-    } finally {
-      setLoading(false);
+      console.error("Error updating user:", err)
+      setError(err.message || "Failed to update user")
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -103,22 +190,21 @@ export default function EditUser() {
             Back to Users
           </span>
         </button>
-        <h1 className="text-2xl font-bold animate-fade-in">Add New User</h1>
+        <h1 className="text-2xl font-bold animate-fade-in">Edit User</h1>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg animate-shake">
-          {error}
-        </div>
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg animate-shake">{error}</div>
       )}
 
       {success && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-600 rounded-lg animate-fade-in">
-          User added successfully!
+          User updated successfully!
         </div>
       )}
 
       <form
+        ref={formRef}
         onSubmit={handleSubmit}
         className="bg-white rounded-lg shadow-md p-6 transition-all duration-500 hover:shadow-lg"
       >
@@ -127,67 +213,62 @@ export default function EditUser() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Full Name
             </label>
-            <div className="relative">
-              <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={formData.FullName}
-                onChange={(e) =>
-                  setFormData({ ...formData, FullName: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
-              />
+            <div className="space-y-1">
+              <div className="relative">
+                <User className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  name="FullName"
+                  value={formData.FullName}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-2 border ${
+                    validationErrors.FullName && touchedFields.FullName
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300"
+                  } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300`}
+                />
+              </div>
+              {validationErrors.FullName && touchedFields.FullName && (
+                <div className="text-red-500 text-sm flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span>{validationErrors.FullName}</span>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
             <div className="relative">
               <Mail className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
+                name="Email"
                 value={formData.Email}
-                onChange={(e) =>
-                  setFormData({ ...formData, Email: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                className={`w-full pl-10 pr-4 py-2 border ${
+                  validationErrors.Email && touchedFields.Email ? "border-red-500 bg-red-50" : "border-gray-300"
+                } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300`}
               />
+              {validationErrors.Email && touchedFields.Email && (
+                <div className="text-red-500 text-sm mt-1 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {validationErrors.Email}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <Shield className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="password"
-                value={formData.Password}
-                onChange={(e) =>
-                  setFormData({ ...formData, Password: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300"
-                required
-              />
-            </div>
-          </div> */}
-
           <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gender
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
             <div className="relative">
               <Users className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="Gender"
                 value={formData.Gender}
-                onChange={(e) =>
-                  setFormData({ ...formData, Gender: e.target.value })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
                 {genders.map((gender) => (
@@ -199,49 +280,38 @@ export default function EditUser() {
             </div>
           </div>
 
-          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
+          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <div className="relative">
               <ShieldCheck className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="Status"
                 value={formData.Status || "Active"}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    Status: e.target.value,
-                  })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
-                {status.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
+                {status.map((statusOption) => (
+                  <option key={statusOption} value={statusOption}>
+                    {statusOption}
                   </option>
                 ))}
               </select>
             </div>
           </div>
-          <div className="transition-all duration-300  transform hover:translate-y-[-2px]">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Action Restrict
-            </label>
+
+          <div className="transition-all duration-300 transform hover:translate-y-[-2px]">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Action Restrict</label>
             <div className="relative">
               <UserCog className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <select
+                name="ActionStatus"
                 value={formData.ActionStatus}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    ActionStatus: e.target.value,
-                  })
-                }
+                onChange={handleInputChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-300 appearance-none"
               >
-                {actionStatus.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
+                {actionStatus.map((statusOption) => (
+                  <option key={statusOption} value={statusOption}>
+                    {statusOption}
                   </option>
                 ))}
               </select>
@@ -253,15 +323,12 @@ export default function EditUser() {
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="checkbox"
+                  name="verified"
                   checked={formData.verified}
-                  onChange={(e) =>
-                    setFormData({ ...formData, verified: e.target.checked })
-                  }
+                  onChange={handleInputChange}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-all duration-300"
                 />
-                <span className="text-sm font-medium text-gray-700">
-                  Verified User
-                </span>
+                <span className="text-sm font-medium text-gray-700">Verified User</span>
               </label>
             </div>
           </div>
@@ -290,14 +357,7 @@ export default function EditUser() {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -315,12 +375,7 @@ export default function EditUser() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Save User
               </span>
@@ -329,5 +384,5 @@ export default function EditUser() {
         </div>
       </form>
     </div>
-  );
+  )
 }

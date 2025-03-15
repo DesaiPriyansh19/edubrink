@@ -149,7 +149,7 @@ export const SearchDropdown = ({
         >
           {results.map((result, index) => (
             <div
-              key={result._id}
+              key={index}
               className={`
                 dropdown-item group flex items-center justify-between
                 px-4 py-3 cursor-pointer

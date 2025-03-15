@@ -23,6 +23,8 @@ import newzealand from "../assets/Flags/NewZealandFlag.webp";
 import denmark from "../assets/Flags/DenmarkFlag.webp";
 import australia from "../assets/Flags/AustraliaFlag.png";
 import { Link, useNavigate } from "react-router-dom";
+import useDropdownData from "../../hooks/useDropdownData";
+import { useLanguage } from "../../context/LanguageContext";
 
 function SideBar({ isMenuOpen, setIsMenuOpen }) {
   // Initialize AOS
@@ -48,6 +50,9 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
   ];
 
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
+  const { filteredData } = useDropdownData();
+  const { language } = useLanguage();
+  console.log(filteredData);
 
   const handleNavigate = (name) => {
     navigate(`/country/${name}`);
@@ -103,18 +108,9 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
                 data-aos-easing="ease-in-out"
               >
                 <ul className="flex flex-col text-start gap-2">
-                  <li>Digital Marketing</li>
-                  <li>Python Basics</li>
-                  <li>Data Visualization</li>
-                  <li>Project Planning</li>
-                  <li>Computer Science</li>
-                  <li>Marketing Analytics</li>
-                  <li>AI for Everyone</li>
-                  <li>Blockchain Basics</li>
-                  <li>Web Development</li>
-                  <li>JavaScript Basics</li>
-                  <li>Data Science</li>
-                  <li> Public Speaking </li>
+                  {filteredData.courses.slice(0, 10).map((item) => (
+                    <li>{item.CourseName[language]}</li>
+                  ))}
                 </ul>
               </div>
             )}
