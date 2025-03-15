@@ -1,7 +1,7 @@
 import React from "react";
 import studentTwo from "../../assets/AboutpageImage/StudentTwo.png";
 import studentThree from "../../assets/AboutpageImage/StudentThree.png";
-import studentOne from "../../assets/AboutpageImage/StudentOne.png";
+import studentOne from "../../assets/AboutpageImage/Studentone.png";
 
 const AboutStudentPlacement = () => {
   const cards = [
