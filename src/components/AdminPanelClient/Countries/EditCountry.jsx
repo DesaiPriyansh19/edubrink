@@ -1,101 +1,19 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  Flag,
-  Search,
-  Languages,
-  School,
-  BookOpen,
-  Tag,
-} from "lucide-react";
-import { countryFlags, getEmoji } from "../../../../libs/countryFlags";
-import { useLanguage } from "../../../../context/LanguageContext";
-import useApiData from "../../../../hooks/useApiData";
-import InputField from "../../../../utils/InputField";
-import UploadWidget from "../../../../utils/UploadWidget";
-import useDropdownData from "../../../../hooks/useDropdownData";
-import DropdownSelect from "../../../../utils/DropdownSelect";
-import Loader from "../../../../utils/Loader";
-import MetaArrayFields from "../Universities/MetaArrayFields";
-import RichText from "../../../../utils/RichText";
-const isWindows = navigator.userAgent.includes("Windows");
+"use client"
 
-// const countryTemplates = [
-//   {
-//     name: "United States",
-//     iso_code: "US",
-//     currency: "USD",
-//     language: "English",
-//     education_system:
-//       "American system with K-12 and higher education. Features a flexible credit-based system with diverse majors and specializations. Strong emphasis on practical experience and research.",
-//     flag_emoji: "🇺🇸",
-//     study_programs: [
-//       "Engineering",
-//       "Medicine",
-//       "Business",
-//       "Computer Science",
-//       "Liberal Arts",
-//     ],
-//     countryLanguages: ["English"],
-//     universities: [],
-//     blog: [],
-//     faculty: [],
-//     university_types: ["Public", "Private", "Community College"],
-//     admission_requirements: ["High School Diploma", "SAT/ACT", "TOEFL/IELTS"],
-//     part_time_work: "20 hours per week during semester, 40 hours during breaks",
-//     visa_documents: [
-//       "Valid Passport",
-//       "I-20 Form",
-//       "Financial Proof",
-//       "SEVIS Fee Receipt",
-//     ],
-//     visa_processing: "3-4 weeks typical processing time",
-//     post_grad_residency: "Optional Practical Training (OPT) for up to 3 years",
-//     tuition_range: "$20,000 - $50,000 per year",
-//     living_costs: "$800 - $2,000 per month",
-//     housing_options: [
-//       "University Dormitory",
-//       "Off-campus Apartment",
-//       "Homestay",
-//     ],
-//   },
-//   {
-//     name: "United Kingdom",
-//     iso_code: "GB",
-//     currency: "GBP",
-//     language: "English",
-//     education_system:
-//       "British system with undergraduate and postgraduate degrees. Known for its research-intensive universities and specialized courses. Three-year bachelor's degrees are standard.",
-//     flag_emoji: "🇬🇧",
-//     study_programs: [
-//       "Law",
-//       "Medicine",
-//       "Engineering",
-//       "Business",
-//       "Arts and Humanities",
-//     ],
-//     university_types: ["Public", "Russell Group", "Private"],
-//     admission_requirements: ["A-Levels/IB", "UCAS Application", "IELTS/TOEFL"],
-//     part_time_work:
-//       "20 hours per week during term time, full-time during holidays",
-//     visa_documents: [
-//       "CAS Number",
-//       "Valid Passport",
-//       "Financial Proof",
-//       "English Proficiency",
-//     ],
-//     visa_processing: "3-4 weeks standard processing",
-//     post_grad_residency: "Graduate Route visa for 2 years",
-//     tuition_range: "£12,000 - £35,000 per year",
-//     living_costs: "£800 - £1,500 per month",
-//     housing_options: [
-//       "University Halls",
-//       "Private Accommodation",
-//       "Shared Housing",
-//     ],
-//   },
-// ];
+import { useState, useEffect } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { ArrowLeft, Flag, Search, Languages, School, BookOpen, Tag } from "lucide-react"
+import { countryFlags, getEmoji } from "../../../../libs/countryFlags"
+import { useLanguage } from "../../../../context/LanguageContext"
+import useApiData from "../../../../hooks/useApiData"
+import InputField from "../../../../utils/InputField"
+import UploadWidget from "../../../../utils/UploadWidget"
+import useDropdownData from "../../../../hooks/useDropdownData"
+import DropdownSelect from "../../../../utils/DropdownSelect"
+import Loader from "../../../../utils/Loader"
+import MetaArrayFields from "../Universities/MetaArrayFields"
+import RichText from "../../../../utils/RichText"
+const isWindows = navigator.userAgent.includes("Windows")
 
 const initialFormData = {
   countryName: {
@@ -141,14 +59,12 @@ const initialFormData = {
   blog: [],
   hotDestination: false,
   livingCost: "",
-};
+}
 
 export default function EditCountry() {
-  const { language } = useLanguage();
-  const { id } = useParams();
-  const { data, updateWithOutById } = useApiData(
-    `https://edu-brink-backend.vercel.app/api/country/${id}`
-  );
+  const { language } = useLanguage()
+  const { id } = useParams()
+  const { data, updateWithOutById } = useApiData(`https://edu-brink-backend.vercel.app/api/country/${id}`)
 
   useEffect(() => {
     if (data) {
@@ -178,12 +94,8 @@ export default function EditCountry() {
             ar: data?.seo?.metaDescription?.ar || "",
           },
           metaKeywords: {
-            en: Array.isArray(data?.seo?.metaKeywords?.en)
-              ? data.seo.metaKeywords.en
-              : [],
-            ar: Array.isArray(data?.seo?.metaKeywords?.ar)
-              ? data.seo.metaKeywords.ar
-              : [],
+            en: Array.isArray(data?.seo?.metaKeywords?.en) ? data.seo.metaKeywords.en : [],
+            ar: Array.isArray(data?.seo?.metaKeywords?.ar) ? data.seo.metaKeywords.ar : [],
           },
         },
         customURLSlug: {
@@ -200,26 +112,65 @@ export default function EditCountry() {
         faculty: data?.faculty || [],
         hotDestination: data?.hotDestination || false,
         livingCost: data?.livingCost || "",
-      });
+      })
     }
-  }, [data]);
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState(initialFormData);
+  }, [data])
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState(initialFormData)
   const [showDropdown, setShowDropdown] = useState({
     universities: false,
     blogs: false,
-  });
-  const [error, setError] = useState(null);
-  const [newItem, setNewItem] = useState("");
-  const [activeSection, setActiveSection] = useState(null > null);
-  const [showFlagPicker, setShowFlagPicker] = useState(false);
-  const [flagSearch, setFlagSearch] = useState("");
-  const { filteredData, handleRemove, handleAdd } = useDropdownData();
+  })
+  const [error, setError] = useState(null)
+  const [newItem, setNewItem] = useState("")
+  const [activeSection, setActiveSection] = useState(null > null)
+  const [showFlagPicker, setShowFlagPicker] = useState(false)
+  const [flagSearch, setFlagSearch] = useState("")
+  const { filteredData, handleRemove, handleAdd } = useDropdownData()
+  const [validationErrors, setValidationErrors] = useState({})
+  const [searchInput, setSearchInput] = useState({ univername: "", blogname: "" })
+
+  // Validate form data
+  const validateForm = () => {
+    const errors = {}
+
+    // Required fields validation
+    if (!formData.countryName.en) errors["countryName.en"] = "Country name in English is required"
+    if (!formData.countryName.ar) errors["countryName.ar"] = "Country name in Arabic is required"
+    if (!formData.countrySummary.en) errors["countrySummary.en"] = "Country summary in English is required"
+    if (!formData.countrySummary.ar) errors["countrySummary.ar"] = "Country summary in Arabic is required"
+    if (!formData.countryCode) errors["countryCode"] = "Country ISO code is required"
+    if (!formData.countryCurrency) errors["countryCurrency"] = "Country currency is required"
+    if (formData.countryLanguages.length === 0) errors["countryLanguages"] = "At least one language is required"
+
+    // SEO validation
+    if (!formData.seo.metaTitle.en) errors["seo.metaTitle.en"] = "Meta title in English is required"
+    if (!formData.seo.metaTitle.ar) errors["seo.metaTitle.ar"] = "Meta title in Arabic is required"
+    if (!formData.seo.metaDescription.en) errors["seo.metaDescription.en"] = "Meta description in English is required"
+    if (!formData.seo.metaDescription.ar) errors["seo.metaDescription.ar"] = "Meta description in Arabic is required"
+
+    // URL slug validation
+    if (!formData.customURLSlug.en) errors["customURLSlug.en"] = "Custom URL in English is required"
+    if (!formData.customURLSlug.ar) errors["customURLSlug.ar"] = "Custom URL in Arabic is required"
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+
+    // Validate form before submission
+    if (!validateForm()) {
+      setError("Please fix the validation errors before submitting")
+      // Scroll to the top to show the error message
+      window.scrollTo({ top: 0, behavior: "smooth" })
+      return
+    }
+
+    setLoading(true)
+    setError(null)
 
     try {
       const { name, ...updatedFormData } = {
@@ -233,40 +184,40 @@ export default function EditCountry() {
         universities: formData.universities.map((university) => university._id),
         blog: formData.blog.map((blog) => blog._id),
         faculty: formData.faculty.map((faculty) => faculty._id),
-      };
+      }
 
-      console.log(updatedFormData);
+      console.log(updatedFormData)
 
-      await updateWithOutById(updatedFormData);
-      navigate(`/${language}/admin/countries`);
+      await updateWithOutById(updatedFormData)
+      navigate(`/${language}/admin/countries`)
     } catch (err) {
-      console.error("Error adding country:", err);
-      setError(err.message || "Failed to add country");
+      console.error("Error adding country:", err)
+      setError(err.message || "Failed to add country")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    const nameParts = name.split(/[\[\].]+/); // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target
+    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
 
-    let temp = { ...formData }; // Clone the form data to avoid direct mutation
+    const temp = { ...formData } // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value;
+        acc[part] = type === "checkbox" ? checked : value
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
       }
-      return acc[part];
-    }, temp);
+      return acc[part]
+    }, temp)
 
     if (nameParts.includes("countryName")) {
-      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -276,36 +227,36 @@ export default function EditCountry() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        };
+        }
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        };
+        }
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp);
+    setFormData(temp)
 
-    // setValidationErrors((prevErrors) => {
-    //   if (prevErrors[name]) {
-    //     const updatedErrors = { ...prevErrors };
-    //     delete updatedErrors[name]; // Remove the error for this field
-    //     return updatedErrors;
-    //   }
-    //   return prevErrors;
-    // });
-  };
+    // Clear validation error for this field if it exists
+    if (validationErrors[name]) {
+      setValidationErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors }
+        delete updatedErrors[name] // Remove the error for this field
+        return updatedErrors
+      })
+    }
+  }
 
   const addItem = (field) => {
-    if (!newItem.trim()) return;
+    if (!newItem.trim()) return
 
     setFormData((prev) => {
-      const fieldPath = field.split(".");
-      const fieldKey = fieldPath[0]; // "keywords"
-      const subKey = fieldPath[1]; // "en"
+      const fieldPath = field.split(".")
+      const fieldKey = fieldPath[0] // "keywords"
+      const subKey = fieldPath[1] // "en"
 
       if (subKey) {
         return {
@@ -314,69 +265,77 @@ export default function EditCountry() {
             ...prev[fieldKey],
             [subKey]: [...(prev[fieldKey]?.[subKey] || []), newItem],
           },
-        };
+        }
       } else {
         return {
           ...prev,
           [field]: [...(prev[field] || []), newItem],
-        };
+        }
       }
-    });
+    })
 
-    setNewItem(""); // Clear input field
-  };
+    setNewItem("") // Clear input field
+
+    // Clear validation error for this field if it exists
+    if (validationErrors[field]) {
+      setValidationErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors }
+        delete updatedErrors[field]
+        return updatedErrors
+      })
+    }
+  }
 
   const removeItem = (field, itemToRemove) => {
     setFormData((prev) => {
-      const fieldPath = field.split(".");
-      const fieldKey = fieldPath[0]; // "keywords"
-      const subKey = fieldPath[1]; // "en"
+      const fieldPath = field.split(".")
+      const fieldKey = fieldPath[0] // "keywords"
+      const subKey = fieldPath[1] // "en"
 
       if (subKey) {
         return {
           ...prev,
           [fieldKey]: {
             ...prev[fieldKey],
-            [subKey]: prev[fieldKey]?.[subKey]?.filter(
-              (item) => item !== itemToRemove
-            ),
+            [subKey]: prev[fieldKey]?.[subKey]?.filter((item) => item !== itemToRemove),
           },
-        };
+        }
       } else {
         return {
           ...prev,
           [field]: prev[field].filter((item) => item !== itemToRemove),
-        };
+        }
       }
-    });
-  };
+    })
+  }
 
   const filteredFlags = countryFlags.filter(
     (country) =>
       country.name.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.code.toLowerCase().includes(flagSearch.toLowerCase())
-  );
+      country.code.toLowerCase().includes(flagSearch.toLowerCase()),
+  )
 
   const renderArrayField = (field, label, icon, placeholder) => {
-    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
-    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
-    const subKey = fieldPath[1]; // Second key (e.g., "en")
+    const fieldPath = field.split(".") // Split nested field (e.g., ["keywords", "en"])
+    const fieldKey = fieldPath[0] // First key (e.g., "keywords")
+    const subKey = fieldPath[1] // Second key (e.g., "en")
 
     return (
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          {label}
-        </label>
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {validationErrors[field] && <p className="text-red-500 text-xs mt-1">{validationErrors[field]}</p>}
         <div className="flex gap-2 mb-2">
           <input
             type="text"
             value={activeSection === field ? newItem : ""}
             onChange={(e) => {
-              setNewItem(e.target.value);
-              setActiveSection(field);
+              setNewItem(e.target.value)
+              setActiveSection(field)
             }}
             placeholder={placeholder}
-            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className={`flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
+              validationErrors[field] ? "border-red-500" : ""
+            }`}
           />
           <button
             type="button"
@@ -389,10 +348,7 @@ export default function EditCountry() {
         <div className="flex flex-wrap gap-2">
           {subKey
             ? formData?.[fieldKey]?.[subKey]?.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
+                <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                   {icon}
                   {item}
                   <button
@@ -405,10 +361,7 @@ export default function EditCountry() {
                 </div>
               ))
             : formData?.[fieldKey]?.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-                >
+                <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
                   {icon}
                   {item}
                   <button
@@ -422,11 +375,11 @@ export default function EditCountry() {
               ))}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   if (loading) {
-    <Loader />;
+    return <Loader />
   }
 
   return (
@@ -442,16 +395,9 @@ export default function EditCountry() {
         <h1 className="text-2xl font-bold">Edit Country</h1>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-6"
-      >
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -464,6 +410,7 @@ export default function EditCountry() {
                 onChange={handleInputChange}
                 autoComplete="countryName"
                 variant={3}
+                error={validationErrors["countryName.en"]}
               />
             </div>
             <div>
@@ -476,6 +423,7 @@ export default function EditCountry() {
                 onChange={handleInputChange}
                 autoComplete="countryName"
                 variant={3}
+                error={validationErrors["countryName.ar"]}
               />
             </div>
 
@@ -503,14 +451,13 @@ export default function EditCountry() {
                   onChange={handleInputChange}
                   autoComplete="countryCurrency"
                   variant={3}
+                  error={validationErrors["countryCurrency"]}
                 />
               </div>
             </div>
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Flag
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Flag</label>
               <div className="relative">
                 <button
                   type="button"
@@ -522,32 +469,25 @@ export default function EditCountry() {
                       formData?.countryCode ? (
                         <>
                           <img
-                            src={`https://flagcdn.com/w320/${getEmoji(
-                              formData.countryCode
-                            )}.png`}
+                            src={`https://flagcdn.com/w320/${getEmoji(formData.countryCode)}.png`}
                             alt="Country Flag"
                             className="w-4 h-4  object-cover rounded-full"
                           />
 
                           <span className="ml-2 text-gray-600">
-                            {formData.countryName?.en || "Select Flag"}{" "}
-                            {/* Placeholder if name is empty */}
+                            {formData.countryName?.en || "Select Flag"} {/* Placeholder if name is empty */}
                           </span>
                         </>
                       ) : (
-                        <span className="text-[.6rem] font-medium">
-                          No flag
-                        </span>
+                        <span className="text-[.6rem] font-medium">No flag</span>
                       )
                     ) : (
                       <>
                         <span className="text-2xl mr-2">
-                          {formData.countryPhotos.countryFlag || "🏳"}{" "}
-                          {/* White flag if empty */}
+                          {formData.countryPhotos.countryFlag || "🏳"} {/* White flag if empty */}
                         </span>
                         <span className="text-gray-600">
-                          {formData.countryName.en || "Select Flag"}{" "}
-                          {/* Placeholder if name is empty */}
+                          {formData.countryName.en || "Select Flag"} {/* Placeholder if name is empty */}
                         </span>
                       </>
                     )}
@@ -583,9 +523,9 @@ export default function EditCountry() {
                                 ...prev.countryPhotos, // Ensure previous countryPhotos state is preserved
                                 countryFlag: country.emoji,
                               },
-                            }));
+                            }))
 
-                            setShowFlagPicker(false);
+                            setShowFlagPicker(false)
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
@@ -593,29 +533,21 @@ export default function EditCountry() {
                             country?.alpha3 ? (
                               <>
                                 <img
-                                  src={`https://flagcdn.com/w320/${getEmoji(
-                                    country.alpha3
-                                  )}.png`}
+                                  src={`https://flagcdn.com/w320/${getEmoji(country.alpha3)}.png`}
                                   alt="Country Flag"
                                   className="w-4 h-4 object-cover  rounded-full"
                                 />
                                 <span>{country.name}</span>
-                                <span className="text-gray-400 text-sm">
-                                  ({country.alpha3})
-                                </span>
+                                <span className="text-gray-400 text-sm">({country.alpha3})</span>
                               </>
                             ) : (
-                              <span className="text-[.6rem] font-medium">
-                                No flag
-                              </span>
+                              <span className="text-[.6rem] font-medium">No flag</span>
                             )
                           ) : (
                             <>
                               <span className="text-2xl">{country.emoji}</span>
                               <span>{country.name}</span>
-                              <span className="text-gray-400 text-sm">
-                                ({country.alpha3})
-                              </span>
+                              <span className="text-gray-400 text-sm">({country.alpha3})</span>
                             </>
                           )}
                         </button>
@@ -635,6 +567,7 @@ export default function EditCountry() {
               onChange={handleInputChange}
               autoComplete="country_summary_en"
               variant={3}
+              error={validationErrors["countrySummary.en"]}
             />
 
             <InputField
@@ -646,6 +579,7 @@ export default function EditCountry() {
               onChange={handleInputChange}
               autoComplete="country_summary_ar"
               variant={3}
+              error={validationErrors["countrySummary.ar"]}
             />
 
             <div className="w-full">
@@ -658,6 +592,7 @@ export default function EditCountry() {
                 onChange={handleInputChange}
                 autoComplete="countryCode"
                 variant={3}
+                error={validationErrors["countryCode"]}
               />
             </div>
 
@@ -671,6 +606,7 @@ export default function EditCountry() {
                 onChange={handleInputChange}
                 autoComplete="metaTitle"
                 variant={3}
+                error={validationErrors["seo.metaTitle.en"]}
               />
 
               <InputField
@@ -682,6 +618,7 @@ export default function EditCountry() {
                 onChange={handleInputChange}
                 autoComplete="metaTitle"
                 variant={3}
+                error={validationErrors["seo.metaTitle.ar"]}
               />
 
               <div className="col-span-2">
@@ -694,6 +631,7 @@ export default function EditCountry() {
                   onChange={handleInputChange}
                   autoComplete="metaDescription"
                   variant={3}
+                  error={validationErrors["seo.metaDescription.en"]}
                 />
               </div>
 
@@ -707,6 +645,7 @@ export default function EditCountry() {
                   onChange={handleInputChange}
                   autoComplete="metaDescription"
                   variant={3}
+                  error={validationErrors["seo.metaDescription.ar"]}
                 />
               </div>
               <div className="col-span-2 flex flex-col gap-3">
@@ -738,6 +677,7 @@ export default function EditCountry() {
                       onChange={handleInputChange}
                       autoComplete="custom_url_slug_en"
                       variant={3}
+                      error={validationErrors["customURLSlug.en"]}
                     />
                   </div>
                   <div className="w-full">
@@ -750,6 +690,7 @@ export default function EditCountry() {
                       onChange={handleInputChange}
                       autoComplete="custom_url_slug_ar"
                       variant={3}
+                      error={validationErrors["customURLSlug.ar"]}
                     />
                   </div>
                 </div>
@@ -788,7 +729,7 @@ export default function EditCountry() {
                           ...prevData.countryPhotos,
                           mainPagePhoto: "", // Reset field
                         },
-                      }));
+                      }))
                     }}
                     className="text-red-500 ml-2"
                   >
@@ -819,38 +760,8 @@ export default function EditCountry() {
               "countryLanguages",
               "Teaching Language",
               <Languages className="w-4 h-4" />,
-              "Add New Language..."
+              "Add New Language...",
             )}
-            {/* {renderArrayField(
-              "study_programs",
-              "Study Programs",
-              <GraduationCap className="w-4 h-4" />,
-              "Add new program..."
-            )} */}
-            {/* {renderArrayField(
-              "university_types",
-              "University Types",
-              <Building2 className="w-4 h-4" />,
-              "Add university type..."
-            )} */}
-            {/* {renderArrayField(
-              "admission_requirements",
-              "Admission Requirements",
-              <Briefcase className="w-4 h-4" />,
-              "Add requirement..."
-            )} */}
-            {/* {renderArrayField(
-              "visa_documents",
-              "Required Visa Documents",
-              <Passport className="w-4 h-4" />,
-              "Add document..."
-            )} */}
-            {/* {renderArrayField(
-              "housing_options",
-              "Housing Options",
-              <Building2 className="w-4 h-4" />,
-              "Add housing option..."
-            )} */}
           </div>
 
           <div>
@@ -887,17 +798,8 @@ export default function EditCountry() {
             selectedItems={formData?.universities}
             searchKey="uniName"
             options={filteredData?.universities}
-            onSearch={(value) =>
-              setSearchInput((prev) => ({ ...prev, univername: value }))
-            }
-            onSelect={(university) =>
-              handleAdd(
-                "universities",
-                university,
-                setFormData,
-                setShowDropdown
-              )
-            }
+            onSearch={(value) => setSearchInput((prev) => ({ ...prev, univername: value }))}
+            onSelect={(university) => handleAdd("universities", university, setFormData, setShowDropdown)}
             onRemove={(id) => handleRemove("universities", id, setFormData)}
             language="en"
             dropdownKey="universities"
@@ -913,12 +815,8 @@ export default function EditCountry() {
             disabled={true}
             searchKey="blogTitle"
             options={filteredData?.blogs}
-            onSearch={(value) =>
-              setSearchInput((prev) => ({ ...prev, blogname: value }))
-            }
-            onSelect={(blog) =>
-              handleAdd("blog", blog, setFormData, setShowDropdown)
-            }
+            onSearch={(value) => setSearchInput((prev) => ({ ...prev, blogname: value }))}
+            onSelect={(blog) => handleAdd("blog", blog, setFormData, setShowDropdown)}
             onRemove={(id) => handleRemove("blog", id, setFormData)}
             language="en"
             dropdownKey="blogs"
@@ -935,38 +833,15 @@ export default function EditCountry() {
             autoComplete="hot_destination"
             variant={3}
           />
-
-          {/* Faculty Dropdown */}
-          {/* <DropdownSelect
-            label="Enroll Faculty (التسجيل بالكلية)"
-            placeholder="Select a Faculty"
-            icon={BookOpen}
-            selectedItems={formData?.faculty}
-            searchKey="facultyName"
-            options={filteredFaculty}
-            onSearch={(value) =>
-              setSearchInput((prev) => ({ ...prev, facultyname: value }))
-            }
-            onSelect={(faculty) =>
-              handleAdd("faculty", faculty, setFormData, setShowDropdown)
-            }
-            onRemove={(id) => handleRemove("faculty", id, setFormData)}
-            language="en"
-            dropdownKey="faculty"
-            showDropdown={showDropdown}
-            setShowDropdown={setShowDropdown}
-          /> */}
         </div>
 
         <div className="mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-[#294dd8] rounded-lg text-white"
-          >
+          <button type="submit" className="px-4 py-2 bg-[#294dd8] rounded-lg text-white">
             Save
           </button>
         </div>
       </form>
     </div>
-  );
+  )
 }
+

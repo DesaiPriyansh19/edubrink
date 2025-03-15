@@ -1,28 +1,20 @@
-import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Plus,
-  ArrowLeft,
-  Building2,
-  GraduationCap,
-  Languages,
-  FileCheck,
-  BookOpen,
-  Tag,
-  Search,
-} from "lucide-react";
-import { useLanguage } from "../../../../context/LanguageContext";
-import InputField from "../../../../utils/InputField";
-import RichText from "../../../../utils/RichText";
-import UploadWidget from "../../../../utils/UploadWidget";
-import ArrayFieldAndPhotos from "../../../../utils/ArrayFieldAndPhotos";
-import useDropdownData from "../../../../hooks/useDropdownData";
-import useApiData from "../../../../hooks/useApiData";
-import CampusSection from "./CampusSection";
-import MetaArrayFields from "./MetaArrayFields";
-import FaqSection from "./FaqSection";
-import { getEmoji } from "../../../../libs/countryFlags";
-const isWindows = navigator.userAgent.includes("Windows");
+"use client"
+
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Plus, ArrowLeft, Building2, Languages, FileCheck, BookOpen, Tag, Search } from "lucide-react"
+import { useLanguage } from "../../../../context/LanguageContext"
+import InputField from "../../../../utils/InputField"
+import RichText from "../../../../utils/RichText"
+import UploadWidget from "../../../../utils/UploadWidget"
+import ArrayFieldAndPhotos from "../../../../utils/ArrayFieldAndPhotos"
+import useDropdownData from "../../../../hooks/useDropdownData"
+import useApiData from "../../../../hooks/useApiData"
+import CampusSection from "./CampusSection"
+import MetaArrayFields from "./MetaArrayFields"
+import FaqSection from "./FaqSection"
+import { getEmoji } from "../../../../libs/countryFlags"
+const isWindows = navigator.userAgent.includes("Windows")
 
 const initialFormData = {
   uniName: {
@@ -108,9 +100,10 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-};
+  entranceExamRequired: false,
+}
 
-const universityTypes = ["Public", "Private", "Research", "Technical"];
+const universityTypes = ["Public", "Private", "Research", "Technical"]
 
 const studyPrograms = [
   "Engineering",
@@ -122,15 +115,8 @@ const studyPrograms = [
   "Social Sciences",
   "Natural Sciences",
   "Architecture",
-];
-const languages = [
-  "English",
-  "French",
-  "German",
-  "Spanish",
-  "Arabic",
-  "Chinese",
-];
+]
+const languages = ["English", "French", "German", "Spanish", "Arabic", "Chinese"]
 const commonRequirements = [
   "High School Diploma",
   "Bachelor Degree",
@@ -140,59 +126,57 @@ const commonRequirements = [
   "GMAT",
   "Motivation Letter",
   "Recommendation Letters",
-];
+]
 
 export default function AddUniversity() {
-  const navigate = useNavigate();
-  const { filteredData, setSearchInput, handleAdd, handleRemove } =
-    useDropdownData();
+  const navigate = useNavigate()
+  const { filteredData, setSearchInput, handleAdd, handleRemove } = useDropdownData()
 
-  const [showFlagPicker, setShowFlagPicker] = useState(false);
-  const [flagSearch, setFlagSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [photosshow, setPhotosShow] = useState("LifeStyle");
+  const [showFlagPicker, setShowFlagPicker] = useState(false)
+  const [flagSearch, setFlagSearch] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [photosshow, setPhotosShow] = useState("LifeStyle")
   const [showDropdown, setShowDropdown] = useState({
     courses: false,
     faculty: false,
-  });
-  const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/university"
-  );
-  const { language } = useLanguage();
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
+  })
+  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/university")
+  const { language } = useLanguage()
+  const [error, setError] = useState(null)
+  const [formData, setFormData] = useState(initialFormData)
   const [newItems, setNewItems] = useState({
     study_programs: "",
     spokenLanguage: "",
     admission_requirements: "",
-  });
+  })
+  const [validationErrors, setValidationErrors] = useState({})
 
   const filterFacultyData = filteredData.countries?.filter(
     (country) =>
       country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
-  );
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase()),
+  )
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    const nameParts = name.split(/[\[\].]+/); // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target
+    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
 
-    let temp = { ...formData }; // Clone the form data to avoid direct mutation
+    const temp = { ...formData } // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value;
+        acc[part] = type === "checkbox" ? checked : value
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
       }
-      return acc[part];
-    }, temp);
+      return acc[part]
+    }, temp)
 
     if (nameParts.includes("uniName")) {
-      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -202,92 +186,178 @@ export default function AddUniversity() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        };
+        }
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        };
+        }
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp);
+    setFormData(temp)
 
-    // setValidationErrors((prevErrors) => {
-    //   if (prevErrors[name]) {
-    //     const updatedErrors = { ...prevErrors };
-    //     delete updatedErrors[name]; // Remove the error for this field
-    //     return updatedErrors;
-    //   }
-    //   return prevErrors;
-    // });
-  };
-  const [activeSection, setActiveSection] = useState(null);
+    // Clear validation error for this field if it exists
+    if (validationErrors[name]) {
+      setValidationErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors }
+        delete updatedErrors[name] // Remove the error for this field
+        return updatedErrors
+      })
+    }
+  }
+  const [activeSection, setActiveSection] = useState(null)
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+
+    // Basic validation
+    const errors = {}
+    if (!formData.uniName.en) {
+      errors["uniName.en"] = "University Name (English) is required"
+    }
+    if (!formData.uniName.ar) {
+      errors["uniName.ar"] = "University Name (Arabic) is required"
+    }
+    if (!formData.uniType) {
+      errors["uniType"] = "University Type is required"
+    }
+    if (!formData.uniTutionFees) {
+      errors["uniTutionFees"] = "Tuition Fees is required"
+    }
+    if (!formData.uniMainImage) {
+      errors["uniMainImage"] = "Main Image URL is required"
+    }
+    if (!formData.uniCountry) {
+      errors["uniCountry"] = "Country is required"
+    }
+    if (formData.study_programs.length === 0) {
+      errors["study_programs"] = "At least one study program is required"
+    }
+    if (formData.spokenLanguage.length === 0) {
+      errors["spokenLanguage"] = "At least one language is required"
+    }
+    if (formData.admission_requirements.length === 0) {
+      errors["admission_requirements"] = "At least one admission requirement is required"
+    }
+    if (!formData.seo.metaTitle.en) {
+      errors["seo.metaTitle.en"] = "Meta Title (English) is required"
+    }
+    if (!formData.seo.metaTitle.ar) {
+      errors["seo.metaTitle.ar"] = "Meta Title (Arabic) is required"
+    }
+    if (!formData.seo.metaDescription.en) {
+      errors["seo.metaDescription.en"] = "Meta Description (English) is required"
+    }
+    if (!formData.seo.metaDescription.ar) {
+      errors["seo.metaDescription.ar"] = "Meta Description (Arabic) is required"
+    }
+    if (!formData.customURLSlug.en) {
+      errors["customURLSlug.en"] = "Custom URL (English) is required"
+    }
+    if (!formData.customURLSlug.ar) {
+      errors["customURLSlug.ar"] = "Custom URL (Arabic) is required"
+    }
+
+    // Add these validation checks
+    if (!formData.uniStartDate) {
+      errors["uniStartDate"] = "University Start Date is required"
+    }
+    if (!formData.uniDeadline) {
+      errors["uniDeadline"] = "Application Deadline is required"
+    }
+    if (!formData.living_cost) {
+      errors["living_cost"] = "Living Cost is required"
+    }
+    if (!formData.uniAccomodation.en) {
+      errors["uniAccomodation.en"] = "Accommodation (English) is required"
+    }
+    if (!formData.uniAccomodation.ar) {
+      errors["uniAccomodation.ar"] = "Accommodation (Arabic) is required"
+    }
+
+    setValidationErrors(errors)
+
+    if (Object.keys(errors).length > 0) {
+      setError("Please fix the validation errors before submitting")
+      window.scrollTo({ top: 0, behavior: "smooth" })
+      return
+    }
+
+    setLoading(true)
+    setError(null)
 
     try {
       const { countryEmoji, countryName, countryCode, ...updatedFormData } = {
         ...formData,
         courseId: formData.courseId.map((course) => course._id),
         faculty: formData.faculty.map((faculty) => faculty._id),
-      };
-      console.log(updatedFormData);
+      }
+      console.log(updatedFormData)
 
-      await addNew(updatedFormData);
-      setFormData(initialFormData);
-      navigate(`/${language}/admin/universities`);
+      await addNew(updatedFormData)
+      setFormData(initialFormData)
+      navigate(`/${language}/admin/universities`)
     } catch (err) {
-      console.error("Error adding university:", err);
-      setError(err.message || "Failed to add university. Please try again.");
+      console.error("Error adding university:", err)
+      setError(err.message || "Failed to add university. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleMainPhotoChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
-      updatedPhotos[index] = value;
-      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
-    });
-  };
+      const updatedPhotos = [...prevData[field]] // Dynamically access the field
+      updatedPhotos[index] = value
+      return { ...prevData, [field]: updatedPhotos } // Update the specific field
+    })
+  }
 
   const addItem = (field) => {
-    const newItem = newItems[field];
+    const newItem = newItems[field]
     if (newItem && !formData[field].includes(newItem)) {
       setFormData((prev) => ({
         ...prev,
         [field]: [...prev[field], newItem],
-      }));
-      setNewItems((prev) => ({ ...prev, [field]: "" }));
-      setActiveSection(null);
+      }))
+      setNewItems((prev) => ({ ...prev, [field]: "" }))
+      setActiveSection(null)
+
+      // Clear validation error for this field if it exists
+      if (validationErrors[field]) {
+        setValidationErrors((prevErrors) => {
+          const updatedErrors = { ...prevErrors }
+          delete updatedErrors[field]
+          return updatedErrors
+        })
+      }
     }
-  };
+  }
 
   const removeItem = (field, item) => {
     setFormData((prev) => ({
       ...prev,
       [field]: prev[field].filter((i) => i !== item),
-    }));
-  };
+    }))
+  }
 
   const renderArrayField = (field, label, icon, placeholder, options) => (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
+      {validationErrors[field] && <p className="text-red-500 text-xs mt-1">{validationErrors[field]}</p>}
       <div className="flex gap-2 mb-2">
         {options ? (
           <select
             value={activeSection === field ? newItems[field] : ""}
             onChange={(e) => {
-              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
-              setActiveSection(field);
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
+              setActiveSection(field)
             }}
-            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className={`flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
+              validationErrors[field] ? "border-red-500" : ""
+            }`}
           >
             <option value="">Select {label}</option>
             {options.map((option) =>
@@ -299,7 +369,7 @@ export default function AddUniversity() {
                 <option key={option} value={option}>
                   {option}
                 </option>
-              )
+              ),
             )}
           </select>
         ) : (
@@ -307,11 +377,13 @@ export default function AddUniversity() {
             type="text"
             value={activeSection === field ? newItems[field] : ""}
             onChange={(e) => {
-              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
-              setActiveSection(field);
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
+              setActiveSection(field)
             }}
             placeholder={placeholder}
-            className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className={`flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
+              validationErrors[field] ? "border-red-500" : ""
+            }`}
           />
         )}
         <button
@@ -324,24 +396,17 @@ export default function AddUniversity() {
       </div>
       <div className="flex flex-wrap gap-2">
         {formData[field].map((item) => (
-          <div
-            key={item}
-            className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-          >
+          <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
             {icon}
             {item}
-            <button
-              type="button"
-              onClick={() => removeItem(field, item)}
-              className="text-blue-500 hover:text-blue-700"
-            >
+            <button type="button" onClick={() => removeItem(field, item)} className="text-blue-500 hover:text-blue-700">
               ×
             </button>
           </div>
         ))}
       </div>
     </div>
-  );
+  )
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -356,11 +421,7 @@ export default function AddUniversity() {
         <h1 className="text-2xl font-bold">Add New University</h1>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
 
       <form onSubmit={handleSubmit} className="">
         <div className="space-y-6">
@@ -386,7 +447,7 @@ export default function AddUniversity() {
                   <>
                     <div className="relative w-full h-full">
                       <img
-                        src={formData.uniSymbol}
+                        src={formData.uniSymbol || "/placeholder.svg"}
                         alt="Profile"
                         className="w-full h-full object-cover rounded-full"
                       />
@@ -432,6 +493,7 @@ export default function AddUniversity() {
                 value={formData?.uniType}
                 onChange={handleInputChange}
                 variant={3}
+                error={validationErrors["uniType"]}
                 options={[
                   {
                     value: "",
@@ -459,6 +521,7 @@ export default function AddUniversity() {
                 onChange={handleInputChange}
                 autoComplete="uniName"
                 variant={3}
+                error={validationErrors["uniName.en"]}
               />
             </div>
             <div className="mb-4 w-full">
@@ -471,6 +534,7 @@ export default function AddUniversity() {
                 onChange={handleInputChange}
                 autoComplete="uniName"
                 variant={3}
+                error={validationErrors["uniName.ar"]}
               />
             </div>
 
@@ -515,6 +579,7 @@ export default function AddUniversity() {
               value={formData?.uniStartDate || ""}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["uniStartDate"]}
             />
 
             <InputField
@@ -524,6 +589,7 @@ export default function AddUniversity() {
               value={formData?.uniDeadline || ""}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["uniDeadline"]}
             />
 
             <InputField
@@ -534,6 +600,7 @@ export default function AddUniversity() {
               value={formData.uniTutionFees}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["uniTutionFees"]}
             />
 
             <InputField
@@ -541,9 +608,10 @@ export default function AddUniversity() {
               type="text"
               name="living_cost"
               placeholder="e.g., $800 - $1,200"
-              value={formData.tuition_fees}
+              value={formData.living_cost}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["living_cost"]}
             />
 
             <InputField
@@ -554,7 +622,9 @@ export default function AddUniversity() {
               value={formData.uniAccomodation.en}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["uniAccomodation.en"]}
             />
+
             <InputField
               label="إقامة (عربي)"
               type="textarea"
@@ -563,12 +633,11 @@ export default function AddUniversity() {
               value={formData.uniAccomodation.ar}
               onChange={handleInputChange}
               variant={3}
+              error={validationErrors["uniAccomodation.ar"]}
             />
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Country
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
               <div className="relative">
                 <button
                   type="button"
@@ -580,31 +649,23 @@ export default function AddUniversity() {
                       formData?.countryCode ? (
                         <div className="flex gap-2  items-center">
                           <img
-                            src={`https://flagcdn.com/w320/${getEmoji(
-                              formData?.countryCode
-                            )}.png`}
+                            src={`https://flagcdn.com/w320/${getEmoji(formData?.countryCode)}.png`}
                             alt="Country Flag"
                             className="w-4 h-4 object-cover rounded-full"
                           />
                           <span className="py-1 text-gray-600">
-                            {formData?.countryName?.en ||
-                              formData?.uniCountry ||
-                              "Select Country"}{" "}
+                            {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
                             {/* Placeholder if name is empty */}
                           </span>
                         </div>
                       ) : (
-                        <span className="py-1 text-gray-600">
-                          Select Country
-                        </span>
+                        <span className="py-1 text-gray-600">Select Country</span>
                       )
                     ) : (
                       <>
                         <span>{formData?.countryEmoji}</span>
                         <span className="py-1 text-gray-600">
-                          {formData?.countryName?.en ||
-                            formData?.uniCountry ||
-                            "Select Country"}{" "}
+                          {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
                           {/* Placeholder if name is empty */}
                         </span>
                       </>
@@ -612,6 +673,10 @@ export default function AddUniversity() {
                   </span>
                   <BookOpen className="w-5 h-5 text-gray-400" />
                 </button>
+
+                {validationErrors["uniCountry"] && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors["uniCountry"]}</p>
+                )}
 
                 {showFlagPicker && (
                   <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -643,8 +708,8 @@ export default function AddUniversity() {
                               },
                               countryCode: country.countryCode,
                               countryEmoji: country.countryPhotos.countryFlag,
-                            }));
-                            setShowFlagPicker(false);
+                            }))
+                            setShowFlagPicker(false)
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
@@ -652,29 +717,22 @@ export default function AddUniversity() {
                             country?.countryCode ? (
                               <div className="flex gap-2 mt-2 items-center">
                                 <img
-                                  src={`https://flagcdn.com/w320/${getEmoji(
-                                    country?.countryCode
-                                  )}.png`}
+                                  src={`https://flagcdn.com/w320/${getEmoji(country?.countryCode)}.png`}
                                   alt="Country Flag"
                                   className="w-4 h-4 object-cover rounded-full"
                                 />
                                 <p className="text-black text-sm">
-                                  {language === "ar"
-                                    ? country?.countryName?.ar
-                                    : country?.countryName?.en}
+                                  {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
                                 </p>
                               </div>
                             ) : (
-                              <span className="text-[.6rem] font-medium">
-                                No flag
-                              </span>
+                              <span className="text-[.6rem] font-medium">No flag</span>
                             )
                           ) : (
                             <>
                               <span>{country?.countryPhotos?.countryFlag}</span>
                               <span className="text-black text-sm">
-                                {country?.countryName?.en} -{" "}
-                                {country?.countryName?.ar}
+                                {country?.countryName?.en} - {country?.countryName?.ar}
                               </span>
                             </>
                           )}
@@ -693,21 +751,21 @@ export default function AddUniversity() {
               "Study Programs",
               <Building2 className="w-4 h-4" />,
               "Add program...",
-              studyPrograms
+              studyPrograms,
             )}
             {renderArrayField(
               "spokenLanguage",
               "Languages of Instruction",
               <Languages className="w-4 h-4" />,
               "Add language...",
-              languages
+              languages,
             )}
             {renderArrayField(
               "admission_requirements",
               "Admission Requirements",
               <FileCheck className="w-4 h-4" />,
               "Add requirement...",
-              commonRequirements
+              commonRequirements,
             )}
           </div>
 
@@ -723,6 +781,7 @@ export default function AddUniversity() {
                   onChange={handleInputChange}
                   autoComplete="off"
                   variant={3}
+                  error={validationErrors["uniMainImage"]}
                 />
               </div>
 
@@ -914,6 +973,7 @@ export default function AddUniversity() {
               onChange={handleInputChange}
               autoComplete="metaTitle"
               variant={3}
+              error={validationErrors["seo.metaTitle.en"]}
             />
 
             <InputField
@@ -925,6 +985,7 @@ export default function AddUniversity() {
               onChange={handleInputChange}
               autoComplete="metaTitle"
               variant={3}
+              error={validationErrors["seo.metaTitle.ar"]}
             />
 
             <div className="col-span-2">
@@ -937,6 +998,7 @@ export default function AddUniversity() {
                 onChange={handleInputChange}
                 autoComplete="metaDescription"
                 variant={3}
+                error={validationErrors["seo.metaDescription.en"]}
               />
             </div>
 
@@ -950,6 +1012,7 @@ export default function AddUniversity() {
                 onChange={handleInputChange}
                 autoComplete="metaDescription"
                 variant={3}
+                error={validationErrors["seo.metaDescription.ar"]}
               />
             </div>
             <div className="col-span-2 flex flex-col gap-3">
@@ -981,6 +1044,7 @@ export default function AddUniversity() {
                     onChange={handleInputChange}
                     autoComplete="custom_url_slug_en"
                     variant={3}
+                    error={validationErrors["customURLSlug.en"]}
                   />
                 </div>
                 <div className="w-full">
@@ -993,6 +1057,7 @@ export default function AddUniversity() {
                     onChange={handleInputChange}
                     autoComplete="custom_url_slug_ar"
                     variant={3}
+                    error={validationErrors["customURLSlug.ar"]}
                   />
                 </div>
               </div>
@@ -1107,5 +1172,6 @@ export default function AddUniversity() {
         </div>
       </form>
     </div>
-  );
+  )
 }
+
