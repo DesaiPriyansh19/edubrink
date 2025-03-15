@@ -14,8 +14,9 @@ function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/blog/`
-  ,false);
+    `https://edu-brink-backend.vercel.app/api/blog/`,
+    false
+  );
   const { t } = useTranslation();
   const { language } = useLanguage();
 
@@ -26,7 +27,7 @@ function RecentBlog() {
     });
   }, []);
 
-  const handleNaviagte = (name) => {
+  const handleNavigate = (name) => {
     navigate(`/${language}/blog/${name}`);
   };
 
@@ -70,7 +71,6 @@ function RecentBlog() {
               >
                 {t("recentBlog.title")}
               </h1>
-             
             </div>
             <p
               className={`text-sm text-gray-600 ${
@@ -101,24 +101,23 @@ function RecentBlog() {
               ))
             : data?.map((blog, idx) => (
                 <div
-                  key={idx}
-                  onClick={() => handleNaviagte(blog.customURLSlug[language])}
-                  className="w-[280px] flex-shrink-0 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
+                  key={blog._id}
+                  onClick={() => handleNavigate(blog.customURLSlug[language])}
+                  className="blog-card"
                   data-aos="fade-up"
-                  data-aos-delay={idx * 100}
+                  data-aos-delay={100}
                 >
                   {/* Image container */}
-                  <div className="h-[160px] w-full rounded-t-xl overflow-hidden">
+                  <div className="blog-card-image">
                     <img
                       src={"https://placehold.co/600x400" || blog?.blogPhoto}
                       alt={blog?.blogTitle?.[language]}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
 
-                  <div className="p-4">
+                  <div className="blog-card-content">
                     {/* Country name */}
-                    <p className="text-[#E82448] text-xs font-medium truncate">
+                    <p className="blog-card-country">
                       {language === "ar"
                         ? `الدراسة في ${
                             blog?.blogCountry?.countryName?.ar || "غير متوفر"
@@ -129,16 +128,16 @@ function RecentBlog() {
                     </p>
 
                     {/* Blog title */}
-                    <h4 className="font-medium text-base text-gray-800 mt-2 mb-3 line-clamp-2 h-[48px] group-hover:text-[#380C95] transition-colors duration-300">
+                    <h4 className="blog-card-title">
                       {language === "ar"
                         ? blog?.blogTitle?.ar
                         : blog?.blogTitle?.en}
                     </h4>
 
                     {/* Date */}
-                    <div className="flex items-center text-xs text-gray-500 mt-auto">
+                    <div className="blog-card-date">
                       <Calander />
-                      <span className="ml-2">
+                      <span>
                         {blog.blogAdded
                           ? new Date(blog.blogAdded).toLocaleDateString()
                           : "Date not available"}

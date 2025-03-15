@@ -26,7 +26,6 @@ const Header = ({ data: notifications, refetch }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const [keywordData, setKeywordData] = useState([]);
-
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showLanguageSettings, setShowLanguageSettings] = useState(false);
@@ -66,9 +65,10 @@ const Header = ({ data: notifications, refetch }) => {
     const fetchKeywords = async () => {
       try {
         const response = await axios.get(
-          `https://edu-brink-backend.vercel.app/api/keyword`
+          `https://edu-brink-backend.vercel.app/api/keyword/admin`
         );
         const adaptedData = adaptKeywordData(response.data.data);
+        console.log(adaptedData);
         setKeywordData(adaptedData);
       } catch (error) {
         console.error("Error fetching keywords:", error);

@@ -20,7 +20,7 @@ function Article({
   const { filterProp } = useSearch();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
+
   // State for infinite scrolling
   const [blogs, setBlogs] = useState(initialData || []);
   const [loading, setLoading] = useState(initialLoading);
@@ -41,7 +41,8 @@ function Article({
 
   // Reset pagination and blogs when filters change or initialData updates
   useEffect(() => {
-    const isFilterChanged = JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
+    const isFilterChanged =
+      JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
 
     // Always update blogs when initialData changes, even if it's empty
     if (initialData !== initialDataRef.current) {
@@ -88,9 +89,13 @@ function Article({
         // Append new data to existing blogs, avoiding duplicates
         setBlogs((prevBlogs) => {
           // Create a map of existing IDs for faster lookup
-          const existingIds = new Map(prevBlogs.map((blog) => [blog._id, true]));
+          const existingIds = new Map(
+            prevBlogs.map((blog) => [blog._id, true])
+          );
           // Filter out duplicates
-          const newBlogs = response.data.data.filter((blog) => !existingIds.has(blog._id));
+          const newBlogs = response.data.data.filter(
+            (blog) => !existingIds.has(blog._id)
+          );
           return [...prevBlogs, ...newBlogs];
         });
 
@@ -165,7 +170,7 @@ function Article({
       const timeoutId = setTimeout(() => {
         const scrollHeight = document.documentElement.scrollHeight;
         const clientHeight = document.documentElement.clientHeight;
-        
+
         // If the content doesn't fill the viewport, trigger a fetch
         if (scrollHeight <= clientHeight) {
           setFetchTrigger((prev) => prev + 1);
@@ -189,7 +194,7 @@ function Article({
   const SkeletonLoader = () => {
     return (
       <div className="flex gap-2 ">
-        <div className="min-w-[300px] h-[50vh] sm:v-[40vh] md:h-[30vh] lg:h-[70vh] bg-white p-5 pb-0  rounded-3xl shadow-md animate-pulse">
+        <div className="min-w-[300px] h-[50vh] sm:v-[40vh] md:h-[30vh] lg:h-[70vh] bg-white p-5 pb-0  rounded-3xl shadow-md ">
           {/* Skeleton for Image */}
           <div className="h-[55%] w-[100%] bg-gray-300 rounded-2xl"></div>
 
@@ -244,42 +249,54 @@ function Article({
             <SkeletonLoader />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4  py-6 ">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-20 ">
             {/* First Slide */}
-            {blogs?.map((card, idx) => (
-              <div
-                key={idx}
-                className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
-              >
-                {/* SVG and Image */}
-                <div className="h-[55%] w-[100%]">
-                  <img
-                    src={"https://placehold.co/260x220" || card?.blogPhoto}
-                    alt={`Slide ${idx + 1}`}
-                    className="w-[100%] h-[100%] rounded-2xl object-cover"
-                  />
-                </div>
+            {blogs?.map((blog, idx) => (
+               <div
+               key={blog._id}
+               onClick={() => handleNavigate(blog.customURLSlug[language])}
+               className="blog-card"
+               data-aos="fade-up"
+               data-aos-delay={100}
+             >
+               {/* Image container */}
+               <div className="blog-card-image">
+                 <img
+                   src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                   alt={blog?.blogTitle?.[language]}
+                 />
+               </div>
 
-                <p className="text-[#E82448] text-sm font-semibold mt-4 ">
-                  {language === "ar"
-                    ? `الدراسة في ${
-                        card?.blogCountry?.countryName?.ar || "غير متوفر"
-                      }`
-                    : `Study in ${card?.blogCountry?.countryName?.en || "N/A"}`}
-                </p>
+               <div className="blog-card-content">
+                 {/* Country name */}
+                 <p className="blog-card-country">
+                   {language === "ar"
+                     ? `الدراسة في ${
+                         blog?.blogCountry?.countryName?.ar || "غير متوفر"
+                       }`
+                     : `Study in ${
+                         blog?.blogCountry?.countryName?.en || "N/A"
+                       }`}
+                 </p>
 
-                <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-                  {language === "ar"
-                    ? card?.blogTitle?.ar
-                    : card?.blogTitle?.en}
-                </h4>
-                <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-                  <Calander />
-                  {card.blogAdded
-                    ? new Date(card.blogAdded).toLocaleDateString()
-                    : "Date not available"}
-                </div>
-              </div>
+                 {/* Blog title */}
+                 <h4 className="blog-card-title">
+                   {language === "ar"
+                     ? blog?.blogTitle?.ar
+                     : blog?.blogTitle?.en}
+                 </h4>
+
+                 {/* Date */}
+                 <div className="blog-card-date">
+                   <Calander />
+                   <span>
+                     {blog.blogAdded
+                       ? new Date(blog.blogAdded).toLocaleDateString()
+                       : "Date not available"}
+                   </span>
+                 </div>
+               </div>
+             </div>
             ))}
           </div>
         )}
@@ -291,7 +308,11 @@ function Article({
           className="w-full flex justify-center py-4 mt-2"
           style={{ minHeight: "80px" }}
         >
-          <div className={`animate-spin rounded-full h-8 w-8 border-b-2 border-primary ${loadingMore ? "opacity-100" : "opacity-50"}`}></div>
+          <div
+            className={`animate-spin rounded-full h-8 w-8 border-b-2 border-primary ${
+              loadingMore ? "opacity-100" : "opacity-50"
+            }`}
+          ></div>
         </div>
       )}
 

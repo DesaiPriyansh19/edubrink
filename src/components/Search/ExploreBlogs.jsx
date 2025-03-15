@@ -181,39 +181,49 @@ function ExploreBlogs({ language }) {
       <h3 className="text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 py-6"
+        className="grid grid-cols-1  lg:grid-cols-3 xlg:grid-cols-4 gap-20"
       >
         {/* Blog Cards */}
         {blogs?.map((blog, idx) => (
           <div
-            key={idx}
-            className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
+            key={blog._id}
+            onClick={() => handleNavigate(blog.customURLSlug[language])}
+            className="blog-card"
+            data-aos="fade-up"
+            data-aos-delay={100}
           >
-            {/* SVG and Image */}
-            <div className="h-[55%] w-[100%]">
+            {/* Image container */}
+            <div className="blog-card-image">
               <img
-                src={"https://placehold.co/260x220" || blog?.blogPhoto}
-                alt={`Blog ${idx + 1}`}
-                className="w-[100%] h-[100%] rounded-2xl object-cover"
+                src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                alt={blog?.blogTitle?.[language]}
               />
             </div>
 
-            <p className="text-[#E82448] text-sm font-semibold mt-4 ">
-              {language === "ar"
-                ? `الدراسة في ${
-                    blog?.blogCountry?.countryName?.ar || "غير متوفر"
-                  }`
-                : `Study in ${blog?.blogCountry?.countryName?.en || "N/A"}`}
-            </p>
+            <div className="blog-card-content">
+              {/* Country name */}
+              <p className="blog-card-country">
+                {language === "ar"
+                  ? `الدراسة في ${
+                      blog?.blogCountry?.countryName?.ar || "غير متوفر"
+                    }`
+                  : `Study in ${blog?.blogCountry?.countryName?.en || "N/A"}`}
+              </p>
 
-            <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-              {language === "ar" ? blog?.blogTitle?.ar : blog?.blogTitle?.en}
-            </h4>
-            <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-              <Calander />
-              {blog.blogAdded
-                ? new Date(blog.blogAdded).toLocaleDateString()
-                : "Date not available"}
+              {/* Blog title */}
+              <h4 className="blog-card-title">
+                {language === "ar" ? blog?.blogTitle?.ar : blog?.blogTitle?.en}
+              </h4>
+
+              {/* Date */}
+              <div className="blog-card-date">
+                <Calander />
+                <span>
+                  {blog.blogAdded
+                    ? new Date(blog.blogAdded).toLocaleDateString()
+                    : "Date not available"}
+                </span>
+              </div>
             </div>
           </div>
         ))}
