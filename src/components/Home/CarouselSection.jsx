@@ -10,8 +10,7 @@ const isWindows = navigator.userAgent.includes("Windows");
 
 const fetchCountries = async () => {
   const res = await fetch(
-    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,customURLSlug",
-    false
+    "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,customURLSlug"
   );
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();
