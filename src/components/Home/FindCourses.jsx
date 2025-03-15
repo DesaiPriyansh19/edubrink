@@ -133,7 +133,7 @@ const FindCourses = () => {
           </label>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-full w-full text-white text-[.9rem] bg-gradient-to-r from-[#380C95] to-[#E15754] focus:outline-none focus:ring-[#380C95]"
+            className="px-4 py-2 rounded-full w-full text-white text-[.9rem] bg-[#3b3d8d] focus:outline-none focus:ring-[#380C95]"
           >
             {t("findCourses.findCoursesBtn")}
           </button>
