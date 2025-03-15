@@ -70,11 +70,7 @@ function RecentBlog() {
               >
                 {t("recentBlog.title")}
               </h1>
-              <img
-                src="/placeholder.svg?height=32&width=32"
-                alt="Blog icon"
-                className="w-8 h-8 object-contain"
-              />
+             
             </div>
             <p
               className={`text-sm text-gray-600 ${
@@ -86,7 +82,7 @@ function RecentBlog() {
           </div>
 
           <div className="hidden sm:block" data-aos="fade-left">
-            <Link to="AllBlogs">
+            <Link to={`/${language}/searchresults/AllBlogs`}>
               <button className="px-6 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-50">
                 {t("viewAll")}
               </button>
