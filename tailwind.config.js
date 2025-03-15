@@ -46,6 +46,7 @@ export default {
         "3xl": "1600px",
       },
       colors: {
+        slateBlue: "#3b3d8d",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

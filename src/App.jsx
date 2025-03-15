@@ -50,6 +50,7 @@ import TagCRUD from "./components/AdminPanelClient/Tags/TagCRUD";
 import FacultyPage from "./components/FacultyPage/FacultyPage";
 import ApplyCRUD from "./components/AdminPanelClient/Applies/ApplyCRUD";
 import ApplicationDetails from "./components/AdminPanelClient/Applies/ApplicationDetails";
+import ApplyForm from "../utils/ApplyForm";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,6 +89,11 @@ function App() {
                   path="/:lang/university/:slug"
                   element={<UniversityPage />}
                 />
+                <Route
+                  path="/:lang/applications/:itemId"
+                  element={<ApplyForm />}
+                />
+
                 <Route path="/:lang/faculty/:slug" element={<FacultyPage />} />
                 <Route path="/:lang/courses/:id" element={<CoursePage />} />
                 <Route path="/:lang/blog/:slug" element={<Blog />} />

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Home,
   FileText,
@@ -47,6 +47,7 @@ const CoursePage = () => {
       )}`;
 
   const { data, loading } = useFetch(apiUrl);
+  const navigate = useNavigate();
 
   // Update document head for SEO
   useEffect(() => {
@@ -166,22 +167,10 @@ const CoursePage = () => {
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
   };
-
-  const toggleShareModal = () => {
-    setIsShareModalOpen(!isShareModalOpen);
-  };
-
-  const handleApplyNow = (id) => {
-    setShowApplyForm(true);
-    setItemId(id);
-  };
-
-  const handleFormClose = () => {
-    setShowApplyForm(false);
-  };
-
-  const handleFormSubmit = () => {
-    setShowApplyForm(false);
+  const handleApplyNow = (id, category) => {
+    navigate(
+      `/${language}/applications/${id}?category=${encodeURIComponent(category)}`
+    );
   };
 
   // Get the current URL for sharing
@@ -260,7 +249,7 @@ const CoursePage = () => {
               <button
                 className="bg-[rgba(56,12,149,1)] hover:bg-[rgba(46,10,129,1)] text-white px-6 py-2.5 rounded-full font-semibold transition-all"
                 onClick={() => {
-                  handleApplyNow(data?._id);
+                  handleApplyNow(data?._id, "course");
                 }}
               >
                 {t("applyNow")}
@@ -510,30 +499,6 @@ const CoursePage = () => {
         contentType={"course"}
         contentUrl={courseUrl}
       />
-
-      {/* Apply Form Modal */}
-      {showApplyForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto relative">
-            <button
-              onClick={handleFormClose}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-              aria-label="Close form"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <div className="p-6">
-              <ApplyForm
-                itemId={itemId}
-                category="Course"
-                onClose={handleFormClose}
-                onSubmitSuccess={handleFormSubmit}
-                isDesktop={true}
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

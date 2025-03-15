@@ -326,7 +326,7 @@ function ResultsCorses({ loading: initialLoading, filteredData: initialData, uni
                   <div className="grid gap-6 px-3 grid-cols-2 mb-4 mt-4">
                     <button
                       // onClick={() => handleApplyClick(university._id, university.countryName)}
-                      className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full"
+                      className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                     >
                       {t("applyNow")}
                     </button>
