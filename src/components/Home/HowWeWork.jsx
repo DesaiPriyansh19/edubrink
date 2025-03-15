@@ -32,7 +32,7 @@ function HowWeWork() {
       id: 1,
       bgImage: bg1,
       smallImage: Search,
-      smallImagePosition: "absolute -bottom-2 -right-2",
+      smallImagePosition: "absolute -bottom-0 -right-0",
       title: t("HowWeWorkSection.cards.0.title"),
       description: t("HowWeWorkSection.cards.0.description"),
       borderRadius: "rounded-bl-[4rem] rounded-br-[3rem] rounded-tr-[4rem]",
@@ -43,7 +43,7 @@ function HowWeWork() {
       id: 2,
       bgImage: bg2,
       smallImage: Book,
-      smallImagePosition: "absolute -top-2 -left-2",
+      smallImagePosition: "absolute -top-0 -left-0",
       title: t("HowWeWorkSection.cards.1.title"),
       description: t("HowWeWorkSection.cards.1.description"),
       borderRadius: "rounded-bl-[4rem] rounded-br-[4rem] rounded-tl-[3rem]",
@@ -54,7 +54,7 @@ function HowWeWork() {
       id: 3,
       bgImage: bg3,
       smallImage: Plain,
-      smallImagePosition: "absolute -bottom-2 -left-2",
+      smallImagePosition: "absolute -bottom-0 -left-0",
       title: t("HowWeWorkSection.cards.2.title"),
       description: t("HowWeWorkSection.cards.2.description"),
       borderRadius: "rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem]",
@@ -65,7 +65,7 @@ function HowWeWork() {
       id: 4,
       bgImage: bg4,
       smallImage: Book,
-      smallImagePosition: "absolute -top-2 -left-2",
+      smallImagePosition: "absolute -top-0 -left-0",
       title: t("HowWeWorkSection.cards.3.title"),
       description: t("HowWeWorkSection.cards.3.description"),
       borderRadius: "rounded-br-[4rem] rounded-bl-[4rem] rounded-tl-[4rem]",
@@ -75,7 +75,7 @@ function HowWeWork() {
   ]
 
   return (
-    <div className="max-w-[1240px] mb-20 px-0 md:px-4 mx-auto">
+    <div className="max-w-[1240px] mb-0 px-0 md:px-4 mx-auto w-[90%]">
       <h1
         className="text-3xl sm:text-4xl font-semibold flex items-center gap-3 justify-center text-center mb-4"
         data-aos="fade-down"
@@ -99,16 +99,16 @@ function HowWeWork() {
               data-aos={card.aosAnimation}
               data-aos-delay={card.aosDelay}
             >
-              <div className="relative transition-transform duration-300 hover:shadow-md rounded-2xl overflow-hidden group">
+              <div className="relative transition-transform duration-300 rounded-2xl overflow-hidden group">
                 <img
                   src={card.bgImage || "/placeholder.svg"}
                   alt={`Step ${card.id}`}
                   className={`w-full h-auto object-contain ${card.borderRadius}`}
                 />
                 <div
-                  className={`${card.smallImagePosition} transition-transform duration-300 group-hover:translate-y-[-2px]`}
+                  className={`${card.smallImagePosition} transition-transform  duration-300 w-[30%] h-[30%] group-hover:translate-y-[-2px]`}
                 >
-                  <img src={card.smallImage || "/placeholder.svg"} alt="Icon" className="w-[30%] h-[30%]" />
+                  <img src={card.smallImage || "/placeholder.svg"} alt="Icon" className="" />
                 </div>
               </div>
               <div className="mt-4 transition-all duration-300 group-hover:translate-x-1">

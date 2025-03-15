@@ -28,7 +28,7 @@ function OurCourses() {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   // Define the background colors to cycle through
-  const bgColors = ["#60E38C", "#55CFFF", "#E186FF", "#fef08a"];
+  const bgColors = ["#4A2E81", "#3D408D", "#C3BBD9", "#3D408D"];
 
   // Image array for cycling through images based on index
   const images = [img1, img2, img3];
@@ -140,7 +140,7 @@ function OurCourses() {
   };
 
   return (
-    <div className="relative overflow-hidden max-w-[1240px] mx-auto py-10">
+    <div className="relative overflow-hidden max-w-[1240px] pl-6 mx-auto py-5">
       {/* Header Section */}
       <div
         className={`max-w-[1240px] mb-10 mx-auto ${
@@ -208,9 +208,9 @@ function OurCourses() {
               key={`${course._id}-${
                 course.countryNameEn || course.countryNameAr
               }`}
-              className={`sm:min-w-[397px] w-full flex ${
+              className={`sm:min-w-[320px] w-full flex ${
                 isEven ? "flex-col" : "flex-col-reverse"
-              } justify-between p-6 rounded-3xl  transition-all duration-500 snap-start transform hover:scale-[1.03] backdrop-blur-sm relative overflow-hidden`}
+              } justify-between py-2 px-2 rounded-3xl  transition-all duration-500 snap-start transform hover:scale-[1.03] backdrop-blur-sm relative overflow-hidden`}
               style={{
                 background: getGradientBackground(index),
               }}
@@ -268,7 +268,7 @@ function OurCourses() {
                   <span className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center  shadow-lg group cursor-pointer transform group-hover:rotate-12 transition-all duration-300 hover:bg-white">
                     <ArrowTopRight />
                   </span>
-                  <div className="w-48 h-auto overflow-hidden rounded-lg ">
+                  <div className=" w-36 h-auto overflow-hidden rounded-lg ">
                     <img
                       src={images[imageIndex] || "/placeholder.svg"}
                       alt={`course ${course._id}`}
