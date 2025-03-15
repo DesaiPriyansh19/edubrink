@@ -77,12 +77,12 @@ function OurStatastics() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full mb-20">
-      <h1 className="text-3xl sm:text-5xl font-semibold text-center mb-8 sm:mb-16">
+    <section ref={sectionRef} className="w-full mb-12">
+      <h1 className="text-3xl sm:text-4xl font-semibold text-center mb-8 sm:mb-16">
         {t("descriptionTitle")}
       </h1>
 
-      <div className="grid grid-cols-2 lg:flex rounded-3xl justify-between gap-4 max-w-[1242px] py-4 px-4 mx-auto bg-white">
+      <div className="grid grid-cols-2 lg:flex rounded-3xl justify-between gap-4 w-[89%] max-w-[1242px] py-4 px-4 mx-auto bg-white">
         {statistics.map((item, index) => (
           <div
             key={index}
@@ -96,7 +96,7 @@ function OurStatastics() {
                 </span>
               </div>
             </div>
-            <h3 className="text-2xl sm:text-4xl md:text-5xl text-start font-semibold mb-2 md:mb-5">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl text-start font-semibold mb-2 md:mb-5">
               {counts[index]}+
             </h3>
             <p className="text-black text-xs sm:text-sm md:text-base text-start font-medium">

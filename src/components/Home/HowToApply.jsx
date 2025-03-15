@@ -14,31 +14,31 @@ function HowToApply() {
   const items = t("howToApplySection.items", { returnObjects: true });
 
   return (
-    <section className="w-full mb-20 py-8">
+    <section className="w-full mb-10 py-4">
       {/* Title */}
-      <h1 className="text-3xl sm:text-5xl font-semibold flex items-center gap-3 justify-center text-center mb-3">
+      <h1 className="text-3xl sm:text-4xl font-semibold flex items-center gap-3 justify-center text-center mb-3">
         {t("howToApplySection.title")}
         <img src={ManSticker}></img>
       </h1>
-      <p className="text-[.9rem] max-w-2xl mx-auto px-2 md:p-0 text-center mb-16">
+      <p className="text-[.9rem] max-w-2xl mx-auto px-2 lg:px-24 md:p-0 text-center mb-16">
         {t("howToApplySection.description")}
       </p>
       {/* Four Divs in One Line */}
-      <div className="grid grid-cols-1 ew:grid-cols-2 gap-4 lg:flex max-w-[1240px] mx-auto rounded-3xl justify-between px-2  ">
+      <div className="grid grid-cols-1 ew:grid-cols-2 gap-4 lg:flex  w-[90%] max-w-[1240px] mx-auto rounded-3xl justify-between px-2  ">
         {items.map((item, index) => (
           <div
             key={index}
-            className={` p-1 box ${language==="ar"?"xl:p-12 sm:p-10":"sm:p-4"} pb-2  sm:pb-9 rounded-3xl  bg-white w-auto text-center`}
+            className={` p-1 box ${language==="ar"?"xl:p-12 sm:p-10":"sm:p-4"} pb-2  sm:pb-4 rounded-3xl max-h-72   bg-white w-auto text-center`}
           >
             {/* P tag and round div in one line */}
-            <div className="mt-4 mb-5 md:mt-14 md:mb-9">
+            <div className="mt-4 mb-5 md:mt-4 md:mb-4">
               <div
                 style={{ backgroundColor: `${item.color}` }}
-                className="flex items-center justify-center w-24 h-24  md:w-40 md:h-40 mx-auto rounded-full"
+                className="flex items-center justify-center w-24 h-24  md:w-24 md:h-24 mx-auto rounded-full"
               >
                 <span>
                   {" "}
-                  <span>
+                  <span >
                     {index === 0 && <BookLogo />}
                     {index === 1 && <TrakeLogo />}
                     {index === 2 && <TestLogo />}

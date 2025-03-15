@@ -12,7 +12,7 @@ function Discover() {
   const { t } = useTranslation();
   return (
     <section
-      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-20 h-[36vh] sm:h-[50vh] md:h-[450px] relative overflow-hidden"
+      className="w-[95%] sm:w-[98%] mx-auto rounded-3xl sm:rounded-3xl mb-10 sm:mb-16 h-[36vh] sm:h-[50vh] md:h-[450px] relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
@@ -32,10 +32,10 @@ function Discover() {
       {/* Content */}
 
       <div className="relative z-10 text-center text-white flex flex-col items-center justify-center h-full space-y-4">
-        <p className="text-[22px] em:text-[24px] sm:text-[30px] md:text-[62px] leading-8 sm:leading-9 md:leading-[78.2px] font-semibold">
+        <p className="text-[22px] em:text-[24px] sm:text-[30px] md:text-[50px] leading-8 sm:leading-9 md:leading-[78.2px] font-semibold">
           <Trans i18nKey={"title"} />
         </p>
-        <p className=" text-[.6rem] max-w-sm md:max-w-xl md:text-[1rem] px-4">
+        <p className=" text-[.6rem] max-w-sm md:max-w-xl md:text-[.9rem] px-4">
           {t("description")}
 
         </p>

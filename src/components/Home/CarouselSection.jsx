@@ -63,9 +63,9 @@ const CarouselSection = () => {
   const shouldUseMarquee = countries.length >= 8 || isMobile;
 
   return (
-    <section className="bg-gradient-to-r  w-full py-16 md:px-4">
+    <section className="bg-gradient-to-r  w-full py-5 md:px-4">
       <div className="flex items-center justify-center mb-12">
-        <h1 className="text-3xl sm:text-4xl text-center font-semibold text-gray-800">
+        <h1 className="text-3xl sm:text-3xl text-center font-semibold text-gray-800">
           🎓 {t("carouselItemTitle")}
         </h1>
       </div>
@@ -110,11 +110,11 @@ const CountryCard = ({ country, handleNavigate, language }) => (
           : country?.customURLSlug?.en
       )
     }
-    className="flex-shrink-0 mx-6 cursor-pointer flex flex-col items-center group"
+    className="flex-shrink-0 mx-5 cursor-pointer flex flex-col items-center group"
   >
     <div className="relative w-24 h-24 mb-4 overflow-hidden rounded-full transition-all duration-300 group-hover:shadow-lg">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#6439a2]/20 to-[#d76a6b]/20 transition-transform duration-300 group-hover:scale-110"></div>
-      <div className="absolute inset-0 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+
+      <div className="absolute inset-0 flex items-center justify-center transition-all  duration-300 group-hover:scale-110">
         {isWindows ? (
           country?.countryCode ? (
             <img
@@ -122,19 +122,29 @@ const CountryCard = ({ country, handleNavigate, language }) => (
                 country.countryCode
               )}.png`}
               alt="Country Flag"
-              className="w-12 h-12 object-cover transition-all duration-300 group-hover:rotate-12 rounded-full"
+              className="w-14 h-14 object-cover flag-shadow transition-all duration-300 group-hover:rotate-12 rounded-full"
+              // style={{
+              //   boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.5), -4px -4px 10px rgba(255, 255, 255, 0.3)',
+              //   border: '1px solid rgba(0, 0, 0, 0)'
+              // }}
             />
           ) : (
             <span className="text-[.6rem] font-medium">No flag</span>
           )
         ) : (
-          <span className="text-5xl filter transition-all duration-300 group-hover:rotate-12">
-            {getCountryEmoji(country?.countryCode)}
-          </span>
+          <span
+          className="text-5xl  transition-all duration-300"
+          style={{
+            textShadow: '4px 4px 10px rgba(0, 0, 0, 0.6), -4px -4px 10px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          {getCountryEmoji(country?.countryCode)}
+        </span>
+        
         )}
       </div>
     </div>
-    <p className="text-center text-sm font-medium text-gray-700 transition-all duration-300 group-hover:text-[#6439a2]">
+    <p className="text-center text-sm font-medium  transition-all duration-300 group-hover:text-[#6439a2]">
       {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
     </p>
   </div>
