@@ -143,45 +143,57 @@ function OurCourses() {
     <div className="relative overflow-hidden max-w-[1240px] pl-6 mx-auto py-5">
       {/* Header Section */}
       <div
-        className={`max-w-[1240px] mb-10 mx-auto ${
+        className={`max-w-[1240px] flex justify-between mb-10 mx-auto ${
           isVisible ? "animate_fade_in" : "opacity-0"
         }`}
         style={{ animationDelay: "0.2s" }}
       >
-        <div
-          className={`text-start flex items-center ${
-            language === "ar" ? "flex-row-reverse justify-end" : "justify-start"
-          } mb-4 pl-4 pr-4`}
-        >
-          <h1 className="text-start text-3xl sm:text-4xl font-semibold">
-            {t("ourCourseSection.title")}
-          </h1>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 mr-1 ml-3 flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
-            <img
-              src={Book || "/placeholder.svg"}
-              alt="Icon"
-              className="w-full h-full object-contain"
-            />
+        <div className="w-full">
+          <div
+            className={`text-start flex items-center ${
+              language === "ar"
+                ? "flex-row-reverse justify-end"
+                : "justify-start"
+            } mb-4 pl-4 pr-4`}
+          >
+            <h1 className="text-start text-3xl sm:text-4xl font-semibold">
+              {t("ourCourseSection.title")}
+            </h1>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 mr-1 ml-3 flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+              <img
+                src={Book || "/placeholder.svg"}
+                alt="Icon"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
-        </div>
 
-        <p
-          className={`font-normal w-full text-sm ${
-            language === "ar" ? "text-right" : "text-left"
-          } sm:text-[.8rem] px-0 pl-4 pr-1`}
-        >
-          {t("ourCourseSection.description")}
-        </p>
+          <p
+            className={`font-normal w-full text-sm ${
+              language === "ar" ? "text-right" : "text-left"
+            } sm:text-[.8rem] px-0 pl-4 pr-1`}
+          >
+            {t("ourCourseSection.description")}
+          </p>
+        </div>
 
         <div
           className={`w-full flex mt-4 ${
             language === "ar" ? "justify-start" : "justify-end"
           } items-center px-4`}
         >
-          <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
+          <button
+            className={`bg-white flex    justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
             {t("viewAll")}
 
-            <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
           </button>
         </div>
       </div>

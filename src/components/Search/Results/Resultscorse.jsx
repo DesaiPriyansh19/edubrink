@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useRef, useState, useCallback } from "react"
 import DollerRounded from "../../../../svg/DollerRounded/Index"
 import Master from "../../../../svg/AboutStudent/Master"
@@ -32,11 +30,8 @@ function ResultsCorses({ loading: initialLoading, filteredData: initialData, uni
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp)
   const initialDataRef = useRef(null)
-
-  // API base URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search"
 
-  // Check if we're on the searchresults path that should disable infinite scroll
   const isSearchResultsPath = path === `/${language}/searchresults`
 
   useEffect(() => {

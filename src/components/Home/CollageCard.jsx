@@ -6,7 +6,7 @@ import useFetch from "../../../hooks/useFetch";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, GraduationCap } from "lucide-react";
+import { ArrowRight, BookOpen, GraduationCap } from "lucide-react";
 import { getEmoji } from "../../../libs/countryFlags";
 
 const CollegeCard = ({ college, idx, isWindows }) => {
@@ -198,8 +198,10 @@ const CollegeCarousel = () => {
             language === "ar" ? "justify-start" : "justify-end "
           } items-center px-4`}
         >
-          <button className="px-6 py-2 whitespace-nowrap text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-50">
+           <button className="bg-white whitespace-nowrap flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
             {t("viewAll")}
+
+            <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
       </div>

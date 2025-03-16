@@ -3,19 +3,35 @@ import DollerRounded from "../../../svg/DollerRounded/Index";
 
 import Master from "../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../svg/LanguageLogo";
+import { useTranslation } from "react-i18next";
+import { ArrowRight } from "lucide-react";
+import { useLanguage } from "../../../context/LanguageContext";
 
 // Course Data
 
 const CountryPopularCourse = ({ data }) => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   return (
     <>
       <div className="max-w-full mx-auto">
-        <div className="flex items-center justify-between mt-6 mb-4">
-          <h1 className="text-2xl sm:text-4xl font-semibold">
-            Popular Courses in {data?.countryName?.en || "N/A"}
+        <div className="flex flex-col sm:flex-row items-center mb-8 justify-between mt-6 md:mb-4">
+          <h1 className="text-2xl sm:text-4xl text-center sm:text-start mb-4 md:mb-0 font-semibold">
+            {t("countryPage.PopularTitle", { title: t("courses") })}{" "}
+            {data?.countryName?.[language] || "N/A"}
           </h1>
-          <button className="hidden sm:block bg-white shadow-sm hover:shadow-md text-black text-sm sm:text-base py-2 px-4 rounded-full">
-            View All <span className="mx-2">&gt;</span>
+          <button
+            className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
+            {t("viewAll")}
+
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
           </button>
         </div>
         <div className="w-full hidden sm:flex justify-end items-center px-4"></div>
@@ -28,22 +44,22 @@ const CountryPopularCourse = ({ data }) => {
             const dynamicFeatures = [
               {
                 icon: <DollerRounded />,
-                title: "Tuition Fees",
-                description: course?.CourseFees || "N/A",
+                title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
+                description: `$ ${course?.CourseFees}` || "N/A",
               },
               {
                 icon: <LanguageLogo />,
-                title: "Language",
-                description: "English", // Assuming language is not dynamic
+                title: language === "ar" ? "اللغة" : "Language",
+                description: language === "ar" ? "الإنجليزية" : "English", // Assuming English is default
               },
               {
                 icon: <DollerRounded />,
-                title: "Deadline",
+                title: language === "ar" ? "الموعد النهائي" : "Deadline",
                 description: course?.DeadLine
                   ? new Date(course?.DeadLine).toLocaleDateString("en-US", {
-                      year: "numeric", // Full year (optional)
-                      month: "short", // Abbreviated month name
-                      day: "numeric", // Day of the month
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
                     })
                   : "N/A",
               },
@@ -51,15 +67,23 @@ const CountryPopularCourse = ({ data }) => {
 
             return (
               <div
-                key={`${index}-${courseIndex}`} // Unique key for each course
+                key={courseIndex}
                 className="relative mt-3 border rounded-xl shadow-md bg-white"
               >
-                <div className="px-3 pr-3 sm:pr-8 md:pr-9 lg:pr-16 p-4">
+                <div
+                  className={`px-3 ${
+                    language === "ar"
+                      ? "pl-3 sm:pl-8 md:pl-9 lg:pl-16"
+                      : "pr-3 sm:pr-8 md:pr-9 lg:pr-16"
+                  } p-4`}
+                >
                   <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
                     <div className="w-20 h-20">
                       <img
                         src={
-                          university.uniSymbol || "https://placehold.co/80x80"
+                          course?.university?.uniSymbol ||
+                          "https://placehold.co/80x80" ||
+                          "/placeholder.svg"
                         }
                         alt="College Logo"
                         className="w-full h-full rounded-full"
@@ -67,10 +91,14 @@ const CountryPopularCourse = ({ data }) => {
                     </div>
                     <div>
                       <h1 className="text-lg font-semibold flex items-center">
-                        {course?.CourseName?.en || "N/A"}
+                        {language === "ar"
+                          ? course?.CourseName?.ar
+                          : course?.CourseName?.en || "N/A"}
                       </h1>
                       <p className="text-[.8rem] font-medium text-black flex items-center mt-1">
-                        {university?.uniName?.en || "N/A"}
+                        {language === "ar"
+                          ? university?.uniName?.ar
+                          : university?.uniName?.en || "N/A"}
                       </p>
                       <div className="flex items-center mt-1">
                         <span className="w-5 h-5 rounded-full mr-1">
@@ -81,9 +109,9 @@ const CountryPopularCourse = ({ data }) => {
                   </div>
 
                   <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                    {dynamicFeatures?.map((feature, featureIndex) => (
+                    {dynamicFeatures?.flat()?.map((feature, index) => (
                       <div
-                        key={featureIndex} // Unique key for each feature
+                        key={index}
                         className="flex items-center justify-center"
                       >
                         <span className="rounded-full w-10 flex items-center justify-center h-10 border">
@@ -102,11 +130,21 @@ const CountryPopularCourse = ({ data }) => {
                   </div>
                 </div>
                 <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                  <button className="bg-gradient-to-r from-[#380C95] to-[#E15754] hover:bg-gradient-to-l text-white text-sm py-2 px-3 rounded-full">
-                    Apply Now
+                  <button
+                    onClick={() =>
+                      handleApplyClick(course._id, course.countryName)
+                    }
+                    className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
+                  >
+                    {t("applyNow")}
                   </button>
-                  <button className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800">
-                    Learn More
+                  <button
+                    onClick={() => {
+                      handleNavigate(course.CourseName.en);
+                    }}
+                    className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
+                  >
+                    {t("learnMore")}
                   </button>
                 </div>
               </div>

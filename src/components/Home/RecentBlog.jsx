@@ -9,6 +9,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { ArrowRight } from "lucide-react";
 
 function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -83,8 +84,10 @@ function RecentBlog() {
 
           <div className="hidden sm:block" data-aos="fade-left">
             <Link to={`/${language}/searchresults/AllBlogs`}>
-              <button className="px-6 py-2 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:bg-gray-50">
+              <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
                 {t("viewAll")}
+
+                <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </Link>
           </div>
@@ -151,8 +154,10 @@ function RecentBlog() {
         {/* Mobile view all button */}
         <div className="sm:hidden flex justify-center mt-6">
           <Link to="AllBlogs">
-            <button className="px-8 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-[#380C95] to-[#E15754] rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+            <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
               {t("viewAll")}
+
+              <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </Link>
         </div>

@@ -1,46 +1,74 @@
 import React from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
+import { useTranslation } from "react-i18next";
+import { ArrowRight } from "lucide-react";
+import { useLanguage } from "../../../context/LanguageContext";
 function CountryBlogs({ data }) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
   return (
     <div className="mt-11 text-black">
       <div className="max-w-[1240px] mx-auto">
-        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold  flex justify-between">
-          Popular Article related {data?.countryName?.en || "N/A"}
-          <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-            View All<span className="mx-2">&gt;</span>
+        <div className="flex flex-col sm:flex-row items-center mb-8 justify-between mt-6 md:mb-4">
+          <h1 className="text-2xl sm:text-4xl text-center sm:text-start mb-4 md:mb-0 font-semibold">
+            {t("countryPage.PopularTitle", { title: t("articles") })}{" "}
+            {data?.countryName?.[language] || "N/A"}
+          </h1>
+          <button
+            className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
+            {t("viewAll")}
+
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
           </button>
-        </h1>
+        </div>
       </div>
       <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6   py-6 ">
         {/* First Slide */}
-        {data?.blog.map((card,idx) => (
+        {data?.blog.map((blog, idx) => (
           <div
-            key={idx}
-            className="min-w-[300px] bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
+            key={blog._id}
+            onClick={() => handleNavigate(blog.customURLSlug[language])}
+            className="blog-card"
+            data-aos="fade-up"
+            data-aos-delay={100}
           >
-            {/* SVG and Image */}
-            <div className="h-[55%] w-[100%]">
+            {/* Image container */}
+            <div className="blog-card-image">
               <img
-                src={"https://placehold.co/260x200"}
-                alt={`Slide ${card.id}`}
-                className="w-[100%] h-[100%] rounded-2xl object-cover"
+                src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                alt={blog?.blogTitle?.[language]}
               />
             </div>
 
-            <p className="text-[#E82448] uppercase text-sm font-semibold mt-4 ">
-              STUDY IN {data?.countryName?.en || "N/A"}
-            </p>
+            <div className="blog-card-content">
+              {/* Country name */}
+              <p className="blog-card-country">
+                {language === "ar"
+                  ? `الدراسة في ${data?.countryName?.[language] || "غير متوفر"}`
+                  : `Study in ${data?.countryName?.[language] || "N/A"}`}
+              </p>
 
-            <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-              {card?.blogTitle?.en}
-            </h4>
-            <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-              <Calander />
-              {new Date(card?.blogAdded).toLocaleDateString("en-US", {
-                year: "numeric", // Full year (optional)
-                month: "short", // Abbreviated month name
-                day: "numeric", // Day of the month
-              })}
+              {/* Blog title */}
+              <h4 className="blog-card-title">
+                {language === "ar" ? blog?.blogTitle?.ar : blog?.blogTitle?.en}
+              </h4>
+
+              {/* Date */}
+              <div className="blog-card-date">
+                <Calander />
+                <span>
+                  {blog.blogAdded
+                    ? new Date(blog.blogAdded).toLocaleDateString()
+                    : "Date not available"}
+                </span>
+              </div>
             </div>
           </div>
         ))}

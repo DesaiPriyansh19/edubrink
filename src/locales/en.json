@@ -17,6 +17,7 @@
   "search_placeholder": "Search for courses",
 
   "universities": "Universities",
+  "blogs": "Blogs",
   "articles": "Articles",
   "filters": "Filters",
   "carouselSectionItems": [
@@ -232,7 +233,10 @@
     "Country": "Country",
     "Requirements": "Requirements",
     "ScholarshipAva": "Available",
-    "ScholarshipOptions": "Scholarship Options"
+    "ScholarshipOptions": "Scholarship Options",
+    "UniversityCourse": "University Course",
+    "SpecialCourse": "Special Course Program",
+    "OfferedBy": "Offered by"
   },
 
   "Footer": {
@@ -501,5 +505,56 @@
       "programTypeRequired": "Please select a program type",
       "descriptionRequired": "Please tell us about yourself and why you are interested"
     }
+  },
+  "countryPage": {
+    "livingCost": "Living Cost",
+    "currency": "Currency",
+    "keyFacts": "Key Facts",
+    "PopularTitle": "Popular {{title}} in"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "welcomeBack": "Welcome Back",
+    "createAccount": "Create Your Account",
+    "welcomeSubtext": "We're glad to see you again",
+    "createAccountSubtext": "Join our community and get started",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "emailPlaceholder": "your.email@example.com",
+    "passwordPlaceholder": "Enter your password",
+    "createPasswordPlaceholder": "Create a secure password",
+    "signInButton": "Sign In",
+    "signUpButton": "Create Account",
+    "orContinueWith": "or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+
+    "emailRequired": "Email is required",
+    "emailInvalid": "Email is invalid",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "loginFailed": "Login failed. Please check your credentials.",
+    "signupFailed": "Signup failed. This email may already be registered.",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+
+    "emailVerification": "Email Verification",
+    "otpInstructions": "We've sent a 4-digit verification code to your email. Please enter it below.",
+    "invalidOtp": "Invalid verification code. Please try again.",
+    "verifyEmail": "Verify Email",
+    "verifying": "Verifying...",
+    "resendCode": "Resend verification code",
+    "resendIn": "Resend in {{seconds}}s",
+    "termsText": "By clicking on Verify button you agree to our",
+    "termsLink": "Terms & Conditions",
+    "securityNote": "Your information is securely encrypted",
+
+    "loginVerifiedTitle": "Verification Successful",
+    "loginVerfiedText": "Your account has been successfully verified. You can now access all features.",
+    "continue": "Continue",
+    "verified": "Verified",
+    "secured": "Secured",
+    "complete": "Complete"
   }
 }

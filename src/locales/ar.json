@@ -14,7 +14,9 @@
   "countries": "الدول",
   "about": "عن",
   "search_placeholder": "ابحث عن الدورات",
+  "blogs": "المدونات",
   "universities": "الجامعات",
+
   "articles": "المقالات",
   "filters": "الفلاتر",
   "carouselSectionItems": [
@@ -230,7 +232,10 @@
     "Country": "دولة",
     "Requirements": "متطلبات",
     "ScholarshipAva": "متاح",
-    "ScholarshipOptions": "خيارات المنح الدراسية"
+    "ScholarshipOptions": "خيارات المنح الدراسية",
+    "UniversityCourse": "دورة جامعية",
+    "SpecialCourse": "برنامج دورة خاصة",
+    "OfferedBy": "مقدمة من"
   },
   "Footer": {
     "SubscribeMessage": "ابقَ على اطلاع بكل شيء عن إديوبرينك من خلال الاشتراك معنا!",
@@ -498,5 +503,56 @@
       "programTypeRequired": "يرجى اختيار نوع البرنامج",
       "descriptionRequired": "يرجى إخبارنا عن نفسك ولماذا أنت مهتم"
     }
+  },
+  "countryPage": {
+    "livingCost": "تكلفة المعيشة",
+    "currency": "عملة",
+    "keyFacts": "حقائق رئيسية",
+    "PopularTitle": "{{title}} شائع في"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "welcomeBack": "مرحبًا بعودتك",
+    "createAccount": "إنشاء حسابك",
+    "welcomeSubtext": "يسعدنا رؤيتك مرة أخرى",
+    "createAccountSubtext": "انضم إلى مجتمعنا وابدأ",
+    "emailAddress": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "emailPlaceholder": "بريدك@مثال.كوم",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "createPasswordPlaceholder": "إنشاء كلمة مرور آمنة",
+    "signInButton": "تسجيل الدخول",
+    "signUpButton": "إنشاء حساب",
+    "orContinueWith": "أو المتابعة باستخدام",
+    "continueWithGoogle": "المتابعة باستخدام جوجل",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "dontHaveAccount": "ليس لديك حساب؟",
+
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "البريد الإلكتروني غير صالح",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordTooShort": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "loginFailed": "فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.",
+    "signupFailed": "فشل التسجيل. قد يكون هذا البريد الإلكتروني مسجلاً بالفعل.",
+    "unexpectedError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+
+    "emailVerification": "التحقق من البريد الإلكتروني",
+    "otpInstructions": "لقد أرسلنا رمز تحقق مكون من 4 أرقام إلى بريدك الإلكتروني. يرجى إدخاله أدناه.",
+    "invalidOtp": "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى.",
+    "verifyEmail": "تحقق من البريد الإلكتروني",
+    "verifying": "جاري التحقق...",
+    "resendCode": "إعادة إرسال رمز التحقق",
+    "resendIn": "إعادة الإرسال في {{seconds}} ثانية",
+    "termsText": "بالنقر على زر التحقق، فإنك توافق على",
+    "termsLink": "الشروط والأحكام",
+    "securityNote": "معلوماتك مشفرة بشكل آمن",
+
+    "loginVerifiedTitle": "تم التحقق بنجاح",
+    "loginVerfiedText": "تم التحقق من حسابك بنجاح. يمكنك الآن الوصول إلى جميع الميزات.",
+    "continue": "متابعة",
+    "verified": "تم التحقق",
+    "secured": "مؤمّن",
+    "complete": "مكتمل"
   }
 }
