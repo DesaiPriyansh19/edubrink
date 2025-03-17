@@ -30,6 +30,30 @@ const DropdownCountries = forwardRef(
       setShowCountriesDropdown(false);
     };
 
+    // Helper function to render flag
+    const renderFlag = (country) => {
+      if (isWindows) {
+        if (country?.countryCode) {
+          return (
+            <img
+              src={`https://flagcdn.com/w320/${country.countryCode.toLowerCase()}.png`}
+              alt="Country Flag"
+              className="w-4 h-4 rounded-full mr-1"
+            />
+          );
+        }
+      } else if (country?.countryPhotos?.countryFlag) {
+        return (
+          <span className="text-base font-medium">
+            {country.countryPhotos.countryFlag}
+          </span>
+        );
+      }
+      
+      // Fallback
+      return <span className="text-[.6rem] font-medium">🏳️</span>;
+    };
+
     return (
       <div
         id="divshadow"
@@ -63,6 +87,7 @@ const DropdownCountries = forwardRef(
                       onClick={() => handleNavigate(country)}
                       className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
+                      {renderFlag(country)}
                       <p className="text-[.6rem] font-medium">
                         {country?.countryName?.[language]}
                       </p>
@@ -78,10 +103,7 @@ const DropdownCountries = forwardRef(
                       onClick={() => handleNavigate(country)}
                       className="w-full mb-3 flex cursor-pointer items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                     >
-                      <p className="text-[.6rem] font-medium">
-                        {country?.countryPhotos?.countryFlag}
-                      </p>
-
+                      {renderFlag(country)}
                       <p className="text-[.6rem] font-medium">
                         {country?.countryName?.[language]}
                       </p>
@@ -97,26 +119,7 @@ const DropdownCountries = forwardRef(
                   onClick={() => handleNavigate(country)}
                   className="w-full mb-3 cursor-pointer flex items-center pl-3 gap-1 pr-1 py-1 rounded-xl bg-[#f8f8f8] justify-start text-black"
                 >
-                  {isWindows ? (
-                    country?.countryCode ? (
-                      <img
-                        src={`https://flagcdn.com/w320/${getEmoji(
-                          country.countryCode
-                        )}.png`}
-                        alt="Country Flag"
-                        className="w-4 h-4 rounded-full mr-1"
-                      />
-                    ) : (
-                      <span className="text-[.6rem] font-medium">No flag</span>
-                    )
-                  ) : country?.countryPhotos?.countryFlag ? (
-                    <p className="text-base font-medium">
-                      {country.countryPhotos.countryFlag}
-                    </p>
-                  ) : (
-                    <span className="text-[.6rem] font-medium">No flag</span>
-                  )}
-
+                  {renderFlag(country)}
                   <p className="text-[.6rem] font-medium">
                     {country?.countryName?.[language] || "Unknown"}
                   </p>
