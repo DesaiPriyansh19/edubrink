@@ -1,46 +1,74 @@
-import React, { useState } from "react";
-import { Plus, Trash2, MessageCircle } from "lucide-react";
-import InputField from "../../../../utils/InputField";
+"use client"
+
+import { useState, useEffect } from "react"
+import { Plus, Trash2, MessageCircle } from "lucide-react"
+import InputField from "../../../../utils/InputField"
 
 const FaqSection = ({ formData, setFormData }) => {
-  const [activeFAQ, setActiveFAQ] = useState(0);
+  const [activeFAQ, setActiveFAQ] = useState(0)
+
+  // Initialize faq array if it doesn't exist
+  useEffect(() => {
+    if (!formData.faq) {
+      setFormData((prevData) => ({
+        ...prevData,
+        faq: [],
+      }))
+    }
+  }, [formData, setFormData])
 
   const addFAQ = () => {
     setFormData((prevData) => ({
       ...prevData,
       faq: [
-        ...prevData.faq,
+        ...(prevData.faq || []),
         {
           faqQuestions: { en: "", ar: "" },
           faqAnswers: { en: "", ar: "" },
         },
       ],
-    }));
-    setActiveFAQ(formData.faq?.length);
-  };
+    }))
+    // Set active FAQ to the new one
+    setActiveFAQ(formData.faq?.length || 0)
+  }
 
   const removeFAQ = (index) => {
     setFormData((prevData) => ({
       ...prevData,
-      faq: prevData.faq.filter((_, i) => i !== index),
-    }));
+      faq: (prevData.faq || []).filter((_, i) => i !== index),
+    }))
     if (activeFAQ === index) {
-      setActiveFAQ(Math.max(0, index - 1));
+      setActiveFAQ(Math.max(0, index - 1))
     } else if (activeFAQ > index) {
-      setActiveFAQ(activeFAQ - 1);
+      setActiveFAQ(activeFAQ - 1)
     }
-  };
+  }
 
   const handleFAQChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedFAQs = [...prevData.faq];
-      const [parent, child] = field.split(".");
+      const updatedFAQs = [...(prevData.faq || [])]
+      const [parent, child] = field.split(".")
 
-      updatedFAQs[index][parent][child] = value;
+      if (!updatedFAQs[index]) {
+        updatedFAQs[index] = {
+          faqQuestions: { en: "", ar: "" },
+          faqAnswers: { en: "", ar: "" },
+        }
+      }
 
-      return { ...prevData, faq: updatedFAQs };
-    });
-  };
+      if (!updatedFAQs[index][parent]) {
+        updatedFAQs[index][parent] = { en: "", ar: "" }
+      }
+
+      updatedFAQs[index][parent][child] = value
+
+      return { ...prevData, faq: updatedFAQs }
+    })
+  }
+
+  // Check if we have FAQs and if the active FAQ exists
+  const hasFaqs = formData.faq && formData.faq.length > 0
+  const activeFaqExists = hasFaqs && formData.faq[activeFAQ]
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
@@ -59,7 +87,7 @@ const FaqSection = ({ formData, setFormData }) => {
         </button>
       </div>
 
-      {formData.faq.length > 0 && (
+      {hasFaqs && (
         <div className="flex flex-wrap gap-2 border-b pb-2">
           {formData.faq.map((faq, index) => (
             <button
@@ -72,17 +100,17 @@ const FaqSection = ({ formData, setFormData }) => {
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               }`}
             >
-              {faq.faqQuestions.en || `FAQ ${index + 1}`}
+              {faq.faqQuestions?.en || `FAQ ${index + 1}`}
             </button>
           ))}
         </div>
       )}
 
-      {formData.faq.length > 0 && (
+      {activeFaqExists && (
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">
-              {formData.faq[activeFAQ].faqQuestions.en
+              {formData.faq[activeFAQ].faqQuestions?.en
                 ? formData.faq[activeFAQ].faqQuestions.en
                 : `FAQ ${activeFAQ + 1}`}
             </h3>
@@ -103,10 +131,8 @@ const FaqSection = ({ formData, setFormData }) => {
               type="text"
               name="faqQuestions.en"
               placeholder="Enter question in English"
-              value={formData.faq[activeFAQ].faqQuestions.en}
-              onChange={(e) =>
-                handleFAQChange(activeFAQ, "faqQuestions.en", e.target.value)
-              }
+              value={formData.faq[activeFAQ].faqQuestions?.en || ""}
+              onChange={(e) => handleFAQChange(activeFAQ, "faqQuestions.en", e.target.value)}
               variant={3}
             />
 
@@ -116,10 +142,8 @@ const FaqSection = ({ formData, setFormData }) => {
               type="text"
               name="faqQuestions.ar"
               placeholder="أدخل السؤال بالعربية"
-              value={formData.faq[activeFAQ].faqQuestions.ar}
-              onChange={(e) =>
-                handleFAQChange(activeFAQ, "faqQuestions.ar", e.target.value)
-              }
+              value={formData.faq[activeFAQ].faqQuestions?.ar || ""}
+              onChange={(e) => handleFAQChange(activeFAQ, "faqQuestions.ar", e.target.value)}
               variant={3}
             />
 
@@ -129,10 +153,8 @@ const FaqSection = ({ formData, setFormData }) => {
               type="textarea"
               name="faqAnswers.en"
               placeholder="Enter answer in English"
-              value={formData.faq[activeFAQ].faqAnswers.en}
-              onChange={(e) =>
-                handleFAQChange(activeFAQ, "faqAnswers.en", e.target.value)
-              }
+              value={formData.faq[activeFAQ].faqAnswers?.en || ""}
+              onChange={(e) => handleFAQChange(activeFAQ, "faqAnswers.en", e.target.value)}
               variant={3}
             />
 
@@ -142,17 +164,15 @@ const FaqSection = ({ formData, setFormData }) => {
               type="textarea"
               name="faqAnswers.ar"
               placeholder="أدخل الإجابة بالعربية"
-              value={formData.faq[activeFAQ].faqAnswers.ar}
-              onChange={(e) =>
-                handleFAQChange(activeFAQ, "faqAnswers.ar", e.target.value)
-              }
+              value={formData.faq[activeFAQ].faqAnswers?.ar || ""}
+              onChange={(e) => handleFAQChange(activeFAQ, "faqAnswers.ar", e.target.value)}
               variant={3}
             />
           </div>
         </div>
       )}
 
-      {formData.faq.length === 0 && (
+      {!hasFaqs && (
         <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
           <MessageCircle className="w-12 h-12 mx-auto text-gray-400 mb-3" />
           <p className="text-gray-500">No FAQs added yet</p>
@@ -167,7 +187,8 @@ const FaqSection = ({ formData, setFormData }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FaqSection;
+export default FaqSection
+

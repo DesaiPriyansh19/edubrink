@@ -132,6 +132,7 @@ const CountryPage = () => {
   if (loading) {
     return <CountrySkeletonLoader />;
   }
+  console.log(data);
 
   return (
     <div className="max-w-[1240px] px-4 sm:px-6 lg:px-10 mx-auto py-8 font-sans bg-gray-50">
@@ -354,19 +355,19 @@ const CountryPage = () => {
         </div>
       </div>
 
-      {data?.countryName && (
+      {data?.universities.length > 0 && (
         <div data-aos="fade-up" data-aos-delay="500">
           <CountryPopularCourse data={data} />
         </div>
       )}
 
-      {data?.universities && (
+      {data?.universities.length > 0  && (
         <div data-aos="fade-up" data-aos-delay="550">
           <CountryPopularUniversity data={data} />
         </div>
       )}
 
-      {data?.blog && (
+      {data?.blog.length > 0 && (
         <div data-aos="fade-up" data-aos-delay="600">
           <CountryBlogs data={data} />
         </div>

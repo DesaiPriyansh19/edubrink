@@ -171,7 +171,7 @@ export default function EditUniversity() {
         },
         faculty: data?.faculty || [],
         courseId: data?.courseId || [],
-
+        uniSymbol: data?.uniSymbol || "",
         uniTutionFees: data?.uniTutionFees || "",
         uniMainImage: data?.uniMainImage || "",
         uniCountry: data?.uniCountry || null,

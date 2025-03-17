@@ -1,17 +1,28 @@
-import React, { useState } from "react";
-import { Plus, MapPin, Building, Camera, Trash2 } from "lucide-react";
-import UploadWidget from "../../../../utils/UploadWidget";
-import InputField from "../../../../utils/InputField";
+"use client"
+
+import { useState, useEffect } from "react"
+import { Plus, MapPin, Building, Trash2 } from "lucide-react"
+import InputField from "../../../../utils/InputField"
 
 const CampusSection = ({ formData, setFormData }) => {
-  const [activeCampus, setActiveCampus] = useState(0);
-  const [newFacility, setNewFacility] = useState("");
+  const [activeCampus, setActiveCampus] = useState(0)
+  const [newFacility, setNewFacility] = useState("")
+
+  // Initialize campuses array if it doesn't exist
+  useEffect(() => {
+    if (!formData.campuses) {
+      setFormData((prevData) => ({
+        ...prevData,
+        campuses: [],
+      }))
+    }
+  }, [formData, setFormData])
 
   const addCampus = () => {
     setFormData((prevData) => ({
       ...prevData,
       campuses: [
-        ...prevData.campuses,
+        ...(prevData.campuses || []),
         {
           campusName: { en: "", ar: "" },
           campusLocation: {
@@ -21,67 +32,137 @@ const CampusSection = ({ formData, setFormData }) => {
           campusFacilities: [],
         },
       ],
-    }));
+    }))
     // Set the newly added campus as active
-    setActiveCampus(formData.campuses.length);
-  };
+    setActiveCampus(formData.campuses?.length || 0)
+  }
 
   const removeCampus = (index) => {
     setFormData((prevData) => ({
       ...prevData,
-      campuses: prevData.campuses.filter((_, i) => i !== index),
-    }));
+      campuses: (prevData.campuses || []).filter((_, i) => i !== index),
+    }))
     // Adjust active campus if needed
     if (activeCampus === index) {
-      setActiveCampus(Math.max(0, index - 1));
+      setActiveCampus(Math.max(0, index - 1))
     } else if (activeCampus > index) {
-      setActiveCampus(activeCampus - 1);
+      setActiveCampus(activeCampus - 1)
     }
-  };
+  }
 
   const handleCampusChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedCampuses = [...prevData.campuses];
+      const updatedCampuses = [...(prevData.campuses || [])]
+
+      // Ensure the campus exists
+      if (!updatedCampuses[index]) {
+        updatedCampuses[index] = {
+          campusName: { en: "", ar: "" },
+          campusLocation: {
+            uniCity: { en: "", ar: "" },
+            uniDescription: { en: "", ar: "" },
+          },
+          campusFacilities: [],
+        }
+      }
 
       // Handle nested fields with dot notation
       if (field.includes(".")) {
-        const [parent, child, grandchild] = field.split(".");
+        const [parent, child, grandchild] = field.split(".")
+
+        // Ensure parent exists
+        if (!updatedCampuses[index][parent]) {
+          updatedCampuses[index][parent] = {}
+        }
+
         if (grandchild) {
-          updatedCampuses[index][parent][child][grandchild] = value;
+          // Ensure child exists
+          if (!updatedCampuses[index][parent][child]) {
+            updatedCampuses[index][parent][child] = {}
+          }
+          updatedCampuses[index][parent][child][grandchild] = value
         } else {
-          updatedCampuses[index][parent][child] = value;
+          updatedCampuses[index][parent][child] = value
         }
       } else {
-        updatedCampuses[index][field] = value;
+        updatedCampuses[index][field] = value
       }
 
-      return { ...prevData, campuses: updatedCampuses };
-    });
-  };
+      return { ...prevData, campuses: updatedCampuses }
+    })
+  }
 
   const addFacility = (index) => {
-    if (newFacility.trim()) {
-      setFormData((prevData) => {
-        const updatedCampuses = [...prevData.campuses];
-        updatedCampuses[index].campusFacilities = [
-          ...updatedCampuses[index].campusFacilities,
-          newFacility.trim(),
-        ];
-        return { ...prevData, campuses: updatedCampuses };
-      });
-      setNewFacility("");
-    }
-  };
+    if (!newFacility.trim()) return
+
+    // Replace Arabic commas with English commas first, then split
+    const normalizedInput = newFacility.replace(/،/g, ",")
+
+    // Split the input by commas and trim each item
+    const facilitiesToAdd = normalizedInput
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item) // Remove empty strings
+
+    if (facilitiesToAdd.length === 0) return
+
+    setFormData((prevData) => {
+      const updatedCampuses = [...(prevData.campuses || [])]
+
+      // Ensure the campus exists
+      if (!updatedCampuses[index]) {
+        updatedCampuses[index] = {
+          campusName: { en: "", ar: "" },
+          campusLocation: {
+            uniCity: { en: "", ar: "" },
+            uniDescription: { en: "", ar: "" },
+          },
+          campusFacilities: [],
+        }
+      }
+
+      // Ensure campusFacilities is an array
+      if (!Array.isArray(updatedCampuses[index].campusFacilities)) {
+        updatedCampuses[index].campusFacilities = []
+      }
+
+      // Add new facilities, avoiding duplicates
+      const currentFacilities = updatedCampuses[index].campusFacilities
+      const newFacilities = facilitiesToAdd.filter((facility) => !currentFacilities.includes(facility))
+
+      updatedCampuses[index].campusFacilities = [...currentFacilities, ...newFacilities]
+
+      return { ...prevData, campuses: updatedCampuses }
+    })
+
+    setNewFacility("") // Clear the input after adding
+  }
 
   const removeFacility = (campusIndex, facilityIndex) => {
     setFormData((prevData) => {
-      const updatedCampuses = [...prevData.campuses];
-      updatedCampuses[campusIndex].campusFacilities = updatedCampuses[
-        campusIndex
-      ].campusFacilities.filter((_, i) => i !== facilityIndex);
-      return { ...prevData, campuses: updatedCampuses };
-    });
-  };
+      const updatedCampuses = [...(prevData.campuses || [])]
+
+      if (updatedCampuses[campusIndex] && Array.isArray(updatedCampuses[campusIndex].campusFacilities)) {
+        updatedCampuses[campusIndex].campusFacilities = updatedCampuses[campusIndex].campusFacilities.filter(
+          (_, i) => i !== facilityIndex,
+        )
+      }
+
+      return { ...prevData, campuses: updatedCampuses }
+    })
+  }
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      addFacility(activeCampus)
+    }
+  }
+
+  // Check if we have campuses and if the active campus exists
+  const hasCampuses = formData.campuses && formData.campuses.length > 0
+  const activeCampusExists = hasCampuses && formData.campuses[activeCampus]
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
@@ -101,7 +182,7 @@ const CampusSection = ({ formData, setFormData }) => {
       </div>
 
       {/* Campus tabs */}
-      {formData.campuses.length > 0 && (
+      {hasCampuses && (
         <div className="flex flex-wrap gap-2 border-b pb-2">
           {formData.campuses.map((campus, index) => (
             <button
@@ -114,18 +195,18 @@ const CampusSection = ({ formData, setFormData }) => {
                   : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               }`}
             >
-              {campus.campusName.en || `Campus ${index + 1}`}
+              {campus.campusName?.en || `Campus ${index + 1}`}
             </button>
           ))}
         </div>
       )}
 
       {/* Active campus form */}
-      {formData.campuses.length > 0 && (
+      {activeCampusExists && (
         <div className="bg-gray-50 p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">
-              {formData.campuses[activeCampus].campusName.en
+              {formData.campuses[activeCampus].campusName?.en
                 ? formData.campuses[activeCampus].campusName.en
                 : `Campus ${activeCampus + 1}`}
             </h3>
@@ -147,14 +228,8 @@ const CampusSection = ({ formData, setFormData }) => {
                 type="text"
                 name={`campusName.en`}
                 placeholder="Main Campus, Medical Campus, etc."
-                value={formData.campuses[activeCampus].campusName.en}
-                onChange={(e) =>
-                  handleCampusChange(
-                    activeCampus,
-                    "campusName.en",
-                    e.target.value
-                  )
-                }
+                value={formData.campuses[activeCampus].campusName?.en || ""}
+                onChange={(e) => handleCampusChange(activeCampus, "campusName.en", e.target.value)}
                 variant={3}
               />
             </div>
@@ -162,17 +237,10 @@ const CampusSection = ({ formData, setFormData }) => {
               <InputField
                 label="اسم الحرم الجامعي (عربي)"
                 type="text"
-                name={`
-campusName.ar`}
+                name={`campusName.ar`}
                 placeholder="اسم الحرم الجامعي بالعربية"
-                value={formData.campuses[activeCampus].campusName.ar}
-                onChange={(e) =>
-                  handleCampusChange(
-                    activeCampus,
-                    "campusName.ar",
-                    e.target.value
-                  )
-                }
+                value={formData.campuses[activeCampus].campusName?.ar || ""}
+                onChange={(e) => handleCampusChange(activeCampus, "campusName.ar", e.target.value)}
                 variant={3}
               />
             </div>
@@ -186,76 +254,38 @@ campusName.ar`}
                 <InputField
                   label="City (English)"
                   type="text"
-                  name={`
-campusLocation.uniCity.en`}
+                  name={`campusLocation.uniCity.en`}
                   placeholder="City"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniCity.en
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniCity.en",
-                      e.target.value
-                    )
-                  }
+                  value={formData.campuses[activeCampus].campusLocation?.uniCity?.en || ""}
+                  onChange={(e) => handleCampusChange(activeCampus, "campusLocation.uniCity.en", e.target.value)}
                   variant={3}
                 />
                 <InputField
                   label="مدينة (عربي)"
                   type="text"
-                  name={`
-campusLocation.uniCity.ar`}
+                  name={`campusLocation.uniCity.ar`}
                   placeholder="المدينة"
-                  value={
-                    formData.campuses[activeCampus].campusLocation.uniCity.ar
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniCity.ar",
-                      e.target.value
-                    )
-                  }
+                  value={formData.campuses[activeCampus].campusLocation?.uniCity?.ar || ""}
+                  onChange={(e) => handleCampusChange(activeCampus, "campusLocation.uniCity.ar", e.target.value)}
                   variant={3}
                 />
 
                 <InputField
                   label="Description (English)"
                   type="textarea"
-                  name={`
-campusLocation.uniDescription.en`}
+                  name={`campusLocation.uniDescription.en`}
                   placeholder="Description"
-                  value={
-                    formData.campuses[activeCampus].campusLocation
-                      .uniDescription.en
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniDescription.en",
-                      e.target.value
-                    )
-                  }
+                  value={formData.campuses[activeCampus].campusLocation?.uniDescription?.en || ""}
+                  onChange={(e) => handleCampusChange(activeCampus, "campusLocation.uniDescription.en", e.target.value)}
                   variant={3}
                 />
                 <InputField
                   label="(الوصف (عربي"
                   type="textarea"
-                  name={`
-campusLocation.uniDescription.ar`}
+                  name={`campusLocation.uniDescription.ar`}
                   placeholder="المدينة"
-                  value={
-                    formData.campuses[activeCampus].campusLocation
-                      .uniDescription.ar
-                  }
-                  onChange={(e) =>
-                    handleCampusChange(
-                      activeCampus,
-                      "campusLocation.uniDescription.ar",
-                      e.target.value
-                    )
-                  }
+                  value={formData.campuses[activeCampus].campusLocation?.uniDescription?.ar || ""}
+                  onChange={(e) => handleCampusChange(activeCampus, "campusLocation.uniDescription.ar", e.target.value)}
                   variant={3}
                 />
               </div>
@@ -272,20 +302,22 @@ campusLocation.uniDescription.ar`}
                     type="text"
                     value={newFacility}
                     onChange={(e) => setNewFacility(e.target.value)}
-                    placeholder="Add facility (e.g., Library, Gym, Cafeteria)"
+                    onKeyDown={handleKeyPress}
+                    placeholder="Add facilities (e.g., Library, Gym, Cafeteria) - separate with commas"
                     className="flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                   <button
                     type="button"
                     onClick={() => addFacility(activeCampus)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
                   >
+                    <Plus className="w-4 h-4 mr-1" />
                     Add
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {formData.campuses[activeCampus].campusFacilities.map(
-                    (facility, idx) => (
+                  {Array.isArray(formData.campuses[activeCampus].campusFacilities) &&
+                    formData.campuses[activeCampus].campusFacilities.map((facility, idx) => (
                       <div
                         key={idx}
                         className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
@@ -299,22 +331,20 @@ campusLocation.uniDescription.ar`}
                           ×
                         </button>
                       </div>
-                    )
-                  )}
-                  {formData.campuses[activeCampus].campusFacilities.length ===
-                    0 && (
-                    <p className="text-gray-500 text-sm italic">
-                      No facilities added yet
-                    </p>
+                    ))}
+                  {(!Array.isArray(formData.campuses[activeCampus].campusFacilities) ||
+                    formData.campuses[activeCampus].campusFacilities.length === 0) && (
+                    <p className="text-gray-500 text-sm italic">No facilities added yet</p>
                   )}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Tip: You can paste multiple facilities separated by commas</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {formData.campuses.length === 0 && (
+      {!hasCampuses && (
         <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
           <Building className="w-12 h-12 mx-auto text-gray-400 mb-3" />
           <p className="text-gray-500">No campuses added yet</p>
@@ -329,7 +359,8 @@ campusLocation.uniDescription.ar`}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CampusSection;
+export default CampusSection
+

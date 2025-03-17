@@ -120,15 +120,11 @@ const AuthModal = ({ isOpen, onClose }) => {
 
       try {
         const response = await axios.post(
-          `http://localhost:4000/api/users/login`,
+          `https://edu-brink-backend.vercel.app/api/users/login`,
           userData
         );
         console.log("Login response:", response.data);
-
-        // Extract response data
         const responseData = response.data;
-
-        // Check if response contains data.status === "pending" (for OTP verification)
         if (responseData.data && responseData.data.status === "pending") {
           // OTP verification required
           setOtpVerification(true);
