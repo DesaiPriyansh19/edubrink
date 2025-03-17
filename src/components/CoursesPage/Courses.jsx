@@ -187,19 +187,18 @@ const CoursePage = () => {
 
   // Define theme colors based on course type
   const themeColors = isUniversityCourse
-  ? {
-      primary: "#3b3d8d", // rgba(56,12,149,1)
-      primaryHover: "#2E0A81", // rgba(46,10,129,1)
-      secondary: "#E82448", // rgba(232,36,72,1)
-      gradient: "from-[#380C95] to-[#E15754]", // rgba(56,12,149,1) to rgba(225,87,84,1)
-    }
-  : {
-    primary: "#0f766e", // Deep teal
-    primaryHover: "#0d5c57", // Darker teal for hover effect
-    secondary: "#14b8a6", // Lighter teal accent
-    gradient: "from-[#0f766e] to-[#2dd4bf]", // Smooth teal gradient
-  }
-  
+    ? {
+        primary: "#3b3d8d", // University course blue
+        primaryHover: "#2E0A81",
+        secondary: "#E82448",
+        gradient: "from-[#3b3d8d] to-[#E15754]",
+      }
+    : {
+        primary: "#0f766e", // Deep teal
+        primaryHover: "#0d5c57", // Darker teal for hover effect
+        secondary: "#14b8a6", // Lighter teal accent
+        gradient: "from-teal-600 to-teal-400", // Using Tailwind classes for gradient
+      };
 
   if (!data)
     return (
@@ -213,12 +212,12 @@ const CoursePage = () => {
       {/* Course Type Banner - Only for non-university courses */}
       {!isUniversityCourse && (
         <div
-          className="bg-gradient-to-r from-teal-600 to-teal-500 text-white py-2 px-4 text-center"
+          className="bg-gradient-to-r from-teal-600 to-teal-500 text-white py-3 px-4 text-center shadow-md"
           data-aos="fade-down"
         >
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             <Certificate className="w-5 h-5" />
-            <p className="font-medium">
+            <p className="font-medium text-base">
               {t("CourseSlugPage.SpecialCourse")} -{" "}
               {data?.CourseCategory?.replace(/_/g, " ")}
             </p>
@@ -238,7 +237,7 @@ const CoursePage = () => {
             <span className="mx-2">&gt;</span>
           </div>
           <div className="flex items-center">
-            <span>{t("courses")}</span>
+            <span>{t("CourseSlugPage.Country")}</span>
             <span className="mx-2">&gt;</span>
             <span className="font-medium text-gray-900">
               {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
@@ -269,7 +268,7 @@ const CoursePage = () => {
                 >
                   {isUniversityCourse
                     ? t("CourseSlugPage.UniversityCourse")
-                    : data?.CourseCategory?.replace(/_/g, " ")}
+                    : t("CourseSlugPage.ExternalCourse")}
                 </span>
               </div>
 
@@ -302,8 +301,9 @@ const CoursePage = () => {
                     <School className="w-5 h-5 text-gray-600" />
                     <p className="text-lg text-gray-700">
                       {t("CourseSlugPage.OfferedBy")}{" "}
-                      {data?.provider?.[language] ||
-                        t("CourseSlugPage.EduBrink")}
+                      {data?.provider ||
+                        data?.universities?.uniName?.[language] ||
+                        "N/A"}
                     </p>
                   </div>
                 )}
@@ -323,7 +323,13 @@ const CoursePage = () => {
               </button>
 
               <button
-                className={`bg-[${themeColors.primary}] hover:bg-[${themeColors.primaryHover}] text-white px-6 py-2.5 rounded-full font-semibold transition-all`}
+                className={`${
+                  isUniversityCourse ? "bg-[#3b3d8d]" : "bg-teal-600"
+                } ${
+                  isUniversityCourse
+                    ? "hover:bg-[#2E0A81]"
+                    : "hover:bg-teal-700"
+                } text-white px-6 py-2.5 rounded-full font-semibold transition-all`}
                 onClick={() => {
                   handleApplyNow(data?._id, "course");
                 }}
@@ -348,7 +354,7 @@ const CoursePage = () => {
                 <img
                   src={data.courseImage || "/placeholder.svg"}
                   alt={data?.CourseName?.[language]}
-                  className="w-full h-auto rounded-lg object-cover"
+                  className="w-full h-auto rounded-lg object-cover shadow-md"
                   style={{ maxHeight: "300px" }}
                 />
               </div>
@@ -373,7 +379,11 @@ const CoursePage = () => {
 
               <button
                 onClick={toggleReadMore}
-                className={`mt-4 px-4 py-2 text-[${themeColors.primary}] border border-[${themeColors.primary}] hover:bg-[${themeColors.primary}]/5 font-medium rounded-lg transition-all`}
+                className={`mt-4 px-4 py-2 ${
+                  isUniversityCourse
+                    ? "text-[#3b3d8d] border-[#3b3d8d] hover:bg-[#3b3d8d]/5"
+                    : "text-teal-600 border-teal-600 hover:bg-teal-50"
+                } border font-medium rounded-lg transition-all`}
               >
                 {isExpanded
                   ? language === "ar"
@@ -406,7 +416,11 @@ const CoursePage = () => {
                       data-aos-delay={400 + index * 50}
                     >
                       <CheckCircle
-                        className={`w-5 h-5 flex-shrink-0 mt-1 text-[${themeColors.primary}]`}
+                        className={`w-5 h-5 flex-shrink-0 mt-1 ${
+                          isUniversityCourse
+                            ? "text-[#3b3d8d]"
+                            : "text-teal-600"
+                        }`}
                       />
                       <span className="font-medium text-gray-700">
                         {req || "Requirement not specified."}
@@ -415,21 +429,21 @@ const CoursePage = () => {
                   ))
                 ) : (
                   <p className="text-gray-500 italic">
-                    No requirements available.
+                    {t("CourseSlugPage.NoRequirementsAvailable")}
                   </p>
                 )}
               </div>
             </div>
 
             {/* Career Prospects - Only for non-university courses */}
-            {!isUniversityCourse && (
+            {/* {!isUniversityCourse && (
               <div
                 className="bg-white rounded-xl shadow-sm p-6 mt-8"
                 data-aos="fade-up"
                 data-aos-delay="450"
               >
                 <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                  <Briefcase className="w-5 h-5 mr-2" />
+                  <Briefcase className="w-5 h-5 mr-2 text-teal-600" />
                   {t("CourseSlugPage.CareerProspects")}
                 </h3>
 
@@ -438,7 +452,7 @@ const CoursePage = () => {
                     data.CareerProspects?.[language].map((career, index) => (
                       <div
                         key={index}
-                        className="bg-teal-50 p-4 rounded-lg flex items-start gap-3"
+                        className="bg-teal-50 p-4 rounded-lg flex items-start gap-3 border border-teal-100"
                         data-aos="fade-up"
                         data-aos-delay={450 + index * 50}
                       >
@@ -455,7 +469,7 @@ const CoursePage = () => {
                   )}
                 </div>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Course Details Card - 1/3 width on desktop */}
@@ -467,7 +481,9 @@ const CoursePage = () => {
             <div className="bg-white rounded-xl shadow-sm overflow-hidden sticky top-4">
               {/* Price Header */}
               <div
-                className={`bg-[${themeColors.secondary}] text-white p-6 rounded-t-xl`}
+                className={`${
+                  isUniversityCourse ? "bg-[#E82448]" : "bg-teal-500"
+                } text-white p-6 rounded-t-xl`}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Ticket className="w-5 h-5" />
@@ -478,7 +494,7 @@ const CoursePage = () => {
                 <p className="text-white/90 text-sm">
                   {isUniversityCourse
                     ? t("UniversitySlugPage.InterFees")
-                    : t("CourseSlugPage.TotalCourseFee")}
+                    : t("UniversitySlugPage.InterFees")}
                 </p>
               </div>
 
@@ -486,9 +502,11 @@ const CoursePage = () => {
               <div className="p-6 space-y-4">
                 {/* Duration */}
                 <div className="flex items-center gap-4 py-3 border-b border-gray-100">
-                  <div className={`bg-gray-50 p-2 rounded-full`}>
+                  <div className="bg-gray-50 p-2 rounded-full">
                     <Clock
-                      className={`w-5 h-5 text-[${themeColors.primary}]`}
+                      className={`w-5 h-5 ${
+                        isUniversityCourse ? "text-[#3b3d8d]" : "text-teal-600"
+                      }`}
                     />
                   </div>
                   <div>
@@ -505,7 +523,9 @@ const CoursePage = () => {
                 <div className="flex items-center gap-4 py-3 border-b border-gray-100">
                   <div className="bg-gray-50 p-2 rounded-full">
                     <Calendar
-                      className={`w-5 h-5 text-[${themeColors.primary}]`}
+                      className={`w-5 h-5 ${
+                        isUniversityCourse ? "text-[#3b3d8d]" : "text-teal-600"
+                      }`}
                     />
                   </div>
                   <div>
@@ -522,7 +542,9 @@ const CoursePage = () => {
                 <div className="flex items-center gap-4 py-3 border-b border-gray-100">
                   <div className="bg-gray-50 p-2 rounded-full">
                     <Timer
-                      className={`w-5 h-5 text-[${themeColors.primary}]`}
+                      className={`w-5 h-5 ${
+                        isUniversityCourse ? "text-[#3b3d8d]" : "text-teal-600"
+                      }`}
                     />
                   </div>
                   <div>
@@ -544,7 +566,9 @@ const CoursePage = () => {
                 <div className="flex items-center gap-4 py-3 border-b border-gray-100">
                   <div className="bg-gray-50 p-2 rounded-full">
                     <BookOpen
-                      className={`w-5 h-5 text-[${themeColors.primary}]`}
+                      className={`w-5 h-5 ${
+                        isUniversityCourse ? "text-[#3b3d8d]" : "text-teal-600"
+                      }`}
                     />
                   </div>
                   <div>
@@ -562,37 +586,15 @@ const CoursePage = () => {
                 {/* Language - Only for non-university courses */}
                 {!isUniversityCourse && (
                   <div className="flex items-center gap-4 py-3 border-b border-gray-100">
-                    <div className="bg-gray-50 p-2 rounded-full">
-                      <Globe
-                        className={`w-5 h-5 text-[${themeColors.primary}]`}
-                      />
+                    <div className="bg-teal-50 p-2 rounded-full">
+                      <Globe className="w-5 h-5 text-teal-600" />
                     </div>
                     <div>
                       <p className="text-lg font-bold text-gray-900">
                         {data?.Language?.[language] || "English"}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {t("CourseSlugPage.Language")}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Certification - Only for non-university courses */}
-                {!isUniversityCourse && (
-                  <div className="flex items-center gap-4 py-3 border-b border-gray-100">
-                    <div className="bg-gray-50 p-2 rounded-full">
-                      <Award
-                        className={`w-5 h-5 text-[${themeColors.primary}]`}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-lg font-bold text-gray-900">
-                        {data?.CertificationType?.[language] ||
-                          t("CourseSlugPage.ProfessionalCertificate")}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {t("CourseSlugPage.CertificationType")}
+                        {t("UniversitySlugPage.Language")}
                       </p>
                     </div>
                   </div>
@@ -601,7 +603,11 @@ const CoursePage = () => {
                 {/* Discount/Scholarship */}
                 <div className="flex items-center gap-4 py-3">
                   <div className="bg-gray-50 p-2 rounded-full">
-                    <Tag className={`w-5 h-5 text-[${themeColors.primary}]`} />
+                    <Tag
+                      className={`w-5 h-5 ${
+                        isUniversityCourse ? "text-[#3b3d8d]" : "text-teal-600"
+                      }`}
+                    />
                   </div>
                   <div>
                     <p className="text-lg font-bold text-gray-900">
@@ -615,7 +621,11 @@ const CoursePage = () => {
 
                 {/* Apply Button */}
                 <button
-                  className={`w-full mt-4 bg-gradient-to-r ${themeColors.gradient} text-white py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all`}
+                  className={`w-full mt-4 bg-gradient-to-r ${
+                    isUniversityCourse
+                      ? "from-[#3b3d8d] to-[#E15754]"
+                      : "from-teal-600 to-teal-400"
+                  } text-white py-4 rounded-full font-semibold text-lg hover:shadow-lg transition-all`}
                   onClick={() => {
                     handleApplyNow(data?._id, "course");
                   }}
@@ -661,7 +671,11 @@ const CoursePage = () => {
 
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <button
-                  className={`bg-gradient-to-r ${themeColors.gradient} text-white py-2.5 rounded-full font-medium hover:shadow-md transition-all`}
+                  className={`bg-gradient-to-r ${
+                    isUniversityCourse
+                      ? "from-[#3b3d8d] to-[#E15754]"
+                      : "from-teal-600 to-teal-400"
+                  } text-white py-2.5 rounded-full font-medium hover:shadow-md transition-all`}
                 >
                   {t("UniversitySlugPage.CallNow")}
                 </button>

@@ -233,7 +233,9 @@
     "Requirements": "متطلبات",
     "ScholarshipAva": "متاح",
     "ScholarshipOptions": "خيارات المنح الدراسية",
+    "NoRequirementsAvailable":"لا توجد متطلبات متاحة",
     "UniversityCourse": "دورة جامعية",
+    "ExternalCourse": "دورة خارجية",
     "SpecialCourse": "برنامج دورة خاصة",
     "OfferedBy": "مقدمة من"
   },

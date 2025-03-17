@@ -235,6 +235,8 @@
     "ScholarshipAva": "Available",
     "ScholarshipOptions": "Scholarship Options",
     "UniversityCourse": "University Course",
+    "NoRequirementsAvailable":"No requirements available",
+    "ExternalCourse":"External Course",
     "SpecialCourse": "Special Course Program",
     "OfferedBy": "Offered by"
   },
