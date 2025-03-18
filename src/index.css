@@ -510,6 +510,7 @@ body {
   }
 }
 
+
 .scroll-to-top {
   position: fixed;
   bottom: 2rem;
@@ -528,6 +529,7 @@ body {
   transition: all 0.3s ease-out;
   cursor: pointer;
   animation: smoothAppear 0.3s ease-out;
+  border: none;
 }
 
 .scroll-to-top:hover {
@@ -560,6 +562,59 @@ body {
   height: 1.5rem;
   z-index: 10;
 }
+
+/* WhatsApp Button CSS - Dynamic positioning */
+.whatsapp-button {
+  position: fixed;
+  bottom: 2rem; /* Same position as scroll-to-top when it's hidden */
+  right: 2rem;
+  z-index: 50;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #25d366; /* WhatsApp green */
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  transform: scale(1);
+  transition: all 0.3s ease-out; /* Smooth transition for position change */
+  cursor: pointer;
+  border: none;
+}
+
+/* Class applied when scroll-to-top is visible */
+.whatsapp-button-raised {
+  bottom: 6.5rem; /* Move up when scroll-to-top appears */
+}
+
+.whatsapp-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4);
+}
+
+.whatsapp-icon {
+  color: white;
+}
+
+@keyframes smoothAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+
+
+
+
+
 
 
 

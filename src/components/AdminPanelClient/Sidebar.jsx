@@ -24,11 +24,11 @@ const Sidebar = () => {
       label: "Universities",
       path: `/${language}/admin/universities`,
     },
-    {
-      icon: GraduationCap,
-      label: "Faculties",
-      path: `/${language}/admin/faculties`,
-    },
+    // {
+    //   icon: GraduationCap,
+    //   label: "Faculties",
+    //   path: `/${language}/admin/faculties`,
+    // },
     { icon: BookOpen, label: "Majors", path: `/${language}/admin/majors` },
     {
       icon: BookOpenCheck,

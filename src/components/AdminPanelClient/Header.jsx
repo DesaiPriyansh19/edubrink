@@ -68,7 +68,6 @@ const Header = ({ data: notifications, refetch }) => {
           `https://edu-brink-backend.vercel.app/api/keyword/admin`
         );
         const adaptedData = adaptKeywordData(response.data.data);
-        console.log(adaptedData);
         setKeywordData(adaptedData);
       } catch (error) {
         console.error("Error fetching keywords:", error);

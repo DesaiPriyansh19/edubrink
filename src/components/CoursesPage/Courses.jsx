@@ -51,8 +51,6 @@ const CoursePage = () => {
       )}`;
 
   const { data, loading } = useFetch(apiUrl);
-
-  console.log(data);
   const navigate = useNavigate();
 
   // Update document head for SEO

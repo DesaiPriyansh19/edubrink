@@ -16,24 +16,25 @@ import useFetch from "../../hooks/useFetch"
 import { useSearch } from "../../context/SearchContext"
 import useClickOutside from "../../hooks/useClickOutside"
 import { SearchDropdown } from "../../utils/SearchDropDown"
-import { ChevronDown, LogOut } from "lucide-react"
+import { ChevronDown, LogOut, LogIn } from "lucide-react"
 
-const NavBar = () => {
+const isWindows = navigator.userAgent.includes("Windows")
+
+const NavBar = ({ setIsModalOpen }) => {
   const [showCoursesDropdown, setShowCoursesDropdown] = useState(false)
   const { setFilterProp, filterProp, setSearchState, searchState, initialState } = useSearch()
 
   const [showCountriesDropdown, setShowCountriesDropdown] = useState(false)
-  const [showAboutDropdown, setShowAboutDropdown] = useState(false)
   const [showFlagsDropdown, setShowFlagsDropdown] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [showLogoutOption, setShowLogoutOption] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0)
 
   const dropDownLanguageRef = useClickOutside(() => setShowFlagsDropdown(false))
   const dropDownCountryRef = useClickOutside(() => setShowCountriesDropdown(false))
   const dropDownCourseRef = useClickOutside(() => setShowCoursesDropdown(false))
-  const logoRef = useClickOutside(() => setShowLogoutOption(false))
   const searchContainerRef = useRef(null)
 
   const inputRef = useRef(null)
@@ -58,9 +59,34 @@ const NavBar = () => {
   const keywords = KeywordData || []
 
   const languageLabels = {
-    en: "English",
-    ar: "العربية",
+    en: {
+      text: "English",
+      emoji: "🇺🇸",
+      code: "us",
+    },
+    ar: {
+      text: "العربية",
+      emoji: "🇦🇪",
+      code: "ae",
+    },
   }
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = () => {
+      const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}")
+      setIsLoggedIn(!!userInfo?.token) // Set to true if token exists
+    }
+
+    // Check on initial load
+    checkLoginStatus()
+
+    // Set up an interval to check periodically
+    const intervalId = setInterval(checkLoginStatus, 1000)
+
+    // Clean up interval on unmount
+    return () => clearInterval(intervalId)
+  }, [])
 
   // Handle window resize
   useEffect(() => {
@@ -502,12 +528,15 @@ const NavBar = () => {
     localStorage.removeItem("eduuserInfo")
     // Redirect to home page
     navigate(`/${language}`)
-    // Close the logout option
-    setShowLogoutOption(false)
+    // Update login state
+    setIsLoggedIn(false)
   }
 
-  const toggleLogoutOption = () => {
-    setShowLogoutOption(!showLogoutOption)
+  const handleLogin = () => {
+    // Instead of navigating, open the auth modal
+    if (setIsModalOpen) {
+      setIsModalOpen(true)
+    }
   }
 
   return (
@@ -515,38 +544,17 @@ const NavBar = () => {
       <div className="w-full my-3 h-auto sticky mmd:static top-0 z-30 bg-[#F8F8F8] mmd:bg-transparent">
         <nav
           id="navbar"
-          className="sticky mmd:static top-0 z-30 flex py-4 md:py-2 mb-2 items-center w-[98%] mx-auto mmd:justify-between px-4 text-sm bg-white rounded-xl md:rounded-3xl shadow-md"
+          className="sticky mmd:static top-0 z-30 flex py-4 md:py-2 mb-2 items-center w-[98%] mx-auto mmd:justify-between px-4 text-sm bg-white rounded-xl md:rounded-xl shadow-[30px]"
         >
           {/* Logo */}
-          <div className="flex gap-3 items-center w-auto h-auto justify-center relative" ref={logoRef}>
+          <div className="flex gap-3 items-center w-auto h-auto justify-center relative">
             <span className="flex mmd:hidden" onClick={toggleSidebar}>
               {isMenuOpen ? <TogelMenuTwo /> : <TogelMenu />}
             </span>
-            <div className="relative">
-              <h2
-                className="text-xl mmd:text-2xl font-semibold bg-white cursor-pointer pointer text-gray-800"
-                onClick={toggleLogoutOption}
-              >
-                <Link to={`/${language}`}>Edubrink</Link>
-              </h2>
 
-              {/* Logout Option */}
-              {showLogoutOption && (
-                <div
-                  className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg py-2 w-36 z-50 transform transition-all duration-300 ease-in-out"
-                  data-aos="fade-up"
-                  data-aos-duration="300"
-                >
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
+            <h2 className="text-xl mmd:text-2xl font-semibold bg-white cursor-pointer pointer text-gray-800">
+              <Link to={`/${language}`}>Edubrink</Link>
+            </h2>
           </div>
 
           {/* Desktop Search Bar */}
@@ -585,7 +593,15 @@ const NavBar = () => {
                 className="flex items-center space-x-2 px-3 py-2 rounded-full text-gray-800 hover:bg-gray-100 transition-all duration-200 ease-in-out hover:shadow-md"
                 onClick={() => handleDropdownToggle("flags")}
               >
-                <span>{languageLabels[language]}</span>
+                {isWindows ? (
+                  <img
+                    src={`https://flagcdn.com/w320/${languageLabels[language].code}.png`}
+                    alt={languageLabels[language].text}
+                    className="w-5 h-5 object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-xl">{languageLabels[language].emoji}</span>
+                )}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -604,7 +620,7 @@ const NavBar = () => {
                   className={`absolute top-10 z-30 ${
                     language === "ar" ? "left-0" : "right-0"
                   } mt-2 w-40 bg-white border rounded-xl shadow-xl
-                  transform transition-all duration-300 ease-in-out opacity-100 scale-100 origin-top`}
+      transform transition-all duration-300 ease-in-out opacity-100 scale-100  origin-top`}
                 >
                   <li
                     className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
@@ -612,7 +628,16 @@ const NavBar = () => {
                       changeLanguage("en")
                     }}
                   >
-                    <span className="mr-2">🇺🇸</span> English
+                    {isWindows ? (
+                      <img
+                        src="https://flagcdn.com/w320/us.png"
+                        alt="English"
+                        className="w-5 h-5 object-cover rounded-full mr-2"
+                      />
+                    ) : (
+                      <span className="mr-2 text-xl">🇺🇸</span>
+                    )}
+                    English
                   </li>
                   <li
                     className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
@@ -620,7 +645,16 @@ const NavBar = () => {
                       changeLanguage("ar")
                     }}
                   >
-                    <span className="mr-2">🇦🇪</span> العربية
+                    {isWindows ? (
+                      <img
+                        src="https://flagcdn.com/w320/ae.png"
+                        alt="Arabic"
+                        className="w-5 h-5 object-cover rounded-full mr-2"
+                      />
+                    ) : (
+                      <span className="mr-2 text-xl">🇦🇪</span>
+                    )}
+                    العربية
                   </li>
                 </ul>
               )}
@@ -663,37 +697,83 @@ const NavBar = () => {
               {t("about")}
             </Link>
 
+            <Link
+              to={`/${language}/contact`}
+              className=" text-sm  font-medium text-gray-800 hover:text-[#652986] transition-colors"
+            >
+              {t("contactUs")}
+            </Link>
+
             {/* Language Dropdown */}
             <div className="relative group">
-              <button className="flex items-center space-x-1  text-sm  font-medium text-gray-800 hover:text-[#652986] transition-colors">
-                <span>{languageLabels[language]}</span>
+              {" "}
+              <button className="flex items-center space-x-1 text-sm font-medium text-gray-800 hover:text-[#652986] transition-colors">
+                {isWindows ? (
+                  <img
+                    src={`https://flagcdn.com/w320/${languageLabels[language].code}.png`}
+                    alt={languageLabels[language].text}
+                    className="w-5 h-5 object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-xl">{languageLabels[language].emoji}</span>
+                )}
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
-              <div className="absolute top-full right-0 mt-1 w-40 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-                <div className="py-1">
+              <div className="absolute top-full right-0 mt-1 w-40 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                <div className="py-1 rounded-xl">
                   <button
                     onClick={() => changeLanguage("en")}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    <span className="mr-2">🇺🇸</span> English
+                    {isWindows ? (
+                      <img
+                        src="https://flagcdn.com/w320/us.png"
+                        alt="English"
+                        className="w-5 h-5 object-cover rounded-full mr-2"
+                      />
+                    ) : (
+                      <span className="mr-2 text-xl">🇺🇸</span>
+                    )}
+                    English
                   </button>
                   <button
                     onClick={() => changeLanguage("ar")}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    <span className="mr-2">🇦🇪</span> العربية
+                    {isWindows ? (
+                      <img
+                        src="https://flagcdn.com/w320/ae.png"
+                        alt="Arabic"
+                        className="w-5 h-5 object-cover rounded-full mr-2"
+                      />
+                    ) : (
+                      <span className="mr-2 text-xl">🇦🇪</span>
+                    )}
+                    العربية
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Contact Us Button */}
-          <Link to={"/contact"}>
-            <button className="hidden mmd:flex px-6 py-2.5  text-sm font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-              {t("contactUs")}
+          {/* Conditional Login/Logout Button */}
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              {t("logOut")}
             </button>
-          </Link>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            >
+              <LogIn className="w-4 h-4 mr-2" />
+              {t("login")}
+            </button>
+          )}
         </nav>
       </div>
 

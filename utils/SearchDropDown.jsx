@@ -70,7 +70,7 @@ export const SearchDropdown = ({
     <div className="relative w-full" dir={language === "ar" ? "rtl" : "ltr"}>
       {/* Search Input with enhanced styling */}
       <div className="relative group">
-        <div className="absolute z-10 inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+        <div className={`absolute z-10 ${language==="ar"?"right-0 pr-4":"left-0 pl-4"} inset-y-0  flex items-center pl-4 pointer-events-none`}>
           <Search
             className={`w-5 h-5 transition-colors duration-200 ${
               isFocused ? "text-blue-500" : "text-gray-900"

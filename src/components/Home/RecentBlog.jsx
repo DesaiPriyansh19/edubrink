@@ -15,7 +15,7 @@ function RecentBlog() {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/blog/`,
+    `https://edu-brink-backend.vercel.app/api/blog/?limit=5&fields=blogTitle,blogSubtitle,blogPhoto,blogCountry.countryName,blogAdded`,
     false
   );
   const { t } = useTranslation();

@@ -12,6 +12,7 @@ import {
   BookOpen,
   Search,
   AlertCircle,
+  Building2,
 } from "lucide-react"
 import RichText from "../../../../utils/RichText"
 import { useLanguage } from "../../../../context/LanguageContext"
@@ -25,6 +26,11 @@ const initialFormData = {
     ar: "",
   },
   faculty: "",
+  university: "",
+  universityName: {
+    en: "",
+    ar: "",
+  },
   majorDescription: {
     en: "",
     ar: "",
@@ -85,8 +91,10 @@ export default function AddMajor() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [showFlagPicker, setShowFlagPicker] = useState(false)
-  const [flagSearch, setFlagSearch] = useState("")
+  const [showFacultyPicker, setShowFacultyPicker] = useState(false)
+  const [showUniversityPicker, setShowUniversityPicker] = useState(false)
+  const [facultySearch, setFacultySearch] = useState("")
+  const [universitySearch, setUniversitySearch] = useState("")
   const [formData, setFormData] = useState(initialFormData)
   const [newItems, setNewItems] = useState({
     studyLevel: "",
@@ -113,6 +121,10 @@ export default function AddMajor() {
 
     if (name === "faculty" && (!value || value === "")) {
       error = "Faculty is required"
+    }
+
+    if (name === "university" && (!value || value === "")) {
+      error = "University is required"
     }
 
     if (name === "duration") {
@@ -201,8 +213,9 @@ export default function AddMajor() {
     errors["majorName.en"] = validateField("majorName.en", formData.majorName.en)
     errors["majorName.ar"] = validateField("majorName.ar", formData.majorName.ar)
 
-    // Validate faculty
+    // Validate faculty and university
     errors["faculty"] = validateField("faculty", formData.faculty)
+    errors["university"] = validateField("university", formData.university)
 
     // Validate duration
     errors["duration"] = validateField("duration", formData.duration)
@@ -253,6 +266,7 @@ export default function AddMajor() {
       "majorName.en": true,
       "majorName.ar": true,
       faculty: true,
+      university: true,
       duration: true,
       majorTuitionFees: true,
       studyLevel: true,
@@ -275,7 +289,7 @@ export default function AddMajor() {
     setError(null)
 
     try {
-      const { facultyName, ...updatedFormData } = {
+      const { facultyName, universityName, ...updatedFormData } = {
         ...formData,
       }
 
@@ -328,10 +342,16 @@ export default function AddMajor() {
     }))
   }
 
-  const filterFacultyData = filteredData.faculties.filter(
-    (country) =>
-      country.facultyName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.facultyName.ar.toLowerCase().includes(flagSearch.toLowerCase()),
+  const filteredFacultyData = filteredData.faculties.filter(
+    (faculty) =>
+      faculty.facultyName.en.toLowerCase().includes(facultySearch.toLowerCase()) ||
+      faculty.facultyName.ar.toLowerCase().includes(facultySearch.toLowerCase()),
+  )
+
+  const filteredUniversityData = filteredData.universities.filter(
+    (university) =>
+      university.uniName.en.toLowerCase().includes(universitySearch.toLowerCase()) ||
+      university.uniName.ar.toLowerCase().includes(universitySearch.toLowerCase()),
   )
 
   const renderArrayField = (field, label, icon, placeholder, options) => {
@@ -535,13 +555,92 @@ export default function AddMajor() {
               }))}
             />
 
+            {/* University Dropdown */}
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">University</label>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUniversityPicker(!showUniversityPicker)
+                    setShowFacultyPicker(false)
+                    setTouched((prev) => ({ ...prev, university: true }))
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
+                    touched["university"] && validationErrors["university"] ? "border-red-300" : "border-gray-300"
+                  }`}
+                >
+                  <span className="flex items-center">
+                    <span className="py-1 text-gray-600">
+                      {formData?.universityName?.en || formData?.university || "Select University"}
+                    </span>
+                  </span>
+                  <Building2 className="w-5 h-5 text-gray-400" />
+                </button>
+
+                {touched["university"] && validationErrors["university"] && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors["university"]}</p>
+                )}
+
+                {showUniversityPicker && (
+                  <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="p-2 border-b">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <input
+                          type="text"
+                          placeholder="Search universities..."
+                          value={universitySearch}
+                          onChange={(e) => setUniversitySearch(e.target.value)}
+                          className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {filteredUniversityData.map((university) => (
+                        <button
+                          key={university._id}
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              university: university._id, // Updating university ID
+                              universityName: {
+                                en: university.uniName.en,
+                                ar: university.uniName.ar,
+                              },
+                            }))
+                            setShowUniversityPicker(false)
+
+                            // Validate
+                            const error = validateField("university", university._id)
+                            setValidationErrors((prev) => ({
+                              ...prev,
+                              university: error,
+                            }))
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
+                        >
+                          <span className="text-gray-700 text-sm">
+                            {university?.uniName?.en} - {university?.uniName?.ar}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Faculty Dropdown */}
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Faculty</label>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => {
-                    setShowFlagPicker(!showFlagPicker)
+                    setShowFacultyPicker(!showFacultyPicker)
+                    setShowUniversityPicker(false)
                     setTouched((prev) => ({ ...prev, faculty: true }))
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
@@ -550,8 +649,7 @@ export default function AddMajor() {
                 >
                   <span className="flex items-center">
                     <span className="py-1 text-gray-600">
-                      {formData?.facultyName?.en || formData?.faculty || "Select Faculty"}{" "}
-                      {/* Placeholder if name is empty */}
+                      {formData?.facultyName?.en || formData?.faculty || "Select Faculty"}
                     </span>
                   </span>
                   <BookOpen className="w-5 h-5 text-gray-400" />
@@ -561,7 +659,7 @@ export default function AddMajor() {
                   <p className="mt-1 text-sm text-red-600">{validationErrors["faculty"]}</p>
                 )}
 
-                {showFlagPicker && (
+                {showFacultyPicker && (
                   <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
                     <div className="p-2 border-b">
                       <div className="relative">
@@ -569,14 +667,14 @@ export default function AddMajor() {
                         <input
                           type="text"
                           placeholder="Search faculties..."
-                          value={flagSearch}
-                          onChange={(e) => setFlagSearch(e.target.value)}
+                          value={facultySearch}
+                          onChange={(e) => setFacultySearch(e.target.value)}
                           className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                         />
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filterFacultyData.map((faculty) => (
+                      {filteredFacultyData.map((faculty) => (
                         <button
                           key={faculty._id}
                           type="button"
@@ -590,7 +688,7 @@ export default function AddMajor() {
                                 ar: faculty.facultyName.ar,
                               },
                             }))
-                            setShowFlagPicker(false)
+                            setShowFacultyPicker(false)
 
                             // Validate
                             const error = validateField("faculty", faculty._id)

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -12,42 +14,84 @@ import {
   Home,
   SortAsc,
   Filter,
-  Gem,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import Loader from "../../../../utils/Loader";
 import { useLanguage } from "../../../../context/LanguageContext";
-import useApiData from "../../../../hooks/useApiData";
 import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
 import useDropdownData from "../../../../hooks/useDropdownData";
+import axios from "axios";
 
 export default function UniCRUD() {
   const navigate = useNavigate();
   const { filteredData } = useDropdownData();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterCountry, setFilterCountry] = useState("");
   const [filterType, setFilterType] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
   const [error, setError] = useState(null);
   const { language } = useLanguage();
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery); // Store debounced value
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [universityToDelete, setUniversityToDelete] = useState(null);
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const getToken = () => {
+    const userInfo = JSON.parse(localStorage.getItem("eduuserInfo"));
+    return userInfo?.token || "";
+  };
+
+  // Debounce search input
   useEffect(() => {
+    setIsSearching(true);
     const handler = setTimeout(() => {
       setDebouncedSearch(searchQuery);
     }, 500); // 500ms delay
 
-    return () => clearTimeout(handler); // Cleanup on unmount or if searchQuery changes
+    return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  const baseUrl = isDeletePopupOpen
-    ? `https://edu-brink-backend.vercel.app/api/university`
-    : `https://edu-brink-backend.vercel.app/api/university/fields/query?search=${debouncedSearch}`;
-  const { data: universities, loading, deleteById } = useApiData(baseUrl);
+  // Fetch universities with pagination
+  const fetchUniversities = async () => {
+    setLoading(true);
+    try {
+      const token = getToken();
+      const response = await axios.get(
+        `https://edu-brink-backend.vercel.app/api/university/fields/query?search=${debouncedSearch}&page=${currentPage}&limit=${itemsPerPage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUniversities(response.data.data || []);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalCount);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch universities. Please try again.");
+      console.error("Error fetching universities:", err);
+    } finally {
+      setLoading(false);
+      setIsSearching(false);
+    }
+  };
+
+  // Fetch data when pagination params or search term changes
+  useEffect(() => {
+    fetchUniversities();
+  }, [currentPage, itemsPerPage, debouncedSearch]);
 
   const handleDelete = (university) => {
     setUniversityToDelete(university);
@@ -58,9 +102,18 @@ export default function UniCRUD() {
     if (!universityToDelete) return;
 
     try {
-      await deleteById(id);
+      const token = getToken();
+      await axios.delete(
+        `https://edu-brink-backend.vercel.app/api/university/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setIsDeletePopupOpen(false);
       setUniversityToDelete(null);
+      fetchUniversities(); // Refresh data after deletion
     } catch (error) {
       console.error("Error deleting university:", error);
     }
@@ -77,11 +130,6 @@ export default function UniCRUD() {
           direction *
           (a.countryName?.en || "").localeCompare(b.countryName?.en || "")
         );
-      // case "created_at":
-      //   return (
-      //     direction *
-      //     (new Date(a.uniCreationDate).getTime() - new Date(b.uniCreationDate).getTime())
-      //   );
       default:
         return 0;
     }
@@ -105,10 +153,69 @@ export default function UniCRUD() {
     }
   };
 
-  if (loading) {
-    <div className="flex items-center justify-center h-screen">
-      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-    </div>;
+  // Pagination controls
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total pages are less than max pages to show
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+
+      // Calculate start and end of middle pages
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      // Adjust if we're near the beginning
+      if (currentPage <= 3) {
+        endPage = 4;
+      }
+
+      // Adjust if we're near the end
+      if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 3;
+      }
+
+      // Add ellipsis after first page if needed
+      if (startPage > 2) {
+        pageNumbers.push("...");
+      }
+
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      // Add ellipsis before last page if needed
+      if (endPage < totalPages - 1) {
+        pageNumbers.push("...");
+      }
+
+      // Always show last page
+      pageNumbers.push(totalPages);
+    }
+
+    return pageNumbers;
+  };
+
+  if (loading && universities.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
   }
 
   return (
@@ -150,19 +257,7 @@ export default function UniCRUD() {
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               />
             </div>
-            <div className="flex gap-4">
-              {/* <select
-                value={filterCountry}
-                onChange={(e) => setFilterCountry(e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 min-w-[200px]"
-              >
-                <option value="">All Countries</option>
-                {countries.map((country) => (
-                  <option key={country.id} value={country.id}>
-                    {country.name}
-                  </option>
-                ))}
-              </select> */}
+            <div className="flex items-center gap-4">
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
@@ -173,6 +268,26 @@ export default function UniCRUD() {
                 <option value="private">Private</option>
                 <option value="research">Research</option>
               </select>
+              <div className="flex items-center gap-2">
+                <label htmlFor="itemsPerPage" className="text-sm text-gray-600">
+                  Items per page:
+                </label>
+                <select
+                  id="itemsPerPage"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1); // Reset to first page when changing items per page
+                  }}
+                  className="border rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
+                >
+                  {[10, 20, 30, 40, 50].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4 mt-4 text-sm text-gray-600">
@@ -210,27 +325,37 @@ export default function UniCRUD() {
                 />
               )}
             </button>
-            <button
-              onClick={() => handleSort("created_at")}
-              className={`flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 ${
-                sortBy === "created_at" ? "text-blue-600 font-medium" : ""
-              }`}
-            >
-              Date Added
-              {sortBy === "created_at" && (
-                <SortAsc
-                  className={`w-4 h-4 ${
-                    sortDirection === "desc" ? "transform rotate-180" : ""
-                  }`}
-                />
-              )}
-            </button>
           </div>
         </div>
 
         {/* Universities Grid */}
         <div className="p-4">
-          {filteredUniversities.length === 0 ? (
+          {/* Loading Skeleton */}
+          {isSearching && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(itemsPerPage)].map((_, index) => (
+                <div key={index} className="border rounded-lg overflow-hidden">
+                  <div className="aspect-video bg-gray-200 animate-pulse"></div>
+                  <div className="p-4">
+                    <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-4 w-2/3"></div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div className="h-6 w-28 bg-gray-200 rounded-full animate-pulse"></div>
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Actual Content */}
+          {!isSearching && filteredUniversities.length === 0 ? (
             <div className="p-8 text-center">
               <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-1">
@@ -242,79 +367,137 @@ export default function UniCRUD() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredUniversities.map((university) => (
-                <div
-                  key={`${university.countryName.en}-${university._id}`}
-                  className="group bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 relative"
-                >
-                  <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                    <img
-                      src={
-                        university?.uniMainImage ||
-                        "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=800"
-                      }
-                      alt={university.uniName.en}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="text-white font-semibold text-lg leading-tight mb-1">
-                        {university.uniName.en}
-                      </h3>
-                      <div className="flex items-center text-white/90 text-sm">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {university.countryName?.en || "N/A"}
+            !isSearching && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredUniversities.map((university) => (
+                  <div
+                    key={`${university.countryName?.en || "unknown"}-${
+                      university._id
+                    }`}
+                    className="group bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 relative"
+                  >
+                    <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                      <img
+                        src={
+                          university?.uniMainImage ||
+                          "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=800" ||
+                          "/placeholder.svg" ||
+                          "/placeholder.svg" ||
+                          "/placeholder.svg"
+                        }
+                        alt={university.uniName.en}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 className="text-white font-semibold text-lg leading-tight mb-1">
+                          {university.uniName.en}
+                        </h3>
+                        <div className="flex items-center text-white/90 text-sm">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {university.countryName?.en || "N/A"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="text-sm text-gray-600 line-clamp-2 mb-4">
+                        {university.uniOverview?.en?.split("\n")[0] ||
+                          "No description available"}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <BookOpen className="w-3 h-3 mr-1" />
+                          Programs Available
+                        </span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <Home className="w-3 h-3 mr-1" />
+                          Campus
+                        </span>
+                        {university.uniType && (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <Award className="w-3 h-3 mr-1" />
+                            {university.uniType}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/${language}/admin/universities/${university._id}`
+                            )
+                          }
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => handleDelete(university)}
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <div className="text-sm text-gray-600 line-clamp-2 mb-4">
-                      {university.uniOverview.en?.split("\n")[0] ||
-                        "No description available"}
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        <BookOpen className="w-3 h-3 mr-1" />
-                        Programs Available
-                      </span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <Home className="w-3 h-3 mr-1" />
-                        Campus
-                      </span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        <Gem className="w-3 h-3 mr-1" />
-                        Featured
-                      </span>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        <Award className="w-3 h-3 mr-1" />
-                        Accredited
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <button
-                        onClick={() =>
-                          navigate(
-                            `/${language}/admin/universities/${university._id}`
-                          )
-                        }
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        View Details
-                      </button>
-                      <button
-                        onClick={() => handleDelete(university)}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {!loading && !isSearching && totalPages > 1 && (
+          <div className="flex items-center justify-between border-t p-4">
+            <div className="text-sm text-gray-500">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+              universities
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`p-2 rounded-md ${
+                  currentPage === 1
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {getPageNumbers().map((page, index) => (
+                <button
+                  key={index}
+                  onClick={() => typeof page === "number" && goToPage(page)}
+                  className={`px-3 py-1 rounded-md ${
+                    page === currentPage
+                      ? "bg-blue-600 text-white"
+                      : page === "..."
+                      ? "text-gray-500 cursor-default"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`p-2 rounded-md ${
+                  currentPage === totalPages
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Statistics Section */}
@@ -329,7 +512,7 @@ export default function UniCRUD() {
               <p className="text-sm text-gray-500">Active institutions</p>
             </div>
           </div>
-          <p className="text-3xl font-bold">{universities?.length}</p>
+          <p className="text-3xl font-bold">{totalItems}</p>
           <div className="mt-2 text-sm text-gray-500">
             Across {filteredData?.countries?.length} countries
           </div>

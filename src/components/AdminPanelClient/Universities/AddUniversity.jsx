@@ -1,20 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Plus, ArrowLeft, Building2, Languages, FileCheck, BookOpen, Tag, Search } from "lucide-react"
-import { useLanguage } from "../../../../context/LanguageContext"
-import InputField from "../../../../utils/InputField"
-import RichText from "../../../../utils/RichText"
-import UploadWidget from "../../../../utils/UploadWidget"
-import ArrayFieldAndPhotos from "../../../../utils/ArrayFieldAndPhotos"
-import useDropdownData from "../../../../hooks/useDropdownData"
-import useApiData from "../../../../hooks/useApiData"
-import CampusSection from "./CampusSection"
-import MetaArrayFields from "./MetaArrayFields"
-import FaqSection from "./FaqSection"
-import { getEmoji } from "../../../../libs/countryFlags"
-const isWindows = navigator.userAgent.includes("Windows")
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Plus,
+  ArrowLeft,
+  Building2,
+  Languages,
+  FileCheck,
+  BookOpen,
+  Tag,
+  Search,
+} from "lucide-react";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+import RichText from "../../../../utils/RichText";
+import UploadWidget from "../../../../utils/UploadWidget";
+import ArrayFieldAndPhotos from "../../../../utils/ArrayFieldAndPhotos";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import useApiData from "../../../../hooks/useApiData";
+import CampusSection from "./CampusSection";
+import MetaArrayFields from "./MetaArrayFields";
+import FaqSection from "./FaqSection";
+import { getEmoji } from "../../../../libs/countryFlags";
+const isWindows = navigator.userAgent.includes("Windows");
 
 const initialFormData = {
   uniName: {
@@ -23,6 +32,7 @@ const initialFormData = {
   },
   study_programs: [],
   faculty: [],
+  major: [],
   courseId: [],
   uniTutionFees: "",
   uniMainImage: "",
@@ -101,9 +111,9 @@ const initialFormData = {
     ar: "",
   },
   entranceExamRequired: false,
-}
+};
 
-const universityTypes = ["Public", "Private", "Research", "Technical"]
+const universityTypes = ["Public", "Private", "Research", "Technical"];
 
 const studyPrograms = [
   "Engineering",
@@ -115,8 +125,15 @@ const studyPrograms = [
   "Social Sciences",
   "Natural Sciences",
   "Architecture",
-]
-const languages = ["English", "French", "German", "Spanish", "Arabic", "Chinese"]
+];
+const languages = [
+  "English",
+  "French",
+  "German",
+  "Spanish",
+  "Arabic",
+  "Chinese",
+];
 const commonRequirements = [
   "High School Diploma",
   "Bachelor Degree",
@@ -126,57 +143,56 @@ const commonRequirements = [
   "GMAT",
   "Motivation Letter",
   "Recommendation Letters",
-]
+];
 
 export default function AddUniversity() {
-  const navigate = useNavigate()
-  const { filteredData, setSearchInput, handleAdd, handleRemove } = useDropdownData()
+  const navigate = useNavigate();
+  const { filteredData, setSearchInput, handleAdd, handleRemove } =
+    useDropdownData();
 
-  const [showFlagPicker, setShowFlagPicker] = useState(false)
-  const [flagSearch, setFlagSearch] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [photosshow, setPhotosShow] = useState("LifeStyle")
-  const [showDropdown, setShowDropdown] = useState({
-    courses: false,
-    faculty: false,
-  })
-  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/university")
-  const { language } = useLanguage()
-  const [error, setError] = useState(null)
-  const [formData, setFormData] = useState(initialFormData)
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [photosshow, setPhotosShow] = useState("LifeStyle");
+  const { addNew } = useApiData(
+    "https://edu-brink-backend.vercel.app/api/university"
+  );
+  const { language } = useLanguage();
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
   const [newItems, setNewItems] = useState({
     study_programs: "",
     spokenLanguage: "",
     admission_requirements: "",
-  })
-  const [validationErrors, setValidationErrors] = useState({})
+  });
+  const [validationErrors, setValidationErrors] = useState({});
 
   const filterFacultyData = filteredData.countries?.filter(
     (country) =>
       country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase()),
-  )
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
+  );
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target
-    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
 
-    const temp = { ...formData } // Clone the form data to avoid direct mutation
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value
+        acc[part] = type === "checkbox" ? checked : value;
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
       }
-      return acc[part]
-    }, temp)
+      return acc[part];
+    }, temp);
 
     if (nameParts.includes("uniName")) {
-      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -186,174 +202,179 @@ export default function AddUniversity() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        }
+        };
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        }
+        };
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp)
+    setFormData(temp);
 
     // Clear validation error for this field if it exists
     if (validationErrors[name]) {
       setValidationErrors((prevErrors) => {
-        const updatedErrors = { ...prevErrors }
-        delete updatedErrors[name] // Remove the error for this field
-        return updatedErrors
-      })
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[name]; // Remove the error for this field
+        return updatedErrors;
+      });
     }
-  }
-  const [activeSection, setActiveSection] = useState(null)
+  };
+  const [activeSection, setActiveSection] = useState(null);
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Basic validation
-    const errors = {}
+    const errors = {};
     if (!formData.uniName.en) {
-      errors["uniName.en"] = "University Name (English) is required"
+      errors["uniName.en"] = "University Name (English) is required";
     }
     if (!formData.uniName.ar) {
-      errors["uniName.ar"] = "University Name (Arabic) is required"
+      errors["uniName.ar"] = "University Name (Arabic) is required";
     }
     if (!formData.uniType) {
-      errors["uniType"] = "University Type is required"
+      errors["uniType"] = "University Type is required";
     }
     if (!formData.uniTutionFees) {
-      errors["uniTutionFees"] = "Tuition Fees is required"
+      errors["uniTutionFees"] = "Tuition Fees is required";
     }
     if (!formData.uniMainImage) {
-      errors["uniMainImage"] = "Main Image URL is required"
+      errors["uniMainImage"] = "Main Image URL is required";
     }
     if (!formData.uniCountry) {
-      errors["uniCountry"] = "Country is required"
+      errors["uniCountry"] = "Country is required";
     }
     if (formData.study_programs.length === 0) {
-      errors["study_programs"] = "At least one study program is required"
+      errors["study_programs"] = "At least one study program is required";
     }
     if (formData.spokenLanguage.length === 0) {
-      errors["spokenLanguage"] = "At least one language is required"
+      errors["spokenLanguage"] = "At least one language is required";
     }
     if (formData.admission_requirements.length === 0) {
-      errors["admission_requirements"] = "At least one admission requirement is required"
+      errors["admission_requirements"] =
+        "At least one admission requirement is required";
     }
     if (!formData.seo.metaTitle.en) {
-      errors["seo.metaTitle.en"] = "Meta Title (English) is required"
+      errors["seo.metaTitle.en"] = "Meta Title (English) is required";
     }
     if (!formData.seo.metaTitle.ar) {
-      errors["seo.metaTitle.ar"] = "Meta Title (Arabic) is required"
+      errors["seo.metaTitle.ar"] = "Meta Title (Arabic) is required";
     }
     if (!formData.seo.metaDescription.en) {
-      errors["seo.metaDescription.en"] = "Meta Description (English) is required"
+      errors["seo.metaDescription.en"] =
+        "Meta Description (English) is required";
     }
     if (!formData.seo.metaDescription.ar) {
-      errors["seo.metaDescription.ar"] = "Meta Description (Arabic) is required"
+      errors["seo.metaDescription.ar"] =
+        "Meta Description (Arabic) is required";
     }
     if (!formData.customURLSlug.en) {
-      errors["customURLSlug.en"] = "Custom URL (English) is required"
+      errors["customURLSlug.en"] = "Custom URL (English) is required";
     }
     if (!formData.customURLSlug.ar) {
-      errors["customURLSlug.ar"] = "Custom URL (Arabic) is required"
+      errors["customURLSlug.ar"] = "Custom URL (Arabic) is required";
     }
 
     // Add these validation checks
     if (!formData.uniStartDate) {
-      errors["uniStartDate"] = "University Start Date is required"
+      errors["uniStartDate"] = "University Start Date is required";
     }
     if (!formData.uniDeadline) {
-      errors["uniDeadline"] = "Application Deadline is required"
+      errors["uniDeadline"] = "Application Deadline is required";
     }
     if (!formData.living_cost) {
-      errors["living_cost"] = "Living Cost is required"
+      errors["living_cost"] = "Living Cost is required";
     }
     if (!formData.uniAccomodation.en) {
-      errors["uniAccomodation.en"] = "Accommodation (English) is required"
+      errors["uniAccomodation.en"] = "Accommodation (English) is required";
     }
     if (!formData.uniAccomodation.ar) {
-      errors["uniAccomodation.ar"] = "Accommodation (Arabic) is required"
+      errors["uniAccomodation.ar"] = "Accommodation (Arabic) is required";
     }
 
-    setValidationErrors(errors)
+    setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      setError("Please fix the validation errors before submitting")
-      window.scrollTo({ top: 0, behavior: "smooth" })
-      return
+      setError("Please fix the validation errors before submitting");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const { countryEmoji, countryName, countryCode, ...updatedFormData } = {
         ...formData,
         courseId: formData.courseId.map((course) => course._id),
         faculty: formData.faculty.map((faculty) => faculty._id),
-      }
-      console.log(updatedFormData)
+      };
+      console.log(updatedFormData);
 
-      await addNew(updatedFormData)
-      setFormData(initialFormData)
-      navigate(`/${language}/admin/universities`)
+      await addNew(updatedFormData);
+      setFormData(initialFormData);
+      navigate(`/${language}/admin/universities`);
     } catch (err) {
-      console.error("Error adding university:", err)
-      setError(err.message || "Failed to add university. Please try again.")
+      console.error("Error adding university:", err);
+      setError(err.message || "Failed to add university. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleMainPhotoChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedPhotos = [...prevData[field]] // Dynamically access the field
-      updatedPhotos[index] = value
-      return { ...prevData, [field]: updatedPhotos } // Update the specific field
-    })
-  }
+      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
+      updatedPhotos[index] = value;
+      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
+    });
+  };
 
   const addItem = (field) => {
-    const newItem = newItems[field]
+    const newItem = newItems[field];
     if (newItem && !formData[field].includes(newItem)) {
       setFormData((prev) => ({
         ...prev,
         [field]: [...prev[field], newItem],
-      }))
-      setNewItems((prev) => ({ ...prev, [field]: "" }))
-      setActiveSection(null)
+      }));
+      setNewItems((prev) => ({ ...prev, [field]: "" }));
+      setActiveSection(null);
 
       // Clear validation error for this field if it exists
       if (validationErrors[field]) {
         setValidationErrors((prevErrors) => {
-          const updatedErrors = { ...prevErrors }
-          delete updatedErrors[field]
-          return updatedErrors
-        })
+          const updatedErrors = { ...prevErrors };
+          delete updatedErrors[field];
+          return updatedErrors;
+        });
       }
     }
-  }
+  };
 
   const removeItem = (field, item) => {
     setFormData((prev) => ({
       ...prev,
       [field]: prev[field].filter((i) => i !== item),
-    }))
-  }
+    }));
+  };
 
   const renderArrayField = (field, label, icon, placeholder, options) => (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
-      {validationErrors[field] && <p className="text-red-500 text-xs mt-1">{validationErrors[field]}</p>}
+      {validationErrors[field] && (
+        <p className="text-red-500 text-xs mt-1">{validationErrors[field]}</p>
+      )}
       <div className="flex gap-2 mb-2">
         {options ? (
           <select
             value={activeSection === field ? newItems[field] : ""}
             onChange={(e) => {
-              setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
-              setActiveSection(field)
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+              setActiveSection(field);
             }}
             className={`flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
               validationErrors[field] ? "border-red-500" : ""
@@ -369,7 +390,7 @@ export default function AddUniversity() {
                 <option key={option} value={option}>
                   {option}
                 </option>
-              ),
+              )
             )}
           </select>
         ) : (
@@ -377,8 +398,8 @@ export default function AddUniversity() {
             type="text"
             value={activeSection === field ? newItems[field] : ""}
             onChange={(e) => {
-              setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
-              setActiveSection(field)
+              setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+              setActiveSection(field);
             }}
             placeholder={placeholder}
             className={`flex-1 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
@@ -396,17 +417,24 @@ export default function AddUniversity() {
       </div>
       <div className="flex flex-wrap gap-2">
         {formData[field].map((item) => (
-          <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+          <div
+            key={item}
+            className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+          >
             {icon}
             {item}
-            <button type="button" onClick={() => removeItem(field, item)} className="text-blue-500 hover:text-blue-700">
+            <button
+              type="button"
+              onClick={() => removeItem(field, item)}
+              className="text-blue-500 hover:text-blue-700"
+            >
               ×
             </button>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -421,7 +449,11 @@ export default function AddUniversity() {
         <h1 className="text-2xl font-bold">Add New University</h1>
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="">
         <div className="space-y-6">
@@ -637,7 +669,9 @@ export default function AddUniversity() {
             />
 
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Country
+              </label>
               <div className="relative">
                 <button
                   type="button"
@@ -649,23 +683,31 @@ export default function AddUniversity() {
                       formData?.countryCode ? (
                         <div className="flex gap-2  items-center">
                           <img
-                            src={`https://flagcdn.com/w320/${getEmoji(formData?.countryCode)}.png`}
+                            src={`https://flagcdn.com/w320/${getEmoji(
+                              formData?.countryCode
+                            )}.png`}
                             alt="Country Flag"
                             className="w-4 h-4 object-cover rounded-full"
                           />
                           <span className="py-1 text-gray-600">
-                            {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                            {formData?.countryName?.en ||
+                              formData?.uniCountry ||
+                              "Select Country"}{" "}
                             {/* Placeholder if name is empty */}
                           </span>
                         </div>
                       ) : (
-                        <span className="py-1 text-gray-600">Select Country</span>
+                        <span className="py-1 text-gray-600">
+                          Select Country
+                        </span>
                       )
                     ) : (
                       <>
                         <span>{formData?.countryEmoji}</span>
                         <span className="py-1 text-gray-600">
-                          {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                          {formData?.countryName?.en ||
+                            formData?.uniCountry ||
+                            "Select Country"}{" "}
                           {/* Placeholder if name is empty */}
                         </span>
                       </>
@@ -675,7 +717,9 @@ export default function AddUniversity() {
                 </button>
 
                 {validationErrors["uniCountry"] && (
-                  <p className="text-red-500 text-xs mt-1">{validationErrors["uniCountry"]}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors["uniCountry"]}
+                  </p>
                 )}
 
                 {showFlagPicker && (
@@ -708,8 +752,8 @@ export default function AddUniversity() {
                               },
                               countryCode: country.countryCode,
                               countryEmoji: country.countryPhotos.countryFlag,
-                            }))
-                            setShowFlagPicker(false)
+                            }));
+                            setShowFlagPicker(false);
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
@@ -717,22 +761,29 @@ export default function AddUniversity() {
                             country?.countryCode ? (
                               <div className="flex gap-2 mt-2 items-center">
                                 <img
-                                  src={`https://flagcdn.com/w320/${getEmoji(country?.countryCode)}.png`}
+                                  src={`https://flagcdn.com/w320/${getEmoji(
+                                    country?.countryCode
+                                  )}.png`}
                                   alt="Country Flag"
                                   className="w-4 h-4 object-cover rounded-full"
                                 />
                                 <p className="text-black text-sm">
-                                  {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
+                                  {language === "ar"
+                                    ? country?.countryName?.ar
+                                    : country?.countryName?.en}
                                 </p>
                               </div>
                             ) : (
-                              <span className="text-[.6rem] font-medium">No flag</span>
+                              <span className="text-[.6rem] font-medium">
+                                No flag
+                              </span>
                             )
                           ) : (
                             <>
                               <span>{country?.countryPhotos?.countryFlag}</span>
                               <span className="text-black text-sm">
-                                {country?.countryName?.en} - {country?.countryName?.ar}
+                                {country?.countryName?.en} -{" "}
+                                {country?.countryName?.ar}
                               </span>
                             </>
                           )}
@@ -751,21 +802,21 @@ export default function AddUniversity() {
               "Study Programs",
               <Building2 className="w-4 h-4" />,
               "Add program...",
-              studyPrograms,
+              studyPrograms
             )}
             {renderArrayField(
               "spokenLanguage",
               "Languages of Instruction",
               <Languages className="w-4 h-4" />,
               "Add language...",
-              languages,
+              languages
             )}
             {renderArrayField(
               "admission_requirements",
               "Admission Requirements",
               <FileCheck className="w-4 h-4" />,
               "Add requirement...",
-              commonRequirements,
+              commonRequirements
             )}
           </div>
 
@@ -1172,6 +1223,5 @@ export default function AddUniversity() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-

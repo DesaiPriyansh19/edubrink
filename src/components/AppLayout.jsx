@@ -1,21 +1,25 @@
-import { useLocation } from "react-router-dom";
-import AuthModal from "./AuthModal";
-import NavBar from "./NavBar";
-import Footer from "./Footer/Footer";
-import ScrollToTop from "../../utils/ScrollToTop";
+"use client"
 
-export default function AppLayout({ children, setIsModalOpen }) {
-  const location = useLocation();
-  const lang = location.pathname.split("/")[1];
-  const isAdminRoute = location.pathname.startsWith(`/${lang}/admin`);
+import { useLocation } from "react-router-dom"
+import { useState } from "react" // Add this import
+import AuthModal from "./AuthModal"
+import NavBar from "./NavBar"
+import Footer from "./Footer/Footer"
+import ScrollToTop from "../../utils/ScrollToTop"
+
+export default function AppLayout({ children }) {
+  const location = useLocation()
+  const lang = location.pathname.split("/")[1]
+  const isAdminRoute = location.pathname.startsWith(`/${lang}/admin`)
+  const [isModalOpen, setIsModalOpen] = useState(false) // Add state for modal
 
   return (
     <>
       {/* Modal Component */}
-      <AuthModal isOpen={false} onClose={() => setIsModalOpen(false)} />
+      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       {/* Conditionally Render NavBar */}
-      {!isAdminRoute && <NavBar />}
+      {!isAdminRoute && <NavBar setIsModalOpen={setIsModalOpen} />}
 
       {/* Main Content */}
       {children}
@@ -24,5 +28,6 @@ export default function AppLayout({ children, setIsModalOpen }) {
       {/* Conditionally Render Footer */}
       {!isAdminRoute && <Footer />}
     </>
-  );
+  )
 }
+

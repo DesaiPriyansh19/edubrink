@@ -11,6 +11,7 @@ import {
   BookOpen,
   Tag,
   Search,
+  BookDown,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
@@ -32,7 +33,7 @@ const initialFormData = {
     ar: "",
   },
   study_programs: [],
-  faculty: [],
+  major: [],
   courseId: [],
   uniTutionFees: "",
   uniMainImage: "",
@@ -155,6 +156,7 @@ export default function EditUniversity() {
   const [showDropdown, setShowDropdown] = useState({
     courses: false,
     faculty: false,
+    major: false,
   });
   const { data, updateWithOutById } = useApiData(
     `https://edu-brink-backend.vercel.app/api/university/${id}`
@@ -169,7 +171,7 @@ export default function EditUniversity() {
           en: data?.uniName?.en || "",
           ar: data?.uniName?.ar || "",
         },
-        faculty: data?.faculty || [],
+        major: data?.major || [],
         courseId: data?.courseId || [],
         uniSymbol: data?.uniSymbol || "",
         uniTutionFees: data?.uniTutionFees || "",
@@ -213,6 +215,7 @@ export default function EditUniversity() {
         uniStartDate: data?.uniStartDate || "",
         uniDeadline: data?.uniDeadline || "",
         uniType: data?.uniType || "",
+        study_programs: data?.study_programs || "",
         spokenLanguage: data?.spokenLanguage || [],
         scholarshipAvailability: data?.scholarshipAvailability ?? false,
         admission_requirements: data?.admission_requirements || [],
@@ -446,7 +449,7 @@ export default function EditUniversity() {
       const { countryEmoji, countryName, ...updatedFormData } = {
         ...formData,
         courseId: formData.courseId.map((course) => course._id),
-        faculty: formData.faculty.map((faculty) => faculty._id),
+        major: formData.major.map((major) => major._id),
       };
       console.log(updatedFormData);
 
@@ -550,22 +553,26 @@ export default function EditUniversity() {
         </button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {formData[field].map((item) => (
-          <div
-            key={item}
-            className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
-          >
-            {icon}
-            {item}
-            <button
-              type="button"
-              onClick={() => removeItem(field, item)}
-              className="text-blue-500 hover:text-blue-700"
+        {Array.isArray(formData[field]) ? (
+          formData[field].map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
             >
-              ×
-            </button>
-          </div>
-        ))}
+              {icon}
+              {item}
+              <button
+                type="button"
+                onClick={() => removeItem(field, item)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                ×
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500">No items added yet</p>
+        )}
       </div>
     </div>
   );
@@ -1098,22 +1105,22 @@ export default function EditUniversity() {
             )}
 
             <DropdownSelect
-              label="Enrolled Faculty"
-              placeholder="Select a Faculty"
+              label="Enrolled Major"
+              placeholder="Select a Major"
               disabled={true}
-              icon={BookOpen}
-              selectedItems={formData?.faculty}
-              searchKey="facultyName"
-              options={filteredData.faculties}
+              icon={BookDown}
+              selectedItems={formData?.major}
+              searchKey="majorName"
+              options={filteredData.majors}
               onSearch={(value) =>
-                setSearchInput((prev) => ({ ...prev, facultyname: value }))
+                setSearchInput((prev) => ({ ...prev, majorname: value }))
               }
-              onSelect={(faculty) =>
-                handleAdd("faculty", faculty, setFormData, setShowDropdown)
+              onSelect={(major) =>
+                handleAdd("major", major, setFormData, setShowDropdown)
               }
-              onRemove={(id) => handleRemove("faculty", id, setFormData)}
+              onRemove={(id) => handleRemove("major", id, setFormData)}
               language="en"
-              dropdownKey="faculty"
+              dropdownKey="major"
               showDropdown={showDropdown}
               setShowDropdown={setShowDropdown}
             />

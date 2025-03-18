@@ -165,14 +165,14 @@ const CountryPage = () => {
             "https://placehold.co/1376x426"
           }
           alt={`Study in ${data?.countryName?.[language]}`}
-          className="w-full h-auto max-h-[426px] object-cover transform hover:scale-105 transition-transform duration-500"
+          className="w-full h-auto max-h-[426px] object-cover transform  transition-transform duration-500"
           width="1376"
           height="426"
           style={{ aspectRatio: "1376/426" }}
         />
       </div>
 
-      <div className="bg-white rounded-xl p-6 shadow-sm mb-8">
+      <div className=" rounded-xl  shadow-sm mb-8">
         <div
           className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4"
           data-aos="fade-up"
@@ -184,7 +184,7 @@ const CountryPage = () => {
           </h1>
 
           {data?.hotDestination && (
-            <p className="inline-block bg-gradient-to-r from-rose-500 to-pink-600 font-sans font-medium text-base text-white py-2 px-4 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+            <p className="inline-block bg-gradient-to-r text-sm from-rose-500 to-pink-600 font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
               🔥 Hot Destination
             </p>
           )}
@@ -220,7 +220,7 @@ const CountryPage = () => {
           data-aos-delay="200"
         >
           <div
-            className="flex items-center p-5 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="250"
           >
@@ -239,7 +239,7 @@ const CountryPage = () => {
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="300"
           >
@@ -257,7 +257,7 @@ const CountryPage = () => {
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="350"
           >
@@ -275,7 +275,7 @@ const CountryPage = () => {
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="400"
           >
@@ -292,7 +292,7 @@ const CountryPage = () => {
         </div>
 
         <div
-          className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm"
+          className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm"
           data-aos="fade-up"
           data-aos-delay="450"
         >

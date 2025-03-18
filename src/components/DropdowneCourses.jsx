@@ -43,13 +43,13 @@ const DropdowneCourses = forwardRef(
             language === "ar"
               ? " mmd:left-[20%] lg:left-[18%] xl:left-[22%] xlg:left-[19%]"
               : " mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
-          }   md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[45vw]  h-auto z-10 flex gap-3  mt-2 
-   bg-[#f8f8f8] rounded-3xl shadow-lg`}
+          }   md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-3 py-4 w-[40vw] lg:max-w-[25vw]  h-auto z-10 flex gap-3  mt-2 
+   bg-[#f8f8f8] rounded-xl shadow-lg`}
           data-aos="fade-out"
           data-aos-delay="0"
           data-aos-duration="300"
         >
-          <div className="bg-white rounded-3xl px-4 py-2 w-[70%] ">
+          <div className="bg-white rounded-3xl px-4 py-2 w-[100%] ">
             <p className="mb-2 text-sm font-semibold pt-3 ">
               {t("DropDownCourse.Coursetitle")}
             </p>
@@ -83,7 +83,7 @@ const DropdowneCourses = forwardRef(
               );
             })}
           </div>
-          <div className="pl-3 w-[30%]  ] ">
+          {/* <div className="pl-3 w-[30%]  ] ">
             <p className="mb-2 text-sm font-semibold pt-4 ">
               {t("DropDownCourse.FacultyTitle")}
             </p>
@@ -98,7 +98,7 @@ const DropdowneCourses = forwardRef(
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
       </>
     );
