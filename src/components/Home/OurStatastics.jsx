@@ -82,11 +82,11 @@ function OurStatastics() {
         {t("descriptionTitle")}
       </h1>
 
-      <div className="grid grid-cols-2 lg:flex rounded-3xl justify-between gap-4 w-[89%] max-w-[1242px] py-4 px-4 mx-auto bg-white">
+      <div className="grid grid-cols-2 lg:flex rounded-3xl justify-between gap-4 w-[89%] max-w-[1050px] py-4 px-4 mx-auto bg-white">
         {statistics.map((item, index) => (
           <div
             key={index}
-            className="p-4 rounded-3xl bg-[#F8F8F8] w-auto lg:w-72 text-center"
+            className="p-4 rounded-3xl bg-[#F8F8F8] w-auto lg:w-60 text-center"
           >
             <div className="flex items-center justify-between space-x-2 mb-4">
               <p className="text-black font-medium">{item.info}</p>

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -14,13 +14,14 @@ import {
   Tag,
   Landmark,
   AlertCircle,
-} from "lucide-react"
-import { useLanguage } from "../../../../context/LanguageContext"
-import InputField from "../../../../utils/InputField"
-import useDropdownData from "../../../../hooks/useDropdownData"
-import useApiData from "../../../../hooks/useApiData"
-import RichText from "../../../../utils/RichText"
-import MetaArrayFields from "../Universities/MetaArrayFields"
+} from "lucide-react";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import useApiData from "../../../../hooks/useApiData";
+import RichText from "../../../../utils/RichText";
+import MetaArrayFields from "../Universities/MetaArrayFields";
+import FaqSection from "../../../../utils/FaqSection";
 
 const initialFormData = {
   CourseName: {
@@ -74,25 +75,34 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-}
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
+};
 
-const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"]
-const studyModes = ["Full-time", "Part-time", "Online", "Blended"]
-const studyModesAr = ["دوام كامل", "دوام جزئي", "عبر الإنترنت", "مختلط"]
-const studyLevels = ["Beginner", "Intermediate", "Advanced"]
-const languages = ["English", "French", "German", "Spanish"]
-const admissionRequirements = ["High School Diploma", "Bachelor's Degree", "Master's Degree", "IELTS", "TOEFL"]
-const durationUnits = ["Years", "Months", "Weeks"]
+const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
+const studyModes = ["Full-time", "Part-time", "Online", "Blended"];
+const studyModesAr = ["دوام كامل", "دوام جزئي", "عبر الإنترنت", "مختلط"];
+const studyLevels = ["Beginner", "Intermediate", "Advanced"];
+const languages = ["English", "French", "German", "Spanish"];
+const admissionRequirements = [
+  "High School Diploma",
+  "Bachelor's Degree",
+  "Master's Degree",
+  "IELTS",
+  "TOEFL",
+];
+const durationUnits = ["Years", "Months", "Weeks"];
 
 export default function EditCourse() {
-  const { id } = useParams()
-  const { filteredData } = useDropdownData()
-  const { language } = useLanguage()
-  const { addTags } = useDropdownData()
-  const { data, updateWithOutById } = useApiData(`https://edu-brink-backend.vercel.app/api/course/${id}`)
+  const { id } = useParams();
+  const { filteredData } = useDropdownData();
+  const { language } = useLanguage();
+  const { addTags } = useDropdownData();
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/course/${id}`
+  );
 
   useEffect(() => {
-    if (!data) return // Ensure `data` is available
+    if (!data) return; // Ensure `data` is available
 
     setFormData((prev) => ({
       ...initialFormData, // Ensures all fields exist
@@ -116,13 +126,13 @@ export default function EditCourse() {
         en: Array.isArray(data?.ModeOfStudy?.en)
           ? data?.ModeOfStudy?.en
           : Array.isArray(data?.ModeOfStudy)
-            ? data?.ModeOfStudy.map((item) => item.en).filter(Boolean)
-            : [],
+          ? data?.ModeOfStudy.map((item) => item.en).filter(Boolean)
+          : [],
         ar: Array.isArray(data?.ModeOfStudy?.ar)
           ? data?.ModeOfStudy?.ar
           : Array.isArray(data?.ModeOfStudy)
-            ? data?.ModeOfStudy.map((item) => item.ar).filter(Boolean)
-            : [],
+          ? data?.ModeOfStudy.map((item) => item.ar).filter(Boolean)
+          : [],
       },
       Tags: {
         en: Array.isArray(data?.Tags?.en) ? data?.Tags.en : [],
@@ -137,13 +147,13 @@ export default function EditCourse() {
         en: Array.isArray(data?.Requirements?.en)
           ? data?.Requirements?.en
           : Array.isArray(data?.Requirements)
-            ? data?.Requirements.map((item) => item.en).filter(Boolean)
-            : [],
+          ? data?.Requirements.map((item) => item.en).filter(Boolean)
+          : [],
         ar: Array.isArray(data?.Requirements?.ar)
           ? data?.Requirements?.ar
           : Array.isArray(data?.Requirements)
-            ? data?.Requirements.map((item) => item.ar).filter(Boolean)
-            : [],
+          ? data?.Requirements.map((item) => item.ar).filter(Boolean)
+          : [],
       },
       scholarshipsAvailable: data?.scholarshipsAvailable || false,
       scholarshipType: data?.scholarshipType || "none",
@@ -163,59 +173,84 @@ export default function EditCourse() {
           ar: data?.seo?.metaDescription?.ar || "",
         },
         metaKeywords: {
-          en: Array.isArray(data?.seo?.metaKeywords?.en) ? data?.seo?.metaKeywords?.en : [],
-          ar: Array.isArray(data?.seo?.metaKeywords?.ar) ? data?.seo?.metaKeywords?.ar : [],
+          en: Array.isArray(data?.seo?.metaKeywords?.en)
+            ? data?.seo?.metaKeywords?.en
+            : [],
+          ar: Array.isArray(data?.seo?.metaKeywords?.ar)
+            ? data?.seo?.metaKeywords?.ar
+            : [],
         },
       },
       customURLSlug: {
         en: data?.customURLSlug?.en || "",
         ar: data?.customURLSlug?.ar || "",
       },
-    }))
-  }, [data]) // Runs when `data` changes
+      faq: data?.faq?.length
+        ? data.faq.map((item) => ({
+            faqQuestions: {
+              en: item?.faqQuestions?.en || "",
+              ar: item?.faqQuestions?.ar || "",
+            },
+            faqAnswers: {
+              en: item?.faqAnswers?.en || "",
+              ar: item?.faqAnswers?.ar || "",
+            },
+          }))
+        : [
+            {
+              faqQuestions: { en: "", ar: "" },
+              faqAnswers: { en: "", ar: "" },
+            },
+          ],
+    }));
+  }, [data]); // Runs when `data` changes
 
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [showFlagPicker, setShowFlagPicker] = useState(false)
-  const [flagSearch, setFlagSearch] = useState("")
-  const [formData, setFormData] = useState(initialFormData)
-  const [validationErrors, setValidationErrors] = useState({})
-  const [touched, setTouched] = useState({})
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
-  const [newItem, setNewItem] = useState("")
-  const [searchInput, setSearchInput] = useState({ tagEn: "", tagAr: "" })
+  const [newItem, setNewItem] = useState("");
+  const [searchInput, setSearchInput] = useState({ tagEn: "", tagAr: "" });
   const [showDropdown, setShowDropdown] = useState({
     tagEn: false,
     tagAr: false,
-  })
+  });
 
   // Extract English & Arabic tags from addTags
   const tagOptions = {
     tagEn: addTags[0]?.tags?.en || [],
     tagAr: addTags[0]?.tags?.ar || [],
-  }
+  };
 
   // Filter tags based on search input
   const filteredTags = {
-    tagEn: tagOptions.tagEn.filter((tag) => tag.toLowerCase().includes(searchInput.tagEn.toLowerCase())),
-    tagAr: tagOptions.tagAr.filter((tag) => tag.toLowerCase().includes(searchInput.tagAr.toLowerCase())),
-  }
+    tagEn: tagOptions.tagEn.filter((tag) =>
+      tag.toLowerCase().includes(searchInput.tagEn.toLowerCase())
+    ),
+    tagAr: tagOptions.tagAr.filter((tag) =>
+      tag.toLowerCase().includes(searchInput.tagAr.toLowerCase())
+    ),
+  };
 
   const filteredUniData = filteredData.universities.filter((item) => {
     if (!flagSearch.trim()) {
-      return true // Show all universities when flagSearch is empty
+      return true; // Show all universities when flagSearch is empty
     }
     return (
       item.uniName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
       item.uniName.ar.toLowerCase().includes(flagSearch.toLowerCase())
-    )
-  })
+    );
+  });
 
   // Toggle dropdown visibility
   const toggleDropdown = (key) => {
-    setShowDropdown((prev) => ({ ...prev, [key]: !prev[key] }))
-  }
+    setShowDropdown((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // Handle tag selection
   const onSelect = (key, tag, drop) => {
@@ -223,22 +258,24 @@ export default function EditCourse() {
       ...prev,
       Tags: {
         ...prev.Tags,
-        [key]: prev.Tags[key].includes(tag) ? prev.Tags[key] : [...prev.Tags[key], tag], // Prevent duplicates
+        [key]: prev.Tags[key].includes(tag)
+          ? prev.Tags[key]
+          : [...prev.Tags[key], tag], // Prevent duplicates
       },
-    }))
+    }));
 
     // Mark as touched
-    setTouched((prev) => ({ ...prev, [`Tags.${key}`]: true }))
+    setTouched((prev) => ({ ...prev, [`Tags.${key}`]: true }));
 
     // Validate
-    validateField(`Tags.${key}`, [...formData.Tags[key], tag])
+    validateField(`Tags.${key}`, [...formData.Tags[key], tag]);
 
-    setShowDropdown((prev) => ({ ...prev, [drop]: false })) // Close dropdown
-  }
+    setShowDropdown((prev) => ({ ...prev, [drop]: false })); // Close dropdown
+  };
 
   // Handle tag removal
   const onRemove = (key, tag) => {
-    const updatedTags = formData.Tags[key].filter((t) => t !== tag)
+    const updatedTags = formData.Tags[key].filter((t) => t !== tag);
 
     setFormData((prev) => ({
       ...prev,
@@ -246,157 +283,197 @@ export default function EditCourse() {
         ...prev.Tags,
         [key]: updatedTags, // Remove the tag
       },
-    }))
+    }));
 
     // Validate
-    validateField(`Tags.${key}`, updatedTags)
-  }
+    validateField(`Tags.${key}`, updatedTags);
+  };
 
-  const [activeSection, setActiveSection] = useState(null)
+  const [activeSection, setActiveSection] = useState(null);
 
   const validateField = (name, value) => {
-    let error = ""
+    let error = "";
 
     // Handle undefined or null values consistently
     if (value === undefined) {
       // For fields that access formData directly, try to get the value from formData
       if (name.includes(".")) {
-        const parts = name.split(".")
-        let currentValue = formData
+        const parts = name.split(".");
+        let currentValue = formData;
         for (const part of parts) {
-          currentValue = currentValue?.[part]
-          if (currentValue === undefined) break
+          currentValue = currentValue?.[part];
+          if (currentValue === undefined) break;
         }
-        value = currentValue || ""
+        value = currentValue || "";
       } else {
-        value = formData[name] || ""
+        value = formData[name] || "";
       }
     }
 
     if (name.includes("CourseName")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
+      const lang = name.split(".")[1]; // Extract language (en or ar)
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "Course name is required" : "اسم الدورة مطلوب"
+        error = lang === "en" ? "Course name is required" : "اسم الدورة مطلوب";
       } else if (typeof value === "string" && value.length < 3) {
-        error = lang === "en" ? "Course name must be at least 3 characters" : "يجب أن يكون اسم الدورة 3 أحرف على الأقل"
+        error =
+          lang === "en"
+            ? "Course name must be at least 3 characters"
+            : "يجب أن يكون اسم الدورة 3 أحرف على الأقل";
       }
     }
 
     if (name === "CourseType" && (!value || value === "")) {
-      error = "Course type is required"
+      error = "Course type is required";
     }
 
     if (name === "CourseCategory" && (!value || value === "")) {
-      error = "Course category is required"
+      error = "Course category is required";
     }
 
     if (name === "CourseDuration") {
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = "Duration is required"
+        error = "Duration is required";
       } else if (isNaN(value) || Number.parseFloat(value) <= 0) {
-        error = "Duration must be a positive number"
+        error = "Duration must be a positive number";
       }
     }
 
     if (name === "DeadLine") {
       if (value) {
         // If a deadline is provided, validate it's a valid date
-        const deadlineDate = new Date(value)
+        const deadlineDate = new Date(value);
         if (isNaN(deadlineDate.getTime())) {
-          error = "Please enter a valid date"
+          error = "Please enter a valid date";
         }
 
         // Optionally validate that the deadline is in the future
-        const today = new Date()
-        today.setHours(0, 0, 0, 0) // Set to beginning of day for fair comparison
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to beginning of day for fair comparison
         if (deadlineDate < today) {
-          error = "Deadline should be a future date"
+          error = "Deadline should be a future date";
         }
       }
     }
 
     if (name === "CourseFees") {
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = "Course fees information is required"
+        error = "Course fees information is required";
       } else if (isNaN(value) || Number.parseFloat(value) < 0) {
-        error = "Course fees must be a non-negative number"
+        error = "Course fees must be a non-negative number";
       }
     }
 
-    if (name === "university" && formData.CourseCategory === "university_course" && (!value || value === "")) {
-      error = "University is required for university courses"
+    if (
+      name === "university" &&
+      formData.CourseCategory === "university_course" &&
+      (!value || value === "")
+    ) {
+      error = "University is required for university courses";
     }
 
-    if (name === "provider" && formData.CourseCategory === "external_course" && (!value || value === "")) {
-      error = "Provider is required for external courses"
+    if (
+      name === "provider" &&
+      formData.CourseCategory === "external_course" &&
+      (!value || value === "")
+    ) {
+      error = "Provider is required for external courses";
     }
 
     if (name.includes("ModeOfStudy")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
-      const modesArray = Array.isArray(value) ? value : formData.ModeOfStudy?.[lang] || []
+      const lang = name.split(".")[1]; // Extract language (en or ar)
+      const modesArray = Array.isArray(value)
+        ? value
+        : formData.ModeOfStudy?.[lang] || [];
       if (!modesArray.length) {
-        error = lang === "en" ? "At least one study mode must be selected" : "يجب تحديد وضع دراسة واحد على الأقل"
+        error =
+          lang === "en"
+            ? "At least one study mode must be selected"
+            : "يجب تحديد وضع دراسة واحد على الأقل";
       }
     }
 
     if (name === "StudyLevel") {
-      const levelsArray = Array.isArray(value) ? value : formData.StudyLevel || []
+      const levelsArray = Array.isArray(value)
+        ? value
+        : formData.StudyLevel || [];
       if (!levelsArray.length) {
-        error = "At least one study level must be selected"
+        error = "At least one study level must be selected";
       }
     }
 
     if (name === "Languages") {
-      const languagesArray = Array.isArray(value) ? value : formData.Languages || []
+      const languagesArray = Array.isArray(value)
+        ? value
+        : formData.Languages || [];
       if (!languagesArray.length) {
-        error = "At least one language must be selected"
+        error = "At least one language must be selected";
       }
     }
 
     if (name.includes("Tags")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
-      const tagsArray = Array.isArray(value) ? value : formData.Tags?.[lang] || []
+      const lang = name.split(".")[1]; // Extract language (en or ar)
+      const tagsArray = Array.isArray(value)
+        ? value
+        : formData.Tags?.[lang] || [];
       if (!tagsArray.length) {
-        error = lang === "en" ? "At least one tag must be selected" : "يجب تحديد علامة واحدة على الأقل"
+        error =
+          lang === "en"
+            ? "At least one tag must be selected"
+            : "يجب تحديد علامة واحدة على الأقل";
       }
     }
 
     if (name.includes("CourseDescription")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
+      const lang = name.split(".")[1]; // Extract language (en or ar)
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "Description is required" : "الوصف مطلوب"
+        error = lang === "en" ? "Description is required" : "الوصف مطلوب";
       } else if (typeof value === "string" && value.length < 20) {
-        error = lang === "en" ? "Description must be at least 20 characters" : "يجب أن يكون الوصف 20 حرفًا على الأقل"
+        error =
+          lang === "en"
+            ? "Description must be at least 20 characters"
+            : "يجب أن يكون الوصف 20 حرفًا على الأقل";
       }
     }
 
-    if (name === "scholarshipPercentage" && formData.scholarshipsAvailable && formData.scholarshipType === "partial") {
+    if (
+      name === "scholarshipPercentage" &&
+      formData.scholarshipsAvailable &&
+      formData.scholarshipType === "partial"
+    ) {
       if (!value || value.trim() === "") {
-        error = "Scholarship percentage is required"
-      } else if (isNaN(value) || Number.parseFloat(value) <= 0 || Number.parseFloat(value) >= 100) {
-        error = "Scholarship percentage must be between 1 and 99"
+        error = "Scholarship percentage is required";
+      } else if (
+        isNaN(value) ||
+        Number.parseFloat(value) <= 0 ||
+        Number.parseFloat(value) >= 100
+      ) {
+        error = "Scholarship percentage must be between 1 and 99";
       }
     }
 
     if (name === "DiscountValue" && formData.DiscountAvailable) {
       if (!value || value.trim() === "") {
-        error = "Discount value is required"
+        error = "Discount value is required";
       } else if (isNaN(value) || Number.parseFloat(value) <= 0) {
-        error = "Discount value must be a positive number"
+        error = "Discount value must be a positive number";
       }
     }
 
     if (name.includes("seo.metaTitle")) {
-      const lang = name.split(".")[2] // Extract language (en or ar)
+      const lang = name.split(".")[2]; // Extract language (en or ar)
       if (!value || value.trim() === "") {
-        error = lang === "en" ? "Meta title is required" : "العنوان التعريفي مطلوب"
+        error =
+          lang === "en" ? "Meta title is required" : "العنوان التعريفي مطلوب";
       }
     }
 
     if (name.includes("seo.metaDescription")) {
-      const lang = name.split(".")[2] // Extract language (en or ar)
+      const lang = name.split(".")[2]; // Extract language (en or ar)
       if (!value || value.trim() === "") {
-        error = lang === "en" ? "Meta description is required" : "الوصف التعريفي مطلوب"
+        error =
+          lang === "en"
+            ? "Meta description is required"
+            : "الوصف التعريفي مطلوب";
       }
     }
 
@@ -404,31 +481,31 @@ export default function EditCourse() {
     setValidationErrors((prev) => ({
       ...prev,
       [name]: error,
-    }))
+    }));
 
-    return error
-  }
+    return error;
+  };
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target
-    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
 
-    const temp = { ...formData } // Clone the form data to avoid direct mutation
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value
+        acc[part] = type === "checkbox" ? checked : value;
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
       }
-      return acc[part]
-    }, temp)
+      return acc[part];
+    }, temp);
 
     if (nameParts.includes("CourseName")) {
-      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -438,90 +515,135 @@ export default function EditCourse() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        }
+        };
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        }
+        };
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp)
+    setFormData(temp);
 
     // Mark field as touched
-    setTouched((prev) => ({ ...prev, [name]: true }))
+    setTouched((prev) => ({ ...prev, [name]: true }));
 
     // Validate the field
-    validateField(name, type === "checkbox" ? checked : value)
-  }
+    validateField(name, type === "checkbox" ? checked : value);
+  };
 
   const handleBlur = (event) => {
-    const { name, value } = event.target
-    setTouched((prev) => ({ ...prev, [name]: true }))
-    validateField(name, value)
-  }
+    const { name, value } = event.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    validateField(name, value);
+  };
 
   const validateForm = () => {
-    const errors = {}
+    const errors = {};
 
     // Validate course names
-    errors["CourseName.en"] = validateField("CourseName.en", formData.CourseName?.en)
-    errors["CourseName.ar"] = validateField("CourseName.ar", formData.CourseName?.ar)
+    errors["CourseName.en"] = validateField(
+      "CourseName.en",
+      formData.CourseName?.en
+    );
+    errors["CourseName.ar"] = validateField(
+      "CourseName.ar",
+      formData.CourseName?.ar
+    );
 
     // Validate course type and category
-    errors["CourseType"] = validateField("CourseType", formData.CourseType)
-    errors["CourseCategory"] = validateField("CourseCategory", formData.CourseCategory)
+    errors["CourseType"] = validateField("CourseType", formData.CourseType);
+    errors["CourseCategory"] = validateField(
+      "CourseCategory",
+      formData.CourseCategory
+    );
 
     // Validate university or provider based on course category
     if (formData.CourseCategory === "university_course") {
-      errors["university"] = validateField("university", formData.university)
+      errors["university"] = validateField("university", formData.university);
     } else if (formData.CourseCategory === "external_course") {
-      errors["provider"] = validateField("provider", formData.provider)
+      errors["provider"] = validateField("provider", formData.provider);
     }
 
     // Validate duration
-    errors["CourseDuration"] = validateField("CourseDuration", formData.CourseDuration)
+    errors["CourseDuration"] = validateField(
+      "CourseDuration",
+      formData.CourseDuration
+    );
 
     // Validate fees
-    errors["CourseFees"] = validateField("CourseFees", formData.CourseFees)
+    errors["CourseFees"] = validateField("CourseFees", formData.CourseFees);
 
     // Validate arrays
-    errors["ModeOfStudy.en"] = validateField("ModeOfStudy.en", formData.ModeOfStudy?.en)
-    errors["ModeOfStudy.ar"] = validateField("ModeOfStudy.ar", formData.ModeOfStudy?.ar)
-    errors["StudyLevel"] = validateField("StudyLevel", formData.StudyLevel)
-    errors["Languages"] = validateField("Languages", formData.Languages)
-    errors["Tags.en"] = validateField("Tags.en", formData.Tags?.en)
-    errors["Tags.ar"] = validateField("Tags.ar", formData.Tags?.ar)
+    errors["ModeOfStudy.en"] = validateField(
+      "ModeOfStudy.en",
+      formData.ModeOfStudy?.en
+    );
+    errors["ModeOfStudy.ar"] = validateField(
+      "ModeOfStudy.ar",
+      formData.ModeOfStudy?.ar
+    );
+    errors["StudyLevel"] = validateField("StudyLevel", formData.StudyLevel);
+    errors["Languages"] = validateField("Languages", formData.Languages);
+    errors["Tags.en"] = validateField("Tags.en", formData.Tags?.en);
+    errors["Tags.ar"] = validateField("Tags.ar", formData.Tags?.ar);
 
     // Validate descriptions
-    errors["CourseDescription.en"] = validateField("CourseDescription.en", formData.CourseDescription?.en)
-    errors["CourseDescription.ar"] = validateField("CourseDescription.ar", formData.CourseDescription?.ar)
+    errors["CourseDescription.en"] = validateField(
+      "CourseDescription.en",
+      formData.CourseDescription?.en
+    );
+    errors["CourseDescription.ar"] = validateField(
+      "CourseDescription.ar",
+      formData.CourseDescription?.ar
+    );
 
     // Validate conditional fields
-    if (formData.scholarshipsAvailable && formData.scholarshipType === "partial") {
-      errors["scholarshipPercentage"] = validateField("scholarshipPercentage", formData.scholarshipPercentage)
+    if (
+      formData.scholarshipsAvailable &&
+      formData.scholarshipType === "partial"
+    ) {
+      errors["scholarshipPercentage"] = validateField(
+        "scholarshipPercentage",
+        formData.scholarshipPercentage
+      );
     }
 
     if (formData.DiscountAvailable) {
-      errors["DiscountValue"] = validateField("DiscountValue", formData.DiscountValue)
+      errors["DiscountValue"] = validateField(
+        "DiscountValue",
+        formData.DiscountValue
+      );
     }
 
     // Validate SEO fields
-    errors["seo.metaTitle.en"] = validateField("seo.metaTitle.en", formData.seo?.metaTitle?.en)
-    errors["seo.metaTitle.ar"] = validateField("seo.metaTitle.ar", formData.seo?.metaTitle?.ar)
-    errors["seo.metaDescription.en"] = validateField("seo.metaDescription.en", formData.seo?.metaDescription?.en)
-    errors["seo.metaDescription.ar"] = validateField("seo.metaDescription.ar", formData.seo?.metaDescription?.ar)
+    errors["seo.metaTitle.en"] = validateField(
+      "seo.metaTitle.en",
+      formData.seo?.metaTitle?.en
+    );
+    errors["seo.metaTitle.ar"] = validateField(
+      "seo.metaTitle.ar",
+      formData.seo?.metaTitle?.ar
+    );
+    errors["seo.metaDescription.en"] = validateField(
+      "seo.metaDescription.en",
+      formData.seo?.metaDescription?.en
+    );
+    errors["seo.metaDescription.ar"] = validateField(
+      "seo.metaDescription.ar",
+      formData.seo?.metaDescription?.ar
+    );
 
-    errors["DeadLine"] = validateField("DeadLine", formData.DeadLine)
+    errors["DeadLine"] = validateField("DeadLine", formData.DeadLine);
 
-    setValidationErrors(errors)
+    setValidationErrors(errors);
 
     // Check if there are any errors
-    return !Object.values(errors).some((error) => error !== "")
-  }
+    return !Object.values(errors).some((error) => error !== "");
+  };
 
   const handleRichTextChange = (content, lang) => {
     setFormData((prev) => ({
@@ -530,17 +652,17 @@ export default function EditCourse() {
         ...prev.CourseDescription,
         [lang]: content,
       },
-    }))
+    }));
 
     // Mark as touched
-    setTouched((prev) => ({ ...prev, [`CourseDescription.${lang}`]: true }))
+    setTouched((prev) => ({ ...prev, [`CourseDescription.${lang}`]: true }));
 
     // Validate
-    validateField(`CourseDescription.${lang}`, content)
-  }
+    validateField(`CourseDescription.${lang}`, content);
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Mark all fields as touched
     const allFields = {
@@ -563,142 +685,152 @@ export default function EditCourse() {
       "seo.metaTitle.ar": true,
       "seo.metaDescription.en": true,
       "seo.metaDescription.ar": true,
-    }
+    };
 
     // Add conditional fields
     if (formData.CourseCategory === "university_course") {
-      allFields["university"] = true
+      allFields["university"] = true;
     } else {
-      allFields["provider"] = true
+      allFields["provider"] = true;
     }
 
-    if (formData.scholarshipsAvailable && formData.scholarshipType === "partial") {
-      allFields["scholarshipPercentage"] = true
+    if (
+      formData.scholarshipsAvailable &&
+      formData.scholarshipType === "partial"
+    ) {
+      allFields["scholarshipPercentage"] = true;
     }
 
     if (formData.DiscountAvailable) {
-      allFields["DiscountValue"] = true
+      allFields["DiscountValue"] = true;
     }
 
-    setTouched(allFields)
+    setTouched(allFields);
 
     // Validate all fields
-    const isValid = validateForm()
+    const isValid = validateForm();
 
     if (!isValid) {
-      setError("Please fix the validation errors before submitting")
-      window.scrollTo(0, 0)
-      return
+      setError("Please fix the validation errors before submitting");
+      window.scrollTo(0, 0);
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const { uniName, ...updatedFormData } = {
         ...formData,
-      }
+      };
 
-      console.log(updatedFormData)
+      console.log(updatedFormData);
 
-      await updateWithOutById(updatedFormData)
-      navigate(`/${language}/admin/courses`)
+      await updateWithOutById(updatedFormData);
+      navigate(`/${language}/admin/courses`);
     } catch (err) {
-      console.error("Error updating course:", err)
-      setError(err.message || "Failed to update course")
-      window.scrollTo(0, 0)
+      console.error("Error updating course:", err);
+      setError(err.message || "Failed to update course");
+      window.scrollTo(0, 0);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const addItem = (field) => {
-    if (!newItem.trim()) return // Prevent empty values
+    if (!newItem.trim()) return; // Prevent empty values
 
     setFormData((prev) => {
-      const fieldPath = field.split(".")
-      const newState = { ...prev } // Clone the state
+      const fieldPath = field.split(".");
+      const newState = { ...prev }; // Clone the state
 
-      let ref = newState
+      let ref = newState;
       for (let i = 0; i < fieldPath.length - 1; i++) {
-        const key = fieldPath[i]
-        ref[key] = ref[key] || {} // Ensure object structure exists
-        ref = ref[key]
+        const key = fieldPath[i];
+        ref[key] = ref[key] || {}; // Ensure object structure exists
+        ref = ref[key];
       }
 
-      const lastKey = fieldPath[fieldPath.length - 1]
-      ref[lastKey] = Array.isArray(ref[lastKey]) ? ref[lastKey] : [] // Ensure it's an array
+      const lastKey = fieldPath[fieldPath.length - 1];
+      ref[lastKey] = Array.isArray(ref[lastKey]) ? ref[lastKey] : []; // Ensure it's an array
       if (!ref[lastKey].includes(newItem)) {
-        ref[lastKey].push(newItem)
+        ref[lastKey].push(newItem);
       }
 
-      return newState
-    })
+      return newState;
+    });
 
     // Mark as touched
-    setTouched((prev) => ({ ...prev, [field]: true }))
+    setTouched((prev) => ({ ...prev, [field]: true }));
 
     // Validate
-    const fieldPath = field.split(".")
-    let currentValue = formData
+    const fieldPath = field.split(".");
+    let currentValue = formData;
     for (let i = 0; i < fieldPath.length - 1; i++) {
-      currentValue = currentValue[fieldPath[i]] || {}
+      currentValue = currentValue[fieldPath[i]] || {};
     }
-    const lastKey = fieldPath[fieldPath.length - 1]
-    const updatedArray = [...(currentValue[lastKey] || []), newItem]
-    validateField(field, updatedArray)
+    const lastKey = fieldPath[fieldPath.length - 1];
+    const updatedArray = [...(currentValue[lastKey] || []), newItem];
+    validateField(field, updatedArray);
 
-    setNewItem("") // Clear input field
-  }
+    setNewItem(""); // Clear input field
+  };
 
   const removeItem = (field, itemToRemove) => {
     setFormData((prev) => {
-      const fieldPath = field.split(".")
-      const newState = { ...prev } // Clone the state
+      const fieldPath = field.split(".");
+      const newState = { ...prev }; // Clone the state
 
-      let ref = newState
+      let ref = newState;
       for (let i = 0; i < fieldPath.length - 1; i++) {
-        const key = fieldPath[i]
-        ref[key] = ref[key] || {} // Ensure object structure exists
-        ref = ref[key]
+        const key = fieldPath[i];
+        ref[key] = ref[key] || {}; // Ensure object structure exists
+        ref = ref[key];
       }
 
-      const lastKey = fieldPath[fieldPath.length - 1]
+      const lastKey = fieldPath[fieldPath.length - 1];
       if (Array.isArray(ref[lastKey])) {
-        ref[lastKey] = ref[lastKey].filter((item) => item !== itemToRemove)
+        ref[lastKey] = ref[lastKey].filter((item) => item !== itemToRemove);
       }
 
-      return newState
-    })
+      return newState;
+    });
 
     // Validate
-    const fieldPath = field.split(".")
-    let currentValue = formData
+    const fieldPath = field.split(".");
+    let currentValue = formData;
     for (let i = 0; i < fieldPath.length - 1; i++) {
-      currentValue = currentValue[fieldPath[i]] || {}
+      currentValue = currentValue[fieldPath[i]] || {};
     }
-    const lastKey = fieldPath[fieldPath.length - 1]
-    const updatedArray = (currentValue[lastKey] || []).filter((item) => item !== itemToRemove)
-    validateField(field, updatedArray)
-  }
+    const lastKey = fieldPath[fieldPath.length - 1];
+    const updatedArray = (currentValue[lastKey] || []).filter(
+      (item) => item !== itemToRemove
+    );
+    validateField(field, updatedArray);
+  };
 
   const renderArrayField = (field, label, icon, placeholder, options) => {
-    const fieldPath = field.split(".")
-    const fieldData = fieldPath.reduce((acc, key) => acc?.[key] || [], formData) // Ensure data is an array
+    const fieldPath = field.split(".");
+    const fieldData = fieldPath.reduce(
+      (acc, key) => acc?.[key] || [],
+      formData
+    ); // Ensure data is an array
 
-    const error = validationErrors[field]
-    const isTouched = touched[field]
+    const error = validationErrors[field];
+    const isTouched = touched[field];
 
     return (
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
         <div className="flex gap-2 mb-2">
           {options ? (
             <select
               value={activeSection === field ? newItem || "" : ""}
               onChange={(e) => {
-                setNewItem(e.target.value)
-                setActiveSection(field)
+                setNewItem(e.target.value);
+                setActiveSection(field);
               }}
               className={`flex-1 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
                 isTouched && error ? "border-red-300" : "border-gray-300"
@@ -716,8 +848,8 @@ export default function EditCourse() {
               type="text"
               value={activeSection === field ? newItem || "" : ""}
               onChange={(e) => {
-                setNewItem(e.target.value)
-                setActiveSection(field)
+                setNewItem(e.target.value);
+                setActiveSection(field);
               }}
               placeholder={placeholder}
               className={`flex-1 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
@@ -737,7 +869,10 @@ export default function EditCourse() {
         <div className="flex flex-wrap gap-2">
           {Array.isArray(fieldData) &&
             fieldData.map((item, index) => (
-              <div key={index} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+              >
                 {icon}
                 {item}
                 <button
@@ -750,10 +885,12 @@ export default function EditCourse() {
               </div>
             ))}
         </div>
-        {isTouched && error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {isTouched && error && (
+          <p className="mt-1 text-sm text-red-600">{error}</p>
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -768,22 +905,27 @@ export default function EditCourse() {
         <h1 className="text-3xl font-bold text-gray-900">Edit Course</h1>
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
-
-      {/* Form validation summary */}
-      {Object.values(validationErrors).some((error) => error !== "") && Object.values(touched).some((t) => t) && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg">
-          <div className="flex items-center mb-2">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            <h3 className="font-medium">Please fix the following errors:</h3>
-          </div>
-          <ul className="list-disc pl-5">
-            {Object.entries(validationErrors).map(([field, error]) =>
-              error && touched[field] ? <li key={field}>{error}</li> : null,
-            )}
-          </ul>
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
         </div>
       )}
+
+      {/* Form validation summary */}
+      {Object.values(validationErrors).some((error) => error !== "") &&
+        Object.values(touched).some((t) => t) && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg">
+            <div className="flex items-center mb-2">
+              <AlertCircle className="w-5 h-5 mr-2" />
+              <h3 className="font-medium">Please fix the following errors:</h3>
+            </div>
+            <ul className="list-disc pl-5">
+              {Object.entries(validationErrors).map(([field, error]) =>
+                error && touched[field] ? <li key={field}>{error}</li> : null
+              )}
+            </ul>
+          </div>
+        )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
@@ -799,7 +941,11 @@ export default function EditCourse() {
                 onBlur={handleBlur}
                 autoComplete="courseName"
                 variant={3}
-                error={touched["CourseName.en"] ? validationErrors["CourseName.en"] : ""}
+                error={
+                  touched["CourseName.en"]
+                    ? validationErrors["CourseName.en"]
+                    : ""
+                }
               />
             </div>
 
@@ -814,7 +960,11 @@ export default function EditCourse() {
                 onBlur={handleBlur}
                 autoComplete="courseName"
                 variant={3}
-                error={touched["CourseName.ar"] ? validationErrors["CourseName.ar"] : ""}
+                error={
+                  touched["CourseName.ar"]
+                    ? validationErrors["CourseName.ar"]
+                    : ""
+                }
               />
             </div>
 
@@ -836,7 +986,11 @@ export default function EditCourse() {
                     label: "External Course",
                   },
                 ]}
-                error={touched["CourseCategory"] ? validationErrors["CourseCategory"] : ""}
+                error={
+                  touched["CourseCategory"]
+                    ? validationErrors["CourseCategory"]
+                    : ""
+                }
               />
             </div>
             <div>
@@ -851,7 +1005,9 @@ export default function EditCourse() {
                   value: mode,
                   label: mode,
                 }))}
-                error={touched["CourseType"] ? validationErrors["CourseType"] : ""}
+                error={
+                  touched["CourseType"] ? validationErrors["CourseType"] : ""
+                }
               />
             </div>
 
@@ -860,7 +1016,11 @@ export default function EditCourse() {
                 label="Course Description (English)"
                 value={formData.CourseDescription.en}
                 onChange={(content) => handleRichTextChange(content, "en")}
-                error={touched["CourseDescription.en"] ? validationErrors["CourseDescription.en"] : ""}
+                error={
+                  touched["CourseDescription.en"]
+                    ? validationErrors["CourseDescription.en"]
+                    : ""
+                }
               />
             </div>
             <div className="col-span-2">
@@ -868,7 +1028,11 @@ export default function EditCourse() {
                 label="وصف الدورة (باللغة الإنجليزية)"
                 value={formData.CourseDescription.ar}
                 onChange={(content) => handleRichTextChange(content, "ar")}
-                error={touched["CourseDescription.ar"] ? validationErrors["CourseDescription.ar"] : ""}
+                error={
+                  touched["CourseDescription.ar"]
+                    ? validationErrors["CourseDescription.ar"]
+                    : ""
+                }
               />
             </div>
 
@@ -877,7 +1041,9 @@ export default function EditCourse() {
                 label="Deadline"
                 type="date"
                 name="DeadLine"
-                value={formData?.DeadLine ? formData?.DeadLine.slice(0, 10) : ""}
+                value={
+                  formData?.DeadLine ? formData?.DeadLine.slice(0, 10) : ""
+                }
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 autoComplete="deadLine"
@@ -897,7 +1063,11 @@ export default function EditCourse() {
                 onBlur={handleBlur}
                 autoComplete="courseDuration"
                 variant={3}
-                error={touched["CourseDuration"] ? validationErrors["CourseDuration"] : ""}
+                error={
+                  touched["CourseDuration"]
+                    ? validationErrors["CourseDuration"]
+                    : ""
+                }
               />
             </div>
 
@@ -907,7 +1077,7 @@ export default function EditCourse() {
                 type="select"
                 name="CourseDurationUnits"
                 placeholder="e.g., Course Figure"
-                value={formData?.CourseDurationUnits }
+                value={formData?.CourseDurationUnits}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 options={durationUnits.map((mode) => ({
@@ -929,7 +1099,9 @@ export default function EditCourse() {
                   onBlur={handleBlur}
                   autoComplete="course_provider"
                   variant={3}
-                  error={touched["provider"] ? validationErrors["provider"] : ""}
+                  error={
+                    touched["provider"] ? validationErrors["provider"] : ""
+                  }
                 />
                 <div className="absolute right-5 top-1/2">
                   <Landmark className="w-4 h-4" />
@@ -939,22 +1111,29 @@ export default function EditCourse() {
 
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                University {formData.CourseCategory === "external_course" ? "External Course (Optional)" : ""}
+                University{" "}
+                {formData.CourseCategory === "external_course"
+                  ? "External Course (Optional)"
+                  : ""}
               </label>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => {
-                    setShowFlagPicker(!showFlagPicker)
-                    setTouched((prev) => ({ ...prev, university: true }))
+                    setShowFlagPicker(!showFlagPicker);
+                    setTouched((prev) => ({ ...prev, university: true }));
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
-                    touched["university"] && validationErrors["university"] ? "border-red-300" : "border-gray-300"
+                    touched["university"] && validationErrors["university"]
+                      ? "border-red-300"
+                      : "border-gray-300"
                   }`}
                 >
                   <span className="flex items-center">
                     <span className="py-1 text-gray-600">
-                      {formData?.uniName?.en || formData?.university || "Select University"}{" "}
+                      {formData?.uniName?.en ||
+                        formData?.university ||
+                        "Select University"}{" "}
                       {/* Placeholder if name is empty */}
                     </span>
                   </span>
@@ -962,7 +1141,9 @@ export default function EditCourse() {
                 </button>
 
                 {touched["university"] && validationErrors["university"] && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors["university"]}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {validationErrors["university"]}
+                  </p>
                 )}
 
                 {showFlagPicker && (
@@ -993,16 +1174,17 @@ export default function EditCourse() {
                                 en: university.uniName.en,
                                 ar: university.uniName.ar,
                               },
-                            }))
-                            setShowFlagPicker(false)
+                            }));
+                            setShowFlagPicker(false);
 
                             // Validate
-                            validateField("university", university._id)
+                            validateField("university", university._id);
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
                           <span className="text-black text-sm">
-                            {university?.uniName?.en} - {university?.uniName?.ar}
+                            {university?.uniName?.en} -{" "}
+                            {university?.uniName?.ar}
                           </span>
                         </button>
                       ))}
@@ -1020,14 +1202,14 @@ export default function EditCourse() {
             "Study Mode (English)",
             <Languages className="w-4 h-4" />,
             "Add New Mode...",
-            studyModes,
+            studyModes
           )}
           {renderArrayField(
             "ModeOfStudy.ar",
             "وضع الدراسة (الإنجليزية)",
             <Languages className="w-4 h-4" />,
             "Add New Mode...",
-            studyModesAr,
+            studyModesAr
           )}
 
           {renderArrayField(
@@ -1035,21 +1217,21 @@ export default function EditCourse() {
             "Study Levels",
             <GraduationCap className="w-4 h-4" />,
             "Add study level...",
-            studyLevels,
+            studyLevels
           )}
           {renderArrayField(
             "Languages",
             "Languages of Instruction",
             <Languages className="w-4 h-4" />,
             "Add language...",
-            languages,
+            languages
           )}
           {renderArrayField(
             "Requirements",
             "Admission Requirements",
             <FileCheck className="w-4 h-4" />,
             "Add requirement...",
-            admissionRequirements,
+            admissionRequirements
           )}
         </div>
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
@@ -1063,7 +1245,11 @@ export default function EditCourse() {
             onBlur={handleBlur}
             autoComplete="metaTitle"
             variant={3}
-            error={touched["seo.metaTitle.en"] ? validationErrors["seo.metaTitle.en"] : ""}
+            error={
+              touched["seo.metaTitle.en"]
+                ? validationErrors["seo.metaTitle.en"]
+                : ""
+            }
           />
 
           {/* Meta Title (Arabic) */}
@@ -1078,7 +1264,11 @@ export default function EditCourse() {
             onBlur={handleBlur}
             autoComplete="metaTitle"
             variant={3}
-            error={touched["seo.metaTitle.ar"] ? validationErrors["seo.metaTitle.ar"] : ""}
+            error={
+              touched["seo.metaTitle.ar"]
+                ? validationErrors["seo.metaTitle.ar"]
+                : ""
+            }
           />
 
           <div className="col-span-2">
@@ -1092,7 +1282,11 @@ export default function EditCourse() {
               onBlur={handleBlur}
               autoComplete="metaDescription"
               variant={3}
-              error={touched["seo.metaDescription.en"] ? validationErrors["seo.metaDescription.en"] : ""}
+              error={
+                touched["seo.metaDescription.en"]
+                  ? validationErrors["seo.metaDescription.en"]
+                  : ""
+              }
             />
           </div>
 
@@ -1108,7 +1302,11 @@ export default function EditCourse() {
               onBlur={handleBlur}
               autoComplete="metaDescription"
               variant={3}
-              error={touched["seo.metaDescription.ar"] ? validationErrors["seo.metaDescription.ar"] : ""}
+              error={
+                touched["seo.metaDescription.ar"]
+                  ? validationErrors["seo.metaDescription.ar"]
+                  : ""
+              }
             />
           </div>
           <div className="col-span-2 flex flex-col gap-3">
@@ -1153,6 +1351,10 @@ export default function EditCourse() {
           />
         </div>
 
+        <div className="bg-white rounded-lg shadow-md ">
+          <FaqSection formData={formData} setFormData={setFormData} />
+        </div>
+
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
           <div className="mb-4 w-full">
             <InputField
@@ -1165,7 +1367,9 @@ export default function EditCourse() {
               onBlur={handleBlur}
               autoComplete="courseFees"
               variant={3}
-              error={touched["CourseFees"] ? validationErrors["CourseFees"] : ""}
+              error={
+                touched["CourseFees"] ? validationErrors["CourseFees"] : ""
+              }
             />
           </div>
 
@@ -1177,27 +1381,38 @@ export default function EditCourse() {
             ].map(({ label, key, value }) => (
               <div key={key} className="mb-4">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {label}
+                  </label>
                   <div className="relative">
                     <button
                       type="button"
                       onClick={() => {
-                        toggleDropdown(key)
-                        setTouched((prev) => ({ ...prev, [`Tags.${value}`]: true }))
+                        toggleDropdown(key);
+                        setTouched((prev) => ({
+                          ...prev,
+                          [`Tags.${value}`]: true,
+                        }));
                       }}
                       className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
-                        touched[`Tags.${value}`] && validationErrors[`Tags.${value}`]
+                        touched[`Tags.${value}`] &&
+                        validationErrors[`Tags.${value}`]
                           ? "border-red-300"
                           : "border-gray-300"
                       }`}
                     >
-                      <span className="text-gray-600">{searchInput[key] || "Select Tags..."}</span>
+                      <span className="text-gray-600">
+                        {searchInput[key] || "Select Tags..."}
+                      </span>
                       <Search className="w-5 h-5 text-gray-400" />
                     </button>
 
-                    {touched[`Tags.${value}`] && validationErrors[`Tags.${value}`] && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors[`Tags.${value}`]}</p>
-                    )}
+                    {touched[`Tags.${value}`] &&
+                      validationErrors[`Tags.${value}`] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {validationErrors[`Tags.${value}`]}
+                        </p>
+                      )}
 
                     {showDropdown[key] && (
                       <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -1231,7 +1446,9 @@ export default function EditCourse() {
                               </button>
                             ))
                           ) : (
-                            <div className="p-4 text-gray-500 text-center">No results found</div>
+                            <div className="p-4 text-gray-500 text-center">
+                              No results found
+                            </div>
                           )}
                         </div>
                       </div>
@@ -1328,7 +1545,11 @@ export default function EditCourse() {
                   variant={3}
                   min="1"
                   max="99"
-                  error={touched["scholarshipPercentage"] ? validationErrors["scholarshipPercentage"] : ""}
+                  error={
+                    touched["scholarshipPercentage"]
+                      ? validationErrors["scholarshipPercentage"]
+                      : ""
+                  }
                 />
               )}
             </div>
@@ -1350,7 +1571,11 @@ export default function EditCourse() {
               autoComplete="discountValue"
               variant={3}
               min="1"
-              error={touched["DiscountValue"] ? validationErrors["DiscountValue"] : ""}
+              error={
+                touched["DiscountValue"]
+                  ? validationErrors["DiscountValue"]
+                  : ""
+              }
             />
           </div>
         )}
@@ -1380,6 +1605,5 @@ export default function EditCourse() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-

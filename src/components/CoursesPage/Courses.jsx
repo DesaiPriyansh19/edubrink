@@ -26,12 +26,11 @@ import useFetch from "../../../hooks/useFetch";
 import ShareCard from "../../../utils/ShareCard";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../context/LanguageContext";
+import FaqDropDown from "../../../utils/FaqDropDown";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { language } = useLanguage();
-  const [showApplyForm, setShowApplyForm] = useState(false);
-  const [itemId, setItemId] = useState("");
   const { id } = useParams();
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -39,7 +38,7 @@ const CoursePage = () => {
   useEffect(() => {
     AOS.init({
       duration: 800,
-      once: false,
+      once: true,
     });
   }, []);
 
@@ -377,11 +376,11 @@ const CoursePage = () => {
 
               <button
                 onClick={toggleReadMore}
-                className={`mt-4 px-4 py-2 ${
+                className={`mt-4  ${
                   isUniversityCourse
-                    ? "text-[#3b3d8d] border-[#3b3d8d] hover:bg-[#3b3d8d]/5"
-                    : "text-teal-600 border-teal-600 hover:bg-teal-50"
-                } border font-medium rounded-lg transition-all`}
+                    ? "text-[#3b3d8d]  hover:text-[#7879bb]"
+                    : "text-teal-600  hover:text-teal-400"
+                }  font-medium rounded-lg transition-all`}
               >
                 {isExpanded
                   ? language === "ar"
@@ -433,6 +432,8 @@ const CoursePage = () => {
               </div>
             </div>
 
+            <FaqDropDown faqData={data?.faq} />
+
             {/* Career Prospects - Only for non-university courses */}
             {/* {!isUniversityCourse && (
               <div
@@ -476,7 +477,7 @@ const CoursePage = () => {
             data-aos="fade-left"
             data-aos-delay="300"
           >
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden sticky top-4">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden  top-4">
               {/* Price Header */}
               <div
                 className={`${

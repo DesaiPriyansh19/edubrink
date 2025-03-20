@@ -18,6 +18,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Home } from "lucide-react";
+import FaqDropDown from "../../../utils/FaqDropDown";
 
 const CountryPage = () => {
   const { slug } = useParams();
@@ -361,7 +362,7 @@ const CountryPage = () => {
         </div>
       )}
 
-      {data?.universities.length > 0  && (
+      {data?.universities.length > 0 && (
         <div data-aos="fade-up" data-aos-delay="550">
           <CountryPopularUniversity data={data} />
         </div>
@@ -370,6 +371,12 @@ const CountryPage = () => {
       {data?.blog.length > 0 && (
         <div data-aos="fade-up" data-aos-delay="600">
           <CountryBlogs data={data} />
+        </div>
+      )}
+
+      {data?.faq.length > 0 && (
+        <div data-aos="fade-up" data-aos-delay="600">
+          <FaqDropDown faqData={data?.faq} />
         </div>
       )}
     </div>

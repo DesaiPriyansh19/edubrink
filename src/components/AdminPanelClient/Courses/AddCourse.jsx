@@ -21,6 +21,7 @@ import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
 import RichText from "../../../../utils/RichText";
 import MetaArrayFields from "../Universities/MetaArrayFields";
+import FaqSection from "../../../../utils/FaqSection";
 
 const initialFormData = {
   CourseName: {
@@ -74,6 +75,7 @@ const initialFormData = {
     en: "",
     ar: "",
   },
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
 };
 
 const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
@@ -1227,6 +1229,10 @@ export default function AddCourse() {
             autoComplete="custom_url_slug_ar"
             variant={3}
           />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md ">
+          <FaqSection formData={formData} setFormData={setFormData} />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">

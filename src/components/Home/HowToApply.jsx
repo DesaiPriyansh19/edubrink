@@ -24,7 +24,7 @@ function HowToApply() {
         {t("howToApplySection.description")}
       </p>
       {/* Four Divs in One Line */}
-      <div className="grid grid-cols-1 ew:grid-cols-2 gap-4 lg:flex  w-[90%] max-w-[1240px] mx-auto rounded-3xl justify-between px-2  ">
+      <div className="grid grid-cols-1 ew:grid-cols-2 gap-4 lg:flex  w-[90%] max-w-[1050px] mx-auto rounded-3xl justify-between px-2  ">
         {items.map((item, index) => (
           <div
             key={index}

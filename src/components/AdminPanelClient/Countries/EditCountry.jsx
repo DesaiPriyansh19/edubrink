@@ -21,6 +21,7 @@ import useDropdownData from "../../../../hooks/useDropdownData";
 import DropdownSelect from "../../../../utils/DropdownSelect";
 import MetaArrayFields from "../Universities/MetaArrayFields";
 import RichText from "../../../../utils/RichText";
+import FaqSection from "../../../../utils/FaqSection";
 const isWindows = navigator.userAgent.includes("Windows");
 
 const initialFormData = {
@@ -65,6 +66,7 @@ const initialFormData = {
   universities: [], // Array to hold references to university IDs
   faculty: [],
   blog: [],
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
   hotDestination: false,
   livingCost: "",
 };
@@ -123,6 +125,23 @@ export default function EditCountry() {
         countryCode: data?.countryCode || "",
         universities: data?.universities || [], // Default to empty array
         blog: data?.blog || [],
+        faq: data?.faq?.length
+          ? data.faq.map((item) => ({
+              faqQuestions: {
+                en: item?.faqQuestions?.en || "",
+                ar: item?.faqQuestions?.ar || "",
+              },
+              faqAnswers: {
+                en: item?.faqAnswers?.en || "",
+                ar: item?.faqAnswers?.ar || "",
+              },
+            }))
+          : [
+              {
+                faqQuestions: { en: "", ar: "" },
+                faqAnswers: { en: "", ar: "" },
+              },
+            ],
         faculty: data?.faculty || [],
         hotDestination: data?.hotDestination || false,
         livingCost: data?.livingCost || "",
@@ -908,6 +927,10 @@ export default function EditCountry() {
             showDropdown={showDropdown}
             setShowDropdown={setShowDropdown}
           />
+
+          <div className="bg-white rounded-lg shadow-md ">
+            <FaqSection formData={formData} setFormData={setFormData} />
+          </div>
 
           <InputField
             label="Hot Destination"

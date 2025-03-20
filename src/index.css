@@ -168,9 +168,9 @@ body {
 
 .box:hover {
   /* color: #a2aaef7f; */
-  transform: translate(0px, -60px) /* 120p / 2 = 60 */;
+  transform: translate(0px, -40px) /* 120p / 2 = 60 */;
   box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15), 0px 40px 0 #fff,
-    00px 55px 20px rgba(0, 0, 0, 0.15), 0px 75px 0 #fff;
+    00px 55px 20px rgba(0, 0, 0, 0.15), 0px 0px 0 #fff;
 }
 
 

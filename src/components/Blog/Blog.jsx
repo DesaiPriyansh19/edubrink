@@ -1,112 +1,127 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Calander from "../../../svg/caplogo/Logo/Calander/Index"
-import UniversityRightLayoutCard from "../UniversityPage/UniversityRightLayoutCard"
-import RelatedBlogs from "./RelatedBlogs"
-import { useNavigate, useParams } from "react-router-dom"
-import useFetch from "../../../hooks/useFetch"
-import { useLanguage } from "../../../context/LanguageContext"
-import { useSearch } from "../../../context/SearchContext"
-import { useTranslation } from "react-i18next"
-import { Share2 } from "lucide-react"
-import ShareCard from "../../../utils/ShareCard"
-import useDropdownData from "../../../hooks/useDropdownData"
+import { useEffect, useState } from "react";
+import Calander from "../../../svg/caplogo/Logo/Calander/Index";
+import UniversityRightLayoutCard from "../UniversityPage/UniversityRightLayoutCard";
+import RelatedBlogs from "./RelatedBlogs";
+import { useNavigate, useParams } from "react-router-dom";
+import useFetch from "../../../hooks/useFetch";
+import { useLanguage } from "../../../context/LanguageContext";
+import { useSearch } from "../../../context/SearchContext";
+import { useTranslation } from "react-i18next";
+import { Share2 } from "lucide-react";
+import ShareCard from "../../../utils/ShareCard";
+import useDropdownData from "../../../hooks/useDropdownData";
+import FaqDropDown from "../../../utils/FaqDropDown";
 
 const MoreInfo = () => {
-  const { language } = useLanguage()
-  const { t } = useTranslation()
-  const { slug } = useParams()
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  const { data, loading } = useFetch(`https://edu-brink-backend.vercel.app/api/blog/name/${encodeURIComponent(slug)}`)
+  const { language } = useLanguage();
+  const { t } = useTranslation();
+  const { slug } = useParams();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const { data, loading } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/blog/name/${encodeURIComponent(
+      slug
+    )}`
+  );
 
-  const { setFilterProp, setSearchState } = useSearch()
+  const { setFilterProp, setSearchState } = useSearch();
   const [filters, setFilters] = useState({
     studyLevel: "",
     subjectPreference: "",
     duration: "",
-  })
-  const navigate = useNavigate()
-  const blogUrl = typeof window !== "undefined" ? window.location.href : ""
+  });
+  const navigate = useNavigate();
+  const blogUrl = typeof window !== "undefined" ? window.location.href : "";
 
-  const { addTags } = useDropdownData()
+  const { addTags } = useDropdownData();
 
   // Update document head for SEO
   useEffect(() => {
     if (data && !loading) {
       // SEO data based on current language
-      const seoTitle = data?.seo?.metaTitle?.[language] || data?.blogTitle?.[language] || "Blog"
+      const seoTitle =
+        data?.seo?.metaTitle?.[language] ||
+        data?.blogTitle?.[language] ||
+        "Blog";
       const seoDescription =
         data?.seo?.metaDescription?.[language] ||
         data?.blogSubtitle?.[language] ||
-        data?.blogDescription?.[language]?.substring(0, 160).replace(/<[^>]*>/g, "") + "..." ||
-        "Read our latest educational blog post."
+        data?.blogDescription?.[language]
+          ?.substring(0, 160)
+          .replace(/<[^>]*>/g, "") + "..." ||
+        "Read our latest educational blog post.";
       const seoKeywords =
         data?.seo?.metaKeywords?.[language]?.join(", ") ||
-        `${data?.blogTitle?.[language]}, ${data?.blogRelated?.map((tag) => tag[language]).join(", ")}, education, blog`
+        `${data?.blogTitle?.[language]}, ${data?.blogRelated
+          ?.map((tag) => tag[language])
+          .join(", ")}, education, blog`;
 
       // Update document title
-      document.title = seoTitle
+      document.title = seoTitle;
 
       // Update or create meta description
-      let metaDescription = document.querySelector('meta[name="description"]')
+      let metaDescription = document.querySelector('meta[name="description"]');
       if (!metaDescription) {
-        metaDescription = document.createElement("meta")
-        metaDescription.setAttribute("name", "description")
-        document.head.appendChild(metaDescription)
+        metaDescription = document.createElement("meta");
+        metaDescription.setAttribute("name", "description");
+        document.head.appendChild(metaDescription);
       }
-      metaDescription.setAttribute("content", seoDescription)
+      metaDescription.setAttribute("content", seoDescription);
 
       // Update or create meta keywords
       if (seoKeywords) {
-        let metaKeywords = document.querySelector('meta[name="keywords"]')
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
         if (!metaKeywords) {
-          metaKeywords = document.createElement("meta")
-          metaKeywords.setAttribute("name", "keywords")
-          document.head.appendChild(metaKeywords)
+          metaKeywords = document.createElement("meta");
+          metaKeywords.setAttribute("name", "keywords");
+          document.head.appendChild(metaKeywords);
         }
-        metaKeywords.setAttribute("content", seoKeywords)
+        metaKeywords.setAttribute("content", seoKeywords);
       }
 
       // Open Graph tags
-      updateMetaTag("og:title", seoTitle)
-      updateMetaTag("og:description", seoDescription)
-      updateMetaTag("og:type", "article")
-      updateMetaTag("og:url", window.location.href)
+      updateMetaTag("og:title", seoTitle);
+      updateMetaTag("og:description", seoDescription);
+      updateMetaTag("og:type", "article");
+      updateMetaTag("og:url", window.location.href);
 
       // Use blog image if available
       if (data?.blogPhoto) {
-        updateMetaTag("og:image", data.blogPhoto)
+        updateMetaTag("og:image", data.blogPhoto);
       }
 
       // Article specific Open Graph tags
       if (data?.blogAdded) {
-        updateMetaTag("article:published_time", new Date(data.blogAdded).toISOString())
+        updateMetaTag(
+          "article:published_time",
+          new Date(data.blogAdded).toISOString()
+        );
       }
 
       if (data?.blogRelated?.length > 0) {
         data.blogRelated.forEach((tag, index) => {
-          updateMetaTag(`article:tag:${index}`, tag[language])
-        })
+          updateMetaTag(`article:tag:${index}`, tag[language]);
+        });
       }
 
       // Twitter Card tags
-      updateMetaTag("twitter:card", "summary_large_image")
-      updateMetaTag("twitter:title", seoTitle)
-      updateMetaTag("twitter:description", seoDescription)
+      updateMetaTag("twitter:card", "summary_large_image");
+      updateMetaTag("twitter:title", seoTitle);
+      updateMetaTag("twitter:description", seoDescription);
 
       if (data?.blogPhoto) {
-        updateMetaTag("twitter:image", data.blogPhoto)
+        updateMetaTag("twitter:image", data.blogPhoto);
       }
 
       // Canonical URL
-      let canonicalLink = document.querySelector('link[rel="canonical"]')
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
-        canonicalLink = document.createElement("link")
-        canonicalLink.setAttribute("rel", "canonical")
-        document.head.appendChild(canonicalLink)
+        canonicalLink = document.createElement("link");
+        canonicalLink.setAttribute("rel", "canonical");
+        document.head.appendChild(canonicalLink);
       }
-      canonicalLink.setAttribute("href", window.location.href)
+      canonicalLink.setAttribute("href", window.location.href);
 
       // Additional structured data for blog posts (Schema.org)
       const blogSchema = {
@@ -115,7 +130,9 @@ const MoreInfo = () => {
         headline: seoTitle,
         description: seoDescription,
         image: data?.blogPhoto || "",
-        datePublished: data?.blogAdded ? new Date(data.blogAdded).toISOString() : new Date().toISOString(),
+        datePublished: data?.blogAdded
+          ? new Date(data.blogAdded).toISOString()
+          : new Date().toISOString(),
         author: {
           "@type": "Organization",
           name: "EduBrink",
@@ -133,60 +150,66 @@ const MoreInfo = () => {
           "@id": window.location.href,
         },
         keywords: seoKeywords,
-      }
+      };
 
       // Add or update structured data
-      let structuredDataScript = document.querySelector("#blog-structured-data")
+      let structuredDataScript = document.querySelector(
+        "#blog-structured-data"
+      );
       if (!structuredDataScript) {
-        structuredDataScript = document.createElement("script")
-        structuredDataScript.id = "blog-structured-data"
-        structuredDataScript.type = "application/ld+json"
-        document.head.appendChild(structuredDataScript)
+        structuredDataScript = document.createElement("script");
+        structuredDataScript.id = "blog-structured-data";
+        structuredDataScript.type = "application/ld+json";
+        document.head.appendChild(structuredDataScript);
       }
-      structuredDataScript.textContent = JSON.stringify(blogSchema)
+      structuredDataScript.textContent = JSON.stringify(blogSchema);
     }
-  }, [data, loading, language])
+  }, [data, loading, language]);
 
   // Helper function to update or create meta tags
   const updateMetaTag = (property, content) => {
-    let metaTag = document.querySelector(`meta[property="${property}"]`)
+    let metaTag = document.querySelector(`meta[property="${property}"]`);
     if (!metaTag) {
-      metaTag = document.createElement("meta")
-      metaTag.setAttribute("property", property)
-      document.head.appendChild(metaTag)
+      metaTag = document.createElement("meta");
+      metaTag.setAttribute("property", property);
+      document.head.appendChild(metaTag);
     }
-    metaTag.setAttribute("content", content)
-  }
+    metaTag.setAttribute("content", content);
+  };
 
   const handleChange = (e) => {
     setFilters({
       ...filters,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     setSearchState((prev) => ({
       ...prev,
       searchTerm: filters.subjectPreference,
       filteredResults: [],
       selectedIndex: null,
-    }))
+    }));
 
     setFilterProp((prev) => ({
       ...prev,
       CourseDuration: filters.duration,
       StudyLevel: filters.studyLevel,
       searchQuery: { ...prev.searchQuery, en: filters.subjectPreference },
-    }))
+    }));
 
-    navigate(`/${language}/searchresults`)
-  }
+    navigate(`/${language}/searchresults`);
+  };
 
   if (!data) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -221,7 +244,11 @@ const MoreInfo = () => {
         >
           <span>📚</span> {data?.blogTitle[language]}
         </h1>
-        <p className={`text-gray-700 ${language === "ar" ? "md:pl-24 lg:pl-56" : "md:pr-24 lg:pr-56"}   font-medium`}>
+        <p
+          className={`text-gray-700 ${
+            language === "ar" ? "md:pl-24 lg:pl-56" : "md:pr-24 lg:pr-56"
+          }   font-medium`}
+        >
           {data?.blogSubtitle[language]}
         </p>
 
@@ -241,14 +268,20 @@ const MoreInfo = () => {
             <div className="h-auto ">
               <div className=" flex flex-wrap gap-3 py-3 text-[0.8rem] font-medium">
                 {data?.blogRelated?.map((item) => (
-                  <span key={item._id} className="bg-[#F3F4F6] rounded-xl py-1 px-2">
+                  <span
+                    key={item._id}
+                    className="bg-[#F3F4F6] rounded-xl py-1 px-2"
+                  >
                     {item[language]}
                   </span>
                 ))}
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-semibold"> {t("BlogInnerPage.Intro")}</h3>
+              <h3 className="text-2xl font-semibold">
+                {" "}
+                {t("BlogInnerPage.Intro")}
+              </h3>
               <div
                 className="text-sm font-medium mt-2 mb-3"
                 dangerouslySetInnerHTML={{
@@ -256,15 +289,25 @@ const MoreInfo = () => {
                 }}
               />
             </div>
+            {data?.faq.length > 0 && (
+              <div data-aos="fade-up" data-aos-delay="600">
+                <FaqDropDown faqData={data?.faq} blog={true} />
+              </div>
+            )}
           </div>
 
           {/* Right Form Section */}
           <div className="  w-full md:w-[40%]  ">
             <div className="w-full space-y-6 bg-white px-5 py-8 rounded-3xl h-[450px]">
-              <h4 className="text-lg font-semibold mb-4">{t("findCourses.title")}</h4>
+              <h4 className="text-lg font-semibold mb-4">
+                {t("findCourses.title")}
+              </h4>
               {/* Dropdowns */}
               <span className="w-full ">
-                <label className="text-sm font-medium"> {t("findCourses.studyLevel")}</label>
+                <label className="text-sm font-medium">
+                  {" "}
+                  {t("findCourses.studyLevel")}
+                </label>
                 <select
                   id="studyLevel"
                   name="studyLevel"
@@ -272,15 +315,20 @@ const MoreInfo = () => {
                   onChange={handleChange}
                   className="w-full mb-5 border-[1.5px] py-2 text-[.755rem] text-gray-700 rounded-xl px-3 bg-white"
                 >
-                  {t("studyLevels", { returnObjects: true }).map((option, idx) => (
-                    <option key={idx} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
+                  {t("studyLevels", { returnObjects: true }).map(
+                    (option, idx) => (
+                      <option key={idx} value={option.value}>
+                        {option.label}
+                      </option>
+                    )
+                  )}
                 </select>
               </span>
               <span className="w-full ">
-                <label htmlFor="subjectPreference" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="subjectPreference"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   {t("findCourses.subjectPreference")}
                 </label>
                 <select
@@ -299,7 +347,10 @@ const MoreInfo = () => {
                 </select>
               </span>
               <span className="w-full">
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="duration"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   {t("findCourses.duration")}
                 </label>
                 <select
@@ -338,8 +389,7 @@ const MoreInfo = () => {
         contentUrl={blogUrl}
       />
     </div>
-  )
-}
+  );
+};
 
-export default MoreInfo
-
+export default MoreInfo;

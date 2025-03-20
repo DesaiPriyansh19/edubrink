@@ -20,6 +20,7 @@ const CountryPage = lazy(() => import("./components/CountryPage/CountryPage"))
 const SearchResults = lazy(() => import("./components/Search/SearchResults"))
 const UniversityPage = lazy(() => import("./components/UniversityPage/UniversityPage"))
 const CoursePage = lazy(() => import("./components/CoursesPage/Courses"))
+const MajorPage = lazy(() => import("./components/MajorPage/MajorPage"))
 const Blog = lazy(() => import("./components/Blog/Blog"))
 const MoreInfo = lazy(() => import("./components/Blog/Blog"))
 const FacultyPage = lazy(() => import("./components/FacultyPage/FacultyPage"))
@@ -92,6 +93,7 @@ function App() {
                   <Route path="/:lang/applications/:itemId" element={<ApplyForm />} />
                   <Route path="/:lang/faculty/:slug" element={<FacultyPage />} />
                   <Route path="/:lang/courses/:id" element={<CoursePage />} />
+                  <Route path="/:lang/major/:slug" element={<MajorPage />} />
                   <Route path="/:lang/blog/:slug" element={<Blog />} />
                   <Route path="/:lang/searchresults/*" element={<SearchResults />} />
                 </Route>

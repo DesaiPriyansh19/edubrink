@@ -21,7 +21,7 @@ import useDropdownData from "../../../../hooks/useDropdownData";
 import useApiData from "../../../../hooks/useApiData";
 import CampusSection from "./CampusSection";
 import MetaArrayFields from "./MetaArrayFields";
-import FaqSection from "./FaqSection";
+import FaqSection from "../../../../utils/FaqSection";
 import { getEmoji } from "../../../../libs/countryFlags";
 const isWindows = navigator.userAgent.includes("Windows");
 

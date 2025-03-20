@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { Plus, ArrowLeft, Tag, X, BookOpen, Search } from "lucide-react"
-import { useLanguage } from "../../../../context/LanguageContext"
-import InputField from "../../../../utils/InputField"
-import UploadWidget from "../../../../utils/UploadWidget"
-import useApiData from "../../../../hooks/useApiData"
-import MetaArrayFields from "../Universities/MetaArrayFields"
-import useDropdownData from "../../../../hooks/useDropdownData"
-import RichText from "../../../../utils/RichText"
-import { getEmoji } from "../../../../libs/countryFlags"
-const isWindows = navigator.userAgent.includes("Windows")
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Plus, ArrowLeft, Tag, X, BookOpen, Search } from "lucide-react";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+import UploadWidget from "../../../../utils/UploadWidget";
+import useApiData from "../../../../hooks/useApiData";
+import MetaArrayFields from "../Universities/MetaArrayFields";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import RichText from "../../../../utils/RichText";
+import { getEmoji } from "../../../../libs/countryFlags";
+import FaqSection from "../../../../utils/FaqSection";
+const isWindows = navigator.userAgent.includes("Windows");
 
 const initialFormData = {
   blogTitle: {
@@ -62,7 +63,8 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-}
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
+};
 
 const categories = [
   "Study Abroad",
@@ -75,27 +77,29 @@ const categories = [
   "Scholarships",
   "Student Stories",
   "Education News",
-]
+];
 
-const Visibility = ["Public", "Private", "Password Protected"]
-const Status = ["Draft", "Pending Review", "Published"]
+const Visibility = ["Public", "Private", "Password Protected"];
+const Status = ["Draft", "Pending Review", "Published"];
 
 export default function EditArticle() {
-  const { language } = useLanguage()
-  const { filteredData } = useDropdownData()
-  const navigate = useNavigate()
-  const { id } = useParams()
-  const [loading, setLoading] = useState(false)
-  const [showFlagPicker, setShowFlagPicker] = useState(false)
-  const [flagSearch, setFlagSearch] = useState("")
-  const [error, setError] = useState(null)
-  const [formData, setFormData] = useState(initialFormData)
-  const [newTag, setNewTag] = useState({ en: "", ar: "" })
-  const { data, updateWithOutById } = useApiData(`https://edu-brink-backend.vercel.app/api/blog/${id}`)
+  const { language } = useLanguage();
+  const { filteredData } = useDropdownData();
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+  const [newTag, setNewTag] = useState({ en: "", ar: "" });
+  const { data, updateWithOutById } = useApiData(
+    `https://edu-brink-backend.vercel.app/api/blog/${id}`
+  );
 
   // Add validation state
-  const [validationErrors, setValidationErrors] = useState({})
-  const [touchedFields, setTouchedFields] = useState({})
+  const [validationErrors, setValidationErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
 
   useEffect(() => {
     if (data) {
@@ -146,164 +150,203 @@ export default function EditArticle() {
             ar: data?.seo?.metaDescription?.ar || "",
           },
           metaKeywords: {
-            en: Array.isArray(data?.seo?.metaKeywords?.en) ? data.seo.metaKeywords.en : [],
-            ar: Array.isArray(data?.seo?.metaKeywords?.ar) ? data.seo.metaKeywords.ar : [],
+            en: Array.isArray(data?.seo?.metaKeywords?.en)
+              ? data.seo.metaKeywords.en
+              : [],
+            ar: Array.isArray(data?.seo?.metaKeywords?.ar)
+              ? data.seo.metaKeywords.ar
+              : [],
           },
         },
         customURLSlug: {
           en: data?.customURLSlug?.en || "",
           ar: data?.customURLSlug?.ar || "",
         },
-      })
+        faq: data?.faq?.length
+          ? data.faq.map((item) => ({
+              faqQuestions: {
+                en: item?.faqQuestions?.en || "",
+                ar: item?.faqQuestions?.ar || "",
+              },
+              faqAnswers: {
+                en: item?.faqAnswers?.en || "",
+                ar: item?.faqAnswers?.ar || "",
+              },
+            }))
+          : [
+              {
+                faqQuestions: { en: "", ar: "" },
+                faqAnswers: { en: "", ar: "" },
+              },
+            ],
+      });
     } else {
-      setFormData(initialFormData) // Reset to initial state when `data` is empty
+      setFormData(initialFormData); // Reset to initial state when `data` is empty
     }
-  }, [data])
+  }, [data]);
 
   const filterFacultyData = filteredData.countries?.filter(
     (country) =>
       country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase()),
-  )
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
+  );
 
   // Function to strip HTML tags for validation
   const stripHtml = (html) => {
-    const doc = new DOMParser().parseFromString(html, "text/html")
-    return doc.body.textContent || ""
-  }
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.body.textContent || "";
+  };
 
   // Validation function
   const validateField = (name, value) => {
-    let error = ""
+    let error = "";
 
     // Handle nested fields like blogTitle.en
     if (name.includes(".")) {
-      const [field, subfield] = name.split(".")
+      const [field, subfield] = name.split(".");
 
       // Handle different field types
       if (field === "blogTitle") {
         if (!value.trim()) {
-          error = `Blog title in ${subfield === "en" ? "English" : "Arabic"} is required`
+          error = `Blog title in ${
+            subfield === "en" ? "English" : "Arabic"
+          } is required`;
         } else if (value.trim().length < 3) {
-          error = `Blog title in ${subfield === "en" ? "English" : "Arabic"} must be at least 3 characters`
+          error = `Blog title in ${
+            subfield === "en" ? "English" : "Arabic"
+          } must be at least 3 characters`;
         }
       } else if (field === "blogSubtitle") {
         if (!value.trim()) {
-          error = `Blog subtitle in ${subfield === "en" ? "English" : "Arabic"} is required`
+          error = `Blog subtitle in ${
+            subfield === "en" ? "English" : "Arabic"
+          } is required`;
         }
       } else if (field === "excerpt") {
         if (!value.trim()) {
-          error = `Excerpt in ${subfield === "en" ? "English" : "Arabic"} is required`
+          error = `Excerpt in ${
+            subfield === "en" ? "English" : "Arabic"
+          } is required`;
         }
       } else if (field === "seo" && subfield === "metaTitle") {
-        const lang = name.split(".")[2] // Get en or ar
+        const lang = name.split(".")[2]; // Get en or ar
         if (!value.trim()) {
-          error = `Meta title in ${lang === "en" ? "English" : "Arabic"} is required`
+          error = `Meta title in ${
+            lang === "en" ? "English" : "Arabic"
+          } is required`;
         } else if (value.length > 60) {
-          error = `Meta title should be less than 60 characters`
+          error = `Meta title should be less than 60 characters`;
         }
       } else if (field === "blogDescription") {
-        const cleanText = stripHtml(value).trim()
+        const cleanText = stripHtml(value).trim();
         if (!cleanText) {
-          error = `Content in ${subfield === "en" ? "English" : "Arabic"} is required`
+          error = `Content in ${
+            subfield === "en" ? "English" : "Arabic"
+          } is required`;
         }
       }
     } else {
       // Handle non-nested fields
       if (name === "blogAuthor") {
         if (!value.trim()) {
-          error = "Author name is required"
+          error = "Author name is required";
         }
       } else if (name === "blogCategory") {
         if (!value) {
-          error = "Please select a category"
+          error = "Please select a category";
         }
       } else if (name === "blogCountry") {
         if (!value) {
-          error = "Please select a country"
+          error = "Please select a country";
         }
       } else if (name === "scheduledPublishDate") {
-        if (formData.status === "Draft" && !formData.publishImmediately && !value) {
-          error = "Please set a scheduled publish date"
+        if (
+          formData.status === "Draft" &&
+          !formData.publishImmediately &&
+          !value
+        ) {
+          error = "Please set a scheduled publish date";
         } else if (value) {
-          const selectedDate = new Date(value)
-          const today = new Date()
-          today.setHours(0, 0, 0, 0)
+          const selectedDate = new Date(value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
 
           if (isNaN(selectedDate.getTime())) {
-            error = "Please enter a valid date"
+            error = "Please enter a valid date";
           } else if (selectedDate < today) {
-            error = "Scheduled date cannot be in the past"
+            error = "Scheduled date cannot be in the past";
           }
         }
       }
     }
 
-    return error
-  }
+    return error;
+  };
 
   // Handle field blur for validation
   const handleBlur = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
 
     // Mark field as touched
     setTouchedFields((prev) => ({
       ...prev,
       [name]: true,
-    }))
+    }));
 
     // Validate the field
-    const error = validateField(name, value)
+    const error = validateField(name, value);
 
     // Update validation errors
     setValidationErrors((prev) => ({
       ...prev,
       [name]: error,
-    }))
-  }
+    }));
+  };
 
   // Validate blog tags
   const validateTags = (lang) => {
     if (!formData.blogTags[lang] || formData.blogTags[lang].length === 0) {
-      return `Please add at least one tag in ${lang === "en" ? "English" : "Arabic"}`
+      return `Please add at least one tag in ${
+        lang === "en" ? "English" : "Arabic"
+      }`;
     }
-    return ""
-  }
+    return "";
+  };
 
   // Mark tags as touched when interacting with them
   const handleTagsInteraction = (lang) => {
     setTouchedFields((prev) => ({
       ...prev,
       [`blogTags.${lang}`]: true,
-    }))
+    }));
 
-    const error = validateTags(lang)
+    const error = validateTags(lang);
     setValidationErrors((prev) => ({
       ...prev,
       [`blogTags.${lang}`]: error,
-    }))
-  }
+    }));
+  };
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target
-    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
 
-    const temp = { ...formData } // Clone the form data to avoid direct mutation
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value
+        acc[part] = type === "checkbox" ? checked : value;
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
       }
-      return acc[part]
-    }, temp)
+      return acc[part];
+    }, temp);
 
     if (nameParts.includes("blogTitle")) {
-      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -313,28 +356,28 @@ export default function EditArticle() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        }
+        };
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        }
+        };
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp)
+    setFormData(temp);
 
     // Clear validation error when field is edited
     if (touchedFields[name]) {
-      const error = validateField(name, value)
+      const error = validateField(name, value);
       setValidationErrors((prev) => ({
         ...prev,
         [name]: error,
-      }))
+      }));
     }
-  }
+  };
 
   // Handle country selection
   const handleCountrySelect = (country) => {
@@ -348,24 +391,24 @@ export default function EditArticle() {
       },
       countryCode: country.countryCode,
       countryEmoji: country.countryPhotos.countryFlag,
-    }))
+    }));
 
-    setShowFlagPicker(false)
+    setShowFlagPicker(false);
 
     // Mark as touched and validate
     setTouchedFields((prev) => ({
       ...prev,
       blogCountry: true,
-    }))
+    }));
 
     setValidationErrors((prev) => ({
       ...prev,
       blogCountry: country._id ? "" : "Please select a country",
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Mark all fields as touched
     const allFields = [
@@ -384,97 +427,99 @@ export default function EditArticle() {
       "seo.metaTitle.ar",
       "blogTags.en",
       "blogTags.ar",
-    ]
+    ];
 
     // Add scheduledPublishDate conditionally
     if (formData.status === "Draft" && !formData.publishImmediately) {
-      allFields.push("scheduledPublishDate")
+      allFields.push("scheduledPublishDate");
     }
 
-    const newTouchedFields = {}
+    const newTouchedFields = {};
     allFields.forEach((field) => {
-      newTouchedFields[field] = true
-    })
+      newTouchedFields[field] = true;
+    });
 
-    setTouchedFields(newTouchedFields)
+    setTouchedFields(newTouchedFields);
 
     // Validate all fields
-    const newErrors = {}
-    let hasErrors = false
+    const newErrors = {};
+    let hasErrors = false;
 
     allFields.forEach((field) => {
-      let value
+      let value;
 
       // Handle nested fields
       if (field.includes(".")) {
-        const parts = field.split(".")
+        const parts = field.split(".");
         if (parts.length === 2) {
-          value = formData[parts[0]][parts[1]]
+          value = formData[parts[0]][parts[1]];
         } else if (parts.length === 3) {
-          value = formData[parts[0]][parts[1]][parts[2]]
+          value = formData[parts[0]][parts[1]][parts[2]];
         }
       } else {
-        value = formData[field]
+        value = formData[field];
       }
 
       // Special case for blogTags
       if (field === "blogTags.en") {
-        const error = validateTags("en")
+        const error = validateTags("en");
         if (error) {
-          newErrors[field] = error
-          hasErrors = true
+          newErrors[field] = error;
+          hasErrors = true;
         }
       } else if (field === "blogTags.ar") {
-        const error = validateTags("ar")
+        const error = validateTags("ar");
         if (error) {
-          newErrors[field] = error
-          hasErrors = true
+          newErrors[field] = error;
+          hasErrors = true;
         }
       } else {
         // Regular field validation
-        const error = validateField(field, value)
+        const error = validateField(field, value);
         if (error) {
-          newErrors[field] = error
-          hasErrors = true
+          newErrors[field] = error;
+          hasErrors = true;
         }
       }
-    })
+    });
 
-    setValidationErrors(newErrors)
+    setValidationErrors(newErrors);
 
     if (hasErrors) {
       // Find the first error element and scroll to it
-      const firstErrorField = Object.keys(newErrors)[0]
-      const errorElement = document.querySelector(`[name="${firstErrorField}"]`)
+      const firstErrorField = Object.keys(newErrors)[0];
+      const errorElement = document.querySelector(
+        `[name="${firstErrorField}"]`
+      );
       if (errorElement) {
-        errorElement.scrollIntoView({ behavior: "smooth", block: "center" })
-        errorElement.focus()
+        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        errorElement.focus();
       }
 
-      setError("Please fix the validation errors before submitting")
-      return
+      setError("Please fix the validation errors before submitting");
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       const { countryName, countryEmoji, countryCode, ...updatedFormData } = {
         ...formData,
-      }
+      };
 
-      console.log(updatedFormData)
+      console.log(updatedFormData);
 
-      await updateWithOutById(updatedFormData)
+      await updateWithOutById(updatedFormData);
 
-      navigate(`/${language}/admin/articles`)
+      navigate(`/${language}/admin/articles`);
     } catch (err) {
-      console.error("Error updating article:", err)
-      setError(err.message || "Failed to update article")
+      console.error("Error updating article:", err);
+      setError(err.message || "Failed to update article");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const addTag = (lang) => {
     if (newTag[lang] && !formData?.blogTags?.[lang]?.includes(newTag[lang])) {
@@ -484,39 +529,40 @@ export default function EditArticle() {
           ...prev.blogTags,
           [lang]: [...(prev.blogTags?.[lang] ?? []), newTag[lang]],
         },
-      }))
+      }));
       setNewTag((prev) => ({
         ...prev,
         [lang]: "", // Clear only the corresponding language field
-      }))
+      }));
 
       // Validate tags after adding
-      handleTagsInteraction(lang)
+      handleTagsInteraction(lang);
     }
-  }
+  };
 
   const removeTag = (lang, tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
       blogTags: {
         ...prev.blogTags,
-        [lang]: prev.blogTags?.[lang]?.filter((tag) => tag !== tagToRemove) ?? [],
+        [lang]:
+          prev.blogTags?.[lang]?.filter((tag) => tag !== tagToRemove) ?? [],
       },
-    }))
+    }));
 
     // Validate tags after removing
-    handleTagsInteraction(lang)
-  }
+    handleTagsInteraction(lang);
+  };
 
   // Helper function to determine if a field has an error and has been touched
   const hasError = (fieldName) => {
-    return touchedFields[fieldName] && validationErrors[fieldName]
-  }
+    return touchedFields[fieldName] && validationErrors[fieldName];
+  };
 
   // Helper function to get error message
   const getErrorMessage = (fieldName) => {
-    return hasError(fieldName) ? validationErrors[fieldName] : ""
-  }
+    return hasError(fieldName) ? validationErrors[fieldName] : "";
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -531,9 +577,16 @@ export default function EditArticle() {
         <h1 className="text-2xl font-bold">Edit Article</h1>
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-lg shadow-md p-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <InputField
@@ -548,7 +601,11 @@ export default function EditArticle() {
               variant={3}
               className={hasError("blogTitle.en") ? "border-red-500" : ""}
             />
-            {hasError("blogTitle.en") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogTitle.en")}</p>}
+            {hasError("blogTitle.en") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogTitle.en")}
+              </p>
+            )}
           </div>
 
           <div>
@@ -564,7 +621,11 @@ export default function EditArticle() {
               variant={3}
               className={hasError("blogTitle.ar") ? "border-red-500" : ""}
             />
-            {hasError("blogTitle.ar") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogTitle.ar")}</p>}
+            {hasError("blogTitle.ar") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogTitle.ar")}
+              </p>
+            )}
           </div>
 
           <div>
@@ -581,7 +642,9 @@ export default function EditArticle() {
               className={hasError("blogSubtitle.en") ? "border-red-500" : ""}
             />
             {hasError("blogSubtitle.en") && (
-              <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogSubtitle.en")}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogSubtitle.en")}
+              </p>
             )}
           </div>
 
@@ -599,7 +662,9 @@ export default function EditArticle() {
               className={hasError("blogSubtitle.ar") ? "border-red-500" : ""}
             />
             {hasError("blogSubtitle.ar") && (
-              <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogSubtitle.ar")}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogSubtitle.ar")}
+              </p>
             )}
           </div>
 
@@ -617,7 +682,11 @@ export default function EditArticle() {
               }))}
               className={hasError("blogCategory") ? "border-red-500" : ""}
             />
-            {hasError("blogCategory") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogCategory")}</p>}
+            {hasError("blogCategory") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogCategory")}
+              </p>
+            )}
           </div>
 
           <div>
@@ -633,7 +702,11 @@ export default function EditArticle() {
               variant={3}
               className={hasError("blogAuthor") ? "border-red-500" : ""}
             />
-            {hasError("blogAuthor") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogAuthor")}</p>}
+            {hasError("blogAuthor") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogAuthor")}
+              </p>
+            )}
           </div>
 
           <div className="col-span-2">
@@ -644,32 +717,37 @@ export default function EditArticle() {
                 setFormData((prev) => ({
                   ...prev,
                   blogDescription: { ...prev.blogDescription, en: content },
-                }))
+                }));
 
                 if (touchedFields["blogDescription.en"]) {
-                  const error = validateField("blogDescription.en", content)
+                  const error = validateField("blogDescription.en", content);
                   setValidationErrors((prev) => ({
                     ...prev,
                     "blogDescription.en": error,
-                  }))
+                  }));
                 }
               }}
               onBlur={() => {
                 setTouchedFields((prev) => ({
                   ...prev,
                   "blogDescription.en": true,
-                }))
+                }));
 
-                const error = validateField("blogDescription.en", formData.blogDescription.en)
+                const error = validateField(
+                  "blogDescription.en",
+                  formData.blogDescription.en
+                );
                 setValidationErrors((prev) => ({
                   ...prev,
                   "blogDescription.en": error,
-                }))
+                }));
               }}
               className={hasError("blogDescription.en") ? "border-red-500" : ""}
             />
             {hasError("blogDescription.en") && (
-              <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogDescription.en")}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogDescription.en")}
+              </p>
             )}
           </div>
 
@@ -681,32 +759,37 @@ export default function EditArticle() {
                 setFormData((prev) => ({
                   ...prev,
                   blogDescription: { ...prev.blogDescription, ar: content },
-                }))
+                }));
 
                 if (touchedFields["blogDescription.ar"]) {
-                  const error = validateField("blogDescription.ar", content)
+                  const error = validateField("blogDescription.ar", content);
                   setValidationErrors((prev) => ({
                     ...prev,
                     "blogDescription.ar": error,
-                  }))
+                  }));
                 }
               }}
               onBlur={() => {
                 setTouchedFields((prev) => ({
                   ...prev,
                   "blogDescription.ar": true,
-                }))
+                }));
 
-                const error = validateField("blogDescription.ar", formData.blogDescription.ar)
+                const error = validateField(
+                  "blogDescription.ar",
+                  formData.blogDescription.ar
+                );
                 setValidationErrors((prev) => ({
                   ...prev,
                   "blogDescription.ar": error,
-                }))
+                }));
               }}
               className={hasError("blogDescription.ar") ? "border-red-500" : ""}
             />
             {hasError("blogDescription.ar") && (
-              <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogDescription.ar")}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("blogDescription.ar")}
+              </p>
             )}
           </div>
 
@@ -716,7 +799,9 @@ export default function EditArticle() {
           ].map((item) => {
             return (
               <div key={item.id}>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{item.label}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {item.label}
+                </label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -729,18 +814,22 @@ export default function EditArticle() {
                     }
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
-                        e.preventDefault()
-                        addTag(item.lang)
+                        e.preventDefault();
+                        addTag(item.lang);
                       }
                     }}
                     onFocus={() => handleTagsInteraction(item.lang)}
                     placeholder={`Add a tag (${item.lang.toUpperCase()})...`}
-                    className={`flex-1 border ${hasError(`blogTags.${item.lang}`) ? "border-red-500" : "border-gray-300"} rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2`}
+                    className={`flex-1 border ${
+                      hasError(`blogTags.${item.lang}`)
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2`}
                   />
                   <button
                     type="button"
                     onClick={() => {
-                      addTag(item.lang)
+                      addTag(item.lang);
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
                   >
@@ -767,10 +856,12 @@ export default function EditArticle() {
                   ))}
                 </div>
                 {hasError(`blogTags.${item.lang}`) && (
-                  <p className="mt-1 text-sm text-red-600">{getErrorMessage(`blogTags.${item.lang}`)}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {getErrorMessage(`blogTags.${item.lang}`)}
+                  </p>
                 )}
               </div>
-            )
+            );
           })}
 
           <div className="col-span-2 space-y-4">
@@ -834,7 +925,11 @@ export default function EditArticle() {
               variant={3}
               className={hasError("excerpt.en") ? "border-red-500" : ""}
             />
-            {hasError("excerpt.en") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("excerpt.en")}</p>}
+            {hasError("excerpt.en") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("excerpt.en")}
+              </p>
+            )}
           </div>
 
           <div className="w-full">
@@ -850,7 +945,11 @@ export default function EditArticle() {
               variant={3}
               className={hasError("excerpt.ar") ? "border-red-500" : ""}
             />
-            {hasError("excerpt.ar") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("excerpt.ar")}</p>}
+            {hasError("excerpt.ar") && (
+              <p className="mt-1 text-sm text-red-600">
+                {getErrorMessage("excerpt.ar")}
+              </p>
+            )}
           </div>
 
           <div>
@@ -869,30 +968,38 @@ export default function EditArticle() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Country
+            </label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => {
-                  setShowFlagPicker(!showFlagPicker)
+                  setShowFlagPicker(!showFlagPicker);
                   setTouchedFields((prev) => ({
                     ...prev,
                     blogCountry: true,
-                  }))
+                  }));
                 }}
-                className={`w-full flex items-center justify-between px-4 py-1 border ${hasError("blogCountry") ? "border-red-500" : "border-gray-300"} rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white`}
+                className={`w-full flex items-center justify-between px-4 py-1 border ${
+                  hasError("blogCountry") ? "border-red-500" : "border-gray-300"
+                } rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white`}
               >
                 <span className="flex gap-2 items-center">
                   {isWindows ? (
                     formData?.countryCode ? (
                       <div className="flex gap-2 items-center">
                         <img
-                          src={`https://flagcdn.com/w320/${getEmoji(formData?.countryCode)}.png`}
+                          src={`https://flagcdn.com/w320/${getEmoji(
+                            formData?.countryCode
+                          )}.png`}
                           alt="Country Flag"
                           className="w-4 h-4 object-cover rounded-full"
                         />
                         <span className="py-1 text-gray-600">
-                          {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                          {formData?.countryName?.en ||
+                            formData?.uniCountry ||
+                            "Select Country"}{" "}
                         </span>
                       </div>
                     ) : (
@@ -902,7 +1009,9 @@ export default function EditArticle() {
                     <>
                       <span>{formData?.countryEmoji}</span>
                       <span className="py-1 text-gray-600">
-                        {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                        {formData?.countryName?.en ||
+                          formData?.uniCountry ||
+                          "Select Country"}{" "}
                       </span>
                     </>
                   )}
@@ -910,7 +1019,11 @@ export default function EditArticle() {
                 <BookOpen className="w-5 h-5 text-gray-400" />
               </button>
 
-              {hasError("blogCountry") && <p className="mt-1 text-sm text-red-600">{getErrorMessage("blogCountry")}</p>}
+              {hasError("blogCountry") && (
+                <p className="mt-1 text-sm text-red-600">
+                  {getErrorMessage("blogCountry")}
+                </p>
+              )}
 
               {showFlagPicker && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -938,22 +1051,29 @@ export default function EditArticle() {
                           country?.countryCode ? (
                             <div className="flex gap-2 mt-2 items-center">
                               <img
-                                src={`https://flagcdn.com/w320/${getEmoji(country?.countryCode)}.png`}
+                                src={`https://flagcdn.com/w320/${getEmoji(
+                                  country?.countryCode
+                                )}.png`}
                                 alt="Country Flag"
                                 className="w-4 h-4 object-cover rounded-full"
                               />
                               <p className="text-black text-sm">
-                                {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
+                                {language === "ar"
+                                  ? country?.countryName?.ar
+                                  : country?.countryName?.en}
                               </p>
                             </div>
                           ) : (
-                            <span className="text-[.6rem] font-medium">No flag</span>
+                            <span className="text-[.6rem] font-medium">
+                              No flag
+                            </span>
                           )
                         ) : (
                           <>
                             <span>{country?.countryPhotos?.countryFlag}</span>
                             <span className="text-black text-sm">
-                              {country?.countryName?.en} - {country?.countryName?.ar}
+                              {country?.countryName?.en} -{" "}
+                              {country?.countryName?.ar}
                             </span>
                           </>
                         )}
@@ -984,15 +1104,23 @@ export default function EditArticle() {
                     label="Scheduled Publish Date"
                     type="date"
                     name="scheduledPublishDate"
-                    value={formData?.scheduledPublishDate ? formData?.scheduledPublishDate.slice(0, 10) : ""}
+                    value={
+                      formData?.scheduledPublishDate
+                        ? formData?.scheduledPublishDate.slice(0, 10)
+                        : ""
+                    }
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     autoComplete="scheduled_publish_date"
                     variant={3}
-                    className={hasError("scheduledPublishDate") ? "border-red-500" : ""}
+                    className={
+                      hasError("scheduledPublishDate") ? "border-red-500" : ""
+                    }
                   />
                   {hasError("scheduledPublishDate") && (
-                    <p className="mt-1 text-sm text-red-600">{getErrorMessage("scheduledPublishDate")}</p>
+                    <p className="mt-1 text-sm text-red-600">
+                      {getErrorMessage("scheduledPublishDate")}
+                    </p>
                   )}
                 </div>
               )}
@@ -1014,7 +1142,9 @@ export default function EditArticle() {
                 className={hasError("seo.metaTitle.en") ? "border-red-500" : ""}
               />
               {hasError("seo.metaTitle.en") && (
-                <p className="mt-1 text-sm text-red-600">{getErrorMessage("seo.metaTitle.en")}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {getErrorMessage("seo.metaTitle.en")}
+                </p>
               )}
             </div>
 
@@ -1032,7 +1162,9 @@ export default function EditArticle() {
                 className={hasError("seo.metaTitle.ar") ? "border-red-500" : ""}
               />
               {hasError("seo.metaTitle.ar") && (
-                <p className="mt-1 text-sm text-red-600">{getErrorMessage("seo.metaTitle.ar")}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {getErrorMessage("seo.metaTitle.ar")}
+                </p>
               )}
             </div>
 
@@ -1104,6 +1236,10 @@ export default function EditArticle() {
             variant={3}
           />
 
+          <div className="bg-white rounded-lg col-span-2 shadow-md ">
+            <FaqSection formData={formData} setFormData={setFormData} />
+          </div>
+
           <div className="flex items-center col-span-2 space-x-6">
             <InputField
               label="Publish Immediately"
@@ -1162,6 +1298,5 @@ export default function EditArticle() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-

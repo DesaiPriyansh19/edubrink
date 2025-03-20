@@ -158,6 +158,10 @@ function ExploreBlogs({ language }) {
     };
   }, []);
 
+  const handleNavigate = (name) => {
+    navigate(`/${language}/blog/${name}`);
+  };
+
   // Show full page loader for initial loading
   if (initialLoading) {
     return (
@@ -195,7 +199,7 @@ function ExploreBlogs({ language }) {
             {/* Image container */}
             <div className="blog-card-image">
               <img
-                src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                src={blog?.blogPhoto || "https://placehold.co/600x400"}
                 alt={blog?.blogTitle?.[language]}
               />
             </div>

@@ -23,8 +23,8 @@ const SkeletonLoader = () => (
         key={index}
         className="flex-shrink-0 flex flex-col items-center w-28 sm:w-32 md:w-32 lg:w-44"
       >
-        <div className="w-24 h-24 rounded-full bg-gray-200 animate-pulse mb-4"></div>
-        <div className="w-20 h-4 bg-gray-200 animate-pulse rounded"></div>
+        <div className="w-24 h-24 rounded-full bg-gray-200 animate-none mb-4"></div>
+        <div className="w-20 h-4 bg-gray-200 animate-none rounded"></div>
       </div>
     ))}
   </div>

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 const DropdowneCourses = forwardRef(
-  ({ setShowCoursesDropdown, navbarHeight, facultyData, data }, ref) => {
+  ({ setShowCoursesDropdown, navbarHeight, data }, ref) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const API_URL = import.meta.env.VITE_API_URL;

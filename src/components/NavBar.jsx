@@ -70,10 +70,10 @@ const NavBar = ({ setIsModalOpen }) => {
     false
   );
 
-  const { data: FacultyData } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/faculty?limit=5`,
-    false
-  );
+  // const { data: FacultyData } = useFetch(
+  //   `https://edu-brink-backend.vercel.app/api/faculty?limit=5`,
+  //   false
+  // );
 
   const { data: CountryData } = useFetch(
     "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,countryPhotos,customURLSlug",
@@ -308,7 +308,7 @@ const NavBar = ({ setIsModalOpen }) => {
             />
           </svg>
         );
-      case "faculty":
+      case "major":
         return (
           <svg
             width="16"
@@ -391,6 +391,7 @@ const NavBar = ({ setIsModalOpen }) => {
 
   const handleSelectTerm = (term) => {
     const customSlug = term.customURLSlug?.[language] || term.keyword;
+    console.log(term);
     setSearchState({
       ...searchState,
       searchTerm: term.keyword, // Keep the selected keyword in search input
@@ -415,8 +416,8 @@ const NavBar = ({ setIsModalOpen }) => {
       navigate(`/${language}/courses/${customSlug}`);
     } else if (term.type === "blog") {
       navigate(`/${language}/blog/${customSlug}`);
-    } else if (term.type === "faculty") {
-      navigate(`/${language}/faculty/${customSlug}`);
+    } else if (term.type === "major") {
+      navigate(`/${language}/major/${customSlug}`);
     } else {
       navigate(`/${language}/searchresults`);
     }
@@ -721,7 +722,7 @@ const NavBar = ({ setIsModalOpen }) => {
               <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50">
                 <DropdowneCourses
                   data={CoursesData}
-                  facultyData={FacultyData}
+                  // facultyData={FacultyData}
                   setShowCoursesDropdown={setShowCoursesDropdown}
                 />
               </div>
@@ -830,7 +831,7 @@ const NavBar = ({ setIsModalOpen }) => {
       {showCoursesDropdown && (
         <DropdowneCourses
           data={CoursesData}
-          facultyData={FacultyData}
+          // facultyData={FacultyData}
           ref={dropDownCourseRef}
           setShowCoursesDropdown={setShowCoursesDropdown}
           navbarHeight={navbarHeight}

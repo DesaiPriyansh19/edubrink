@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { Plus, ArrowLeft, Tag, X, BookOpen, Search } from 'lucide-react'
-import { useLanguage } from "../../../../context/LanguageContext"
-import InputField from "../../../../utils/InputField"
-import UploadWidget from "../../../../utils/UploadWidget"
-import useApiData from "../../../../hooks/useApiData"
-import MetaArrayFields from "../Universities/MetaArrayFields"
-import useDropdownData from "../../../../hooks/useDropdownData"
-import RichText from "../../../../utils/RichText"
-import { getEmoji } from "../../../../libs/countryFlags"
-const isWindows = navigator.userAgent.includes("Windows")
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Plus, ArrowLeft, Tag, X, BookOpen, Search } from "lucide-react";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+import UploadWidget from "../../../../utils/UploadWidget";
+import useApiData from "../../../../hooks/useApiData";
+import MetaArrayFields from "../Universities/MetaArrayFields";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import RichText from "../../../../utils/RichText";
+import { getEmoji } from "../../../../libs/countryFlags";
+import FaqSection from "../../../../utils/FaqSection";
+const isWindows = navigator.userAgent.includes("Windows");
 
 const initialFormData = {
   blogTitle: {
@@ -62,7 +63,8 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-}
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
+};
 
 const categories = [
   "Study Abroad",
@@ -75,26 +77,28 @@ const categories = [
   "Scholarships",
   "Student Stories",
   "Education News",
-]
+];
 
-const Visibility = ["Public", "Private", "Password Protected"]
-const Status = ["Draft", "Pending Review", "Published"]
+const Visibility = ["Public", "Private", "Password Protected"];
+const Status = ["Draft", "Pending Review", "Published"];
 
 export default function AddArticle() {
-  const { language } = useLanguage()
-  const { filteredData } = useDropdownData()
-  const [showFlagPicker, setShowFlagPicker] = useState(false)
-  const [flagSearch, setFlagSearch] = useState("")
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [formData, setFormData] = useState(initialFormData)
-  const [newTag, setNewTag] = useState({ en: "", ar: "" })
-  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/blog?admin=true")
+  const { language } = useLanguage();
+  const { filteredData } = useDropdownData();
+  const [showFlagPicker, setShowFlagPicker] = useState(false);
+  const [flagSearch, setFlagSearch] = useState("");
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+  const [newTag, setNewTag] = useState({ en: "", ar: "" });
+  const { addNew } = useApiData(
+    "https://edu-brink-backend.vercel.app/api/blog?admin=true"
+  );
 
   // Add validation state at the top of the component, after the other useState declarations
-  const [validationErrors, setValidationErrors] = useState({})
-  const [touchedFields, setTouchedFields] = useState({})
+  const [validationErrors, setValidationErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
 
   useEffect(() => {
     if (formData?.publishImmediately) {
@@ -102,30 +106,30 @@ export default function AddArticle() {
         ...prev,
         status: "Published",
         scheduledPublishDate: "",
-      }))
+      }));
     }
-  }, [formData?.publishImmediately])
+  }, [formData?.publishImmediately]);
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target
-    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
 
-    const temp = { ...formData } // Clone the form data to avoid direct mutation
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value
+        acc[part] = type === "checkbox" ? checked : value;
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
       }
-      return acc[part]
-    }, temp)
+      return acc[part];
+    }, temp);
 
     if (nameParts.includes("blogTitle")) {
-      const lang = nameParts[nameParts.length - 1] // Extract language (en or ar)
+      const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
 
       if (lang === "en") {
         // English slug: Convert to lowercase, replace spaces with hyphens, remove special characters
@@ -135,48 +139,48 @@ export default function AddArticle() {
             .toLowerCase()
             .replace(/\s+/g, "-") // Replace spaces with hyphens
             .replace(/[^a-zA-Z0-9-]/g, ""), // Remove special characters
-        }
+        };
       } else if (lang === "ar") {
         // Arabic slug: Just replace spaces with hyphens, keep Arabic characters
         temp.customURLSlug = {
           ...temp.customURLSlug,
           [lang]: value.replace(/\s+/g, "-"), // Replace spaces with hyphens but keep Arabic characters
-        }
+        };
       }
     }
 
     // Update formData state with the new temp object
-    setFormData(temp)
+    setFormData(temp);
 
     // Add this after the setFormData(temp) line in handleInputChange
     setValidationErrors((prev) => {
-      const error = validateField(name, type === "checkbox" ? checked : value)
+      const error = validateField(name, type === "checkbox" ? checked : value);
       if (error) {
-        return { ...prev, [name]: error }
+        return { ...prev, [name]: error };
       } else {
-        const newErrors = { ...prev }
-        delete newErrors[name]
-        return newErrors
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
       }
-    })
-  }
+    });
+  };
 
   // Add this function after handleInputChange
   const handleBlur = (event) => {
-    const { name, value } = event.target
+    const { name, value } = event.target;
 
     setTouchedFields((prev) => ({
       ...prev,
       [name]: true,
-    }))
+    }));
 
-    const error = validateField(name, value)
+    const error = validateField(name, value);
 
     setValidationErrors((prev) => ({
       ...prev,
       [name]: error,
-    }))
-  }
+    }));
+  };
 
   // Modify the validateField function to include validation for the additional fields:
 
@@ -271,7 +275,7 @@ export default function AddArticle() {
       "excerpt.ar",
       "seo.metaTitle.en",
       "seo.metaTitle.ar",
-      "blogCountry"
+      "blogCountry",
     ];
 
     const newTouchedFields = { ...touchedFields };
@@ -282,16 +286,16 @@ export default function AddArticle() {
 
     // Also validate tags separately
     let newErrors = {};
-    
+
     // Validate tags
     if (formData.blogTags.en.length === 0) {
       newErrors["blogTags.en"] = "At least one English tag is required";
     }
-    
+
     if (formData.blogTags.ar.length === 0) {
       newErrors["blogTags.ar"] = "At least one Arabic tag is required";
     }
-    
+
     // Validate country
     if (!formData.blogCountry) {
       newErrors["blogCountry"] = "Country is required";
@@ -362,8 +366,8 @@ export default function AddArticle() {
   const filterFacultyData = filteredData.countries?.filter(
     (country) =>
       country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
-      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase()),
-  )
+      country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
+  );
 
   const addTag = (lang) => {
     if (newTag[lang] && !formData?.blogTags?.[lang]?.includes(newTag[lang])) {
@@ -373,23 +377,24 @@ export default function AddArticle() {
           ...prev.blogTags,
           [lang]: [...(prev.blogTags?.[lang] ?? []), newTag[lang]],
         },
-      }))
+      }));
       setNewTag((prev) => ({
         ...prev,
         [lang]: "", // Clear only the corresponding language field
-      }))
+      }));
     }
-  }
+  };
 
   const removeTag = (lang, tagToRemove) => {
     setFormData((prev) => ({
       ...prev,
       blogTags: {
         ...prev.blogTags,
-        [lang]: prev.blogTags?.[lang]?.filter((tag) => tag !== tagToRemove) ?? [],
+        [lang]:
+          prev.blogTags?.[lang]?.filter((tag) => tag !== tagToRemove) ?? [],
       },
-    }))
-  }
+    }));
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -404,9 +409,16 @@ export default function AddArticle() {
         <h1 className="text-2xl font-bold">Add New Article</h1>
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-lg shadow-md p-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* For the English title field: */}
           <InputField
@@ -419,7 +431,9 @@ export default function AddArticle() {
             onBlur={handleBlur}
             autoComplete="blog_title_english"
             variant={3}
-            error={touchedFields["blogTitle.en"] && validationErrors["blogTitle.en"]}
+            error={
+              touchedFields["blogTitle.en"] && validationErrors["blogTitle.en"]
+            }
             errorMessage={validationErrors["blogTitle.en"]}
           />
 
@@ -434,7 +448,9 @@ export default function AddArticle() {
             onBlur={handleBlur}
             autoComplete="blog_title_arabic"
             variant={3}
-            error={touchedFields["blogTitle.ar"] && validationErrors["blogTitle.ar"]}
+            error={
+              touchedFields["blogTitle.ar"] && validationErrors["blogTitle.ar"]
+            }
             errorMessage={validationErrors["blogTitle.ar"]}
           />
 
@@ -449,7 +465,10 @@ export default function AddArticle() {
             onBlur={handleBlur}
             autoComplete="blog_subtitle_english"
             variant={3}
-            error={touchedFields["blogSubtitle.en"] && validationErrors["blogSubtitle.en"]}
+            error={
+              touchedFields["blogSubtitle.en"] &&
+              validationErrors["blogSubtitle.en"]
+            }
             errorMessage={validationErrors["blogSubtitle.en"]}
           />
 
@@ -464,7 +483,10 @@ export default function AddArticle() {
             onBlur={handleBlur}
             autoComplete="blog_subtitle_arabic"
             variant={3}
-            error={touchedFields["blogSubtitle.ar"] && validationErrors["blogSubtitle.ar"]}
+            error={
+              touchedFields["blogSubtitle.ar"] &&
+              validationErrors["blogSubtitle.ar"]
+            }
             errorMessage={validationErrors["blogSubtitle.ar"]}
           />
 
@@ -480,7 +502,9 @@ export default function AddArticle() {
               value: mode,
               label: mode,
             }))}
-            error={touchedFields["blogCategory"] && validationErrors["blogCategory"]}
+            error={
+              touchedFields["blogCategory"] && validationErrors["blogCategory"]
+            }
             errorMessage={validationErrors["blogCategory"]}
           />
 
@@ -495,7 +519,9 @@ export default function AddArticle() {
             onBlur={handleBlur}
             autoComplete="blog_author"
             variant={3}
-            error={touchedFields["blogAuthor"] && validationErrors["blogAuthor"]}
+            error={
+              touchedFields["blogAuthor"] && validationErrors["blogAuthor"]
+            }
             errorMessage={validationErrors["blogAuthor"]}
           />
 
@@ -508,25 +534,31 @@ export default function AddArticle() {
                 setFormData((prev) => ({
                   ...prev,
                   blogDescription: { ...prev.blogDescription, en: content },
-                }))
+                }));
 
                 // Validate the content
-                const error = validateField("blogDescription.en", content)
+                const error = validateField("blogDescription.en", content);
                 setValidationErrors((prev) => {
                   if (error) {
-                    return { ...prev, "blogDescription.en": error }
+                    return { ...prev, "blogDescription.en": error };
                   } else {
-                    const newErrors = { ...prev }
-                    delete newErrors["blogDescription.en"]
-                    return newErrors
+                    const newErrors = { ...prev };
+                    delete newErrors["blogDescription.en"];
+                    return newErrors;
                   }
-                })
+                });
               }}
-              error={touchedFields["blogDescription.en"] && validationErrors["blogDescription.en"]}
+              error={
+                touchedFields["blogDescription.en"] &&
+                validationErrors["blogDescription.en"]
+              }
             />
-            {touchedFields["blogDescription.en"] && validationErrors["blogDescription.en"] && (
-              <p className="mt-1 text-sm text-red-600">{validationErrors["blogDescription.en"]}</p>
-            )}
+            {touchedFields["blogDescription.en"] &&
+              validationErrors["blogDescription.en"] && (
+                <p className="mt-1 text-sm text-red-600">
+                  {validationErrors["blogDescription.en"]}
+                </p>
+              )}
           </div>
 
           {/* For the Arabic content RichText component, replace with: */}
@@ -538,25 +570,31 @@ export default function AddArticle() {
                 setFormData((prev) => ({
                   ...prev,
                   blogDescription: { ...prev.blogDescription, ar: content },
-                }))
+                }));
 
                 // Validate the content
-                const error = validateField("blogDescription.ar", content)
+                const error = validateField("blogDescription.ar", content);
                 setValidationErrors((prev) => {
                   if (error) {
-                    return { ...prev, "blogDescription.ar": error }
+                    return { ...prev, "blogDescription.ar": error };
                   } else {
-                    const newErrors = { ...prev }
-                    delete newErrors["blogDescription.ar"]
-                    return newErrors
+                    const newErrors = { ...prev };
+                    delete newErrors["blogDescription.ar"];
+                    return newErrors;
                   }
-                })
+                });
               }}
-              error={touchedFields["blogDescription.ar"] && validationErrors["blogDescription.ar"]}
+              error={
+                touchedFields["blogDescription.ar"] &&
+                validationErrors["blogDescription.ar"]
+              }
             />
-            {touchedFields["blogDescription.ar"] && validationErrors["blogDescription.ar"] && (
-              <p className="mt-1 text-sm text-red-600">{validationErrors["blogDescription.ar"]}</p>
-            )}
+            {touchedFields["blogDescription.ar"] &&
+              validationErrors["blogDescription.ar"] && (
+                <p className="mt-1 text-sm text-red-600">
+                  {validationErrors["blogDescription.ar"]}
+                </p>
+              )}
           </div>
 
           {[
@@ -565,7 +603,9 @@ export default function AddArticle() {
           ].map((item) => {
             return (
               <div key={item.id}>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{item.label}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {item.label}
+                </label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -576,14 +616,16 @@ export default function AddArticle() {
                         [item.lang]: e.target.value, // Update only the corresponding language field
                       }))
                     }
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addTag())
+                    }
                     placeholder={`Add a tag (${item.lang.toUpperCase()})...`}
                     className="flex-1 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 px-4 py-2"
                   />
                   <button
                     type="button"
                     onClick={() => {
-                      addTag(item.lang)
+                      addTag(item.lang);
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
                   >
@@ -610,7 +652,7 @@ export default function AddArticle() {
                   ))}
                 </div>
               </div>
-            )
+            );
           })}
 
           <div className="col-span-2 space-y-4">
@@ -678,7 +720,9 @@ export default function AddArticle() {
                 onBlur={handleBlur}
                 autoComplete="excerpt_en"
                 variant={3}
-                error={touchedFields["excerpt.en"] && validationErrors["excerpt.en"]}
+                error={
+                  touchedFields["excerpt.en"] && validationErrors["excerpt.en"]
+                }
                 errorMessage={validationErrors["excerpt.en"]}
               />
             </div>
@@ -694,7 +738,9 @@ export default function AddArticle() {
                 onBlur={handleBlur}
                 autoComplete="excerpt_ar"
                 variant={3}
-                error={touchedFields["excerpt.ar"] && validationErrors["excerpt.ar"]}
+                error={
+                  touchedFields["excerpt.ar"] && validationErrors["excerpt.ar"]
+                }
                 errorMessage={validationErrors["excerpt.ar"]}
               />
             </div>
@@ -716,7 +762,9 @@ export default function AddArticle() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Country
+            </label>
             <div className="relative">
               <button
                 type="button"
@@ -728,12 +776,16 @@ export default function AddArticle() {
                     formData?.countryCode ? (
                       <div className="flex gap-2  items-center">
                         <img
-                          src={`https://flagcdn.com/w320/${getEmoji(formData?.countryCode)}.png`}
+                          src={`https://flagcdn.com/w320/${getEmoji(
+                            formData?.countryCode
+                          )}.png`}
                           alt="Country Flag"
                           className="w-4 h-4 object-cover rounded-full"
                         />
                         <span className="py-1 text-gray-600">
-                          {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                          {formData?.countryName?.en ||
+                            formData?.uniCountry ||
+                            "Select Country"}{" "}
                           {/* Placeholder if name is empty */}
                         </span>
                       </div>
@@ -744,7 +796,9 @@ export default function AddArticle() {
                     <>
                       <span>{formData?.countryEmoji}</span>
                       <span className="py-1 text-gray-600">
-                        {formData?.countryName?.en || formData?.uniCountry || "Select Country"}{" "}
+                        {formData?.countryName?.en ||
+                          formData?.uniCountry ||
+                          "Select Country"}{" "}
                         {/* Placeholder if name is empty */}
                       </span>
                     </>
@@ -783,8 +837,8 @@ export default function AddArticle() {
                             },
                             countryCode: country.countryCode,
                             countryEmoji: country.countryPhotos.countryFlag,
-                          }))
-                          setShowFlagPicker(false)
+                          }));
+                          setShowFlagPicker(false);
                         }}
                         className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                       >
@@ -792,22 +846,29 @@ export default function AddArticle() {
                           country?.countryCode ? (
                             <div className="flex gap-2 mt-2 items-center">
                               <img
-                                src={`https://flagcdn.com/w320/${getEmoji(country?.countryCode)}.png`}
+                                src={`https://flagcdn.com/w320/${getEmoji(
+                                  country?.countryCode
+                                )}.png`}
                                 alt="Country Flag"
                                 className="w-4 h-4 object-cover rounded-full"
                               />
                               <p className="text-black text-sm">
-                                {language === "ar" ? country?.countryName?.ar : country?.countryName?.en}
+                                {language === "ar"
+                                  ? country?.countryName?.ar
+                                  : country?.countryName?.en}
                               </p>
                             </div>
                           ) : (
-                            <span className="text-[.6rem] font-medium">No flag</span>
+                            <span className="text-[.6rem] font-medium">
+                              No flag
+                            </span>
                           )
                         ) : (
                           <>
                             <span>{country?.countryPhotos?.countryFlag}</span>
                             <span className="text-black text-sm">
-                              {country?.countryName?.en} - {country?.countryName?.ar}
+                              {country?.countryName?.en} -{" "}
+                              {country?.countryName?.ar}
                             </span>
                           </>
                         )}
@@ -840,12 +901,19 @@ export default function AddArticle() {
                     label="Scheduled Publish Date"
                     type="date"
                     name="scheduledPublishDate"
-                    value={formData?.scheduledPublishDate ? formData?.scheduledPublishDate.slice(0, 10) : ""}
+                    value={
+                      formData?.scheduledPublishDate
+                        ? formData?.scheduledPublishDate.slice(0, 10)
+                        : ""
+                    }
                     onChange={handleInputChange}
                     onBlur={handleBlur}
                     autoComplete="scheduled_publish_date"
                     variant={3}
-                    error={touchedFields["scheduledPublishDate"] && validationErrors["scheduledPublishDate"]}
+                    error={
+                      touchedFields["scheduledPublishDate"] &&
+                      validationErrors["scheduledPublishDate"]
+                    }
                     errorMessage={validationErrors["scheduledPublishDate"]}
                   />
                 </div>
@@ -865,7 +933,10 @@ export default function AddArticle() {
               onBlur={handleBlur}
               autoComplete="metaTitle"
               variant={3}
-              error={touchedFields["seo.metaTitle.en"] && validationErrors["seo.metaTitle.en"]}
+              error={
+                touchedFields["seo.metaTitle.en"] &&
+                validationErrors["seo.metaTitle.en"]
+              }
               errorMessage={validationErrors["seo.metaTitle.en"]}
             />
 
@@ -880,7 +951,10 @@ export default function AddArticle() {
               onBlur={handleBlur}
               autoComplete="metaTitle"
               variant={3}
-              error={touchedFields["seo.metaTitle.ar"] && validationErrors["seo.metaTitle.ar"]}
+              error={
+                touchedFields["seo.metaTitle.ar"] &&
+                validationErrors["seo.metaTitle.ar"]
+              }
               errorMessage={validationErrors["seo.metaTitle.ar"]}
             />
 
@@ -950,6 +1024,10 @@ export default function AddArticle() {
             variant={3}
           />
 
+          <div className="bg-white rounded-lg col-span-2 shadow-md ">
+            <FaqSection formData={formData} setFormData={setFormData} />
+          </div>
+
           <div className="flex items-center col-span-2 space-x-6">
             <InputField
               label="Publish Immediately"
@@ -993,8 +1071,6 @@ export default function AddArticle() {
             <button
               type="submit"
               disabled={loading}
-
-
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center"
             >
               {loading ? (
@@ -1010,6 +1086,5 @@ export default function AddArticle() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-

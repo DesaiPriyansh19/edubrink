@@ -15,12 +15,12 @@ const CollegeCard = ({ college, idx, isWindows }) => {
   const navigate = useNavigate();
   const features = [
     {
-      icon: <BookOpen />,
-      title: language === "ar" ? "عدد الدورات" : "Number of courses",
+      icon: <BookOpen className="w-5 h-5" />,
+      title: language === "ar" ? "عدد الدورات" : "Courses",
       description: college.courseId.length,
     },
     {
-      icon: <GraduationCap />,
+      icon: <GraduationCap className="w-5 h-5" />,
       title: language === "ar" ? "المنح الدراسية" : "Scholarship",
       description:
         college.scholarshipAvailability === true
@@ -79,7 +79,7 @@ const CollegeCard = ({ college, idx, isWindows }) => {
         <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
           <div className="w-20 h-20 ">
             <img
-              src={"https://placehold.co/80x80" || college.uniSymbol}
+              src={college.uniSymbol || "https://placehold.co/80x80"}
               alt="Logo"
               className="w-full h-full rounded-full object-cover"
             />
@@ -198,7 +198,7 @@ const CollegeCarousel = () => {
             language === "ar" ? "justify-start" : "justify-end "
           } items-center px-4`}
         >
-           <button className="bg-white whitespace-nowrap flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
+          <button className="bg-white whitespace-nowrap flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
             {t("viewAll")}
 
             <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Plus, Trash2, MessageCircle } from "lucide-react"
-import InputField from "../../../../utils/InputField"
+import InputField from "./InputField"
 
 const FaqSection = ({ formData, setFormData }) => {
   const [activeFAQ, setActiveFAQ] = useState(0)

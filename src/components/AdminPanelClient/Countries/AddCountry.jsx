@@ -10,6 +10,7 @@ import InputField from "../../../../utils/InputField"
 import UploadWidget from "../../../../utils/UploadWidget"
 import RichText from "../../../../utils/RichText"
 import MetaArrayFields from "../Universities/MetaArrayFields"
+import FaqSection from "../../../../utils/FaqSection"
 const isWindows = navigator.userAgent.includes("Windows")
 
 const initialFormData = {
@@ -52,6 +53,7 @@ const initialFormData = {
   countryCode: "",
   universities: [], // Array to hold references to university IDs
   blog: [],
+  faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
   hotDestination: false,
   livingCost: "",
 }
@@ -756,6 +758,9 @@ export default function AddCountry() {
                 }))
               }
             />
+          </div>
+          <div className="bg-white rounded-lg shadow-md ">
+            <FaqSection formData={formData} setFormData={setFormData} />
           </div>
 
           <InputField
