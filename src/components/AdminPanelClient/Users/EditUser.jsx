@@ -46,7 +46,7 @@ export default function EditUser() {
         isAdmin: data?.isAdmin ?? false,
         verified: data?.verified ?? false,
         Status: data?.Status || "",
-        ActionStatus: data?.ActionStatus || "",
+        ActionStatus: data?.ActionStatus || "Viewer",
         Gender: data?.Gender || "Male",
       })
     }

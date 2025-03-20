@@ -907,7 +907,7 @@ export default function EditCourse() {
                 type="select"
                 name="CourseDurationUnits"
                 placeholder="e.g., Course Figure"
-                value={formData?.CourseDurationUnits || ""}
+                value={formData?.CourseDurationUnits }
                 onChange={handleInputChange}
                 onBlur={handleBlur}
                 options={durationUnits.map((mode) => ({

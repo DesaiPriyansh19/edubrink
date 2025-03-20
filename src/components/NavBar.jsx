@@ -1,62 +1,87 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import Search from "../../svg/caplogo/Logo/Search"
-import { Link, useNavigate, useLocation } from "react-router-dom"
-import SideBar from "./SideBar"
-import FilterLogo from "../../svg/FilterLogo"
-import DropdowneCourses from "./DropdowneCourses"
-import DropdownContries from "./DropdownContries"
-import TogelMenu from "../../svg/TogelMenu/Index"
-import TogelMenuTwo from "../../svg/TogelMenuTwo/Index"
-import { useTranslation } from "react-i18next"
-import { useLanguage } from "../../context/LanguageContext"
-import FilterSidebar from "./FilterSidevbar/FilterSidebar"
-import useFetch from "../../hooks/useFetch"
-import { useSearch } from "../../context/SearchContext"
-import useClickOutside from "../../hooks/useClickOutside"
-import { SearchDropdown } from "../../utils/SearchDropDown"
-import { ChevronDown, LogOut, LogIn } from "lucide-react"
+import { useState, useEffect, useRef } from "react";
+import Search from "../../svg/caplogo/Logo/Search";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import SideBar from "./SideBar";
+import FilterLogo from "../../svg/FilterLogo";
+import DropdowneCourses from "./DropdowneCourses";
+import DropdownContries from "./DropdownContries";
+import TogelMenu from "../../svg/TogelMenu/Index";
+import TogelMenuTwo from "../../svg/TogelMenuTwo/Index";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../context/LanguageContext";
+import FilterSidebar from "./FilterSidevbar/FilterSidebar";
+import useFetch from "../../hooks/useFetch";
+import { useSearch } from "../../context/SearchContext";
+import unitedStates from "../assets/unitedStates.png";
+import uaeIcon from "../assets/uaeIcon.png";
+import useClickOutside from "../../hooks/useClickOutside";
+import { SearchDropdown } from "../../utils/SearchDropDown";
+import { ChevronDown, LogOut, LogIn } from "lucide-react";
 
-const isWindows = navigator.userAgent.includes("Windows")
+const isWindows = navigator.userAgent.includes("Windows");
 
 const NavBar = ({ setIsModalOpen }) => {
-  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false)
-  const { setFilterProp, filterProp, setSearchState, searchState, initialState } = useSearch()
+  const [showCoursesDropdown, setShowCoursesDropdown] = useState(false);
+  const {
+    setFilterProp,
+    filterProp,
+    setSearchState,
+    searchState,
+    initialState,
+  } = useSearch();
 
-  const [showCountriesDropdown, setShowCountriesDropdown] = useState(false)
-  const [showFlagsDropdown, setShowFlagsDropdown] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
+  const [showFlagsDropdown, setShowFlagsDropdown] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0)
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 0
+  );
 
-  const dropDownLanguageRef = useClickOutside(() => setShowFlagsDropdown(false))
-  const dropDownCountryRef = useClickOutside(() => setShowCountriesDropdown(false))
-  const dropDownCourseRef = useClickOutside(() => setShowCoursesDropdown(false))
-  const searchContainerRef = useRef(null)
+  const dropDownLanguageRef = useClickOutside(() =>
+    setShowFlagsDropdown(false)
+  );
+  const dropDownCountryRef = useClickOutside(() =>
+    setShowCountriesDropdown(false)
+  );
+  const dropDownCourseRef = useClickOutside(() =>
+    setShowCoursesDropdown(false)
+  );
+  const searchContainerRef = useRef(null);
 
-  const inputRef = useRef(null)
-  const dropdownRef = useRef(null) // Ref for the dropdown list
-  const API_URL = import.meta.env.VITE_API_URL
-  const { t } = useTranslation()
-  const { language, setLanguage } = useLanguage()
-  const [navbarHeight, setNavbarHeight] = useState(0)
-  const [showFilter, setShowFilter] = useState(false)
-  const { data: KeywordData } = useFetch(`https://edu-brink-backend.vercel.app/api/keyword`, false)
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null); // Ref for the dropdown list
+  const API_URL = import.meta.env.VITE_API_URL;
+  const { t } = useTranslation();
+  const { language, setLanguage } = useLanguage();
+  const [navbarHeight, setNavbarHeight] = useState(0);
+  const [showFilter, setShowFilter] = useState(false);
+  const { data: KeywordData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/keyword`,
+    false
+  );
 
-  const { data: CoursesData } = useFetch(`https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`, false)
+  const { data: CoursesData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/course/getAll/GetAllCourse`,
+    false
+  );
 
-  const { data: FacultyData } = useFetch(`https://edu-brink-backend.vercel.app/api/faculty?limit=5`, false)
+  const { data: FacultyData } = useFetch(
+    `https://edu-brink-backend.vercel.app/api/faculty?limit=5`,
+    false
+  );
 
   const { data: CountryData } = useFetch(
     "https://edu-brink-backend.vercel.app/api/country/fields/query?fields=countryName,countryCode,countryPhotos,customURLSlug",
-    false,
-  )
-  const navigate = useNavigate()
-  const location = useLocation()
-  const keywords = KeywordData || []
+    false
+  );
+  const navigate = useNavigate();
+  const location = useLocation();
+  const keywords = KeywordData || [];
 
   const languageLabels = {
     en: {
@@ -69,67 +94,71 @@ const NavBar = ({ setIsModalOpen }) => {
       emoji: "🇦🇪",
       code: "ae",
     },
-  }
+  };
 
   // Check if user is logged in
   useEffect(() => {
     const checkLoginStatus = () => {
-      const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}")
-      setIsLoggedIn(!!userInfo?.token) // Set to true if token exists
-    }
+      const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
+      setIsLoggedIn(!!userInfo?.token); // Set to true if token exists
+    };
 
     // Check on initial load
-    checkLoginStatus()
+    checkLoginStatus();
 
     // Set up an interval to check periodically
-    const intervalId = setInterval(checkLoginStatus, 1000)
+    const intervalId = setInterval(checkLoginStatus, 1000);
 
     // Clean up interval on unmount
-    return () => clearInterval(intervalId)
-  }, [])
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      setWindowWidth(window.innerWidth)
+      setWindowWidth(window.innerWidth);
 
       // Auto-close mobile search on resize to desktop
       if (window.innerWidth >= 768 && isSearchOpen) {
-        setIsSearchOpen(false)
+        setIsSearchOpen(false);
       }
-    }
+    };
 
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [isSearchOpen])
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isSearchOpen]);
 
   useEffect(() => {
     const updateNavbarHeight = () => {
-      const navbar = document.getElementById("navbar")
+      const navbar = document.getElementById("navbar");
       if (navbar) {
-        setNavbarHeight(navbar.offsetHeight)
+        setNavbarHeight(navbar.offsetHeight);
       }
-    }
+    };
 
-    updateNavbarHeight() // Initial calculation
-    window.addEventListener("resize", updateNavbarHeight) // Recalculate on window resize
+    updateNavbarHeight(); // Initial calculation
+    window.addEventListener("resize", updateNavbarHeight); // Recalculate on window resize
 
     return () => {
-      window.removeEventListener("resize", updateNavbarHeight) // Cleanup event listener
-    }
-  }, [])
+      window.removeEventListener("resize", updateNavbarHeight); // Cleanup event listener
+    };
+  }, []);
 
   // Close search dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target) && isSearchOpen) {
-        setIsSearchOpen(false)
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target) &&
+        isSearchOpen
+      ) {
+        setIsSearchOpen(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isSearchOpen])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isSearchOpen]);
 
   const getIconForType = (type) => {
     switch (type) {
@@ -172,7 +201,7 @@ const NavBar = ({ setIsModalOpen }) => {
               strokeLinejoin="round"
             />
           </svg>
-        )
+        );
       case "country":
         return (
           <svg
@@ -198,7 +227,7 @@ const NavBar = ({ setIsModalOpen }) => {
               strokeLinejoin="round"
             />
           </svg>
-        )
+        );
       case "university":
         return (
           <svg
@@ -238,7 +267,7 @@ const NavBar = ({ setIsModalOpen }) => {
               strokeLinejoin="round"
             />
           </svg>
-        )
+        );
       case "course":
         return (
           <svg
@@ -278,7 +307,7 @@ const NavBar = ({ setIsModalOpen }) => {
               strokeLinejoin="round"
             />
           </svg>
-        )
+        );
       case "faculty":
         return (
           <svg
@@ -332,41 +361,45 @@ const NavBar = ({ setIsModalOpen }) => {
               strokeLinejoin="round"
             />
           </svg>
-        )
+        );
       default:
-        return <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        return <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />;
     }
-  }
+  };
   const handleDropdownToggle = (dropdownType) => {
-    setShowCountriesDropdown((prev) => (dropdownType === "countries" ? !prev : false))
-    setShowCoursesDropdown((prev) => (dropdownType === "courses" ? !prev : false))
-    setShowFlagsDropdown((prev) => (dropdownType === "flags" ? !prev : false))
-  }
+    setShowCountriesDropdown((prev) =>
+      dropdownType === "countries" ? !prev : false
+    );
+    setShowCoursesDropdown((prev) =>
+      dropdownType === "courses" ? !prev : false
+    );
+    setShowFlagsDropdown((prev) => (dropdownType === "flags" ? !prev : false));
+  };
 
   const toggleSidebar = () => {
-    setIsMenuOpen(!isMenuOpen)
+    setIsMenuOpen(!isMenuOpen);
 
     // Add or remove the overflow-hidden class on the body element
     if (!isMenuOpen) {
-      document.body.classList.add("overflow-auto")
-      document.body.classList.add("overflow-auto")
+      document.body.classList.add("overflow-auto");
+      document.body.classList.add("overflow-auto");
     } else {
-      document.body.classList.remove("overflow-hidden")
-      document.body.classList.remove("overflow-hidden")
+      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove("overflow-hidden");
     }
-  }
+  };
 
   const handleSelectTerm = (term) => {
-    const customSlug = term.customURLSlug?.[language] || term.keyword
+    const customSlug = term.customURLSlug?.[language] || term.keyword;
     setSearchState({
       ...searchState,
       searchTerm: term.keyword, // Keep the selected keyword in search input
       filteredResults: [],
       selectedIndex: null,
-    })
+    });
 
     if (term.type === "country") {
-      navigate(`/${language}/country/${customSlug}`)
+      navigate(`/${language}/country/${customSlug}`);
     } else if (term.type === "tag") {
       setFilterProp((prev) => ({
         ...prev,
@@ -374,170 +407,194 @@ const NavBar = ({ setIsModalOpen }) => {
           en: language === "en" ? term.keyword : prev.searchQuery.en, // Update only relevant language
           ar: language === "ar" ? term.keyword : prev.searchQuery.ar,
         },
-      }))
-      navigate(`/${language}/searchresults`)
+      }));
+      navigate(`/${language}/searchresults`);
     } else if (term.type === "university") {
-      navigate(`/${language}/university/${customSlug}`)
+      navigate(`/${language}/university/${customSlug}`);
     } else if (term.type === "course") {
-      navigate(`/${language}/courses/${customSlug}`)
+      navigate(`/${language}/courses/${customSlug}`);
     } else if (term.type === "blog") {
-      navigate(`/${language}/blog/${customSlug}`)
+      navigate(`/${language}/blog/${customSlug}`);
     } else if (term.type === "faculty") {
-      navigate(`/${language}/faculty/${customSlug}`)
+      navigate(`/${language}/faculty/${customSlug}`);
     } else {
-      navigate(`/${language}/searchresults`)
+      navigate(`/${language}/searchresults`);
     }
 
     if (inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
 
     // Close mobile search after selection
     if (windowWidth < 768) {
-      setIsSearchOpen(false)
+      setIsSearchOpen(false);
     }
-  }
+  };
 
   const handleSearchInput = (eventOrValue) => {
-    const value = typeof eventOrValue === "string" ? eventOrValue : eventOrValue?.target?.value
+    const value =
+      typeof eventOrValue === "string"
+        ? eventOrValue
+        : eventOrValue?.target?.value;
 
-    if (value === undefined) return // Prevents errors if value is missing
+    if (value === undefined) return; // Prevents errors if value is missing
 
     setSearchState((prevState) => ({
       ...prevState,
       searchTerm: value.toLowerCase(),
-    }))
+    }));
 
     // Process keywords for standard structures (blog, country, university, course)
     const matchedKeywords = keywords
       .filter((item) => item.type !== "tag") // Exclude "tag" for now
       .flatMap((item) =>
         item.data
-          .filter((entry) => entry.keywords.some((keyword) => keyword.toLowerCase().includes(value.toLowerCase())))
+          .filter((entry) =>
+            entry.keywords.some((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            )
+          )
           .map((entry) => ({
             type: item.type,
-            keyword: entry.keywords.find((keyword) => keyword.toLowerCase().includes(value.toLowerCase())), // Keep matched keyword
+            keyword: entry.keywords.find((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            ), // Keep matched keyword
             customURLSlug: entry.customURLSlug, // Include the slug
-          })),
-      )
+          }))
+      );
 
     // Process keywords for "tag" structure (inside `data`)
-    const tagData = keywords.find((item) => item.type === "tag")
+    const tagData = keywords.find((item) => item.type === "tag");
     const tagKeywords = tagData
       ? tagData.data.flatMap((tag) =>
           [...tag.keywords.en, ...tag.keywords.ar] // Merge English & Arabic tags
-            .filter((keyword) => keyword.toLowerCase().includes(value.toLowerCase()))
+            .filter((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            )
             .map((keyword) => ({
               keyword,
               type: "tag",
               customURLSlug: tag.customURLSlug || null,
-            })),
+            }))
         )
-      : []
+      : [];
 
-    const filteredResults = [...matchedKeywords, ...tagKeywords]
+    const filteredResults = [...matchedKeywords, ...tagKeywords];
 
     setSearchState((prevState) => ({
       ...prevState,
       filteredResults,
-    }))
-  }
+    }));
+  };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && searchState.selectedIndex !== null && searchState.filteredResults.length > 0) {
-      const selectedTerm = searchState.filteredResults[searchState.selectedIndex]
-      handleSelectTerm(selectedTerm)
-    } else if (e.key === "ArrowDown" && searchState.selectedIndex < searchState.filteredResults.length - 1) {
+    if (
+      e.key === "Enter" &&
+      searchState.selectedIndex !== null &&
+      searchState.filteredResults.length > 0
+    ) {
+      const selectedTerm =
+        searchState.filteredResults[searchState.selectedIndex];
+      handleSelectTerm(selectedTerm);
+    } else if (
+      e.key === "ArrowDown" &&
+      searchState.selectedIndex < searchState.filteredResults.length - 1
+    ) {
       setSearchState((prevState) => {
-        const newIndex = prevState.selectedIndex + 1
+        const newIndex = prevState.selectedIndex + 1;
 
         // Scroll into view
         if (dropdownRef.current) {
-          const item = dropdownRef.current.children[newIndex]
+          const item = dropdownRef.current.children[newIndex];
           if (item) {
-            item.scrollIntoView({ behavior: "smooth", block: "nearest" })
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
           }
         }
 
-        return { ...prevState, selectedIndex: newIndex }
-      })
+        return { ...prevState, selectedIndex: newIndex };
+      });
     } else if (e.key === "ArrowUp" && searchState.selectedIndex > 0) {
       setSearchState((prevState) => {
-        const newIndex = prevState.selectedIndex - 1
+        const newIndex = prevState.selectedIndex - 1;
 
         // Scroll into view
         if (dropdownRef.current) {
-          const item = dropdownRef.current.children[newIndex]
+          const item = dropdownRef.current.children[newIndex];
           if (item) {
-            item.scrollIntoView({ behavior: "smooth", block: "nearest" })
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
           }
         }
 
-        return { ...prevState, selectedIndex: newIndex }
-      })
+        return { ...prevState, selectedIndex: newIndex };
+      });
     }
-  }
+  };
 
   const changeLanguage = (lang) => {
-    setLanguage(lang)
-    navigate(`/${lang}${location.pathname.substring(3)}`) // Update URL while keeping the existing path
-    setShowFlagsDropdown(false) // Close dropdown
-  }
+    setLanguage(lang);
+    navigate(`/${lang}${location.pathname.substring(3)}`); // Update URL while keeping the existing path
+    setShowFlagsDropdown(false); // Close dropdown
+  };
 
   const countActiveFilters = () => {
-    let count = 0
+    let count = 0;
     Object.keys(filterProp).forEach((key) => {
-      if (JSON.stringify(filterProp[key]) !== JSON.stringify(initialState[key])) {
-        count++
+      if (
+        JSON.stringify(filterProp[key]) !== JSON.stringify(initialState[key])
+      ) {
+        count++;
       }
-    })
-    return count
-  }
+    });
+    return count;
+  };
 
-  const activeFilters = countActiveFilters()
+  const activeFilters = countActiveFilters();
 
   useEffect(() => {
-    if (searchState.filteredResults.length > 0 && searchState.selectedIndex === null) {
+    if (
+      searchState.filteredResults.length > 0 &&
+      searchState.selectedIndex === null
+    ) {
       setSearchState((prevState) => ({
         ...prevState,
         selectedIndex: 0, // Set to the first item
-      }))
+      }));
     }
-  }, [searchState.filteredResults, searchState.selectedIndex, setSearchState])
+  }, [searchState.filteredResults, searchState.selectedIndex, setSearchState]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setShowCoursesDropdown(false)
+        setShowCoursesDropdown(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const onSelectResult = (result) => {
-    handleSelectTerm(result)
-  }
+    handleSelectTerm(result);
+  };
 
   const handleLogout = () => {
     // Clear user data from localStorage
-    localStorage.removeItem("eduuserInfo")
+    localStorage.removeItem("eduuserInfo");
     // Redirect to home page
-    navigate(`/${language}`)
+    navigate(`/${language}`);
     // Update login state
-    setIsLoggedIn(false)
-  }
+    setIsLoggedIn(false);
+  };
 
   const handleLogin = () => {
     // Instead of navigating, open the auth modal
     if (setIsModalOpen) {
-      setIsModalOpen(true)
+      setIsModalOpen(true);
     }
-  }
+  };
 
   return (
     <>
@@ -581,7 +638,7 @@ const NavBar = ({ setIsModalOpen }) => {
             <div
               className="h-auto bg-[#F8F8F8] rounded-full w-auto p-2 hover:bg-gray-200 transition-colors"
               onClick={() => {
-                setIsSearchOpen(!isSearchOpen)
+                setIsSearchOpen(!isSearchOpen);
               }}
             >
               <Search />
@@ -593,15 +650,11 @@ const NavBar = ({ setIsModalOpen }) => {
                 className="flex items-center space-x-2 px-3 py-2 rounded-full text-gray-800 hover:bg-gray-100 transition-all duration-200 ease-in-out hover:shadow-md"
                 onClick={() => handleDropdownToggle("flags")}
               >
-                {isWindows ? (
-                  <img
-                    src={`https://flagcdn.com/w320/${languageLabels[language].code}.png`}
-                    alt={languageLabels[language].text}
-                    className="w-5 h-5 object-cover rounded-full"
-                  />
-                ) : (
-                  <span className="text-xl">{languageLabels[language].emoji}</span>
-                )}
+                <img
+                  src={language === "ar" ? uaeIcon : unitedStates}
+                  alt={languageLabels[language].text}
+                  className="w-5 h-5 object-cover rounded-full"
+                />
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -610,7 +663,11 @@ const NavBar = ({ setIsModalOpen }) => {
                   stroke="currentColor"
                   className="w-4 h-4"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                  />
                 </svg>
               </button>
               {showFlagsDropdown && (
@@ -623,37 +680,29 @@ const NavBar = ({ setIsModalOpen }) => {
       transform transition-all duration-300 ease-in-out opacity-100 scale-100  origin-top`}
                 >
                   <li
-                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
+                    className="cursor-pointer flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
                     onClick={() => {
-                      changeLanguage("en")
+                      changeLanguage("en");
                     }}
                   >
-                    {isWindows ? (
-                      <img
-                        src="https://flagcdn.com/w320/us.png"
-                        alt="English"
-                        className="w-5 h-5 object-cover rounded-full mr-2"
-                      />
-                    ) : (
-                      <span className="mr-2 text-xl">🇺🇸</span>
-                    )}
+                    <img
+                      src={unitedStates}
+                      alt={"USAICON"}
+                      className="w-5 h-5 object-cover rounded-full"
+                    />
                     English
                   </li>
                   <li
-                    className="cursor-pointer flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
+                    className="cursor-pointer flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
                     onClick={() => {
-                      changeLanguage("ar")
+                      changeLanguage("ar");
                     }}
                   >
-                    {isWindows ? (
-                      <img
-                        src="https://flagcdn.com/w320/ae.png"
-                        alt="Arabic"
-                        className="w-5 h-5 object-cover rounded-full mr-2"
-                      />
-                    ) : (
-                      <span className="mr-2 text-xl">🇦🇪</span>
-                    )}
+                    <img
+                      src={uaeIcon}
+                      alt={"UAEICON"}
+                      className="w-5 h-5 object-cover rounded-full"
+                    />
                     العربية
                   </li>
                 </ul>
@@ -685,7 +734,10 @@ const NavBar = ({ setIsModalOpen }) => {
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
               <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left z-50">
-                <DropdownContries data={CountryData} setShowCountriesDropdown={setShowCountriesDropdown} />
+                <DropdownContries
+                  data={CountryData}
+                  setShowCountriesDropdown={setShowCountriesDropdown}
+                />
               </div>
             </div>
 
@@ -708,47 +760,36 @@ const NavBar = ({ setIsModalOpen }) => {
             <div className="relative group">
               {" "}
               <button className="flex items-center space-x-1 text-sm font-medium text-gray-800 hover:text-[#652986] transition-colors">
-                {isWindows ? (
-                  <img
-                    src={`https://flagcdn.com/w320/${languageLabels[language].code}.png`}
-                    alt={languageLabels[language].text}
-                    className="w-5 h-5 object-cover rounded-full"
-                  />
-                ) : (
-                  <span className="text-xl">{languageLabels[language].emoji}</span>
-                )}
+                <img
+                  src={language === "ar" ? uaeIcon : unitedStates}
+                  alt={languageLabels[language].text}
+                  className="w-5 h-5 object-cover rounded-full"
+                />
+
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
               <div className="absolute top-full right-0 mt-1 w-40 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
                 <div className="py-1 rounded-xl">
                   <button
                     onClick={() => changeLanguage("en")}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    {isWindows ? (
-                      <img
-                        src="https://flagcdn.com/w320/us.png"
-                        alt="English"
-                        className="w-5 h-5 object-cover rounded-full mr-2"
-                      />
-                    ) : (
-                      <span className="mr-2 text-xl">🇺🇸</span>
-                    )}
+                    <img
+                      src={unitedStates}
+                      alt={"USAICON"}
+                      className="w-5 h-5 object-cover rounded-full"
+                    />
                     English
                   </button>
                   <button
                     onClick={() => changeLanguage("ar")}
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
-                    {isWindows ? (
-                      <img
-                        src="https://flagcdn.com/w320/ae.png"
-                        alt="Arabic"
-                        className="w-5 h-5 object-cover rounded-full mr-2"
-                      />
-                    ) : (
-                      <span className="mr-2 text-xl">🇦🇪</span>
-                    )}
+                    <img
+                      src={uaeIcon}
+                      alt={"UAEICON"}
+                      className="w-5 h-5 object-cover rounded-full"
+                    />
                     العربية
                   </button>
                 </div>
@@ -760,7 +801,7 @@ const NavBar = ({ setIsModalOpen }) => {
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium items-center text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
             >
               <LogOut className="w-4 h-4 mr-2" />
               {t("logOut")}
@@ -768,7 +809,7 @@ const NavBar = ({ setIsModalOpen }) => {
           ) : (
             <button
               onClick={handleLogin}
-              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              className="hidden mmd:flex px-6 py-2.5 text-sm items-center font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
             >
               <LogIn className="w-4 h-4 mr-2" />
               {t("login")}
@@ -795,7 +836,9 @@ const NavBar = ({ setIsModalOpen }) => {
           navbarHeight={navbarHeight}
         />
       )}
-      {isMenuOpen && <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />}
+      {isMenuOpen && (
+        <SideBar setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
+      )}
 
       {/* Mobile Search Bar - Improved UI */}
       {isSearchOpen && (
@@ -806,8 +849,16 @@ const NavBar = ({ setIsModalOpen }) => {
         >
           <div className="flex items-center p-4 border-b">
             {/* Back button */}
-            <button onClick={() => setIsSearchOpen(false)} className="p-2 rounded-full hover:bg-gray-100 mr-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <button
+              onClick={() => setIsSearchOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-100 mr-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path
                   fillRule="evenodd"
                   d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
@@ -878,12 +929,17 @@ const NavBar = ({ setIsModalOpen }) => {
 
           {/* Search results */}
           {searchState.searchTerm && searchState.filteredResults.length > 0 && (
-            <div ref={dropdownRef} className="max-h-[70vh] overflow-y-auto bg-white">
+            <div
+              ref={dropdownRef}
+              className="max-h-[70vh] overflow-y-auto bg-white"
+            >
               {searchState.filteredResults.map((result, index) => (
                 <div
                   key={index}
                   className={`flex items-center px-4 py-3 cursor-pointer transition-colors duration-150 border-b ${
-                    index === searchState.selectedIndex ? "bg-blue-50" : "hover:bg-gray-100"
+                    index === searchState.selectedIndex
+                      ? "bg-blue-50"
+                      : "hover:bg-gray-100"
                   }`}
                   onClick={() => onSelectResult(result)}
                 >
@@ -892,8 +948,12 @@ const NavBar = ({ setIsModalOpen }) => {
                       {getIconForType(result.type)}
                     </div>
                     <div className="flex-1">
-                      <span className="text-sm font-medium text-gray-900 block">{result.keyword}</span>
-                      <span className="text-xs text-gray-500 capitalize">{result.type}</span>
+                      <span className="text-sm font-medium text-gray-900 block">
+                        {result.keyword}
+                      </span>
+                      <span className="text-xs text-gray-500 capitalize">
+                        {result.type}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -902,33 +962,38 @@ const NavBar = ({ setIsModalOpen }) => {
           )}
 
           {/* No results message */}
-          {searchState.searchTerm && searchState.filteredResults.length === 0 && (
-            <div className="p-6 text-center text-gray-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 mx-auto mb-4 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <p>{t("noResultsFound") || "No results found"}</p>
-              <p className="text-sm mt-2">{t("tryDifferentKeywords") || "Try different keywords or check spelling"}</p>
-            </div>
-          )}
+          {searchState.searchTerm &&
+            searchState.filteredResults.length === 0 && (
+              <div className="p-6 text-center text-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-12 w-12 mx-auto mb-4 text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+                <p>{t("noResultsFound") || "No results found"}</p>
+                <p className="text-sm mt-2">
+                  {t("tryDifferentKeywords") ||
+                    "Try different keywords or check spelling"}
+                </p>
+              </div>
+            )}
         </div>
       )}
 
-      {showFilter && <FilterSidebar showFilter={showFilter} setShowFilter={setShowFilter} />}
+      {showFilter && (
+        <FilterSidebar showFilter={showFilter} setShowFilter={setShowFilter} />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default NavBar
-
+export default NavBar;

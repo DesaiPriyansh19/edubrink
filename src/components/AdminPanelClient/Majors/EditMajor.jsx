@@ -25,7 +25,6 @@ const initialFormData = {
     en: "",
     ar: "",
   },
-  faculty: "",
   university: "",
   universityName: {
     en: "",
@@ -41,10 +40,7 @@ const initialFormData = {
   majorLanguages: [],
   majorAdmissionRequirement: [],
   majorTuitionFees: "",
-  facultyName: {
-    en: "",
-    ar: "",
-  },
+
   majorIntakeYear: new Date().getFullYear().toString(),
   majorIntakeMonth: [],
   modeOfStudy: "Full-time",
@@ -105,9 +101,7 @@ export default function EditMajor() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showFacultyPicker, setShowFacultyPicker] = useState(false);
   const [showUniversityPicker, setShowUniversityPicker] = useState(false);
-  const [facultySearch, setFacultySearch] = useState("");
   const [universitySearch, setUniversitySearch] = useState("");
   const [formData, setFormData] = useState(initialFormData);
   const [validationErrors, setValidationErrors] = useState({});
@@ -131,7 +125,6 @@ export default function EditMajor() {
           en: data?.majorName?.en || "",
           ar: data?.majorName?.ar || "",
         },
-        faculty: data?.faculty?._id || "",
         university: data?.university?._id || "",
         majorDescription: {
           en: data?.majorDescription?.en || "",
@@ -143,10 +136,7 @@ export default function EditMajor() {
         majorLanguages: data?.majorLanguages || [],
         majorAdmissionRequirement: data?.majorAdmissionRequirement || [],
         majorTuitionFees: data?.majorTuitionFees || "",
-        facultyName: {
-          en: data?.faculty?.facultyName?.en || "",
-          ar: data?.faculty?.facultyName?.ar || "",
-        },
+
         universityName: {
           en: data?.university?.uniName?.en || "",
           ar: data?.university?.uniName?.ar || "",
@@ -196,10 +186,6 @@ export default function EditMajor() {
             ? "Major name must be at least 3 characters"
             : "يجب أن يكون اسم التخصص 3 أحرف على الأقل";
       }
-    }
-
-    if (name === "faculty" && (!value || value === "")) {
-      error = "Faculty is required";
     }
 
     if (name === "university" && (!value || value === "")) {
@@ -320,7 +306,6 @@ export default function EditMajor() {
     );
 
     // Validate faculty and university
-    errors["faculty"] = validateField("faculty", formData.faculty);
     errors["university"] = validateField("university", formData.university);
 
     // Validate duration
@@ -386,7 +371,6 @@ export default function EditMajor() {
     const allFields = {
       "majorName.en": true,
       "majorName.ar": true,
-      faculty: true,
       university: true,
       duration: true,
       majorTuitionFees: true,
@@ -410,7 +394,7 @@ export default function EditMajor() {
     setError(null);
 
     try {
-      const { facultyName, universityName, ...updatedFormData } = {
+      const { universityName, ...updatedFormData } = {
         ...formData,
       };
       await updateWithOutById(updatedFormData);
@@ -461,14 +445,6 @@ export default function EditMajor() {
       [field]: error,
     }));
   };
-
-  const filteredFacultyData = filteredData.faculties?.filter(
-    (faculty) =>
-      faculty.facultyName.en
-        .toLowerCase()
-        .includes(facultySearch.toLowerCase()) ||
-      faculty.facultyName.ar.toLowerCase().includes(facultySearch.toLowerCase())
-  );
 
   const filteredUniversityData = filteredData.universities?.filter(
     (university) =>
@@ -695,7 +671,6 @@ export default function EditMajor() {
                   type="button"
                   onClick={() => {
                     setShowUniversityPicker(!showUniversityPicker);
-                    setShowFacultyPicker(false);
                     setTouched((prev) => ({ ...prev, university: true }));
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
@@ -765,93 +740,6 @@ export default function EditMajor() {
                           <span className="text-gray-700 text-sm">
                             {university?.uniName?.en} -{" "}
                             {university?.uniName?.ar}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Faculty Dropdown */}
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Faculty
-              </label>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowFacultyPicker(!showFacultyPicker);
-                    setShowUniversityPicker(false);
-                    setTouched((prev) => ({ ...prev, faculty: true }));
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
-                    touched["faculty"] && validationErrors["faculty"]
-                      ? "border-red-300"
-                      : "border-gray-300"
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <span className="py-1 text-gray-600">
-                      {formData?.facultyName?.en ||
-                        formData?.faculty ||
-                        "Select Faculty"}
-                    </span>
-                  </span>
-                  <BookOpen className="w-5 h-5 text-gray-400" />
-                </button>
-
-                {touched["faculty"] && validationErrors["faculty"] && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {validationErrors["faculty"]}
-                  </p>
-                )}
-
-                {showFacultyPicker && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
-                    <div className="p-2 border-b">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                        <input
-                          type="text"
-                          placeholder="Search Faculty..."
-                          value={facultySearch}
-                          onChange={(e) => setFacultySearch(e.target.value)}
-                          className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                        />
-                      </div>
-                    </div>
-                    <div className="max-h-60 overflow-y-auto">
-                      {filteredFacultyData?.map((faculty) => (
-                        <button
-                          key={faculty._id}
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev) => ({
-                              ...prev,
-                              faculty: faculty._id, // Updating faculty ID
-                              facultyName: {
-                                ...prev.facultyName, // Preserve existing values
-                                en: faculty.facultyName.en,
-                                ar: faculty.facultyName.ar,
-                              },
-                            }));
-                            setShowFacultyPicker(false);
-
-                            // Validate
-                            const error = validateField("faculty", faculty._id);
-                            setValidationErrors((prev) => ({
-                              ...prev,
-                              faculty: error,
-                            }));
-                          }}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
-                        >
-                          <span className="text-black text-sm">
-                            {faculty?.facultyName?.en} -{" "}
-                            {faculty?.facultyName?.ar}
                           </span>
                         </button>
                       ))}
