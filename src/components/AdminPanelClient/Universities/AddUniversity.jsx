@@ -328,9 +328,27 @@ export default function AddUniversity() {
 
   const handleMainPhotoChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
-      updatedPhotos[index] = value;
-      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
+      const keys = field.split("."); // Split the nested path into keys
+      const updatedData = { ...prevData }; // Create a copy of the previous data
+
+      // Traverse the nested structure to reach the target field
+      let current = updatedData;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (!current[key]) {
+          current[key] = {}; // Initialize if undefined
+        }
+        current = current[key];
+      }
+
+      // Update the specific field (last key in the path)
+      const lastKey = keys[keys.length - 1];
+      if (!Array.isArray(current[lastKey])) {
+        current[lastKey] = []; // Ensure the target field is an array
+      }
+      current[lastKey][index] = value; // Update the value at the specified index
+
+      return updatedData; // Return the updated form data
     });
   };
 

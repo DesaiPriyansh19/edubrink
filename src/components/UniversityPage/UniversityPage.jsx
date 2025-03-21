@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TickMark from "../../../svg/TickMark";
 import UniversityRightLayout from "./UniversityRightLayout";
 import UniversityLeftLayout from "./UniversityLeftLayout";
@@ -9,13 +9,117 @@ import UniversityHighlight from "./UniversityHighlight";
 import useFetch from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
+import UniversityMajors from "./UniversityMajors";
+import axios from "axios";
 
 const UniversityPage = () => {
   const { slug } = useParams();
   const { language } = useLanguage();
-  const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/university/name/${slug}`
-  );
+
+  // State for courses
+  const [coursePage, setCoursePage] = useState(1);
+  const [courseLimit] = useState(2); // Default to 2 courses per page
+  const [coursePagination, setCoursePagination] = useState(null);
+
+  // State for majors
+  const [majorPage, setMajorPage] = useState(1);
+  const [majorLimit] = useState(2); // Default to 2 majors per page
+  const [majorPagination, setMajorPagination] = useState(null);
+
+  // Add state for filters - now including modeOfStudy
+  const [filters, setFilters] = useState({
+    studyLevel: null,
+    modeOfStudy: null,
+  });
+
+  // Construct the API URL with pagination parameters and filters
+  const apiUrl = `https://edu-brink-backend.vercel.app/api/university/name/${slug}?coursePage=${coursePage}&courseLimit=${courseLimit}&majorPage=${majorPage}&majorLimit=${majorLimit}${
+    filters.studyLevel
+      ? `&studyLevel=${encodeURIComponent(filters.studyLevel)}`
+      : ""
+  }${
+    filters.modeOfStudy
+      ? `&modeOfStudy=${encodeURIComponent(filters.modeOfStudy)}`
+      : ""
+  }`;
+
+  const { data, loading, refetch } = useFetch(apiUrl);
+  const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
+  const token = userInfo?.token || "";
+
+  // Handle filter changes from child components
+  const handleFilterChange = (newFilters) => {
+    // Check if either filter value has changed
+    if (
+      newFilters.studyLevel !== filters.studyLevel ||
+      newFilters.modeOfStudy !== filters.modeOfStudy
+    ) {
+      setFilters((prev) => ({
+        ...prev,
+        ...newFilters,
+      }));
+
+      // Reset to first page when filters change
+      if (newFilters.studyLevel !== filters.studyLevel) {
+        setCoursePage(1);
+      }
+
+      if (newFilters.modeOfStudy !== filters.modeOfStudy) {
+        setMajorPage(1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // First, refetch the main data if the refetch function exists
+        if (refetch) {
+          await refetch();
+        }
+
+        // Then fetch pagination data
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data) {
+          setCoursePagination(response.data.coursePagination || null);
+          setMajorPagination(response.data.majorPagination || null);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiUrl, token]); // Only depend on apiUrl and token, not on refetch
+
+  // Handlers for pagination
+  const handleCoursePageChange = (newPage) => {
+    setCoursePage(newPage);
+  };
+
+  const handleMajorPageChange = (newPage) => {
+    setMajorPage(newPage);
+  };
+
+  useEffect(() => {
+    // Initialize AOS animation library
+    if (typeof window !== "undefined") {
+      import("aos").then((AOS) => {
+        AOS.init({
+          duration: 800,
+          once: true,
+          easing: "ease-in-out",
+          mirror: true,
+        });
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (data && !loading) {
@@ -27,7 +131,7 @@ const UniversityPage = () => {
 
       const seoDescription =
         data?.seo?.metaDescription?.[language] ||
-        data?.uniDescription?.[language]
+        data?.uniOverview?.[language]
           ?.substring(0, 160)
           .replace(/<[^>]*>/g, "") ||
         `Explore programs, courses, and admission details for ${data?.uniName?.[language]}.`;
@@ -136,53 +240,109 @@ const UniversityPage = () => {
 
   if (!data) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        Loading...
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-32 h-32 bg-[#3b3d8d]/20 rounded-full mb-4"></div>
+          <div className="h-6 w-48 bg-[#3b3d8d]/20 rounded mb-4"></div>
+          <div className="h-4 w-64 bg-[#3b3d8d]/20 rounded"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-3 md:px-0 lg:px-8">
-      <div className="relative">
-        <div className="h-[426px]">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16 bg-gray-50">
+      <div className="relative mb-16" data-aos="fade-up">
+        <div className="h-[300px] sm:h-[350px] md:h-[426px] overflow-hidden rounded-xl shadow-lg">
           <img
             src={data?.uniMainImage || "https://placehold.co/1376x426"}
             alt={`${data?.uniName?.[language]} Campus`}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
             width="1376"
             height="426"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
         </div>
+
+        {/* University Logo */}
         <div
-          className={`absolute top-[96%] -translate-y-1/2 
-    ${
-      language === "ar"
-        ? "right-4 sm:right-6 md:right-8"
-        : "left-4 sm:left-6 md:left-8"
-    } 
-    w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white shadow-lg flex items-center justify-center rounded-[1.2rem] bottom-[4%]`}
+          className={`absolute -bottom-8  -translate-y-1/2 
+            ${language === "ar" ? "right-8" : "left-8"} 
+            w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white shadow-xl 
+            flex items-center justify-center rounded-2xl 
+            transition-all duration-300  hover:-translate-y-[55%]`}
+          data-aos="zoom-in"
+          data-aos-delay="300"
         >
           <img
             src={data?.uniSymbol || "https://placehold.co/64x64"}
             alt={`${data?.uniName?.[language]} Logo`}
-            className="w-12 h-12 sm:w-16 sm:h-16 object-cover"
-            width="64"
-            height="64"
+            className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+            width="80"
+            height="80"
           />
-          <span className="absolute bottom-[14%] top-[86%] right-1">
+          <span className="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
             <TickMark />
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-6">
-        <div className="col-span-12 md:col-span-8 space-y-6">
-          <UniversityLeftLayout data={data} language={language} />
-          <UniversityCard data={data} language={language} />
-          <UniversityHighlight data={data} language={language} />
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column */}
+        <div className="lg:col-span-8 space-y-8">
+          <div data-aos="fade-up" data-aos-delay="100">
+            <UniversityLeftLayout
+              data={data}
+              language={language}
+              themeColor="#3b3d8d"
+              onFilterChange={handleFilterChange}
+            />
+          </div>
+
+          <div data-aos="fade-up" data-aos-delay="200">
+            <UniversityCard
+              data={data}
+              language={language}
+              themeColor="#3b3d8d"
+              coursePage={coursePage}
+              courseLimit={courseLimit}
+              onPageChange={handleCoursePageChange}
+              coursePagination={coursePagination}
+              activeFilter={filters.studyLevel}
+            />
+          </div>
+
+          {/* Majors Section */}
+          {data?.majors && data.majors.length > 0 && (
+            <div data-aos="fade-up" data-aos-delay="250">
+              <UniversityMajors
+                data={data}
+                language={language}
+                themeColor="#3b3d8d"
+                majorPage={majorPage}
+                majorLimit={majorLimit}
+                onPageChange={handleMajorPageChange}
+                majorPagination={majorPagination}
+                activeFilter={filters.modeOfStudy}
+              />
+            </div>
+          )}
+
+          <div data-aos="fade-up" data-aos-delay="300">
+            <UniversityHighlight data={data} language={language} />
+          </div>
         </div>
-        <div className="col-span-12 md:col-span-4 space-y-6">
-          <UniversityRightLayout data={data} language={language} />
+
+        {/* Right Column */}
+        <div className="lg:col-span-4 space-y-8">
+          <div data-aos="fade-left" data-aos-delay="400">
+            <UniversityRightLayout
+              data={data}
+              language={language}
+              themeColor="#3b3d8d"
+            />
+          </div>
         </div>
       </div>
     </div>

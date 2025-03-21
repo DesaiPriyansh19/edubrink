@@ -3,9 +3,26 @@ import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "../../../context/LanguageContext";
+import { useSearch } from "../../../context/SearchContext";
+import { useNavigate } from "react-router-dom";
 function CountryBlogs({ data }) {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const { setFilterProp } = useSearch();
+  const navigate = useNavigate();
+  const handleViewAll = (selectedValue) => {
+    setFilterProp((prev) => ({
+      ...prev,
+      Destination: Array.isArray(prev.Destination)
+        ? [selectedValue]
+        : [selectedValue],
+    }));
+    navigate(`/${language}/searchresults/article`);
+  };
+
+  const handleNavigate = (name) => {
+    navigate(`/${language}/blog/${name}`);
+  };
   return (
     <div className="mt-11 text-black">
       <div className="max-w-[1240px] mx-auto">
@@ -15,6 +32,7 @@ function CountryBlogs({ data }) {
             {data?.countryName?.[language] || "N/A"}
           </h1>
           <button
+            onClick={() => handleViewAll(data?.countryName?.en)}
             className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}

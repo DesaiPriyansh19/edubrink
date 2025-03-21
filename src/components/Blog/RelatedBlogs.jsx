@@ -2,67 +2,123 @@ import React from "react";
 import Calander from "../../../svg/caplogo/Logo/Calander/Index";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
-function RelatedBlogs({ data }) {
+function RelatedBlogs({ data: RelatedBlogs, loading }) {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleLearnMore = (customURLSlug) => {
-    navigate(`/${language}/blog/${customURLSlug}`);
+  const handleNavigate = (name) => {
+    navigate(`/${language}/blog/${name}`);
+  };
+
+  const SkeletonLoader = () => {
+    return (
+      <div className="w-[280px] flex-shrink-0 bg-white rounded-xl shadow-md animate-pulse">
+        {/* Image skeleton */}
+        <div className="h-[160px] w-full bg-gray-200 rounded-t-xl"></div>
+
+        <div className="p-4">
+          {/* Country name skeleton */}
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+
+          {/* Title skeleton */}
+          <div className="space-y-2 mt-3">
+            <div className="h-4 w-full bg-gray-200 rounded"></div>
+            <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+          </div>
+
+          {/* Date skeleton */}
+          <div className="flex items-center mt-3">
+            <div className="h-4 w-4 bg-gray-200 rounded-full"></div>
+            <div className="h-4 w-24 bg-gray-200 rounded ml-2"></div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="mt-11 max-w-[1240px] mx-auto text-black">
       <h1 className="text-start text-xl sm:text-4xl mb-4 font-semibold  flex justify-between">
         📑 More Similar blogs
-        <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-          {t("viewAll")}
-          <span className="mx-2">&gt;</span>
-        </button>
+        <div className="hidden sm:block" data-aos="fade-left">
+          <Link to={`/${language}/searchresults/AllBlogs`}>
+            <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
+              {t("viewAll")}
+
+              <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </button>
+          </Link>
+        </div>
       </h1>
 
-      <div className="flex flex-col scrollbar-hide em:flex-row overflow-x-auto gap-6   py-6 ">
-        {/* First Slide */}
-        {data?.blog.map((card, idx) => {
-          return (
-            <div
-              key={idx}
-              onClick={() => {
-                handleLearnMore(card?.customURLSlug?.[language]);
-              }}
-              className="max-w-[300px] cursor-pointer bg-white p-5 pb-0 h-auto rounded-3xl shadow-md"
-            >
-              {/* SVG and Image */}
-              <div className="h-[55%] w-[100%]">
-                <img
-                  src={"https://placehold.co/260x200"}
-                  alt={`Slide ${card.id}`}
-                  className="w-[100%] h-[100%] rounded-2xl object-cover"
-                />
-              </div>
+      <div
+        dir={language === "ar" ? "rtl" : "ltr"}
+        className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+      >
+        {loading
+          ? Array.from({ length: 4 }).map((_, idx) => (
+              <SkeletonLoader key={idx} />
+            ))
+          : RelatedBlogs?.blog?.map((blog, idx) => (
+              <div
+                key={blog._id}
+                onClick={() => handleNavigate(blog.customURLSlug[language])}
+                className="blog-card"
+                data-aos="fade-up"
+                data-aos-delay={100}
+              >
+                {/* Image container */}
+                <div className="blog-card-image">
+                  <img
+                    src={"https://placehold.co/600x400" || blog?.blogPhoto}
+                    alt={blog?.blogTitle?.[language]}
+                  />
+                </div>
 
-              <p className="text-[#E82448] uppercase text-sm font-semibold mt-4 ">
-                {language === "ar"
-                  ? `الدراسة في ${data?.countryName?.ar || "غير متوفر"}`
-                  : `Study in ${data?.countryName?.en || "N/A"}`}
-              </p>
+                <div className="blog-card-content">
+                  {/* Country name */}
+                  <p className="blog-card-country">
+                    {language === "ar"
+                      ? `الدراسة في ${
+                          RelatedBlogs?.countryName?.ar || "غير متوفر"
+                        }`
+                      : `Study in ${RelatedBlogs?.countryName?.en || "N/A"}`}
+                  </p>
 
-              <h4 className="font-semibold text-lg text-black mt-2 mb-1">
-                {card?.blogTitle?.[language]}
-              </h4>
-              <div className="text-[.9rem] gap-2 pb-8 em:pb-0 font-normal flex items-center justify-start ">
-                <Calander />
-                {new Date(card?.blogAdded).toLocaleDateString("en-US", {
-                  year: "numeric", // Full year (optional)
-                  month: "short", // Abbreviated month name
-                  day: "numeric", // Day of the month
-                })}
+                  {/* Blog title */}
+                  <h4 className="blog-card-title">
+                    {language === "ar"
+                      ? blog?.blogTitle?.ar
+                      : blog?.blogTitle?.en}
+                  </h4>
+
+                  {/* Date */}
+                  <div className="blog-card-date">
+                    <Calander />
+                    <span>
+                      {blog.blogAdded
+                        ? new Date(blog.blogAdded).toLocaleDateString()
+                        : "Date not available"}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            ))}
+      </div>
+
+      {/* Mobile view all button */}
+      <div className="sm:hidden flex justify-center mt-6">
+        <Link to="AllBlogs">
+          <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
+            {t("viewAll")}
+
+            <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+        </Link>
       </div>
     </div>
   );

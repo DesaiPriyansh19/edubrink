@@ -6,12 +6,38 @@ import LanguageLogo from "../../../svg/LanguageLogo";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "../../../context/LanguageContext";
+import { useSearch } from "../../../context/SearchContext";
+import { useNavigate } from "react-router-dom";
 
 // Course Data
 
 const CountryPopularCourse = ({ data }) => {
   const { t } = useTranslation();
   const { language } = useLanguage();
+  const { setFilterProp } = useSearch();
+  const navigate = useNavigate();
+  const handleViewAll = (selectedValue) => {
+    setFilterProp((prev) => ({
+      ...prev,
+      Destination: Array.isArray(prev.Destination)
+        ? [selectedValue]
+        : [selectedValue],
+    }));
+    navigate(`/${language}/searchresults/courses`);
+  };
+
+  const handleNavigation = (apply, id, category, slug) => {
+    if (apply) {
+      navigate(
+        `/${language}/applications/${id}?category=${encodeURIComponent(
+          category
+        )}&slug=${slug}`
+      );
+    } else {
+      navigate(`/${language}/courses/${slug}`);
+    }
+  };
+
   return (
     <>
       <div className="max-w-full mx-auto">
@@ -21,6 +47,7 @@ const CountryPopularCourse = ({ data }) => {
             {data?.countryName?.[language] || "N/A"}
           </h1>
           <button
+            onClick={() => handleViewAll(data?.countryName?.en)}
             className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}
@@ -132,16 +159,26 @@ const CountryPopularCourse = ({ data }) => {
                 <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                   <button
                     onClick={() =>
-                      handleApplyClick(course._id, course.countryName)
+                      handleNavigation(
+                        true,
+                        course._id,
+                        "course",
+                        course?.customURLSlug?.en
+                      )
                     }
                     className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                   >
                     {t("applyNow")}
                   </button>
                   <button
-                    onClick={() => {
-                      handleNavigate(course.CourseName.en);
-                    }}
+                    onClick={() =>
+                      handleNavigation(
+                        false,
+                        course._id,
+                        "course",
+                        course?.customURLSlug?.en
+                      )
+                    }
                     className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
                   >
                     {t("learnMore")}

@@ -155,12 +155,13 @@ export default function EditUniversity() {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState({
     courses: false,
-    faculty: false,
     major: false,
   });
   const { data, updateWithOutById } = useApiData(
     `https://edu-brink-backend.vercel.app/api/university/${id}`
   );
+
+  console.log(data);
 
   useEffect(() => {
     if (data) {
@@ -232,7 +233,7 @@ export default function EditUniversity() {
               },
               faqAnswers: {
                 en: item?.faqAnswers?.en || "",
-                ar: item?.faqAnswers?.ar || "",
+                ar: item?.faqAnswers?.en || "",
               },
             }))
           : [
@@ -303,7 +304,7 @@ export default function EditUniversity() {
     admission_requirements: "",
   });
 
-  const filterFacultyData = filteredData.countries?.filter(
+  const filterCountryData = filteredData.countries?.filter(
     (country) =>
       country.countryName.en.toLowerCase().includes(flagSearch.toLowerCase()) ||
       country.countryName.ar.toLowerCase().includes(flagSearch.toLowerCase())
@@ -465,19 +466,64 @@ export default function EditUniversity() {
 
   const handleMainPhotoChange = (index, field, value) => {
     setFormData((prevData) => {
-      const updatedPhotos = [...prevData[field]]; // Dynamically access the field
-      updatedPhotos[index] = value;
-      return { ...prevData, [field]: updatedPhotos }; // Update the specific field
+      const keys = field.split("."); // Split the nested path into keys
+      const updatedData = { ...prevData }; // Create a copy of the previous data
+
+      // Traverse the nested structure to reach the target field
+      let current = updatedData;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (!current[key]) {
+          current[key] = {}; // Initialize if undefined
+        }
+        current = current[key];
+      }
+
+      // Update the specific field (last key in the path)
+      const lastKey = keys[keys.length - 1];
+      if (!Array.isArray(current[lastKey])) {
+        current[lastKey] = []; // Ensure the target field is an array
+      }
+      current[lastKey][index] = value; // Update the value at the specified index
+
+      return updatedData; // Return the updated form data
     });
   };
 
   const addItem = (field) => {
     const newItem = newItems[field];
-    if (newItem && !formData[field].includes(newItem)) {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: [...prev[field], newItem],
-      }));
+    if (newItem) {
+      setFormData((prev) => {
+        // Check if the field exists in the form data
+        if (!(field in prev)) {
+          // If the field doesn't exist, create it as an array
+          return {
+            ...prev,
+            [field]: [newItem],
+          };
+        }
+
+        // If the field exists but is not an array, convert it to an array with the new item
+        if (!Array.isArray(prev[field])) {
+          console.warn(`Field ${field} is not an array, converting to array`);
+          return {
+            ...prev,
+            [field]: [newItem],
+          };
+        }
+
+        // If the field is an array and doesn't already include the item, add it
+        if (!prev[field].includes(newItem)) {
+          return {
+            ...prev,
+            [field]: [...prev[field], newItem],
+          };
+        }
+
+        // If the item already exists in the array, return the unchanged state
+        return prev;
+      });
+
       setNewItems((prev) => ({ ...prev, [field]: "" }));
       setActiveSection(null);
 
@@ -576,6 +622,14 @@ export default function EditUniversity() {
       </div>
     </div>
   );
+
+  useEffect(() => {
+    console.log("Form data structure:", Object.keys(formData));
+    // Check specific fields that might be causing issues
+    console.log("study_programs:", formData.study_programs);
+    console.log("spokenLanguage:", formData.spokenLanguage);
+    console.log("admission_requirements:", formData.admission_requirements);
+  }, [formData]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -864,14 +918,14 @@ export default function EditUniversity() {
                       </div>
                     </div>
                     <div className="max-h-60 overflow-y-auto">
-                      {filterFacultyData?.map((country) => (
+                      {filterCountryData?.map((country) => (
                         <button
                           key={country._id}
                           type="button"
                           onClick={() => {
                             setFormData((prev) => ({
                               ...prev,
-                              uniCountry: country._id, // Updating faculty ID
+                              uniCountry: country._id,
                               countryCode: country.countryCode,
                               countryName: {
                                 ...prev.countryName, // Preserve existing values

@@ -533,7 +533,7 @@ const NavBar = ({ setIsModalOpen }) => {
 
   const changeLanguage = (lang) => {
     setLanguage(lang);
-    navigate(`/${lang}${location.pathname.substring(3)}`); // Update URL while keeping the existing path
+    navigate(`/${lang}${location.pathname.substring(3)}${location.search}`); // Update URL while keeping the existing path
     setShowFlagsDropdown(false); // Close dropdown
   };
 

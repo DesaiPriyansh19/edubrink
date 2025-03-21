@@ -15,8 +15,6 @@ import {
   CheckCircle,
   XCircle,
   MessageSquare,
-  Bell,
-  ChevronDown,
 } from "lucide-react";
 import useApiData from "../../../../hooks/useApiData";
 
@@ -29,7 +27,6 @@ const ApplicationDetails = () => {
     error,
     updateWithOutById,
   } = useApiData(`https://edu-brink-backend.vercel.app/api/apply/${id}`);
-  const [status, setStatus] = useState("");
 
   // Format date
   const formatDate = (dateString) => {
@@ -241,6 +238,10 @@ const ApplicationDetails = () => {
                       application.itemId?.uniName
                     ? application.itemId.uniName.en ||
                       application.itemId.uniName
+                    : application.category === "Major" &&
+                      application.itemId?.majorName
+                    ? application.itemId.majorName.en ||
+                      application.itemId.majorName
                     : "N/A"}
                 </p>
               </div>

@@ -43,9 +43,11 @@ const ApplyCRUD = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
+  // Update the activeFilters state to include major
   const [activeFilters, setActiveFilters] = useState({
     university: false,
     course: false,
+    major: false,
     pending: false,
     approved: false,
     rejected: false,
@@ -95,11 +97,13 @@ const ApplyCRUD = () => {
         queryParams.append("search", debouncedSearch);
       }
 
+      // In the fetchApplications function, update the categories array building logic
       const categories = [];
 
       // Check which filters are active and push the corresponding category
       if (activeFilters.university) categories.push("University");
       if (activeFilters.course) categories.push("Course");
+      if (activeFilters.major) categories.push("Major");
 
       // Add status filters
       const statuses = [];
@@ -640,7 +644,27 @@ const ApplyCRUD = () => {
                   </span>
                 )}
               </button>
-
+              <button
+                onClick={() => toggleFilter("major")}
+                className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs ${
+                  activeFilters.major
+                    ? "bg-slate-100 text-slate-800"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Major
+                {activeFilters.major && (
+                  <span
+                    className="ml-1 flex items-center justify-center w-4 h-4 bg-slate-200 rounded-full hover:bg-slate-300"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFilter("major");
+                    }}
+                  >
+                    ×
+                  </span>
+                )}
+              </button>
               <button
                 onClick={() => toggleFilter("pending")}
                 className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs ${
@@ -662,7 +686,6 @@ const ApplyCRUD = () => {
                   </span>
                 )}
               </button>
-
               <button
                 onClick={() => toggleFilter("approved")}
                 className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs ${
@@ -684,7 +707,6 @@ const ApplyCRUD = () => {
                   </span>
                 )}
               </button>
-
               <button
                 onClick={() => toggleFilter("rejected")}
                 className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs ${
@@ -785,12 +807,17 @@ const ApplyCRUD = () => {
                         </div>
                       </div>
                     </td>
+
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           application.category === "University"
                             ? "bg-purple-100 text-purple-800"
-                            : "bg-blue-100 text-blue-800"
+                            : application.category === "Course"
+                            ? "bg-blue-100 text-blue-800"
+                            : application.category === "Major"
+                            ? "bg-slate-100 text-slate-800"
+                            : "bg-gray-100 text-gray-500"
                         }`}
                       >
                         {application.category}

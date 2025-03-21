@@ -62,7 +62,7 @@ const DropdowneCourses = forwardRef(
                 >
                   <span className=" h-auto w-auto text-sm rounded-md bg-white p-[.4rem]">
                     <img
-                      src={"https://placehold.co/24x24" || course?.uniSymbol}
+                      src={course?.uniSymbol || "https://placehold.co/24x24"}
                       alt="flag"
                       className="w-6 h-6 "
                     />

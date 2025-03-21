@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Home,
   FileText,
@@ -170,9 +170,11 @@ const CoursePage = () => {
   const toggleReadMore = () => {
     setIsExpanded(!isExpanded);
   };
-  const handleApplyNow = (id, category) => {
+  const handleApplyNow = (id, category, slug) => {
     navigate(
-      `/${language}/applications/${id}?category=${encodeURIComponent(category)}`
+      `/${language}/applications/${id}?category=${encodeURIComponent(
+        category
+      )}&slug=${slug}`
     );
   };
 
@@ -234,7 +236,7 @@ const CoursePage = () => {
             <span className="mx-2">&gt;</span>
           </div>
           <div className="flex items-center">
-            <span>{t("CourseSlugPage.Country")}</span>
+            <span>{t("courses")}</span>
             <span className="mx-2">&gt;</span>
             <span className="font-medium text-gray-900">
               {language === "ar" ? data?.CourseName?.ar : data?.CourseName?.en}
@@ -287,11 +289,12 @@ const CoursePage = () => {
                       width="28"
                       height="28"
                     />
-                    <p className="text-lg text-gray-700">
-                      {language === "ar"
-                        ? data?.university?.uniName?.ar
-                        : data?.university?.uniName?.en}
-                    </p>
+                    <Link
+                      to={`/${language}/university/${data?.university?.customURLSlug?.[language]}`}
+                      className="text-lg  hover:text-gray-900 text-gray-600"
+                    >
+                      {data?.university?.uniName?.[language]}
+                    </Link>
                   </>
                 ) : (
                   <div className="flex items-center gap-2">
@@ -328,7 +331,7 @@ const CoursePage = () => {
                     : "hover:bg-teal-700"
                 } text-white px-6 py-2.5 rounded-full font-semibold transition-all`}
                 onClick={() => {
-                  handleApplyNow(data?._id, "course");
+                  handleApplyNow(data?._id, "course", data?.customURLSlug?.en);
                 }}
               >
                 {t("applyNow")}

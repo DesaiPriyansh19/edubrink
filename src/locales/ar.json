@@ -203,20 +203,24 @@
     "Courses": "الدورات",
     "Year": "سنة",
     "StudyLevel": "مستوى الدراسة",
-    "Subjects": "المواضيع",
     "TuitionFees": "الرسوم الدراسية",
+    "FeaturedCourses": "الدورات المميزة",
+    "FeaturedMajors": "التخصصات المميزة",
+    "Overview": "ملخص",
     "Deadline": "الموعد النهائي",
     "ModeOfStudy": "نظام الدراسة",
     "Discount": "تخفيض",
     "InterFees": "رسوم التعليم للطلاب الدوليين",
     "Language": "اللغة",
     "PerYear": "سنوياً",
+    "Scholarship": "منحة دراسية متاحة",
     "Duration": "المدة",
     "StartMonth": "شهر البدء",
     "ApplicationDeadline": "الموعد النهائي للتقديم",
     "CounsellorTitle": "مستشار مخصص",
     "CounsellorName": "جون سميث",
     "CounsellorDesc": "شكرًا على التواصل! أنا متحمس للتواصل مع محترفين في [المجال]. أتطلع إلى تبادل الأفكار والتعلم من بعضنا البعض. إذا كان هناك أي شيء يمكنني المساعدة فيه، لا تتردد في التواصل.",
+    "clearFilter": "مسح الفلتر",
     "CallNow": "اتصل الآن",
     "ChatNow": "تحدث الآن",
     "Highlight": "إبراز",
@@ -273,48 +277,54 @@
   "differentLocation": "حاول موقعًا مختلفًا",
   "clearFilters": "إزالة جميع الفلاتر",
   "backToHome": "العودة إلى الصفحة الرئيسية",
+
   "applyForm": {
     "common": {
       "back": "رجوع",
       "continue": "متابعة",
       "submit": "تقديم الطلب",
       "backTo": "العودة إلى",
+      "major": "التخصص",
       "course": "الدورة",
       "university": "الجامعة",
-      "notProvided": "غير متوفر",
+      "notProvided": "غير مقدم",
       "stepOf": "الخطوة {{current}} من {{total}}"
     },
     "header": {
+      "majorTitle": "التقديم لهذا التخصص",
       "courseTitle": "التقديم لهذه الدورة",
       "universityTitle": "طلب الالتحاق بالجامعة",
-      "subtitle": "أكمل الطلب أدناه لاتخاذ الخطوة الأولى نحو مستقبلك. فريق القبول لدينا جاهز لمساعدتك على النجاح."
+      "subtitle": "أكمل الطلب أدناه لاتخاذ الخطوة الأولى نحو مستقبلك. فريق القبول لدينا مستعد لمساعدتك على النجاح."
     },
     "steps": {
       "personalInfo": "المعلومات الشخصية",
       "education": {
+        "major": "تفضيلات التخصص",
         "course": "متطلبات الدورة",
         "university": "الخلفية التعليمية"
       },
       "skills": {
+        "major": "المهارات ذات الصلة",
         "course": "المهارات ذات الصلة",
         "university": "الخبرة والمهارات"
       },
       "preferences": {
+        "major": "تفضيلات التخصص",
         "course": "تفضيلات الدورة",
         "university": "تفضيلات البرنامج"
       },
-      "review": "المراجعة والتقديم"
+      "review": "مراجعة وإرسال"
     },
     "personalInfo": {
       "title": "المعلومات الشخصية",
-      "subtitle": "أخبرنا عن نفسك حتى نتعرف عليك بشكل أفضل",
+      "subtitle": "أخبرنا عن نفسك حتى نتمكن من التعرف عليك بشكل أفضل",
       "fullName": {
         "label": "الاسم الكامل",
         "placeholder": "أدخل اسمك الكامل"
       },
       "email": {
         "label": "البريد الإلكتروني",
-        "placeholder": "أدخل بريدك الإلكتروني"
+        "placeholder": "أدخل عنوان بريدك الإلكتروني"
       },
       "phone": {
         "label": "رقم الهاتف",
@@ -331,17 +341,19 @@
     "education": {
       "courseTitle": "متطلبات الدورة",
       "universityTitle": "الخلفية التعليمية",
+      "majorTitle": "متطلبات التخصص",
+      "majorSubtitle": "أخبرنا عن مؤهلاتك التعليمية لهذا التخصص",
       "courseSubtitle": "أخبرنا عن مؤهلاتك التعليمية لهذه الدورة",
       "universitySubtitle": "أخبرنا عن مؤهلاتك التعليمية للقبول الجامعي",
       "currentEducation": "المستوى التعليمي الحالي",
       "highestQualification": "أعلى مؤهل",
       "institutionName": "اسم المؤسسة التعليمية",
       "institutionPlaceholder": "أدخل اسم المؤسسة التعليمية",
-      "completionYear": "سنة الإتمام",
+      "completionYear": "سنة الإكمال",
       "graduationYear": "سنة التخرج",
       "yearPlaceholder": "السنة",
       "gpaGrade": "المعدل التراكمي / الدرجة",
-      "gpaPlaceholder": "أدخل المعدل التراكمي أو الدرجة",
+      "gpaPlaceholder": "أدخل معدلك التراكمي أو درجتك",
       "selectQualification": "اختر المؤهل",
       "qualifications": {
         "highSchool": "الثانوية العامة",
@@ -350,6 +362,10 @@
         "mastersDegree": "درجة الماجستير",
         "doctorate": "الدكتوراه",
         "other": "أخرى"
+      },
+      "majorRequirements": {
+        "title": "متطلبات التخصص",
+        "description": "يتطلب هذا التخصص معدل تراكمي لا يقل عن 2.5 وإكمال المتطلبات الأساسية. تساعدنا خلفيتك التعليمية في تحديد أهليتك."
       },
       "courseRequirements": {
         "title": "متطلبات الدورة",
@@ -362,8 +378,10 @@
     },
     "skills": {
       "courseTitle": "المهارات ذات الصلة",
+      "majorTitle": "المهارات ذات الصلة",
       "universityTitle": "الخبرة والمهارات",
       "courseSubtitle": "أخبرنا عن مهاراتك ذات الصلة بهذه الدورة",
+      "majorSubtitle": "أخبرنا عن مهاراتك ذات الصلة بهذا التخصص",
       "universitySubtitle": "أخبرنا عن خبرتك العملية ومهاراتك",
       "yearsExperience": "سنوات الخبرة",
       "selectExperience": "اختر الخبرة",
@@ -379,21 +397,26 @@
       "jobTitle": "المسمى الوظيفي",
       "jobTitlePlaceholder": "أدخل مسماك الوظيفي",
       "languages": "اللغات",
-      "languagesPlaceholder": "اللغات التي تتحدثها (مثل: العربية، الإنجليزية)",
+      "languagesPlaceholder": "اللغات التي تتحدثها (مثل العربية، الإنجليزية)",
       "technicalSkills": "المهارات التقنية",
+      "majorSkills": "مهارات التخصص",
       "computerSkills": "مهارات الكمبيوتر",
       "technicalSkillsPlaceholder": "اذكر مهاراتك التقنية ذات الصلة بهذه الدورة",
+      "majorSkillsPlaceholder": "قم بإدراج مهاراتك التقنية والنظرية ذات الصلة بهذا التخصص",
       "computerSkillsPlaceholder": "اذكر مهارات الكمبيوتر لديك ومستويات إتقانها",
       "certifications": "الشهادات",
-      "certificationsPlaceholder": "اذكر أي شهادات ذات صلة حصلت عليها"
+      "certificationsPlaceholder": "اذكر أي شهادات ذات صلة لديك"
     },
     "preferences": {
       "courseTitle": "تفضيلات الدورة",
+      "majorTitle": "تفضيلات التخصص",
       "universityTitle": "تفضيلات البرنامج",
       "courseSubtitle": "أخبرنا عن تفضيلاتك لهذه الدورة",
+      "majorSubtitle": "أخبرنا عن تفضيلاتك لهذا التخصص",
       "universitySubtitle": "أخبرنا عن تفضيلاتك لبرنامج الجامعة",
       "startDate": "تاريخ البدء المفضل",
       "courseFormat": "صيغة الدورة",
+      "majorFormat": "تنسيق التخصص",
       "programType": "نوع البرنامج",
       "selectFormat": "اختر الصيغة",
       "selectType": "اختر النوع",
@@ -401,7 +424,7 @@
         "online": "عبر الإنترنت",
         "inPerson": "حضوري",
         "hybrid": "مختلط",
-        "selfPaced": "بالسرعة الذاتية",
+        "selfPaced": "بالوتيرة الذاتية",
         "instructorLed": "بقيادة مدرب"
       },
       "typeOptions": {
@@ -413,14 +436,15 @@
       },
       "aboutYourself": {
         "label": "أخبرنا عن نفسك ولماذا أنت مهتم",
+        "majorPlaceholder": "أخبرنا لماذا أنت مهتم بهذا التخصص، وأهدافك، وما تأمل في تحقيقه...",
         "coursePlaceholder": "أخبرنا لماذا أنت مهتم بهذه الدورة، وأهدافك، وما تأمل في تحقيقه...",
-        "universityPlaceholder": "أخبرنا عن خلفيتك التعليمية، واهتماماتك، وأهدافك، ولماذا أنت مهتم ببرنامج الجامعة هذا..."
+        "universityPlaceholder": "أخبرنا عن خلفيتك التعليمية، واهتماماتك، وأهدافك، ولماذا أنت مهتم ببرنامج هذه الجامعة..."
       },
       "beforeSubmit": {
         "title": "قبل التقديم",
         "checkFields": "تأكد من إكمال جميع الحقول المطلوبة",
         "verifyContact": "تحقق من صحة معلومات الاتصال الخاصة بك",
-        "reviewApplication": "راجع طلبك بحثًا عن أي أخطاء"
+        "reviewApplication": "راجع طلبك للتأكد من عدم وجود أخطاء"
       }
     },
     "review": {
@@ -429,12 +453,14 @@
       "sections": {
         "personalInfo": "المعلومات الشخصية",
         "education": {
+          "major": "متطلبات التخصص",
           "course": "متطلبات الدورة",
           "university": "الخلفية التعليمية"
         },
         "experience": "الخبرة",
         "skills": "المهارات",
         "preferences": {
+          "major": "تفضيلات التخصص",
           "course": "تفضيلات الدورة",
           "university": "تفضيلات البرنامج"
         }
@@ -446,12 +472,14 @@
         "dob": "تاريخ الميلاد",
         "address": "العنوان",
         "qualification": {
+          "major": "المستوى التعليمي الحالي",
           "course": "المستوى التعليمي الحالي",
           "university": "أعلى مؤهل"
         },
         "institution": "المؤسسة التعليمية",
         "year": {
-          "course": "سنة الإتمام",
+          "major": "سنة الإكمال",
+          "course": "سنة الإكمال",
           "university": "سنة التخرج"
         },
         "gpa": "المعدل التراكمي / الدرجة",
@@ -461,11 +489,13 @@
         "languages": "اللغات",
         "skills": {
           "technical": "المهارات التقنية",
+          "major": "تقني أو نظري",
           "computer": "مهارات الكمبيوتر"
         },
         "certifications": "الشهادات",
         "startDate": "تاريخ البدء المفضل",
         "format": {
+          "major": "الصيغة المفضلة",
           "course": "صيغة الدورة",
           "university": "نوع البرنامج"
         }
@@ -475,12 +505,12 @@
       "processing": "جاري معالجة طلبك...",
       "title": "تم تقديم الطلب!",
       "subtitle": "شكرًا لتقديم طلبك. سنراجع معلوماتك ونتواصل معك قريبًا.",
-      "redirecting": "إعادة التوجيه إلى الصفحة الرئيسية في {{seconds}} ثوانٍ...",
+      "redirecting": "سيتم إعادة توجيهك إلى الصفحة الرئيسية خلال {{seconds}} ثوانٍ...",
       "nextSteps": {
         "title": "ماذا يحدث بعد ذلك؟",
-        "review": "سيقوم فريقنا بمراجعة طلبك في غضون 3-5 أيام عمل",
-        "confirmation": "ستتلقى تأكيدًا بالبريد الإلكتروني مع تفاصيل طلبك",
-        "interview": "إذا تم اختيارك، سنحدد موعدًا للمقابلة أو نقدم الخطوات التالية"
+        "review": "سيقوم فريقنا بمراجعة طلبك خلال 3-5 أيام عمل",
+        "confirmation": "ستتلقى تأكيدًا بالبريد الإلكتروني يحتوي على تفاصيل طلبك",
+        "interview": "إذا تم اختيارك، سنقوم بجدولة مقابلة أو تقديم الخطوات التالية"
       },
       "connect": {
         "title": "تواصل معنا",
@@ -491,7 +521,7 @@
       "nameRequired": "الاسم الكامل مطلوب",
       "nameLength": "يجب أن يكون الاسم 3 أحرف على الأقل",
       "emailRequired": "البريد الإلكتروني مطلوب",
-      "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+      "emailInvalid": "يرجى إدخال عنوان بريد إلكتروني صالح",
       "phoneRequired": "رقم الهاتف مطلوب",
       "phoneInvalid": "يرجى إدخال رقم هاتف صالح",
       "addressRequired": "العنوان مطلوب",
@@ -508,6 +538,7 @@
       "descriptionRequired": "يرجى إخبارنا عن نفسك ولماذا أنت مهتم"
     }
   },
+
   "countryPage": {
     "livingCost": "تكلفة المعيشة",
     "currency": "عملة",
@@ -558,5 +589,37 @@
     "verified": "تم التحقق",
     "secured": "مؤمّن",
     "complete": "مكتمل"
+  },
+  "majorPage": {
+    "majorNotFound": "التخصص غير موجود",
+    "majorNotFoundDescription": "لم نتمكن من العثور على التخصص الذي تبحث عنه. ربما تم نقله أو لم يعد موجودًا.",
+    "returnHome": "العودة إلى الصفحة الرئيسية",
+    "requirements": "المتطلبات",
+    "tuitionFee": "رسوم الدراسة",
+    "startDate": "تاريخ البدء",
+    "duration": "المدة",
+    "campus": "الحرم الجامعي",
+    "modeOfStudy": "نمط الدراسة",
+    "qualification": "المؤهل",
+    "language": "اللغة",
+    "careerOpportunities": "فرص العمل",
+    "faq": "الأسئلة الشائعة",
+    "readMore": "اقرأ المزيد",
+    "readLess": "اقرأ أقل",
+    "share": "مشاركة",
+    "keyFeatures": "الميزات الرئيسية",
+    "location": "الموقع",
+    "university": "الجامعة",
+    "breadcrumbMajors": "التخصصات",
+    "breadcrumbHome": "الرئيسية",
+    "taughtInPartnership": "يتم التدريس بالشراكة مع",
+    "combineModules": "اجمع بين وحدات {{major}} الأساسية ووحدات في الإدارة والاستراتيجية والتسويق والمحاسبة لإعدادك للعمل مع البيانات في دور قيادي أو إداري.",
+    "learnFromResearch": "تعلم من التدريس المستمد مباشرة من نقاط القوة البحثية العالمية لدينا في الذكاء الاصطناعي وعلوم البيانات والتعلم الآلي.",
+    "requirementsMayVary": "قد تختلف المتطلبات بناءً على خيارات الدراسة التي تحددها.",
+    "applyBy": "التقديم قبل",
+    "mainCampus": "الحرم الجامعي الرئيسي",
+    "studyLevelDegree": "درجة {{studyLevel}}",
+    "careerRoles": "عالم بيانات، محلل أعمال، متخصص في الذكاء الاصطناعي، وظائف بحثية",
+    "featuredMajor": "الرائد المميز"
   }
 }

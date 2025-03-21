@@ -57,8 +57,8 @@ export default function ShareCard({
         return `Check out this university: ${contentTitle}`;
       case "blog":
         return `Check out this article: ${contentTitle}`;
-      case "faculty":
-        return `Check out this faculty: ${contentTitle}`;
+      case "major":
+        return `Check out this major: ${contentTitle}`;
       case "course":
         return `Check out this course: ${contentTitle}`;
       default:

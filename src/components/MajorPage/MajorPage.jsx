@@ -18,6 +18,7 @@ import {
   Clock3,
   Briefcase,
   Loader2,
+  BadgeIcon as Certificate,
 } from "lucide-react";
 import ShareCard from "../../../utils/ShareCard";
 import { useLanguage } from "../../../context/LanguageContext";
@@ -89,8 +90,12 @@ const MajorPage = () => {
     }));
   };
 
-  const handleApplyNow = (id) => {
-    navigate(`/applications/${id}?category=major`);
+  const handleApplyNow = (id, category, slug) => {
+    navigate(
+      `/${language}/applications/${id}?category=${encodeURIComponent(
+        category
+      )}&slug=${slug}`
+    );
   };
 
   // Get the current URL for sharing
@@ -110,11 +115,10 @@ const MajorPage = () => {
         <div className="text-center max-w-md p-8 bg-white rounded-2xl shadow-md">
           <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-6" />
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Major Not Found
+            {t("majorPage.majorNotFound")}
           </h2>
           <p className="text-gray-600 mb-8">
-            We couldn't find the major you're looking for. It may have been
-            moved or doesn't exist.
+            {t("majorPage.majorNotFoundDescription")}
           </p>
           <Link
             to="/"
@@ -122,7 +126,7 @@ const MajorPage = () => {
             style={{ backgroundColor: themeColor }}
           >
             <Home className="w-4 h-4 mr-2" />
-            Return Home
+            {t("majorPage.returnHome")}
           </Link>
         </div>
       </div>
@@ -131,6 +135,19 @@ const MajorPage = () => {
 
   return (
     <div className="bg-white min-h-screen font-sans">
+      {majorData?.majorCheckBox?.featuredMajor && (
+        <div
+          className="bg-[#3b3d8d] text-white py-3 px-4 text-center shadow-md"
+          data-aos="fade-down"
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+            <Certificate className="w-5 h-5" />
+            <p className="font-medium text-base">
+              {t("majorPage.featuredMajor")} - {majorData.majorName[language]}
+            </p>
+          </div>
+        </div>
+      )}
       {/* Breadcrumb Navigation */}
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div
@@ -141,9 +158,9 @@ const MajorPage = () => {
             <Home className="w-4 h-4" />
           </Link>
           <span className="mx-2">›</span>
-          <Link to="/universities" className="hover:text-gray-700">
-            {majorData?.university?.uniName?.[language]}
-          </Link>
+          <p className="hover:text-gray-700">
+            {t("majorPage.breadcrumbMajors")}
+          </p>
           <span className="mx-2">›</span>
           <span className="text-gray-700">{majorData.majorName[language]}</span>
         </div>
@@ -162,12 +179,16 @@ const MajorPage = () => {
             data-aos="fade-up"
             data-aos-delay="100"
           >
-            <div className="flex items-center">
+            <Link
+              to={`/${language}/university/${majorData.university.customURLSlug.en}`}
+              className="flex items-center"
+            >
               <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden mr-2">
                 <img
                   src={
                     majorData?.university?.uniSymbol ||
-                    "/placeholder.svg?height=32&width=32"
+                    "/placeholder.svg?height=32&width=32" ||
+                    "/placeholder.svg"
                   }
                   alt={majorData?.university?.uniName?.[language]}
                   className="w-6 h-6 object-contain"
@@ -176,7 +197,7 @@ const MajorPage = () => {
               <span className="text-gray-700">
                 {majorData?.university?.uniName?.[language]}
               </span>
-            </div>
+            </Link>
           </div>
 
           <div className="flex items-center justify-between">
@@ -186,11 +207,17 @@ const MajorPage = () => {
                 className="text-gray-500 hover:text-gray-700 flex items-center"
               >
                 <Share2 className="w-5 h-5 mr-1" />
-                <span className="text-sm">Share</span>
+                <span className="text-sm">{t("majorPage.share")}</span>
               </button>
             </div>
             <button
-              onClick={() => handleApplyNow(majorData._id)}
+              onClick={() =>
+                handleApplyNow(
+                  majorData._id,
+                  "major",
+                  majorData.customURLSlug.en
+                )
+              }
               className="hidden md:block text-white px-8 py-3 rounded-full font-medium transition-all"
               style={{ backgroundColor: themeColor }}
             >
@@ -209,7 +236,7 @@ const MajorPage = () => {
                 <li className="flex items-start">
                   <div className="text-gray-400 mr-3 mt-1">•</div>
                   <div>
-                    Taught in partnership with the{" "}
+                    {t("majorPage.taughtInPartnership")}{" "}
                     {majorData?.university?.uniName?.[language]} School of{" "}
                     {majorData.studyLevel[0]}
                   </div>
@@ -217,18 +244,14 @@ const MajorPage = () => {
                 <li className="flex items-start">
                   <div className="text-gray-400 mr-3 mt-1">•</div>
                   <div>
-                    Combine core {majorData.majorName[language]} modules with
-                    modules in Management, Strategy, Marketing and Accounting to
-                    prepare you for working with data in a leadership or
-                    management role
+                    {t("majorPage.combineModules", {
+                      major: majorData.majorName[language],
+                    })}
                   </div>
                 </li>
                 <li className="flex items-start">
                   <div className="text-gray-400 mr-3 mt-1">•</div>
-                  <div>
-                    Learn from teaching that draws directly from our world-class
-                    research strengths in AI, data science, and machine learning
-                  </div>
+                  <div>{t("majorPage.learnFromResearch")}</div>
                 </li>
               </ul>
 
@@ -239,12 +262,8 @@ const MajorPage = () => {
                   style={{ color: themeColor }}
                 >
                   {isExpanded
-                    ? language === "ar"
-                      ? "اقرأ أقل"
-                      : "Read Less"
-                    : language === "ar"
-                    ? "اقرأ المزيد"
-                    : "Read More"}
+                    ? t("majorPage.readLess")
+                    : t("majorPage.readMore")}
                   {isExpanded ? (
                     <ChevronUp className="w-4 h-4 ml-1" />
                   ) : (
@@ -272,12 +291,12 @@ const MajorPage = () => {
               <div className="flex items-center mb-4">
                 <FileText className="w-5 h-5 text-gray-700 mr-2" />
                 <h2 className="text-xl font-bold text-gray-900">
-                  {t("CourseSlugPage.Requirements")}
+                  {t("majorPage.requirements")}
                 </h2>
               </div>
 
               <p className="text-gray-700 mb-4">
-                The requirements may vary based on your selected study options.
+                {t("majorPage.requirementsMayVary")}
               </p>
 
               {/* Requirements as keyword pills/tags */}
@@ -300,7 +319,7 @@ const MajorPage = () => {
               <div className="flex items-center mb-4">
                 <FileText className="w-5 h-5 text-gray-700 mr-2" />
                 <h2 className="text-xl font-bold text-gray-900">
-                  Frequently Asked Questions
+                  {t("majorPage.faq")}
                 </h2>
               </div>
 
@@ -347,20 +366,24 @@ const MajorPage = () => {
                     {majorData.majorTuitionFees}
                   </h3>
                 </div>
-                <p className="text-gray-600 text-sm mb-6">Tuition fee</p>
+                <p className="text-gray-600 text-sm mb-6">
+                  {t("majorPage.tuitionFee")}
+                </p>
 
                 <div className="flex items-center mb-4">
                   <Calendar className="w-5 h-5 text-gray-700 mr-2" />
                   <div>
                     <h4 className="font-medium text-gray-900">
-                      Apply by Aug 2025
+                      {t("majorPage.applyBy")} Aug 2025
                     </h4>
                   </div>
                 </div>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Start date</span>
+                    <span className="text-gray-600">
+                      {t("majorPage.startDate")}
+                    </span>
                     <span className="font-medium text-gray-900">
                       {majorData.majorIntakeMonth[0]}{" "}
                       {majorData.majorIntakeYear}
@@ -368,21 +391,27 @@ const MajorPage = () => {
                   </div>
 
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Duration</span>
+                    <span className="text-gray-600">
+                      {t("majorPage.duration")}
+                    </span>
                     <span className="font-medium text-gray-900">
                       {majorData.duration} {majorData.durationUnits}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-gray-600">Campus</span>
+                    <span className="text-gray-600">
+                      {t("majorPage.campus")}
+                    </span>
                     <span className="font-medium text-gray-900">
                       Main Campus
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-gray-600">Mode of study</span>
+                    <span className="text-gray-600">
+                      {t("majorPage.modeOfStudy")}
+                    </span>
                     <span className="font-medium text-gray-900">
                       {majorData.modeOfStudy}
                     </span>
@@ -406,7 +435,7 @@ const MajorPage = () => {
               data-aos-delay="200"
             >
               <h3 className="text-lg font-bold text-gray-900 mb-4">
-                Key Features
+                {t("majorPage.keyFeatures")}
               </h3>
 
               <div className="space-y-4">
@@ -418,7 +447,9 @@ const MajorPage = () => {
                     <Clock3 className="w-5 h-5" style={{ color: themeColor }} />
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900">Duration</h4>
+                    <h4 className="font-medium text-gray-900">
+                      {t("majorPage.duration")}
+                    </h4>
                     <p className="text-sm text-gray-600">
                       {majorData.duration} {majorData.durationUnits},{" "}
                       {majorData.modeOfStudy}
@@ -434,9 +465,12 @@ const MajorPage = () => {
                     <MapPin className="w-5 h-5" style={{ color: themeColor }} />
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900">Location</h4>
+                    <h4 className="font-medium text-gray-900">
+                      {t("majorPage.location")}
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      Main Campus, {majorData?.university?.uniName?.[language]}
+                      {t("majorPage.mainCampus")},{" "}
+                      {majorData?.university?.uniName?.[language]}
                     </p>
                   </div>
                 </div>
@@ -452,9 +486,13 @@ const MajorPage = () => {
                     />
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900">Qualification</h4>
+                    <h4 className="font-medium text-gray-900">
+                      {t("majorPage.qualification")}
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      {majorData.studyLevel[0]} Degree
+                      {t("majorPage.studyLevelDegree", {
+                        studyLevel: majorData.studyLevel[0],
+                      })}
                     </p>
                   </div>
                 </div>
@@ -467,7 +505,9 @@ const MajorPage = () => {
                     <Globe className="w-5 h-5" style={{ color: themeColor }} />
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900">Language</h4>
+                    <h4 className="font-medium text-gray-900">
+                      {t("majorPage.language")}
+                    </h4>
                     <p className="text-sm text-gray-600">
                       {majorData.majorLanguages.join(", ")}
                     </p>
@@ -486,14 +526,78 @@ const MajorPage = () => {
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">
-                      Career Opportunities
+                      {t("majorPage.careerOpportunities")}
                     </h4>
                     <p className="text-sm text-gray-600">
-                      Data Scientist, Business Analyst, AI Specialist, Research
-                      Positions
+                      {t("majorPage.careerRoles")}
                     </p>
                   </div>
                 </div>
+                {majorData?.majorCheckBox?.scholarshipsAvailable && (
+                  <div className="flex items-start">
+                    <div
+                      className="p-2 rounded-full mr-3"
+                      style={{ backgroundColor: "rgba(59, 61, 141, 0.1)" }}
+                    >
+                      <GraduationCap
+                        className="w-5 h-5"
+                        style={{ color: themeColor }}
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">
+                        {t("Scholarships")}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {t("Scholarships Available")}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {majorData?.majorCheckBox?.expressAdmission && (
+                  <div className="flex items-start">
+                    <div
+                      className="p-2 rounded-full mr-3"
+                      style={{ backgroundColor: "rgba(59, 61, 141, 0.1)" }}
+                    >
+                      <Clock3
+                        className="w-5 h-5"
+                        style={{ color: themeColor }}
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">
+                        {t("Express Admission")}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {t("Fast-track application process")}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {majorData?.majorCheckBox?.entranceExamRequired && (
+                  <div className="flex items-start">
+                    <div
+                      className="p-2 rounded-full mr-3"
+                      style={{ backgroundColor: "rgba(59, 61, 141, 0.1)" }}
+                    >
+                      <FileText
+                        className="w-5 h-5"
+                        style={{ color: themeColor }}
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">
+                        {t("Entrance Exam")}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {t("Entrance examination required")}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -506,7 +610,7 @@ const MajorPage = () => {
             className="w-full text-white py-3 rounded-full font-medium transition-all"
             style={{ backgroundColor: themeColor }}
           >
-            Apply now
+            {t("applyNow")}
           </button>
         </div>
       </div>
@@ -515,8 +619,9 @@ const MajorPage = () => {
       <ShareCard
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
-        title={majorData.majorName[language]}
-        url={majorUrl}
+        contentTitle={majorData.majorName[language] || "major"}
+        contentType={"major"}
+        contentUrl={majorUrl}
       />
     </div>
   );

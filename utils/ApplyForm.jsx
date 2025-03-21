@@ -52,7 +52,10 @@ export default function ApplyForm({ isDesktop = true }) {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const category = searchParams.get("category") || "University";
+  const slug = searchParams.get("slug");
+  console.log(slug);
   const isCourse = category === "course";
+  const isMajor = category === "major";
 
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -408,6 +411,18 @@ export default function ApplyForm({ isDesktop = true }) {
         stepIndicator: "bg-indigo-500",
         cardHeader: "bg-indigo-500",
       }
+    : isMajor
+    ? {
+        primary: "from-slate-500 to-slate-400",
+        button: "bg-slate-500 hover:bg-slate-600",
+        accent: "text-slate-600",
+        border: "border-slate-500",
+        label: "text-slate-700",
+        error: "border-slate-800",
+        header: "text-slate-600",
+        stepIndicator: "bg-slate-500",
+        cardHeader: "bg-slate-500",
+      }
     : {
         primary: "from-[#db5458] to-[#e87a7d]",
         button: "bg-[#db5458] hover:bg-[#c94b4f]",
@@ -421,7 +436,14 @@ export default function ApplyForm({ isDesktop = true }) {
       };
 
   const handleBackToListing = () => {
-    navigate(`/${language}/`);
+    if (slug) {
+      if (category === "University")
+        navigate(`/${language}/university/${slug}`);
+      if (category === "course") navigate(`/${language}/courses/${slug}`);
+      if (category === "major") navigate(`/${language}/major/${slug}`);
+    } else {
+      navigate(`/${language}`);
+    }
   };
 
   const renderStep = () => {
@@ -467,7 +489,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDetails.personName
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t(
                       "applyForm.personalInfo.fullName.placeholder"
@@ -508,7 +536,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDetails.personEmail
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t("applyForm.personalInfo.email.placeholder")}
                     required
@@ -547,7 +581,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDetails.personPhone
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t("applyForm.personalInfo.phone.placeholder")}
                     required
@@ -586,7 +626,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDetails.personDOB
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     required
                   />
@@ -623,7 +669,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDetails.personAddress
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all min-h-[80px] resize-none`}
                     placeholder={t(
                       "applyForm.personalInfo.address.placeholder"
@@ -650,11 +702,17 @@ export default function ApplyForm({ isDesktop = true }) {
               >
                 {isCourse
                   ? t("applyForm.education.courseTitle")
+                  : isMajor
+                  ? t("applyForm.education.majorTitle") ||
+                    "Education Background"
                   : t("applyForm.education.universityTitle")}
               </h2>
               <p className="text-gray-600">
                 {isCourse
                   ? t("applyForm.education.courseSubtitle")
+                  : isMajor
+                  ? t("applyForm.education.majorSubtitle") ||
+                    "Tell us about your educational qualifications"
                   : t("applyForm.education.universitySubtitle")}
               </p>
             </div>
@@ -687,7 +745,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:outline-none focus:ring-2 ${
                       errors.education.highestQualification
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent text-base appearance-none bg-white`}
                     required
                   >
@@ -748,7 +812,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.education.institution
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t(
                       "applyForm.education.institutionPlaceholder"
@@ -791,7 +861,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.education.graduationYear
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t("applyForm.education.yearPlaceholder")}
                     min="1950"
@@ -832,7 +908,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.education.gpa
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t("applyForm.education.gpaPlaceholder")}
                   />
@@ -873,23 +955,43 @@ export default function ApplyForm({ isDesktop = true }) {
 
             {!isCourse && (
               <div
-                className="bg-indigo-50 p-4 rounded-lg border border-indigo-100 mt-6"
+                className={`bg-${
+                  isMajor ? "slate" : "indigo"
+                }-50 p-4 rounded-lg border border-${
+                  isMajor ? "slate" : "indigo"
+                }-100 mt-6`}
                 data-aos="fade-up"
                 data-aos-delay="500"
               >
                 <div className="flex items-start">
                   <div className="flex-shrink-0 pt-0.5">
-                    <BookOpen className="h-5 w-5 text-indigo-600" />
+                    <BookOpen
+                      className={`h-5 w-5 text-${
+                        isMajor ? "slate" : "indigo"
+                      }-600`}
+                    />
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-indigo-700">
-                      {t("applyForm.education.universityRequirements.title")}
+                    <h3
+                      className={`text-sm font-medium text-${
+                        isMajor ? "slate" : "indigo"
+                      }-700`}
+                    >
+                      {isMajor
+                        ? t("applyForm.education.majorRequirements.title") ||
+                          "Major Requirements"
+                        : t("applyForm.education.universityRequirements.title")}
                     </h3>
                     <div className="mt-1 text-sm text-gray-700">
                       <p>
-                        {t(
-                          "applyForm.education.universityRequirements.description"
-                        )}
+                        {isMajor
+                          ? t(
+                              "applyForm.education.majorRequirements.description"
+                            ) ||
+                            "Please ensure you meet all the requirements for this major."
+                          : t(
+                              "applyForm.education.universityRequirements.description"
+                            )}
                       </p>
                     </div>
                   </div>
@@ -908,11 +1010,16 @@ export default function ApplyForm({ isDesktop = true }) {
               >
                 {isCourse
                   ? t("applyForm.skills.courseTitle")
+                  : isMajor
+                  ? t("applyForm.skills.majorTitle") || "Skills & Experience"
                   : t("applyForm.skills.universityTitle")}
               </h2>
               <p className="text-gray-600">
                 {isCourse
                   ? t("applyForm.skills.courseSubtitle")
+                  : isMajor
+                  ? t("applyForm.skills.majorSubtitle") ||
+                    "Tell us about your skills and experience relevant to this major"
                   : t("applyForm.skills.universitySubtitle")}
               </p>
             </div>
@@ -946,7 +1053,11 @@ export default function ApplyForm({ isDesktop = true }) {
                           errors.experience?.yearsOfExperience
                             ? "focus:ring-red-500"
                             : `focus:ring-${
-                                isCourse ? "indigo-500" : "[#db5458]"
+                                isCourse
+                                  ? "indigo-500"
+                                  : isMajor
+                                  ? "slate-500"
+                                  : "[#db5458]"
                               }`
                         } focus:border-transparent text-base appearance-none bg-white`}
                       >
@@ -993,7 +1104,11 @@ export default function ApplyForm({ isDesktop = true }) {
                         value={formData.experience.currentEmployer}
                         onChange={handleInputChange}
                         className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${
-                          isCourse ? "indigo-500" : "[#db5458]"
+                          isCourse
+                            ? "indigo-500"
+                            : isMajor
+                            ? "slate-500"
+                            : "[#db5458]"
                         } focus:border-transparent outline-none transition-all`}
                         placeholder={t("applyForm.skills.employerPlaceholder")}
                       />
@@ -1020,7 +1135,11 @@ export default function ApplyForm({ isDesktop = true }) {
                         value={formData.experience.jobTitle}
                         onChange={handleInputChange}
                         className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${
-                          isCourse ? "indigo-500" : "[#db5458]"
+                          isCourse
+                            ? "indigo-500"
+                            : isMajor
+                            ? "slate-500"
+                            : "[#db5458]"
                         } focus:border-transparent outline-none transition-all`}
                         placeholder={t("applyForm.skills.jobTitlePlaceholder")}
                       />
@@ -1049,7 +1168,11 @@ export default function ApplyForm({ isDesktop = true }) {
                     value={formData.skills.languages}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${
-                      isCourse ? "indigo-500" : "[#db5458]"
+                      isCourse
+                        ? "indigo-500"
+                        : isMajor
+                        ? "slate-500"
+                        : "[#db5458]"
                     } focus:border-transparent outline-none transition-all`}
                     placeholder={t("applyForm.skills.languagesPlaceholder")}
                   />
@@ -1066,6 +1189,8 @@ export default function ApplyForm({ isDesktop = true }) {
                 >
                   {isCourse
                     ? t("applyForm.skills.technicalSkills")
+                    : isMajor
+                    ? t("applyForm.skills.majorSkills") || "Relevant Skills"
                     : t("applyForm.skills.computerSkills")}
                 </label>
                 <div className="relative">
@@ -1077,11 +1202,18 @@ export default function ApplyForm({ isDesktop = true }) {
                     value={formData.skills.computerSkills}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${
-                      isCourse ? "indigo-500" : "[#db5458]"
+                      isCourse
+                        ? "indigo-500"
+                        : isMajor
+                        ? "slate-500"
+                        : "[#db5458]"
                     } focus:border-transparent outline-none transition-all min-h-[80px] resize-none`}
                     placeholder={
                       isCourse
                         ? t("applyForm.skills.technicalSkillsPlaceholder")
+                        : isMajor
+                        ? t("applyForm.skills.majorSkillsPlaceholder") ||
+                          "List any skills relevant to this major"
                         : t("applyForm.skills.computerSkillsPlaceholder")
                     }
                   />
@@ -1107,7 +1239,11 @@ export default function ApplyForm({ isDesktop = true }) {
                     value={formData.skills.certifications}
                     onChange={handleInputChange}
                     className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-${
-                      isCourse ? "indigo-500" : "[#db5458]"
+                      isCourse
+                        ? "indigo-500"
+                        : isMajor
+                        ? "slate-500"
+                        : "[#db5458]"
                     } focus:border-transparent outline-none transition-all min-h-[80px] resize-none`}
                     placeholder={t(
                       "applyForm.skills.certificationsPlaceholder"
@@ -1128,11 +1264,16 @@ export default function ApplyForm({ isDesktop = true }) {
               >
                 {isCourse
                   ? t("applyForm.preferences.courseTitle")
+                  : isMajor
+                  ? t("applyForm.preferences.majorTitle") || "Major Preferences"
                   : t("applyForm.preferences.universityTitle")}
               </h2>
               <p className="text-gray-600">
                 {isCourse
                   ? t("applyForm.preferences.courseSubtitle")
+                  : isMajor
+                  ? t("applyForm.preferences.majorSubtitle") ||
+                    "Tell us about your preferences for this major"
                   : t("applyForm.preferences.universitySubtitle")}
               </p>
             </div>
@@ -1164,7 +1305,13 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.preferences.startDate
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all`}
                   />
                 </div>
@@ -1185,6 +1332,8 @@ export default function ApplyForm({ isDesktop = true }) {
                 >
                   {isCourse
                     ? t("applyForm.preferences.courseFormat")
+                    : isMajor
+                    ? t("applyForm.preferences.majorFormat") || "Study Format"
                     : t("applyForm.preferences.programType")}
                 </label>
                 <div className="relative">
@@ -1202,11 +1351,19 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:outline-none focus:ring-2 ${
                       errors.preferences.programType
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent text-base appearance-none bg-white`}
                   >
                     <option value="">
                       {isCourse
+                        ? t("applyForm.preferences.selectFormat")
+                        : isMajor
                         ? t("applyForm.preferences.selectFormat")
                         : t("applyForm.preferences.selectType")}
                     </option>
@@ -1286,13 +1443,24 @@ export default function ApplyForm({ isDesktop = true }) {
                     } rounded-lg focus:ring-2 ${
                       errors.userDescription
                         ? "focus:ring-red-500"
-                        : `focus:ring-${isCourse ? "indigo-500" : "[#db5458]"}`
+                        : `focus:ring-${
+                            isCourse
+                              ? "indigo-500"
+                              : isMajor
+                              ? "slate-500"
+                              : "[#db5458]"
+                          }`
                     } focus:border-transparent outline-none transition-all min-h-[200px] resize-none`}
                     placeholder={
                       isCourse
                         ? t(
                             "applyForm.preferences.aboutYourself.coursePlaceholder"
                           )
+                        : isMajor
+                        ? t(
+                            "applyForm.preferences.aboutYourself.majorPlaceholder"
+                          ) ||
+                          "Tell us why you're interested in this major and your career goals"
                         : t(
                             "applyForm.preferences.aboutYourself.universityPlaceholder"
                           )
@@ -1308,7 +1476,11 @@ export default function ApplyForm({ isDesktop = true }) {
             </div>
 
             <div
-              className="bg-indigo-50 p-6 rounded-lg border border-indigo-100"
+              className={`bg-${
+                isMajor ? "slate" : "indigo"
+              }-50 p-6 rounded-lg border border-${
+                isMajor ? "slate" : "indigo"
+              }-100`}
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -1317,19 +1489,31 @@ export default function ApplyForm({ isDesktop = true }) {
               </h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <Check
+                    className={`h-5 w-5 text-${
+                      isMajor ? "slate" : "indigo"
+                    }-600 mr-2 mt-0.5 flex-shrink-0`}
+                  />
                   <span className="text-gray-700">
                     {t("applyForm.preferences.beforeSubmit.checkFields")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <Check
+                    className={`h-5 w-5 text-${
+                      isMajor ? "slate" : "indigo"
+                    }-600 mr-2 mt-0.5 flex-shrink-0`}
+                  />
                   <span className="text-gray-700">
                     {t("applyForm.preferences.beforeSubmit.verifyContact")}
                   </span>
                 </li>
                 <li className="flex items-start">
-                  <Check className="h-5 w-5 text-indigo-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <Check
+                    className={`h-5 w-5 text-${
+                      isMajor ? "slate" : "indigo"
+                    }-600 mr-2 mt-0.5 flex-shrink-0`}
+                  />
                   <span className="text-gray-700">
                     {t("applyForm.preferences.beforeSubmit.reviewApplication")}
                   </span>
@@ -1414,6 +1598,9 @@ export default function ApplyForm({ isDesktop = true }) {
                   <h3 className="font-medium">
                     {isCourse
                       ? t("applyForm.review.sections.education.course")
+                      : isMajor
+                      ? t("applyForm.review.sections.education.major") ||
+                        "Education Background"
                       : t("applyForm.review.sections.education.university")}
                   </h3>
                 </div>
@@ -1526,6 +1713,9 @@ export default function ApplyForm({ isDesktop = true }) {
                     <p className="text-sm text-gray-500">
                       {isCourse
                         ? t("applyForm.review.fields.skills.technical")
+                        : isMajor
+                        ? t("applyForm.review.fields.skills.major") ||
+                          "Relevant Skills"
                         : t("applyForm.review.fields.skills.computer")}
                     </p>
                     <p className="font-medium">
@@ -1550,6 +1740,9 @@ export default function ApplyForm({ isDesktop = true }) {
                   <h3 className="font-medium">
                     {isCourse
                       ? t("applyForm.review.sections.preferences.course")
+                      : isMajor
+                      ? t("applyForm.review.sections.preferences.major") ||
+                        "Major Preferences"
                       : t("applyForm.review.sections.preferences.university")}
                   </h3>
                 </div>
@@ -1568,6 +1761,9 @@ export default function ApplyForm({ isDesktop = true }) {
                       <p className="text-sm text-gray-500">
                         {isCourse
                           ? t("applyForm.review.fields.format.course")
+                          : isMajor
+                          ? t("applyForm.review.fields.format.major") ||
+                            "Study Format"
                           : t("applyForm.review.fields.format.university")}
                       </p>
                       <p className="font-medium">
@@ -1627,12 +1823,20 @@ export default function ApplyForm({ isDesktop = true }) {
               <>
                 <div
                   className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${
-                    isCourse ? "bg-indigo-100" : "bg-red-100"
+                    isCourse
+                      ? "bg-indigo-100"
+                      : isMajor
+                      ? "bg-slate-100"
+                      : "bg-red-100"
                   } mb-6`}
                 >
                   <Check
                     className={`h-12 w-12 ${
-                      isCourse ? "text-indigo-600" : "text-[#db5458]"
+                      isCourse
+                        ? "text-indigo-600"
+                        : isMajor
+                        ? "text-slate-600"
+                        : "text-[#db5458]"
                     }`}
                   />
                 </div>
@@ -1643,7 +1847,11 @@ export default function ApplyForm({ isDesktop = true }) {
                   {t("applyForm.success.subtitle")}
                 </p>
                 <div className="mb-8 text-center">
-                  <p className="text-indigo-600 font-medium">
+                  <p
+                    className={`text-${
+                      isCourse ? "indigo" : isMajor ? "slate" : "red"
+                    }-600 font-medium`}
+                  >
                     {t("applyForm.success.redirecting", {
                       seconds: redirectCountdown,
                     })}
@@ -1671,7 +1879,11 @@ export default function ApplyForm({ isDesktop = true }) {
                       <li className="flex items-start">
                         <div
                           className={`flex-shrink-0 h-6 w-6 rounded-full ${
-                            isCourse ? "bg-indigo-100" : "bg-red-100"
+                            isCourse
+                              ? "bg-indigo-100"
+                              : isMajor
+                              ? "bg-slate-100"
+                              : "bg-red-100"
                           } flex items-center justify-center mr-3 mt-0.5`}
                         >
                           <span
@@ -1687,7 +1899,11 @@ export default function ApplyForm({ isDesktop = true }) {
                       <li className="flex items-start">
                         <div
                           className={`flex-shrink-0 h-6 w-6 rounded-full ${
-                            isCourse ? "bg-indigo-100" : "bg-red-100"
+                            isCourse
+                              ? "bg-indigo-100"
+                              : isMajor
+                              ? "bg-slate-100"
+                              : "bg-red-100"
                           } flex items-center justify-center mr-3 mt-0.5`}
                         >
                           <span
@@ -1703,7 +1919,11 @@ export default function ApplyForm({ isDesktop = true }) {
                       <li className="flex items-start">
                         <div
                           className={`flex-shrink-0 h-6 w-6 rounded-full ${
-                            isCourse ? "bg-indigo-100" : "bg-red-100"
+                            isCourse
+                              ? "bg-indigo-100"
+                              : isMajor
+                              ? "bg-slate-100"
+                              : "bg-red-100"
                           } flex items-center justify-center mr-3 mt-0.5`}
                         >
                           <span
@@ -1756,7 +1976,11 @@ export default function ApplyForm({ isDesktop = true }) {
                         className={`flex items-center justify-center w-12 h-12 rounded-full ${
                           theme.button
                         } text-white hover:${
-                          isCourse ? "bg-indigo-600" : "bg-[#c94b4f]"
+                          isCourse
+                            ? "bg-indigo-600"
+                            : isMajor
+                            ? "bg-slate-600"
+                            : "bg-[#c94b4f]"
                         } transition-colors`}
                       >
                         <Twitter className="h-6 w-6" />
@@ -1807,6 +2031,8 @@ export default function ApplyForm({ isDesktop = true }) {
                 {t("applyForm.common.backTo")}{" "}
                 {isCourse
                   ? t("applyForm.common.course")
+                  : isMajor
+                  ? t("applyForm.common.major") || "Major"
                   : t("applyForm.common.university")}
               </button>
               <Link
@@ -1822,6 +2048,8 @@ export default function ApplyForm({ isDesktop = true }) {
             >
               {isCourse
                 ? t("applyForm.header.courseTitle")
+                : isMajor
+                ? t("applyForm.header.majorTitle") || "Apply for Major"
                 : t("applyForm.header.universityTitle")}
             </h1>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -1836,25 +2064,26 @@ export default function ApplyForm({ isDesktop = true }) {
               <div className="text-sm text-gray-500">
                 {t("applyForm.common.stepOf", { current: step, total: 5 })}
               </div>
-              <div
-                className={`text-sm font-medium ${
-                  category === "University"
-                    ? "text-[#db5458]"
-                    : "text-indigo-700 "
-                }`}
-              >
+              <div className={`text-sm font-medium ${theme.header}`}>
                 {step === 1 && t("applyForm.steps.personalInfo")}
                 {step === 2 &&
                   (isCourse
                     ? t("applyForm.steps.education.course")
+                    : isMajor
+                    ? t("applyForm.steps.education.major") ||
+                      "Education Background"
                     : t("applyForm.steps.education.university"))}
                 {step === 3 &&
                   (isCourse
                     ? t("applyForm.steps.skills.course")
+                    : isMajor
+                    ? t("applyForm.steps.skills.major") || "Skills & Experience"
                     : t("applyForm.steps.skills.university"))}
                 {step === 4 &&
                   (isCourse
                     ? t("applyForm.steps.preferences.course")
+                    : isMajor
+                    ? t("applyForm.steps.preferences.major") || "Preferences"
                     : t("applyForm.steps.preferences.university"))}
                 {step === 5 && t("applyForm.steps.review")}
               </div>

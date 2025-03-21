@@ -81,7 +81,7 @@ const initialFormData = {
 const courseTypes = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
 const studyModes = ["Full-time", "Part-time", "Online", "Blended"];
 const studyModesAr = ["دوام كامل", "دوام جزئي", "عبر الإنترنت", "مختلط"];
-const studyLevels = ["Beginner", "Intermediate", "Advanced"];
+const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"]
 const languages = ["English", "French", "German", "Spanish"];
 const admissionRequirements = [
   "High School Diploma",

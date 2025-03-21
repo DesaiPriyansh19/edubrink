@@ -157,7 +157,7 @@ const CountryPage = () => {
       </div>
 
       <div
-        className="w-full rounded-xl overflow-hidden mb-8 max-w-[1376px] mx-auto shadow-lg"
+        className="w-full rounded-xl relative overflow-hidden mb-8 max-w-[1376px] mx-auto shadow-lg"
         data-aos="zoom-in"
       >
         <img
@@ -171,6 +171,7 @@ const CountryPage = () => {
           height="426"
           style={{ aspectRatio: "1376/426" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
       </div>
 
       <div className=" rounded-xl  shadow-sm mb-8">
@@ -374,7 +375,7 @@ const CountryPage = () => {
         </div>
       )}
 
-      {data?.faq.length > 0 && (
+      {data?.faq?.length > 0 && (
         <div data-aos="fade-up" data-aos-delay="600">
           <FaqDropDown faqData={data?.faq} />
         </div>
