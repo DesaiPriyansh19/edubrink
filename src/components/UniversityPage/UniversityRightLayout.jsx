@@ -19,6 +19,14 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const formatModeOfStudy = (mod) => {
+    if (!mod || mod.length === 0) return "Full Time";
+    if (mod.length === 1) return mod[0];
+
+    // Show first language + count of additional languages
+    return `${mod[0]} + ${mod.length - 1}`;
+  };
+
   return (
     <>
       <div className="sticky top-24">
@@ -62,17 +70,8 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">
-                      {data?.courses && data.courses.length > 0
-                        ? `$${Math.min(
-                            ...data.courses.map(
-                              (course) => Number(course.CourseFees) || 0
-                            )
-                          )} - $${Math.max(
-                            ...data.courses.map(
-                              (course) => Number(course.CourseFees) || 0
-                            )
-                          )}`
-                        : `$${data?.uniTutionFees || 0}`}{" "}
+                      ${data?.lowestCourseTuitionFees} - $
+                      {data?.highestCourseTuitionFees}{" "}
                       {t("UniversitySlugPage.PerYear")}
                     </p>
                     <p className="text-sm text-gray-600">
@@ -86,7 +85,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
               <div className="p-4 transition-all duration-300 hover:bg-gray-50">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-[#3b3d8d]/10 flex items-center justify-center flex-shrink-0">
-                    <GraduationCap />
+                    <GraduationCap className="text-gray-500" />
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">
@@ -163,9 +162,11 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">
-                      {language === "ar"
-                        ? data?.courses[0]?.ModeOfStudy?.ar?.[0]
-                        : data?.courses[0]?.ModeOfStudy?.en?.[0] || "N/A"}
+                      {formatModeOfStudy(
+                        data?.courses?.map(
+                          (item) => item?.ModeOfStudy?.[language]
+                        )
+                      )}
                     </p>
                     <p className="text-sm text-gray-600">
                       {t("UniversitySlugPage.ModeOfStudy")}

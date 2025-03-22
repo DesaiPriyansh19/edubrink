@@ -205,6 +205,9 @@
     "StudyLevel": "مستوى الدراسة",
     "TuitionFees": "الرسوم الدراسية",
     "FeaturedCourses": "الدورات المميزة",
+    "Majors": "التخصصات",
+    "FeaturedPrograms":"البرامج المميزة",
+    "activeFilter":"عامل التصفية النشط",
     "university": {
       "detailsTitle": "تفاصيل الجامعة",
       "yes": "نعم",

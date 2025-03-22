@@ -140,7 +140,7 @@ export default function EditCourse() {
       },
       CourseFees: data?.CourseFees || "",
       CourseDuration: data?.CourseDuration || "",
-      CourseDurationUnits: data?.CourseDuration || "Years",
+      CourseDurationUnits: data?.CourseDurationUnits || "Years",
       StudyLevel: Array.isArray(data?.StudyLevel) ? data?.StudyLevel : [],
       Languages: Array.isArray(data?.Languages) ? data?.Languages : [],
       Requirements: {

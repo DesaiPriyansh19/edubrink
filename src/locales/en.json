@@ -208,6 +208,9 @@
     "StudyLevel": "Study level",
     "TuitionFees": "Tuition Fees",
     "FeaturedCourses": "Featured Courses",
+    "Majors": "Majors",
+    "FeaturedPrograms":"Featured Programs",
+    "activeFilter":"Active Filter",
     "FeaturedMajors": "Featured Majors",
     "university": {
       "detailsTitle": "University Details",

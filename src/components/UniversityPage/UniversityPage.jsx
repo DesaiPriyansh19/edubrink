@@ -4,16 +4,15 @@ import { useEffect, useState } from "react";
 import TickMark from "../../../svg/TickMark";
 import UniversityRightLayout from "./UniversityRightLayout";
 import UniversityLeftLayout from "./UniversityLeftLayout";
-import UniversityCard from "./UniversityCard";
 import UniversityHighlight from "./UniversityHighlight";
 import UniversityFAQ from "./UniversityFAQ";
-import UniversityDetails from "./UniversityDetails"; // Import the new component
+import UniversityDetails from "./UniversityDetails";
 import useFetch from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
-import UniversityMajors from "./UniversityMajors";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import UniversityPrograms from "./UniversityPrograms";
 
 const UniversityPage = () => {
   const { slug } = useParams();
@@ -21,57 +20,62 @@ const UniversityPage = () => {
 
   // State for courses
   const [coursePage, setCoursePage] = useState(1);
-  const [courseLimit] = useState(2); // Default to 2 courses per page
+  const [courseLimit] = useState(4); // Default to 2 courses per page
   const [coursePagination, setCoursePagination] = useState(null);
 
   // State for majors
   const [majorPage, setMajorPage] = useState(1);
-  const [majorLimit] = useState(2); // Default to 2 majors per page
+  const [majorLimit] = useState(4); // Default to 2 majors per page
   const [majorPagination, setMajorPagination] = useState(null);
 
-  // Add state for filters - now including modeOfStudy
+  // Updated state for filters to support multiple selections
   const [filters, setFilters] = useState({
     studyLevel: null,
     modeOfStudy: null,
   });
 
-  // Construct the API URL with pagination parameters and filters
-  const apiUrl = `https://edu-brink-backend.vercel.app/api/university/name/${slug}?coursePage=${coursePage}&courseLimit=${courseLimit}&majorPage=${majorPage}&majorLimit=${majorLimit}${
-    filters.studyLevel
-      ? `&studyLevel=${encodeURIComponent(filters.studyLevel)}`
-      : ""
-  }${
-    filters.modeOfStudy
-      ? `&modeOfStudy=${encodeURIComponent(filters.modeOfStudy)}`
-      : ""
-  }`;
-
-  const { data, loading, refetch } = useFetch(apiUrl);
-  const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
-  const token = userInfo?.token || "";
-
   // Handle filter changes from child components
   const handleFilterChange = (newFilters) => {
     // Check if either filter value has changed
     if (
-      newFilters.studyLevel !== filters.studyLevel ||
-      newFilters.modeOfStudy !== filters.modeOfStudy
+      JSON.stringify(newFilters.studyLevel) !==
+        JSON.stringify(filters.studyLevel) ||
+      JSON.stringify(newFilters.modeOfStudy) !==
+        JSON.stringify(filters.modeOfStudy)
     ) {
       setFilters((prev) => ({
         ...prev,
         ...newFilters,
       }));
 
-      // Reset to first page when filters change
-      if (newFilters.studyLevel !== filters.studyLevel) {
-        setCoursePage(1);
-      }
-
-      if (newFilters.modeOfStudy !== filters.modeOfStudy) {
-        setMajorPage(1);
-      }
+      // Reset to first page when any filter changes
+      setCoursePage(1);
+      setMajorPage(1);
     }
   };
+
+  // Construct the API URL with pagination parameters and filters
+  const apiUrl = `https://edu-brink-backend.vercel.app/api/university/name/${slug}?coursePage=${coursePage}&courseLimit=${courseLimit}&majorPage=${majorPage}&majorLimit=${majorLimit}${
+    filters.studyLevel
+      ? `&studyLevel=${encodeURIComponent(
+          Array.isArray(filters.studyLevel)
+            ? filters.studyLevel.join(",")
+            : filters.studyLevel
+        )}`
+      : ""
+  }${
+    filters.modeOfStudy
+      ? `&modeOfStudy=${encodeURIComponent(
+          Array.isArray(filters.modeOfStudy)
+            ? filters.modeOfStudy.join(",")
+            : filters.modeOfStudy
+        )}`
+      : ""
+  }`;
+
+  const { data, loading, refetch } = useFetch(apiUrl);
+  const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
+  const token = userInfo?.token || "";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -266,10 +270,10 @@ const UniversityPage = () => {
         {/* University Logo */}
         <div
           className={`absolute -bottom-8  -translate-y-1/2 
-            ${language === "ar" ? "right-8" : "left-8"} 
-            w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white shadow-xl 
-            flex items-center justify-center rounded-2xl 
-            transition-all duration-300 hover:shadow-2xl hover:-translate-y-[55%]`}
+          ${language === "ar" ? "right-8" : "left-8"} 
+          w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white shadow-xl 
+          flex items-center justify-center rounded-2xl 
+          transition-all duration-300 hover:shadow-2xl hover:-translate-y-[55%]`}
           data-aos="zoom-in"
           data-aos-delay="300"
         >
@@ -300,33 +304,22 @@ const UniversityPage = () => {
           </div>
 
           <div data-aos="fade-up" data-aos-delay="200">
-            <UniversityCard
+            <UniversityPrograms
               data={data}
               language={language}
               themeColor="#3b3d8d"
               coursePage={coursePage}
               courseLimit={courseLimit}
-              onPageChange={handleCoursePageChange}
+              majorPage={majorPage}
+              majorLimit={majorLimit}
+              onCoursePageChange={handleCoursePageChange}
+              onMajorPageChange={handleMajorPageChange}
               coursePagination={coursePagination}
-              activeFilter={filters.studyLevel}
+              majorPagination={majorPagination}
+              courseFilter={filters.studyLevel}
+              majorFilter={filters.modeOfStudy}
             />
           </div>
-
-          {/* Majors Section */}
-          {data?.majors && data.majors.length > 0 && (
-            <div data-aos="fade-up" data-aos-delay="250">
-              <UniversityMajors
-                data={data}
-                language={language}
-                themeColor="#3b3d8d"
-                majorPage={majorPage}
-                majorLimit={majorLimit}
-                onPageChange={handleMajorPageChange}
-                majorPagination={majorPagination}
-                activeFilter={filters.modeOfStudy}
-              />
-            </div>
-          )}
 
           {/* Add the new University Details component */}
           <div data-aos="fade-up" data-aos-delay="275">

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   ArrowLeft,
@@ -13,14 +13,14 @@ import {
   AlertCircle,
   Building2,
   Tag,
-} from "lucide-react"
-import RichText from "../../../../utils/RichText"
-import { useLanguage } from "../../../../context/LanguageContext"
-import InputField from "../../../../utils/InputField"
-import useDropdownData from "../../../../hooks/useDropdownData"
-import useApiData from "../../../../hooks/useApiData"
-import FaqSection from "../../../../utils/FaqSection"
-import MetaArrayFields from "../Universities/MetaArrayFields"
+} from "lucide-react";
+import RichText from "../../../../utils/RichText";
+import { useLanguage } from "../../../../context/LanguageContext";
+import InputField from "../../../../utils/InputField";
+import useDropdownData from "../../../../hooks/useDropdownData";
+import useApiData from "../../../../hooks/useApiData";
+import FaqSection from "../../../../utils/FaqSection";
+import MetaArrayFields from "../Universities/MetaArrayFields";
 
 const initialFormData = {
   majorName: {
@@ -44,7 +44,7 @@ const initialFormData = {
   majorTuitionFees: "",
   majorIntakeYear: new Date().getFullYear().toString(),
   majorIntakeMonth: [],
-  modeOfStudy: "Full-time",
+  modeOfStudy: [],
   majorCheckBox: {
     scholarshipsAvailable: false,
     expressAdmission: false,
@@ -70,10 +70,17 @@ const initialFormData = {
     ar: "",
   },
   faq: [{ faqQuestions: { en: "", ar: "" }, faqAnswers: { en: "", ar: "" } }],
-}
+};
 
-const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"]
-const majorLanguages = ["English", "French", "German", "Spanish", "Arabic", "Chinese"]
+const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
+const majorLanguages = [
+  "English",
+  "French",
+  "German",
+  "Spanish",
+  "Arabic",
+  "Chinese",
+];
 const admissionRequirements = [
   "High School Diploma",
   "Bachelor Degree",
@@ -83,9 +90,9 @@ const admissionRequirements = [
   "GMAT",
   "Motivation Letter",
   "Recommendation Letters",
-]
-const durationUnits = ["Years", "Months", "Weeks"]
-const studyModes = ["Full-time", "Part-time", "Online", "Hybrid", "Distance Learning"]
+];
+const durationUnits = ["Years", "Months", "Weeks"];
+const studyModes = ["Full-time", "Part-time", "Online", "Blended"];
 const months = [
   "January",
   "February",
@@ -99,117 +106,140 @@ const months = [
   "October",
   "November",
   "December",
-]
+];
 
 export default function AddMajor() {
-  const { filteredData } = useDropdownData()
-  const { language } = useLanguage()
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [showUniversityPicker, setShowUniversityPicker] = useState(false)
-  const [universitySearch, setUniversitySearch] = useState("")
-  const [formData, setFormData] = useState(initialFormData)
+  const { filteredData } = useDropdownData();
+  const { language } = useLanguage();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showUniversityPicker, setShowUniversityPicker] = useState(false);
+  const [universitySearch, setUniversitySearch] = useState("");
+  const [formData, setFormData] = useState(initialFormData);
   const [newItems, setNewItems] = useState({
     studyLevel: "",
     majorLanguages: "",
     majorAdmissionRequirement: "",
     majorIntakeMonth: "",
-  })
-  const [validationErrors, setValidationErrors] = useState({})
-  const [touched, setTouched] = useState({})
-  const { addNew } = useApiData("https://edu-brink-backend.vercel.app/api/majors")
-  const [activeSection, setActiveSection] = useState(null)
+  });
+  const [validationErrors, setValidationErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const { addNew } = useApiData(
+    "https://edu-brink-backend.vercel.app/api/majors"
+  );
+  const [activeSection, setActiveSection] = useState(null);
 
   const validateField = (name, value) => {
-    let error = ""
+    let error = "";
 
     // Handle undefined or null values consistently
     if (value === undefined || value === null) {
-      value = ""
+      value = "";
     }
 
     if (name.includes("majorName")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
+      const lang = name.split(".")[1]; // Extract language (en or ar)
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "Major name is required" : "اسم التخصص مطلوب"
+        error = lang === "en" ? "Major name is required" : "اسم التخصص مطلوب";
       } else if (typeof value === "string" && value.length < 3) {
-        error = lang === "en" ? "Major name must be at least 3 characters" : "يجب أن يكون اسم التخصص 3 أحرف على الأقل"
+        error =
+          lang === "en"
+            ? "Major name must be at least 3 characters"
+            : "يجب أن يكون اسم التخصص 3 أحرف على الأقل";
       }
     }
 
     if (name === "university" && (!value || value === "")) {
-      error = "University is required"
+      error = "University is required";
     }
 
     if (name === "duration") {
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = "Duration is required"
+        error = "Duration is required";
       } else if (isNaN(value) || Number.parseFloat(value) <= 0) {
-        error = "Duration must be a positive number"
+        error = "Duration must be a positive number";
       }
     }
 
-    if (name === "majorTuitionFees" && (!value || (typeof value === "string" && value.trim() === ""))) {
-      error = "Tuition fees information is required"
+    if (
+      name === "majorTuitionFees" &&
+      (!value || (typeof value === "string" && value.trim() === ""))
+    ) {
+      error = "Tuition fees information is required";
     }
 
-    if (name === "studyLevel" && (!value || (Array.isArray(value) && value.length === 0))) {
-      error = "At least one study level must be selected"
+    if (
+      name === "studyLevel" &&
+      (!value || (Array.isArray(value) && value.length === 0))
+    ) {
+      error = "At least one study level must be selected";
     }
 
-    if (name === "majorLanguages" && (!value || (Array.isArray(value) && value.length === 0))) {
-      error = "At least one language must be selected"
+    if (
+      name === "majorLanguages" &&
+      (!value || (Array.isArray(value) && value.length === 0))
+    ) {
+      error = "At least one language must be selected";
     }
 
-    if (name === "majorIntakeMonth" && (!value || (Array.isArray(value) && value.length === 0))) {
-      error = "At least one intake month must be selected"
+    if (
+      name === "majorIntakeMonth" &&
+      (!value || (Array.isArray(value) && value.length === 0))
+    ) {
+      error = "At least one intake month must be selected";
     }
 
     if (name.includes("majorDescription")) {
-      const lang = name.split(".")[1] // Extract language (en or ar)
+      const lang = name.split(".")[1]; // Extract language (en or ar)
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "Description is required" : "الوصف مطلوب"
+        error = lang === "en" ? "Description is required" : "الوصف مطلوب";
       } else if (typeof value === "string" && value.length < 20) {
-        error = lang === "en" ? "Description must be at least 20 characters" : "يجب أن يكون الوصف 20 حرفًا على الأقل"
+        error =
+          lang === "en"
+            ? "Description must be at least 20 characters"
+            : "يجب أن يكون الوصف 20 حرفًا على الأقل";
       }
     }
 
     // SEO Validation
-    if (name.includes("seo.metaTitle") || name.includes("seo.metaDescription")) {
-      const lang = name.split(".")[2]
+    if (
+      name.includes("seo.metaTitle") ||
+      name.includes("seo.metaDescription")
+    ) {
+      const lang = name.split(".")[2];
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "This field is required" : "هذا الحقل مطلوب"
+        error = lang === "en" ? "This field is required" : "هذا الحقل مطلوب";
       }
     }
 
     if (name.includes("customURLSlug")) {
-      const lang = name.split(".")[1]
+      const lang = name.split(".")[1];
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        error = lang === "en" ? "This field is required" : "هذا الحقل مطلوب"
+        error = lang === "en" ? "This field is required" : "هذا الحقل مطلوب";
       }
     }
 
-    return error
-  }
+    return error;
+  };
 
   const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target
-    const nameParts = name.split(/[[\].]+/) // Split name into parts (e.g., Requirements[0].en)
+    const { name, value, type, checked } = event.target;
+    const nameParts = name.split(/[[\].]+/); // Split name into parts (e.g., Requirements[0].en)
 
-    const temp = { ...formData } // Clone the form data to avoid direct mutation
+    const temp = { ...formData }; // Clone the form data to avoid direct mutation
 
     // Dynamically navigate through the object based on nameParts
     nameParts.reduce((acc, part, index) => {
       if (index === nameParts.length - 1) {
         // Set the value for the last part (en or ar)
-        acc[part] = type === "checkbox" ? checked : value
+        acc[part] = type === "checkbox" ? checked : value;
       } else {
         // Navigate deeper into the nested object or array
-        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : [])
+        acc[part] = acc[part] || (isNaN(nameParts[index + 1]) ? {} : []);
       }
-      return acc[part]
-    }, temp)
+      return acc[part];
+    }, temp);
 
     if (nameParts.includes("majorName")) {
       const lang = nameParts[nameParts.length - 1]; // Extract language (en or ar)
@@ -233,70 +263,109 @@ export default function AddMajor() {
     }
 
     // Update formData state with the new temp object
-    setFormData(temp)
+    setFormData(temp);
 
     // Mark field as touched
-    setTouched((prev) => ({ ...prev, [name]: true }))
+    setTouched((prev) => ({ ...prev, [name]: true }));
 
     // Validate the field
-    const error = validateField(name, value)
+    const error = validateField(name, value);
     setValidationErrors((prev) => ({
       ...prev,
       [name]: error,
-    }))
-  }
+    }));
+  };
 
   const handleBlur = (event) => {
-    const { name, value } = event.target
-    setTouched((prev) => ({ ...prev, [name]: true }))
+    const { name, value } = event.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
 
-    const error = validateField(name, value)
+    const error = validateField(name, value);
     setValidationErrors((prev) => ({
       ...prev,
       [name]: error,
-    }))
-  }
+    }));
+  };
 
   const validateForm = () => {
-    const errors = {}
+    const errors = {};
 
     // Validate major names
-    errors["majorName.en"] = validateField("majorName.en", formData.majorName.en)
-    errors["majorName.ar"] = validateField("majorName.ar", formData.majorName.ar)
+    errors["majorName.en"] = validateField(
+      "majorName.en",
+      formData.majorName.en
+    );
+    errors["majorName.ar"] = validateField(
+      "majorName.ar",
+      formData.majorName.ar
+    );
 
     // Validate university
-    errors["university"] = validateField("university", formData.university)
+    errors["university"] = validateField("university", formData.university);
 
     // Validate duration
-    errors["duration"] = validateField("duration", formData.duration)
+    errors["duration"] = validateField("duration", formData.duration);
 
     // Validate tuition fees
-    errors["majorTuitionFees"] = validateField("majorTuitionFees", formData.majorTuitionFees)
+    errors["majorTuitionFees"] = validateField(
+      "majorTuitionFees",
+      formData.majorTuitionFees
+    );
 
     // Validate arrays
-    errors["studyLevel"] = validateField("studyLevel", formData.studyLevel)
-    errors["majorLanguages"] = validateField("majorLanguages", formData.majorLanguages)
-    errors["majorIntakeMonth"] = validateField("majorIntakeMonth", formData.majorIntakeMonth)
+    errors["studyLevel"] = validateField("studyLevel", formData.studyLevel);
+    errors["majorLanguages"] = validateField(
+      "majorLanguages",
+      formData.majorLanguages
+    );
+    errors["majorIntakeMonth"] = validateField(
+      "majorIntakeMonth",
+      formData.majorIntakeMonth
+    );
 
     // Validate descriptions
-    errors["majorDescription.en"] = validateField("majorDescription.en", formData.majorDescription.en)
-    errors["majorDescription.ar"] = validateField("majorDescription.ar", formData.majorDescription.ar)
+    errors["majorDescription.en"] = validateField(
+      "majorDescription.en",
+      formData.majorDescription.en
+    );
+    errors["majorDescription.ar"] = validateField(
+      "majorDescription.ar",
+      formData.majorDescription.ar
+    );
 
     // Validate SEO fields
-    errors["seo.metaTitle.en"] = validateField("seo.metaTitle.en", formData.seo?.metaTitle?.en)
-    errors["seo.metaTitle.ar"] = validateField("seo.metaTitle.ar", formData.seo?.metaTitle?.ar)
-    errors["seo.metaDescription.en"] = validateField("seo.metaDescription.en", formData.seo?.metaDescription?.en)
-    errors["seo.metaDescription.ar"] = validateField("seo.metaDescription.ar", formData.seo?.metaDescription?.ar)
+    errors["seo.metaTitle.en"] = validateField(
+      "seo.metaTitle.en",
+      formData.seo?.metaTitle?.en
+    );
+    errors["seo.metaTitle.ar"] = validateField(
+      "seo.metaTitle.ar",
+      formData.seo?.metaTitle?.ar
+    );
+    errors["seo.metaDescription.en"] = validateField(
+      "seo.metaDescription.en",
+      formData.seo?.metaDescription?.en
+    );
+    errors["seo.metaDescription.ar"] = validateField(
+      "seo.metaDescription.ar",
+      formData.seo?.metaDescription?.ar
+    );
 
     // Validate custom URL slugs
-    errors["customURLSlug.en"] = validateField("customURLSlug.en", formData.customURLSlug?.en)
-    errors["customURLSlug.ar"] = validateField("customURLSlug.ar", formData.customURLSlug?.ar)
+    errors["customURLSlug.en"] = validateField(
+      "customURLSlug.en",
+      formData.customURLSlug?.en
+    );
+    errors["customURLSlug.ar"] = validateField(
+      "customURLSlug.ar",
+      formData.customURLSlug?.ar
+    );
 
-    setValidationErrors(errors)
+    setValidationErrors(errors);
 
     // Check if there are any errors
-    return !Object.values(errors).some((error) => error !== "")
-  }
+    return !Object.values(errors).some((error) => error !== "");
+  };
 
   const handleRichTextChange = (content, lang) => {
     setFormData((prev) => ({
@@ -305,21 +374,21 @@ export default function AddMajor() {
         ...prev.majorDescription,
         [lang]: content,
       },
-    }))
+    }));
 
     // Mark as touched
-    setTouched((prev) => ({ ...prev, [`majorDescription.${lang}`]: true }))
+    setTouched((prev) => ({ ...prev, [`majorDescription.${lang}`]: true }));
 
     // Validate
-    const error = validateField(`majorDescription.${lang}`, content)
+    const error = validateField(`majorDescription.${lang}`, content);
     setValidationErrors((prev) => ({
       ...prev,
       [`majorDescription.${lang}`]: error,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Mark all fields as touched
     const allFields = {
@@ -339,102 +408,108 @@ export default function AddMajor() {
       "seo.metaDescription.ar": true,
       "customURLSlug.en": true,
       "customURLSlug.ar": true,
-    }
-    setTouched(allFields)
+    };
+    setTouched(allFields);
 
     // Validate all fields
-    const isValid = validateForm()
+    const isValid = validateForm();
 
     if (!isValid) {
-      window.scrollTo(0, 0)
-      return
+      window.scrollTo(0, 0);
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
       // Only remove universityName from formData, keep all other fields
       const { universityName, ...updatedFormData } = {
         ...formData,
-      }
+      };
 
-      console.log("Submitting data:", updatedFormData) // Add this for debugging
+      console.log("Submitting data:", updatedFormData); // Add this for debugging
 
       // Make sure the API endpoint is correct
-      await addNew(updatedFormData)
-      navigate(`/${language}/admin/majors`)
+      await addNew(updatedFormData);
+      navigate(`/${language}/admin/majors`);
     } catch (err) {
-      console.error("Error adding major:", err)
-      setError(err.message || "Failed to add major")
-      window.scrollTo(0, 0)
+      console.error("Error adding major:", err);
+      setError(err.message || "Failed to add major");
+      window.scrollTo(0, 0);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const addItem = (field) => {
-    const newItem = newItems[field]
+    const newItem = newItems[field];
     if (newItem && !formData[field].includes(newItem)) {
-      const updatedItems = [...formData[field], newItem]
+      const updatedItems = [...formData[field], newItem];
       setFormData((prev) => ({
         ...prev,
         [field]: updatedItems,
-      }))
-      setNewItems((prev) => ({ ...prev, [field]: "" }))
-      setActiveSection(null)
+      }));
+      setNewItems((prev) => ({ ...prev, [field]: "" }));
+      setActiveSection(null);
 
       // Mark as touched
-      setTouched((prev) => ({ ...prev, [field]: true }))
+      setTouched((prev) => ({ ...prev, [field]: true }));
 
       // Validate
-      const error = validateField(field, updatedItems)
+      const error = validateField(field, updatedItems);
       setValidationErrors((prev) => ({
         ...prev,
         [field]: error,
-      }))
+      }));
     }
-  }
+  };
 
   const removeItem = (field, item) => {
-    const updatedItems = formData[field].filter((i) => i !== item)
+    const updatedItems = formData[field].filter((i) => i !== item);
     setFormData((prev) => ({
       ...prev,
       [field]: updatedItems,
-    }))
+    }));
 
     // Validate
-    const error = validateField(field, updatedItems)
+    const error = validateField(field, updatedItems);
     setValidationErrors((prev) => ({
       ...prev,
       [field]: error,
-    }))
-  }
+    }));
+  };
 
   const filteredUniversityData = filteredData.universities.filter(
     (university) =>
-      university.uniName.en.toLowerCase().includes(universitySearch.toLowerCase()) ||
-      university.uniName.ar.toLowerCase().includes(universitySearch.toLowerCase()),
-  )
+      university.uniName.en
+        .toLowerCase()
+        .includes(universitySearch.toLowerCase()) ||
+      university.uniName.ar
+        .toLowerCase()
+        .includes(universitySearch.toLowerCase())
+  );
 
   const renderArrayField = (field, label, icon, placeholder, options) => {
-    const fieldPath = field.split(".") // Split nested field (e.g., ["keywords", "en"])
-    const fieldKey = fieldPath[0] // First key (e.g., "keywords")
-    const subKey = fieldPath[1] // Second key (e.g., "en")
-    const error = validationErrors[field]
-    const isTouched = touched[field]
+    const fieldPath = field.split("."); // Split nested field (e.g., ["keywords", "en"])
+    const fieldKey = fieldPath[0]; // First key (e.g., "keywords")
+    const subKey = fieldPath[1]; // Second key (e.g., "en")
+    const error = validationErrors[field];
+    const isTouched = touched[field];
 
     return (
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <label className="block text-sm font-medium text-gray-700">
+          {label}
+        </label>
         <div className="flex gap-2 mb-2">
           {options ? (
             // Dropdown select if options exist
             <select
               value={activeSection === field ? newItems[field] : ""}
               onChange={(e) => {
-                setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
-                setActiveSection(field)
+                setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+                setActiveSection(field);
               }}
               className={`flex-1 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
                 isTouched && error ? "border-red-300" : "border-gray-300"
@@ -453,8 +528,8 @@ export default function AddMajor() {
               type="text"
               value={activeSection === field ? newItems[field] : ""}
               onChange={(e) => {
-                setNewItems((prev) => ({ ...prev, [field]: e.target.value }))
-                setActiveSection(field)
+                setNewItems((prev) => ({ ...prev, [field]: e.target.value }));
+                setActiveSection(field);
               }}
               placeholder={placeholder}
               className={`flex-1 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
@@ -473,7 +548,10 @@ export default function AddMajor() {
         <div className="flex flex-wrap gap-2">
           {subKey
             ? formData?.[fieldKey]?.[subKey]?.map((item) => (
-                <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                <div
+                  key={item}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                >
                   {icon}
                   {item}
                   <button
@@ -486,7 +564,10 @@ export default function AddMajor() {
                 </div>
               ))
             : formData?.[fieldKey]?.map((item) => (
-                <div key={item} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+                <div
+                  key={item}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                >
                   {icon}
                   {item}
                   <button
@@ -499,10 +580,12 @@ export default function AddMajor() {
                 </div>
               ))}
         </div>
-        {isTouched && error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {isTouched && error && (
+          <p className="mt-1 text-sm text-red-600">{error}</p>
+        )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -517,24 +600,32 @@ export default function AddMajor() {
         <h1 className="text-2xl font-bold">Add New Major</h1>
       </div>
 
-      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
-
-      {/* Form validation summary */}
-      {Object.values(validationErrors).some((error) => error !== "") && Object.values(touched).some((t) => t) && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg">
-          <div className="flex items-center mb-2">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            <h3 className="font-medium">Please fix the following errors:</h3>
-          </div>
-          <ul className="list-disc pl-5">
-            {Object.entries(validationErrors).map(([field, error]) =>
-              error && touched[field] ? <li key={field}>{error}</li> : null,
-            )}
-          </ul>
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+          {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+      {/* Form validation summary */}
+      {Object.values(validationErrors).some((error) => error !== "") &&
+        Object.values(touched).some((t) => t) && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg">
+            <div className="flex items-center mb-2">
+              <AlertCircle className="w-5 h-5 mr-2" />
+              <h3 className="font-medium">Please fix the following errors:</h3>
+            </div>
+            <ul className="list-disc pl-5">
+              {Object.entries(validationErrors).map(([field, error]) =>
+                error && touched[field] ? <li key={field}>{error}</li> : null
+              )}
+            </ul>
+          </div>
+        )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-lg shadow-md p-6"
+      >
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -548,7 +639,11 @@ export default function AddMajor() {
                 onBlur={handleBlur}
                 autoComplete="majorName"
                 variant={3}
-                error={touched["majorName.en"] ? validationErrors["majorName.en"] : ""}
+                error={
+                  touched["majorName.en"]
+                    ? validationErrors["majorName.en"]
+                    : ""
+                }
               />
             </div>
             <div>
@@ -562,7 +657,11 @@ export default function AddMajor() {
                 onBlur={handleBlur}
                 autoComplete="majorName"
                 variant={3}
-                error={touched["majorName.ar"] ? validationErrors["majorName.ar"] : ""}
+                error={
+                  touched["majorName.ar"]
+                    ? validationErrors["majorName.ar"]
+                    : ""
+                }
               />
             </div>
 
@@ -574,22 +673,9 @@ export default function AddMajor() {
               onChange={handleInputChange}
               required
               options={Array.from({ length: 6 }, (_, i) => {
-                const year = new Date().getFullYear() + i
-                return { value: year, label: year } // Generates years dynamically
+                const year = new Date().getFullYear() + i;
+                return { value: year, label: year }; // Generates years dynamically
               })}
-            />
-
-            <InputField
-              label="Mode of Study"
-              type="select"
-              name="modeOfStudy"
-              value={formData?.modeOfStudy || ""}
-              onChange={handleInputChange}
-              options={studyModes.map((mode) => ({
-                value: mode,
-                label: mode,
-              }))}
-              required
             />
 
             <div>
@@ -620,28 +706,36 @@ export default function AddMajor() {
 
             {/* University Dropdown */}
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">University</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                University
+              </label>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => {
-                    setShowUniversityPicker(!showUniversityPicker)
-                    setTouched((prev) => ({ ...prev, university: true }))
+                    setShowUniversityPicker(!showUniversityPicker);
+                    setTouched((prev) => ({ ...prev, university: true }));
                   }}
                   className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
-                    touched["university"] && validationErrors["university"] ? "border-red-300" : "border-gray-300"
+                    touched["university"] && validationErrors["university"]
+                      ? "border-red-300"
+                      : "border-gray-300"
                   }`}
                 >
                   <span className="flex items-center">
                     <span className="py-1 text-gray-600">
-                      {formData?.universityName?.en || formData?.university || "Select University"}
+                      {formData?.universityName?.en ||
+                        formData?.university ||
+                        "Select University"}
                     </span>
                   </span>
                   <Building2 className="w-5 h-5 text-gray-400" />
                 </button>
 
                 {touched["university"] && validationErrors["university"] && (
-                  <p className="mt-1 text-sm text-red-600">{validationErrors["university"]}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {validationErrors["university"]}
+                  </p>
                 )}
 
                 {showUniversityPicker && (
@@ -671,20 +765,24 @@ export default function AddMajor() {
                                 en: university.uniName.en,
                                 ar: university.uniName.ar,
                               },
-                            }))
-                            setShowUniversityPicker(false)
+                            }));
+                            setShowUniversityPicker(false);
 
                             // Validate
-                            const error = validateField("university", university._id)
+                            const error = validateField(
+                              "university",
+                              university._id
+                            );
                             setValidationErrors((prev) => ({
                               ...prev,
                               university: error,
-                            }))
+                            }));
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center space-x-2"
                         >
                           <span className="text-gray-700 text-sm">
-                            {university?.uniName?.en} - {university?.uniName?.ar}
+                            {university?.uniName?.en} -{" "}
+                            {university?.uniName?.ar}
                           </span>
                         </button>
                       ))}
@@ -704,39 +802,51 @@ export default function AddMajor() {
                 onBlur={handleBlur}
                 placeholder="e.g., $20,000 - $30,000"
                 variant={3}
-                error={touched["majorTuitionFees"] ? validationErrors["majorTuitionFees"] : ""}
+                error={
+                  touched["majorTuitionFees"]
+                    ? validationErrors["majorTuitionFees"]
+                    : ""
+                }
               />
             </div>
           </div>
 
           <div className="space-y-6">
             {renderArrayField(
+              "modeOfStudy",
+              "Study Mode (English)",
+              <Languages className="w-4 h-4" />,
+              "Add New Mode...",
+              studyModes
+            )}
+
+            {renderArrayField(
               "studyLevel",
               "Study Levels",
               <GraduationCap className="w-4 h-4" />,
               "Add study level...",
-              studyLevels,
+              studyLevels
             )}
             {renderArrayField(
               "majorLanguages",
               "Languages of Instruction",
               <Languages className="w-4 h-4" />,
               "Add language...",
-              majorLanguages,
+              majorLanguages
             )}
             {renderArrayField(
               "majorAdmissionRequirement",
               "Admission Requirements",
               <FileCheck className="w-4 h-4" />,
               "Add requirement...",
-              admissionRequirements,
+              admissionRequirements
             )}
             {renderArrayField(
               "majorIntakeMonth",
               "Intake Months",
               <Calendar className="w-4 h-4" />,
               "Add month...",
-              months,
+              months
             )}
           </div>
 
@@ -745,7 +855,11 @@ export default function AddMajor() {
               label="Major Description (English)"
               value={formData.majorDescription.en || ""}
               onChange={(content) => handleRichTextChange(content, "en")}
-              error={touched["majorDescription.en"] ? validationErrors["majorDescription.en"] : ""}
+              error={
+                touched["majorDescription.en"]
+                  ? validationErrors["majorDescription.en"]
+                  : ""
+              }
             />
           </div>
 
@@ -754,7 +868,11 @@ export default function AddMajor() {
               label="وصف التخصص (عربي)"
               value={formData.majorDescription.ar || ""}
               onChange={(content) => handleRichTextChange(content, "ar")}
-              error={touched["majorDescription.ar"] ? validationErrors["majorDescription.ar"] : ""}
+              error={
+                touched["majorDescription.ar"]
+                  ? validationErrors["majorDescription.ar"]
+                  : ""
+              }
             />
           </div>
 
@@ -936,6 +1054,5 @@ export default function AddMajor() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-
