@@ -11,6 +11,7 @@ import TickMark from "../../../../svg/TickMark";
 import { useLanguage } from "../../../../context/LanguageContext";
 import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
+import GradientSpinnerLoader from "./ImprovedLoaders";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -36,7 +37,13 @@ const CollegeCard = ({ data, loading }) => {
   //   addClickData(uniId, "University", countryName);
   // };
 
-  const handleNavigate = (uniname) => {
+  const handleApply = (courseId, customURLSlug) => {
+    navigate(
+      `/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`
+    );
+  };
+
+  const handleLearnMore = (uniname) => {
     navigate(`/${language}/university/${uniname}`);
   };
 
@@ -102,7 +109,7 @@ const CollegeCard = ({ data, loading }) => {
     <div
       className={`${
         path === `/${language}/searchresults/university`
-          ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+          ? "grid grid-cols-1 sm:grid-cols-3 gap-4"
           : "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:flex "
       }`}
     >
@@ -234,24 +241,19 @@ const CollegeCard = ({ data, loading }) => {
 
               <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                 <button
-                  // onClick={() =>
-                  //   handleApplyClick(
-                  //     university._id,
-                  //     university.uniName,
-                  //     university.countryName
-                  //   )
-                  // }
+                  onClick={() =>
+                    handleApply(
+                      university?._id,
+                      university?.customURLSlug?.[language]
+                    )
+                  }
                   className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                 >
                   {t("applyNow")}
                 </button>
                 <button
                   onClick={() => {
-                    handleNavigate(
-                      language === "ar"
-                        ? university.uniName.ar
-                        : university.uniName.en
-                    );
+                    handleLearnMore(university?.customURLSlug?.[language]);
                   }}
                   className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
                 >
@@ -497,11 +499,11 @@ function Univrsiry({
             className="w-full flex justify-center py-4 mt-2"
             style={{ minHeight: "80px" }}
           >
-            <div
-              className={`animate-spin rounded-full h-8 w-8 border-b-2 border-primary ${
-                loadingMore ? "opacity-100" : "opacity-50"
-              }`}
-            ></div>
+            <div className="col-span-1 lg:col-span-3">
+              <GradientSpinnerLoader
+                message={t("Loading more universities...")}
+              />
+            </div>
           </div>
         )}
 

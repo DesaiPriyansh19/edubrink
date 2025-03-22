@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
 import UniversityMajors from "./UniversityMajors";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
 
 const UniversityPage = () => {
   const { slug } = useParams();
@@ -242,12 +243,8 @@ const UniversityPage = () => {
 
   if (!data) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-32 h-32 bg-[#3b3d8d]/20 rounded-full mb-4"></div>
-          <div className="h-6 w-48 bg-[#3b3d8d]/20 rounded mb-4"></div>
-          <div className="h-4 w-64 bg-[#3b3d8d]/20 rounded"></div>
-        </div>
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
   }

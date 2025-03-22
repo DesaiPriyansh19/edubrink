@@ -296,7 +296,7 @@ const MoreInfo = () => {
                 }}
               />
             </div>
-            {data?.faq.length > 0 && (
+            {data?.faq?.length > 0 && (
               <div data-aos="fade-up" data-aos-delay="600">
                 <FaqDropDown faqData={data?.faq} blog={true} />
               </div>

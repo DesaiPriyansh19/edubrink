@@ -10,6 +10,7 @@ import { useSearch } from "../../../context/SearchContext";
 import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import GradientSpinnerLoader from "./Results/ImprovedLoaders";
 
 function Article({
   loading: initialLoading,
@@ -23,6 +24,7 @@ function Article({
 
   // State for infinite scrolling
   const [blogs, setBlogs] = useState(initialData || []);
+  console.log(blogs);
   const [loading, setLoading] = useState(initialLoading);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -191,6 +193,10 @@ function Article({
     };
   }, []);
 
+  const handleNavigate = (name) => {
+    navigate(`/${language}/blog/${name}`);
+  };
+
   const SkeletonLoader = () => {
     return (
       <div className="flex gap-2 ">
@@ -242,61 +248,61 @@ function Article({
           </div>
         </div>
         {loading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4  py-6 ">
-            <SkeletonLoader /> <SkeletonLoader /> <SkeletonLoader />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-4  py-6 ">
+            <SkeletonLoader />
             <SkeletonLoader />
             <SkeletonLoader />
             <SkeletonLoader />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-20 ">
+          <div className="grid grid-cols-1 max-w-[1240px] mx-auto  mt-8 lg:grid-cols-4  ">
             {/* First Slide */}
             {blogs?.map((blog, idx) => (
-               <div
-               key={blog._id}
-               onClick={() => handleNavigate(blog.customURLSlug[language])}
-               className="blog-card"
-               data-aos="fade-up"
-               data-aos-delay={100}
-             >
-               {/* Image container */}
-               <div className="blog-card-image">
-                 <img
-                   src={"https://placehold.co/600x400" || blog?.blogPhoto}
-                   alt={blog?.blogTitle?.[language]}
-                 />
-               </div>
+              <div
+                key={blog._id}
+                onClick={() => handleNavigate(blog.customURLSlug[language])}
+                className="blog-card"
+                data-aos="fade-up"
+                data-aos-delay={100}
+              >
+                {/* Image container */}
+                <div className="blog-card-image">
+                  <img
+                    src={blog?.blogPhoto || "https://placehold.co/600x400"}
+                    alt={blog?.blogTitle?.[language]}
+                  />
+                </div>
 
-               <div className="blog-card-content">
-                 {/* Country name */}
-                 <p className="blog-card-country">
-                   {language === "ar"
-                     ? `الدراسة في ${
-                         blog?.blogCountry?.countryName?.ar || "غير متوفر"
-                       }`
-                     : `Study in ${
-                         blog?.blogCountry?.countryName?.en || "N/A"
-                       }`}
-                 </p>
+                <div className="blog-card-content">
+                  {/* Country name */}
+                  <p className="blog-card-country">
+                    {language === "ar"
+                      ? `الدراسة في ${
+                          blog?.blogCountry?.countryName?.ar || "غير متوفر"
+                        }`
+                      : `Study in ${
+                          blog?.blogCountry?.countryName?.en || "N/A"
+                        }`}
+                  </p>
 
-                 {/* Blog title */}
-                 <h4 className="blog-card-title">
-                   {language === "ar"
-                     ? blog?.blogTitle?.ar
-                     : blog?.blogTitle?.en}
-                 </h4>
+                  {/* Blog title */}
+                  <h4 className="blog-card-title">
+                    {language === "ar"
+                      ? blog?.blogTitle?.ar
+                      : blog?.blogTitle?.en}
+                  </h4>
 
-                 {/* Date */}
-                 <div className="blog-card-date">
-                   <Calander />
-                   <span>
-                     {blog.blogAdded
-                       ? new Date(blog.blogAdded).toLocaleDateString()
-                       : "Date not available"}
-                   </span>
-                 </div>
-               </div>
-             </div>
+                  {/* Date */}
+                  <div className="blog-card-date">
+                    <Calander />
+                    <span>
+                      {blog.blogAdded
+                        ? new Date(blog.blogAdded).toLocaleDateString()
+                        : "Date not available"}
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -308,11 +314,9 @@ function Article({
           className="w-full flex justify-center py-4 mt-2"
           style={{ minHeight: "80px" }}
         >
-          <div
-            className={`animate-spin rounded-full h-8 w-8 border-b-2 border-primary ${
-              loadingMore ? "opacity-100" : "opacity-50"
-            }`}
-          ></div>
+          <div className="col-span-1 lg:col-span-3">
+            <GradientSpinnerLoader message={t("Loading more blogs...")} />
+          </div>
         </div>
       )}
 

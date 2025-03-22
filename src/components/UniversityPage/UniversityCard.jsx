@@ -1,8 +1,8 @@
-"use client"
-import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
-import { useLanguage } from "../../../context/LanguageContext"
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react"
+"use client";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../../context/LanguageContext";
+import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 
 const UniversityCard = ({
   data,
@@ -14,52 +14,67 @@ const UniversityCard = ({
   coursePagination,
   activeFilter,
 }) => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { language: currentLanguage } = useLanguage()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { language: currentLanguage } = useLanguage();
 
-  const handleApply = (courseId) => {
-    navigate(`/${currentLanguage}/apply/${courseId}?category=course&slug=${data.customURLSlug?.[language]}`)
-  }
+  const handleApply = (courseId, customURLSlug) => {
+    navigate(
+      `/${currentLanguage}/applications/${courseId}?category=course&slug=${customURLSlug}`
+    );
+  };
+
+
 
   // Format languages in a space-efficient way
   const formatLanguages = (languages) => {
-    if (!languages || languages.length === 0) return "English"
-    if (languages.length === 1) return languages[0]
+    if (!languages || languages.length === 0) return "English";
+    if (languages.length === 1) return languages[0];
 
     // Show first language + count of additional languages
-    return `${languages[0]} +${languages.length - 1}`
-  }
+    return `${languages[0]} +${languages.length - 1}`;
+  };
 
   const handleLearnMore = (courseId) => {
     navigate(
-      `/${currentLanguage}/courses/${data.courses.find((c) => c._id === courseId)?.customURLSlug?.[language] || ""}`,
-    )
-  }
+      `/${currentLanguage}/courses/${
+        data.courses.find((c) => c._id === courseId)?.customURLSlug?.[
+          language
+        ] || ""
+      }`
+    );
+  };
 
   // Calculate total pages
-  const totalPages = coursePagination ? Math.ceil(coursePagination.total / coursePagination.limit) : 1
+  const totalPages = coursePagination
+    ? Math.ceil(coursePagination.total / coursePagination.limit)
+    : 1;
 
   // Check if there are previous or next pages
-  const hasPreviousPage = coursePage > 1
-  const hasNextPage = coursePage < totalPages && data?.courses?.length >= courseLimit
+  const hasPreviousPage = coursePage > 1;
+  const hasNextPage =
+    coursePage < totalPages && data?.courses?.length >= courseLimit;
 
   // Add a more robust check for the next button
   const shouldDisableNextButton =
     !hasNextPage ||
     data?.courses?.length < courseLimit ||
-    (coursePagination && coursePagination.total <= coursePage * courseLimit)
+    (coursePagination && coursePagination.total <= coursePage * courseLimit);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
       <div className="flex items-center justify-between mb-6 border-b pb-4">
-        <h2 className="text-2xl font-bold text-[#3b3d8d]">{t("UniversitySlugPage.FeaturedCourses")}</h2>
+        <h2 className="text-2xl font-bold text-[#3b3d8d]">
+          {t("UniversitySlugPage.FeaturedCourses")}
+        </h2>
 
         {/* Show active filter indicator if a filter is applied */}
         {activeFilter && (
           <div className="flex items-center gap-2 px-3 py-1 bg-[#3b3d8d]/10 rounded-full">
             <Filter className="w-4 h-4 text-[#3b3d8d]" />
-            <span className="text-sm font-medium text-[#3b3d8d]">{activeFilter}</span>
+            <span className="text-sm font-medium text-[#3b3d8d]">
+              {activeFilter}
+            </span>
           </div>
         )}
       </div>
@@ -75,26 +90,37 @@ const UniversityCard = ({
             >
               <div className="p-5">
                 <h3 className="text-lg font-bold text-gray-800 mb-4 line-clamp-2 h-14">
-                  {language === "ar" ? item?.CourseName?.ar : item?.CourseName?.en}
+                  {language === "ar"
+                    ? item?.CourseName?.ar
+                    : item?.CourseName?.en}
                 </h3>
 
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="bg-gray-50 p-3 rounded-tl-xl">
-                    <p className="font-semibold text-gray-700 mb-1">{t("UniversitySlugPage.TuitionFees")}</p>
+                    <p className="font-semibold text-gray-700 mb-1">
+                      {t("UniversitySlugPage.TuitionFees")}
+                    </p>
                     <p className="text-[#3b3d8d] font-medium">
                       ${item.CourseFees}/ {t("UniversitySlugPage.Year")}
                     </p>
                   </div>
 
                   <div className="bg-gray-50 p-3 rounded-tr-xl">
-                    <p className="font-semibold text-gray-700 mb-1">{t("UniversitySlugPage.Language")}</p>
-                    <p className="text-[#3b3d8d] font-medium" title={data?.spokenLanguage?.join(", ")}>
+                    <p className="font-semibold text-gray-700 mb-1">
+                      {t("UniversitySlugPage.Language")}
+                    </p>
+                    <p
+                      className="text-[#3b3d8d] font-medium"
+                      title={data?.spokenLanguage?.join(", ")}
+                    >
                       {formatLanguages(data?.spokenLanguage)}
                     </p>
                   </div>
 
                   <div className="bg-gray-50 p-3 rounded-bl-xl">
-                    <p className="font-semibold text-gray-700 mb-1">{t("UniversitySlugPage.Deadline")}</p>
+                    <p className="font-semibold text-gray-700 mb-1">
+                      {t("UniversitySlugPage.Deadline")}
+                    </p>
                     <p className="text-[#3b3d8d] font-medium">
                       {item?.DeadLine
                         ? new Date(item?.DeadLine).toLocaleDateString("en-GB", {
@@ -107,16 +133,22 @@ const UniversityCard = ({
                   </div>
 
                   <div className="bg-gray-50 p-3 rounded-br-xl">
-                    <p className="font-semibold text-gray-700 mb-1">{t("UniversitySlugPage.ModeOfStudy")}</p>
+                    <p className="font-semibold text-gray-700 mb-1">
+                      {t("UniversitySlugPage.ModeOfStudy")}
+                    </p>
                     <p className="text-[#3b3d8d] font-medium">
-                      {language === "ar" ? item?.ModeOfStudy?.ar?.[0] : item?.ModeOfStudy?.en?.[0]}
+                      {language === "ar"
+                        ? item?.ModeOfStudy?.ar?.[0]
+                        : item?.ModeOfStudy?.en?.[0]}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex gap-3 mt-5">
                   <button
-                    onClick={() => handleApply(item._id)}
+                    onClick={() =>
+                      handleApply(item?._id, item?.customURLSlug?.[language])
+                    }
                     className="flex-1 py-2.5 text-white bg-gradient-to-r from-[#3b3d8d] to-[#5254a3] rounded-full text-sm font-medium transition-all duration-300 hover:from-[#2d2f6e] hover:to-[#3b3d8d] hover:shadow-md"
                   >
                     {t("applyNow")}
@@ -182,8 +214,7 @@ const UniversityCard = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UniversityCard
-
+export default UniversityCard;

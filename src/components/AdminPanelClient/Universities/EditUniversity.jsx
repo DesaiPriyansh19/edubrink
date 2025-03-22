@@ -164,7 +164,7 @@ export default function EditUniversity() {
     major: false,
   });
   const { data, updateWithOutById } = useApiData(
-    `http://localhost:4000/api/university/${id}`
+    `https://edu-brink-backend.vercel.app/api/university/${id}`
   );
 
   useEffect(() => {

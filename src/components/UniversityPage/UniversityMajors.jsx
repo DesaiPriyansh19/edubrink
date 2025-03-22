@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
-import { useLanguage } from "../../../context/LanguageContext"
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react"
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../../context/LanguageContext";
+import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
 
 const UniversityMajors = ({
   data,
@@ -15,30 +15,40 @@ const UniversityMajors = ({
   majorPagination,
   activeFilter,
 }) => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { language: currentLanguage } = useLanguage()
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { language: currentLanguage } = useLanguage();
 
-  const handleApply = (majorId) => {
-    navigate(`/${currentLanguage}/apply/${majorId}?category=major&slug=${data.customURLSlug?.[language]}`)
-  }
+  const handleApply = (courseId, customURLSlug) => {
+    navigate(
+      `/${currentLanguage}/applications/${courseId}?category=major&slug=${customURLSlug}`
+    );
+  };
 
   const handleLearnMore = (majorId) => {
-    navigate(`/${currentLanguage}/major/${data.majors.find((m) => m._id === majorId)?.customURLSlug?.[language] || ""}`)
-  }
+    navigate(
+      `/${currentLanguage}/major/${
+        data.majors.find((m) => m._id === majorId)?.customURLSlug?.[language] ||
+        ""
+      }`
+    );
+  };
 
   // Calculate total pages
-  const totalPages = majorPagination ? Math.ceil(majorPagination.total / majorPagination.limit) : 1
+  const totalPages = majorPagination
+    ? Math.ceil(majorPagination.total / majorPagination.limit)
+    : 1;
 
   // Check if there are previous or next pages
-  const hasPreviousPage = majorPage > 1
-  const hasNextPage = majorPage < totalPages && data?.majors?.length >= majorLimit
+  const hasPreviousPage = majorPage > 1;
+  const hasNextPage =
+    majorPage < totalPages && data?.majors?.length >= majorLimit;
 
   // Add a more robust check for the next button
   const shouldDisableNextButton =
     !hasNextPage ||
     data?.majors?.length < majorLimit ||
-    (majorPagination && majorPagination.total <= majorPage * majorLimit)
+    (majorPagination && majorPagination.total <= majorPage * majorLimit);
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
@@ -51,7 +61,9 @@ const UniversityMajors = ({
         {activeFilter && (
           <div className="flex items-center gap-2 px-3 py-1 bg-[#3b3d8d]/10 rounded-full">
             <Filter className="w-4 h-4 text-[#3b3d8d]" />
-            <span className="text-sm font-medium text-[#3b3d8d]">{activeFilter}</span>
+            <span className="text-sm font-medium text-[#3b3d8d]">
+              {activeFilter}
+            </span>
           </div>
         )}
       </div>
@@ -79,7 +91,9 @@ const UniversityMajors = ({
                     <h3 className="font-semibold text-lg text-gray-800 truncate group-hover:text-[#3b3d8d] transition-colors duration-300">
                       {item?.majorName?.[language] || "N/A"}
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1">{data?.uniName?.[language] || "N/A"}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {data?.uniName?.[language] || "N/A"}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +112,9 @@ const UniversityMajors = ({
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                       </svg>
                       <span className="font-medium text-sm">
-                        {item?.majorTuitionFees ? `$${item.majorTuitionFees}` : "Contact for pricing"}
+                        {item?.majorTuitionFees
+                          ? `$${item.majorTuitionFees}`
+                          : "Contact for pricing"}
                       </span>
                     </div>
                   </div>
@@ -109,7 +125,9 @@ const UniversityMajors = ({
                 {/* Action buttons */}
                 <div className="flex gap-3">
                   <button
-                    onClick={() => handleApply(item._id)}
+                    onClick={() =>
+                      handleApply(item?._id, item?.customURLSlug?.[language])
+                    }
                     className="flex-1 py-2.5 text-white bg-gradient-to-r from-[#3b3d8d] to-[#5254a3] rounded-full text-sm font-medium transition-all duration-300 hover:from-[#2d2f6e] hover:to-[#3b3d8d] hover:shadow-md"
                   >
                     {t("applyNow")}
@@ -175,8 +193,7 @@ const UniversityMajors = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UniversityMajors
-
+export default UniversityMajors;

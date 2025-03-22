@@ -180,7 +180,7 @@ const MajorPage = () => {
             data-aos-delay="100"
           >
             <Link
-              to={`/${language}/university/${majorData.university.customURLSlug.en}`}
+              to={`/${language}/university/${majorData?.university?.customURLSlug?.en}`}
               className="flex items-center"
             >
               <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden mr-2">
@@ -215,7 +215,7 @@ const MajorPage = () => {
                 handleApplyNow(
                   majorData._id,
                   "major",
-                  majorData.customURLSlug.en
+                  majorData?.customURLSlug?.en
                 )
               }
               className="hidden md:block text-white px-8 py-3 rounded-full font-medium transition-all"

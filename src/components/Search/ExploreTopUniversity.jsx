@@ -28,18 +28,14 @@ function ExploreTopUniversity({ language }) {
   const loadingRef = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0); // Used to trigger fetches
 
-  const handleNavigate = (universityName) => {
-    navigate(`/${language}/university/${universityName}`);
+  const handleApply = (courseId, customURLSlug) => {
+    navigate(
+      `/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`
+    );
   };
 
-  const handleApplyClick = (universityId, countryName) => {
-    // Your apply logic here
-    console.log(
-      "Applied for university:",
-      universityId,
-      "in country:",
-      countryName
-    );
+  const handleLearnMore = (uniname) => {
+    navigate(`/${language}/university/${uniname}`);
   };
 
   const fetchUniversities = useCallback(async () => {
@@ -354,7 +350,10 @@ function ExploreTopUniversity({ language }) {
                 <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                   <button
                     onClick={() =>
-                      handleApplyClick(university._id, university.countryName)
+                      handleApply(
+                        university?._id,
+                        university?.customURLSlug?.[language]
+                      )
                     }
                     className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                   >
@@ -362,11 +361,7 @@ function ExploreTopUniversity({ language }) {
                   </button>
                   <button
                     onClick={() => {
-                      handleNavigate(
-                        language === "ar"
-                          ? university.uniName.ar
-                          : university.uniName.en
-                      );
+                      handleLearnMore(university?.customURLSlug?.[language]);
                     }}
                     className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
                   >
