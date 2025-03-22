@@ -185,9 +185,9 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                       {t("UniversitySlugPage.Discount")}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {language === "ar"
-                        ? data?.uniDiscount?.ar
-                        : data?.uniDiscount?.en || "N/A"}
+                      {data?.DiscountAvailable
+                        ? t("UniversitySlugPage.available")
+                        : t("UniversitySlugPage.notAvailable")}
                     </p>
                   </div>
                 </div>

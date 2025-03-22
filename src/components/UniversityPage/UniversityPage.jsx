@@ -6,6 +6,8 @@ import UniversityRightLayout from "./UniversityRightLayout";
 import UniversityLeftLayout from "./UniversityLeftLayout";
 import UniversityCard from "./UniversityCard";
 import UniversityHighlight from "./UniversityHighlight";
+import UniversityFAQ from "./UniversityFAQ";
+import UniversityDetails from "./UniversityDetails"; // Import the new component
 import useFetch from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "../../../context/LanguageContext";
@@ -270,7 +272,7 @@ const UniversityPage = () => {
             ${language === "ar" ? "right-8" : "left-8"} 
             w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white shadow-xl 
             flex items-center justify-center rounded-2xl 
-            transition-all duration-300  hover:-translate-y-[55%]`}
+            transition-all duration-300 hover:shadow-2xl hover:-translate-y-[55%]`}
           data-aos="zoom-in"
           data-aos-delay="300"
         >
@@ -329,9 +331,29 @@ const UniversityPage = () => {
             </div>
           )}
 
+          {/* Add the new University Details component */}
+          <div data-aos="fade-up" data-aos-delay="275">
+            <UniversityDetails
+              data={data}
+              language={language}
+              themeColor="#3b3d8d"
+            />
+          </div>
+
           <div data-aos="fade-up" data-aos-delay="300">
             <UniversityHighlight data={data} language={language} />
           </div>
+
+          {/* FAQ component */}
+          {data?.faq && data.faq.length > 0 && (
+            <div data-aos="fade-up" data-aos-delay="350">
+              <UniversityFAQ
+                data={data}
+                language={language}
+                themeColor="#3b3d8d"
+              />
+            </div>
+          )}
         </div>
 
         {/* Right Column */}

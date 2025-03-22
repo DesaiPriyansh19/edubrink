@@ -208,7 +208,7 @@ const UniversityHighlight = ({ data, language }) => {
               onClick={toggleExpand}
               className="mt-2 flex items-center gap-2 font-medium text-[#3b3d8d] hover:text-[#5254a3] transition-colors"
             >
-              <span>{expanded ? "Read less" : "Read more"}</span>
+              <span>{expanded ? t("majorPage.readLess") : t("majorPage.readMore")}</span>
               <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
             </button>
           )}

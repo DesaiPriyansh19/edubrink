@@ -50,6 +50,7 @@
   "student_ambassadors": "Student Ambassadors",
 
   "faq_title": "FAQ",
+
   "faq_description": "Our Study Abroad FAQ covers everything you need to know—from choosing the right destination and applying to universities, to visa requirements.",
   "questions": {
     "q1": {
@@ -208,8 +209,44 @@
     "TuitionFees": "Tuition Fees",
     "FeaturedCourses": "Featured Courses",
     "FeaturedMajors": "Featured Majors",
+    "university": {
+      "detailsTitle": "University Details",
+      "yes": "Yes",
+      "no": "No",
+      "notSpecified": "Not specified",
+      "none": "None",
+
+      "scholarshipsTitle": "Scholarships & Financial Aid",
+      "scholarshipsAvailable": "Scholarships Available",
+      "scholarshipType": "Scholarship Type",
+      "scholarshipFull": "Full Scholarship",
+      "scholarshipPartial": "Partial Scholarship",
+      "scholarshipNone": "No Scholarship",
+      "scholarshipPercentage": "Scholarship Percentage",
+      "discountAvailable": "Discount Available",
+      "discountValue": "Discount Value",
+
+      "housingLivingTitle": "Housing & Living",
+      "housingAvailable": "Housing Available",
+      "livingCost": "Living Cost",
+      "housingInfo": "Housing Information",
+      "noHousingInfo": "No detailed housing information available.",
+
+      "academicInfoTitle": "Academic Information",
+      "preparatoryYear": "Preparatory Year",
+      "preparatoryYearFees": "Preparatory Year Fees",
+      "spokenLanguages": "Spoken Languages",
+
+      "programsRequirementsTitle": "Programs & Requirements",
+      "studyPrograms": "Study Programs",
+      "admissionRequirements": "Admission Requirements"
+    },
     "Deadline": "Deadline",
     "ModeOfStudy": "Mode Of Study",
+
+    "available": "Available",
+    "notAvailable": "Not Available",
+
     "Discount": "Discount",
     "Language": "Language",
     "InterFees": " International Student tutition fee",
@@ -221,7 +258,7 @@
     "CounsellorName": "Jhon Smith",
     "CounsellorDesc": "Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out. Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out.",
     "CallNow": "Call Now",
-    "clearFilter":"Clear Filter",
+    "clearFilter": "Clear Filter",
     "ChatNow": "Chat Now",
     "Highlight": "Highlight",
     "HighlightArray": [

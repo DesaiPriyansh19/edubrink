@@ -81,6 +81,11 @@ const initialFormData = {
   housing_available: false,
   living_cost: "",
   uniFeatured: false,
+  scholarshipsAvailable: false,
+  scholarshipType: "none",
+  scholarshipPercentage: "",
+  DiscountAvailable: false,
+  DiscountValue: "",
   campuses: [
     {
       campusName: { en: "", ar: "" },
@@ -147,8 +152,8 @@ const commonRequirements = [
 
 export default function AddUniversity() {
   const navigate = useNavigate();
-  const { filteredData, setSearchInput, handleAdd, handleRemove } =
-    useDropdownData();
+  const { filteredData } = useDropdownData();
+  const [touched, setTouched] = useState({});
 
   const [showFlagPicker, setShowFlagPicker] = useState(false);
   const [flagSearch, setFlagSearch] = useState("");
@@ -224,6 +229,12 @@ export default function AddUniversity() {
       });
     }
   };
+
+  const handleBlur = (event) => {
+    const { name, value } = event.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+  };
+
   const [activeSection, setActiveSection] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -1154,6 +1165,16 @@ export default function AddUniversity() {
                 />
               </div>
 
+              <InputField
+                label="Discount Available"
+                type="checkbox"
+                name="DiscountAvailable"
+                checked={formData?.DiscountAvailable || false}
+                onChange={handleInputChange}
+                autoComplete="discountAvailable"
+                variant={3}
+              />
+
               <div className="flex items-center space-x-2">
                 <InputField
                   label="Scholarship Availability "
@@ -1198,6 +1219,75 @@ export default function AddUniversity() {
                 />
               </div>
             </div>
+
+            {formData.scholarshipAvailability && (
+              <div className="p-4 border border-blue-100 bg-blue-50 rounded-lg space-y-4">
+                <h3 className="font-medium text-blue-800">
+                  Scholarship Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField
+                    label="Scholarship Type"
+                    type="select"
+                    name="scholarshipType"
+                    value={formData?.scholarshipType || "none"}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    options={[
+                      { value: "", label: "None" },
+                      { value: "partial", label: "Partial" },
+                      { value: "full", label: "Full" },
+                    ]}
+                    variant={3}
+                  />
+
+                  {formData.scholarshipType === "partial" && (
+                    <InputField
+                      label="Scholarship Percentage"
+                      type="text"
+                      name="scholarshipPercentage"
+                      placeholder="e.g., 50"
+                      value={formData?.scholarshipPercentage || ""}
+                      onChange={handleInputChange}
+                      onBlur={handleBlur}
+                      autoComplete="scholarshipPercentage"
+                      variant={3}
+                      min="1"
+                      max="99"
+                      error={
+                        touched["scholarshipPercentage"]
+                          ? validationErrors["scholarshipPercentage"]
+                          : ""
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Discount fields - conditionally rendered */}
+            {formData.DiscountAvailable && (
+              <div className="p-4 border border-green-100 bg-green-50 rounded-lg space-y-4">
+                <h3 className="font-medium text-green-800">Discount Details</h3>
+                <InputField
+                  label="Discount Value"
+                  type="text"
+                  name="DiscountValue"
+                  placeholder="Enter discount amount e.g($300)"
+                  value={formData?.DiscountValue || ""}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                  autoComplete="discountValue"
+                  variant={3}
+                  min="1"
+                  error={
+                    touched["DiscountValue"]
+                      ? validationErrors["DiscountValue"]
+                      : ""
+                  }
+                />
+              </div>
+            )}
 
             {formData.preparatory_year && (
               <div>
