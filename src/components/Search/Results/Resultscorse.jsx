@@ -254,7 +254,7 @@ function ResultsCorses({
         dir={language === "ar" ? "rtl" : "ltr"}
         className={`${
           path === `/${language}/searchresults/courses`
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            ? "grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 gap-2 lg:gap-4"
             : "flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row"
         }`}
       >
@@ -328,7 +328,7 @@ function ResultsCorses({
               return (
                 <div
                 key={index}
-                className={`relative mt-2 lg:min-w-[290px] lg:max-w-[290px]  rounded-xl shadow-sm bg-white ${
+                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[350px] lg:max-w-[350px] mx-auto rounded-xl shadow-sm bg-white ${
                   !isSearchResultsPath ? "min-w-[240px]" : ""
                 }`}
               >
@@ -348,7 +348,7 @@ function ResultsCorses({
                       />
                     </div>
                     <div className="pl-3">
-                    <h1 className="text-[13px] font-semibold flex items-center">
+                    <h1 className="text-[16px] font-semibold flex items-center">
   {(() => {
     const courseName = language === "ar"
       ? university?.CourseName?.ar

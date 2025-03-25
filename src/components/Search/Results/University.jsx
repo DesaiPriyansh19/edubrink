@@ -151,7 +151,7 @@ const CollegeCard = ({ data, loading }) => {
             <div
             key={idx}
             dir={language === "ar" ? "rtl" : "ltr"}
-            className={`relative mt-3  rounded-xl  bg-white md:min-w-[290px]`}
+            className={`relative mt-3  rounded-xl  bg-white min-w-[290px] max-w-[290] lg:max-w-[290] lg:min-w-[350px]`}
           >
             <div className="p-3 sm:p-4">
               {university?.uniFeatured && (
@@ -175,7 +175,7 @@ const CollegeCard = ({ data, loading }) => {
                   />
                 </div>
                 <div className="flex-1">
-                <h1 className="text-[13px] font-semibold flex items-center gap-1">
+                <h1 className="text-[16px] font-semibold flex items-center gap-1">
   {(() => {
     const uniName = language === "ar"
       ? university?.uniName?.ar
