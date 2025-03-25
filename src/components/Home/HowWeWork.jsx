@@ -75,7 +75,7 @@ function HowWeWork() {
   ]
 
   return (
-    <div className="max-w-[1240px] mb-0 px-0 md:px-4 mx-auto w-[90%]">
+    <div className="max-w-[1240px] mt-0 mb-0 px-0 md:px-4 mx-auto w-[90%]">
       <h1
         className="text-3xl sm:text-4xl font-semibold flex items-center gap-3 justify-center text-center mb-4"
         data-aos="fade-down"

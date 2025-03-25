@@ -183,7 +183,7 @@ function OurCourses() {
           } items-center px-4`}
         >
           <button
-            className={`bg-white flex    justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+            className={`bg-white flex    justify-center items-center  hover:shadow-sm text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}
 
