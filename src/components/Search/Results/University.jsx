@@ -109,8 +109,8 @@ const CollegeCard = ({ data, loading }) => {
     <div
       className={`${
         path === `/${language}/searchresults/university`
-          ? "grid grid-cols-1 sm:grid-cols-3 gap-4"
-          : "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:flex "
+          ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4  "
       }`}
     >
       {[...(data || [])] // Create a copy of data to avoid mutating state
@@ -151,7 +151,7 @@ const CollegeCard = ({ data, loading }) => {
             <div
             key={idx}
             dir={language === "ar" ? "rtl" : "ltr"}
-            className={`relative mt-3  rounded-xl  bg-white min-w-[290px] max-w-[290] lg:max-w-[290] lg:min-w-[350px]`}
+            className={`relative mt-3  rounded-xl  bg-white md:min-w-[300px] md:max-w-[300px] lg:max-w-[295px] lg:min-w-[295px] xl:max-w-[350px] xl:min-w-[350px]`}
           >
             <div className="p-3 sm:p-4">
               {university?.uniFeatured && (
@@ -183,7 +183,7 @@ const CollegeCard = ({ data, loading }) => {
 
     return uniName.length > 20 ? uniName.slice(0, 20) + "..." : uniName;
   })()}
-  <span>
+  <span className=" w-2 ">
     <TickMark />
   </span>
 </h1>

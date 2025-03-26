@@ -255,7 +255,7 @@ function Article({
             <SkeletonLoader />
           </div>
         ) : (
-          <div className="grid grid-cols-1 max-w-[1240px] mx-auto  mt-8 lg:grid-cols-4  ">
+          <div className="grid grid-cols-1 max-w-[1240px] mx-auto  mt-8 lg:grid-cols-3 xl:grid-cols-4  gap-3  ">
             {/* First Slide */}
             {blogs?.map((blog, idx) => (
               <div

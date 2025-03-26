@@ -328,7 +328,7 @@ function ResultsCorses({
               return (
                 <div
                 key={index}
-                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[350px] lg:max-w-[350px] mx-auto rounded-xl shadow-sm bg-white ${
+                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[300px] lg:max-w-[300px] mx-auto rounded-xl shadow-sm bg-white ${
                   !isSearchResultsPath ? "min-w-[240px]" : ""
                 }`}
               >
@@ -354,7 +354,7 @@ function ResultsCorses({
       ? university?.CourseName?.ar
       : university?.CourseName?.en || "N/A";
       
-    return courseName.length > 22 ? courseName.slice(0, 22 ) + "..." : courseName;
+    return courseName.length > 18 ? courseName.slice(0, 18 ) + "..." : courseName;
   })()}
 </h1>
 
