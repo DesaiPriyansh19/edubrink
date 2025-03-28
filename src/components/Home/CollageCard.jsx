@@ -13,6 +13,7 @@ const CollegeCard = ({ college, idx, isWindows }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   const features = [
     {
       icon: <BookOpen className="w-4 h-4" />,
@@ -39,118 +40,123 @@ const CollegeCard = ({ college, idx, isWindows }) => {
   ];
 
   const handleLearnMore = (customURLSlug) => {
-    console.log(customURLSlug);
     navigate(`/${language}/university/${customURLSlug}`);
   };
 
   return (
     <div
-    className={`relative mt-2 lg:min-w-[290px]   rounded-2xl shadow-sm bg-white ${
-      language === "ar"
-        ? `text-right ${idx === 0 ? "1xl:mr-16 ml-2" : ""} `
-        : `text-left ${idx === 0 ? "1xl:ml-16" : ""} `
-    }`}
-    dir={language === "ar" ? "rtl" : "ltr"}
-  >
-    {/* Most Popular Badge */}
-    <div
-      className={`px-2 ${
+      className={`relative mt-2 lg:min-w-[290px]   rounded-2xl shadow-sm bg-white ${
         language === "ar"
-          ? "pl-2 sm:pl-6 md:pl-7  lg:pl-12"
-          : "pr-2 sm:pr-6 md:pr-7  lg:pr-12"
-      } p-3`}
+          ? `text-right ${idx === 0 ? "1xl:mr-16 ml-2" : ""} `
+          : `text-left ${idx === 0 ? "1xl:ml-16" : ""} `
+      }`}
+      dir={language === "ar" ? "rtl" : "ltr"}
     >
-      {college?.uniFeatured && (
-        <div
-          className={`absolute top-0 ${
-            language === "ar"
-              ? "left-0 rounded-br-[3px] rounded-tl-lg"
-              : "right-0 rounded-bl-[3px] rounded-tr-lg"
-          } bg-red-500 text-white text-xs px-1 py-0.5`}
-        >
-          {t("mostPopular")}
-        </div>
-      )}
-  
-      {/* College Info */}
-      <div className="flex gap-2 sm:gap-2 items-center mt-4 sm:mt-2 mb-4 md:mb-2">
-        <div className="w-16 h-16">
-          <img
-            src={college.uniSymbol || "https://placehold.co/64x64"}
-            alt="Logo"
-            className="w-full h-full rounded-full object-cover"
-          />
-        </div>
-        <div>
-          <h1 className="text-base font-semibold flex items-center">
-            {language === "ar" ? college?.uniName?.ar : college?.uniName?.en}
-          </h1>
-          <div className="text-[.7rem] font-medium gap-1 text-black flex items-center mt-1">
-            {isWindows ? (
-              college?.countryCode ? (
-                <img
-                  src={`https://flagcdn.com/w320/${getEmoji(
-                    college.countryCode
-                  )}.png`}
-                  alt="Country Flag"
-                  className="w-2.5 h-2.5 object-cover rounded-full"
-                />
+      {/* Most Popular Badge */}
+      <div
+        className={`px-2 ${
+          language === "ar"
+            ? "pl-2 sm:pl-6 md:pl-7  lg:pl-12"
+            : "pr-2 sm:pr-6 md:pr-7  lg:pr-12"
+        } p-3`}
+      >
+        {college?.uniFeatured && (
+          <div
+            className={`absolute top-0 ${
+              language === "ar"
+                ? "left-0 rounded-br-[3px] rounded-tl-lg"
+                : "right-0 rounded-bl-[3px] rounded-tr-lg"
+            } bg-red-500 text-white text-xs px-1 py-0.5`}
+          >
+            {t("mostPopular")}
+          </div>
+        )}
+
+        {/* College Info */}
+        <div className="flex gap-2 sm:gap-2 items-center mt-4 sm:mt-2 mb-4 md:mb-2">
+          <div className="w-16 h-16">
+            <img
+              src={college.uniSymbol || "https://placehold.co/64x64"}
+              alt="Logo"
+              className="w-full h-full rounded-full object-cover"
+            />
+          </div>
+          <div>
+            <h1 className="text-base font-semibold flex items-center">
+              {language === "ar" ? college?.uniName?.ar : college?.uniName?.en}
+            </h1>
+            <div className="text-[.7rem] font-medium gap-1 text-black flex items-center mt-1">
+              {isWindows ? (
+                college?.countryCode ? (
+                  <img
+                    src={`https://flagcdn.com/w320/${getEmoji(
+                      college.countryCode
+                    )}.png`}
+                    alt="Country Flag"
+                    className="w-2.5 h-2.5 object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-[.5rem] font-medium">No flag</span>
+                )
               ) : (
-                <span className="text-[.5rem] font-medium">No flag</span>
-              )
-            ) : (
-              <span className="text-sm filter transition-all duration-300 group-hover:rotate-12">
-                <p>{college?.countryFlag}</p>
-              </span>
-            )}
-            <p>{college?.countryName?.[language]}</p>
-          </div>
-          <div className="flex items-center mt-1">
-            <span className="w-5 h-5 rounded-full mr-1">
-              <PrivetUniLogo />
-            </span>
-            <p className="text-[.7rem] capitalize font-medium text-black">
-              {t(
-                `uniTypes.${college.uniType === "public" ? "Public" : "Private"}`
+                <span className="text-sm filter transition-all duration-300 group-hover:rotate-12">
+                  <p>{college?.countryFlag}</p>
+                </span>
               )}
-            </p>
-          </div>
-        </div>
-      </div>
-  
-      {/* Features */}
-      <div className="flex flex-wrap sm:flex-nowrap gap-3 items-center sm:gap-2 justify-start sm:justify-center mr-6">
-        {features.map((feature, index) => (
-          <div key={index} className="flex items-center gap-1.5 justify-center">
-            <span className="rounded-full w-8 flex items-center justify-center h-8 border">
-              {feature.icon}
-            </span>
-            <div>
-              <p className="text-[.6rem] font-medium">{feature.title}</p>
-              <p className="text-[.6rem] font-medium">{feature.description}</p>
+              <p>{college?.countryName?.[language]}</p>
+            </div>
+            <div className="flex items-center mt-1">
+              <span className="w-5 h-5 rounded-full mr-1">
+                <PrivetUniLogo />
+              </span>
+              <p className="text-[.7rem] capitalize font-medium text-black">
+                {t(
+                  `uniTypes.${
+                    college.uniType === "public" ? "Public" : "Private"
+                  }`
+                )}
+              </p>
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Features */}
+        <div className="flex flex-wrap sm:flex-nowrap gap-3 items-center sm:gap-2 justify-start sm:justify-center mr-6">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-1.5 justify-center"
+            >
+              <span className="rounded-full w-8 flex items-center justify-center h-8 border">
+                {feature.icon}
+              </span>
+              <div>
+                <p className="text-[.6rem] font-medium">{feature.title}</p>
+                <p className="text-[.6rem] font-medium">
+                  {feature.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Thin Line */}
+      <div className="w-full h-[0.7px] bg-gray-300"></div>
+
+      {/* Action Row */}
+      <div className="grid gap-4 px-2 grid-cols-2 mb-4 mt-3 pb-4">
+        <button className="bg-[#3b3d8d] hover:bg-gradient-to-l text-white text-xs py-2 px-2 rounded-full">
+          {t("applyNow")}
+        </button>
+        <button
+          onClick={() => handleLearnMore(college?.customURLSlug?.[language])}
+          className="text-black text-xs px-2 py-2 hover:font-medium rounded-full border border-gray-700"
+        >
+          {t("learnMore")}
+        </button>
       </div>
     </div>
-  
-    {/* Thin Line */}
-    <div className="w-full h-[0.7px] bg-gray-300"></div>
-  
-    {/* Action Row */}
-    <div className="grid gap-4 px-2 grid-cols-2 mb-4 mt-3 pb-4">
-      <button className="bg-[#3b3d8d] hover:bg-gradient-to-l text-white text-xs py-2 px-2 rounded-full">
-        {t("applyNow")}
-      </button>
-      <button
-        onClick={() => handleLearnMore(college?.customURLSlug?.[language])}
-        className="text-black text-xs px-2 py-2 hover:font-medium rounded-full border border-gray-700"
-      >
-        {t("learnMore")}
-      </button>
-    </div>
-  </div>
-  
   );
 };
 
@@ -211,7 +217,10 @@ const CollegeCarousel = () => {
           }`}
         >
           {data?.map((college, idx) => (
-            <div key={idx} className="snap-start w-[95%] mx-auto md:min-w-[290px] lg:min-w-[320px]">
+            <div
+              key={idx}
+              className="snap-start w-[95%] mx-auto md:min-w-[290px] lg:min-w-[320px]"
+            >
               <CollegeCard
                 key={`${college._id}-${
                   college.countryName?.en || college.countryName?.ar

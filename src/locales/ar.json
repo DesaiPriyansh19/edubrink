@@ -199,6 +199,24 @@
   "DropDownCountry": {
     "title": "أفضل المؤسسات في"
   },
+
+  "destination": "الوجهة",
+  "studyLevel": "مستوى الدراسة",
+  "entranceExam": "امتحان القبول",
+  "universityType": "نوع الجامعة",
+  "intakeYear": "سنة القبول",
+  "intakeMonth": "شهر القبول",
+  "courseOptions": "خيارات الدورة",
+  "coursesWith": "دورات مع",
+  "expressOffer": "عرض سريع",
+  "preConditionalOffer": "عرض مشروط مسبق في غضون ساعات قليلة",
+  "modeOfStudy": "نمط الدراسة",
+  "courseDuration": "مدة الدورة",
+  "budget": "الميزانية",
+  "feeRange": "نطاق الرسوم",
+  "resetFilter": "إعادة تعيين الفلتر",
+  "showAllCourses": "عرض جميع الدورات",
+
   "UniversitySlugPage": {
     "Courses": "الدورات",
     "Year": "سنة",
@@ -206,8 +224,8 @@
     "TuitionFees": "الرسوم الدراسية",
     "FeaturedCourses": "الدورات المميزة",
     "Majors": "التخصصات",
-    "FeaturedPrograms":"البرامج المميزة",
-    "activeFilter":"عامل التصفية النشط",
+    "FeaturedPrograms": "البرامج المميزة",
+    "activeFilter": "عامل التصفية النشط",
     "university": {
       "detailsTitle": "تفاصيل الجامعة",
       "yes": "نعم",

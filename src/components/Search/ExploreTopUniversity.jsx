@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef, useCallback } from "react";
 import DollerRounded from "../../../svg/DollerRounded/Index";
 import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
@@ -12,6 +10,7 @@ import { getEmoji } from "../../../libs/countryFlags";
 import GradientSpinnerLoader, {
   BouncingBarsLoader,
 } from "./Results/ImprovedLoaders";
+import ReactGA from "react-ga4";
 
 const isWindows = navigator.userAgent.includes("Windows");
 
@@ -27,6 +26,24 @@ function ExploreTopUniversity({ language }) {
   const observer = useRef(null);
   const loadingRef = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0); // Used to trigger fetches
+
+  const handleApplyClick = (uniName, countryName) => {
+    const uniLabel =
+      language === "ar" ? uniName?.ar : uniName?.en || "Unknown University";
+    const countryLabel =
+      language === "ar"
+        ? countryName?.ar
+        : countryName?.en || "Unknown Country";
+
+    // Track event using ReactGA
+    ReactGA.event({
+      category: "University Application",
+      action: "Apply Click",
+      label: uniLabel, // University name in the correct language
+      university_name: uniLabel,
+      country_name: countryLabel,
+    });
+  };
 
   const handleApply = (courseId, customURLSlug) => {
     navigate(
@@ -349,12 +366,16 @@ function ExploreTopUniversity({ language }) {
 
                 <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      handleApplyClick(
+                        university?.uniName,
+                        university?.uniCountry?.countryName
+                      );
                       handleApply(
                         university?._id,
                         university?.customURLSlug?.[language]
-                      )
-                    }
+                      );
+                    }}
                     className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                   >
                     {t("applyNow")}

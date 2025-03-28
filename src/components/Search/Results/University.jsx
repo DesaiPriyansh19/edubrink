@@ -12,6 +12,7 @@ import { useLanguage } from "../../../../context/LanguageContext";
 import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
+import ReactGA from "react-ga4";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -20,23 +21,23 @@ const CollegeCard = ({ data, loading }) => {
   const navigate = useNavigate();
   const path = location.pathname;
 
-  // const handleApplyClick = (uniId, uniName, countryName) => {
-  //   if (!window.gtag) return; // Prevent errors if GA4 isn't loaded
+  const handleApplyClick = (uniName, countryName) => {
+    const uniLabel =
+      language === "ar" ? uniName?.ar : uniName?.en || "Unknown University";
+    const countryLabel =
+      language === "ar"
+        ? countryName?.ar
+        : countryName?.en || "Unknown Country";
 
-  //   // Get the correct language label
-  //   const uniLabel = language === "ar" ? uniName.ar : uniName.en;
-
-  //   // Track event in GA4
-  //   ReactGA.event("Clicked on Apply", {
-  //     category: "University Click",
-  //     label: uniLabel, // University name in the correct language
-  //     value: uniId,
-  //   });
-
-  //   // Store click data in your backend
-  //   addClickData(uniId, "University", countryName);
-  // };
-
+    // Track event using ReactGA
+    ReactGA.event({
+      category: "University Application",
+      action: "Apply Click",
+      label: uniLabel, // University name in the correct language
+      university_name: uniLabel,
+      country_name: countryLabel,
+    });
+  };
   const handleApply = (courseId, customURLSlug) => {
     navigate(
       `/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`
@@ -149,107 +150,122 @@ const CollegeCard = ({ data, loading }) => {
           ];
           return (
             <div
-            key={idx}
-            dir={language === "ar" ? "rtl" : "ltr"}
-            className={`relative mt-3  rounded-xl  bg-white md:min-w-[300px] md:max-w-[300px] lg:max-w-[295px] lg:min-w-[295px] xl:max-w-[350px] xl:min-w-[350px]`}
-          >
-            <div className="p-3 sm:p-4">
-              {university?.uniFeatured && (
-                <div
-                  className={`absolute top-0 ${
-                    language === "ar"
-                      ? "left-0 "
-                      : "right-0 "
-                  }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1`}
-                >
-                  {t("mostPopular")}
-                </div>
-              )}
-          
-              <div className="flex gap-2 items-center mb-3">
-                <div className="w-12 h-12">
-                  <img
-                    src={"https://placehold.co/60x60"}
-                    alt="Logo"
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
-                <div className="flex-1">
-                <h1 className="text-[16px] font-semibold flex items-center gap-1">
-  {(() => {
-    const uniName = language === "ar"
-      ? university?.uniName?.ar
-      : university?.uniName?.en || "N/A";
-
-    return uniName.length > 20 ? uniName.slice(0, 20) + "..." : uniName;
-  })()}
-  <span className=" w-2 ">
-    <TickMark />
-  </span>
-</h1>
-
-          
-                  <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
-                    <p>{university?.uniCountry?.countryPhotos?.countryFlag}</p>
-                    {language === "ar"
-                      ? university?.uniCountry?.countryName?.ar
-                      : university?.uniCountry?.countryName?.en || "N/A"}
+              key={idx}
+              dir={language === "ar" ? "rtl" : "ltr"}
+              className={`relative mt-3  rounded-xl  bg-white min-w-[290px] max-w-[290] lg:max-w-[290] lg:min-w-[350px]`}
+            >
+              <div className="p-3 sm:p-4">
+                {university?.uniFeatured && (
+                  <div
+                    className={`absolute top-0 ${
+                      language === "ar" ? "left-0 " : "right-0 "
+                    }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1`}
+                  >
+                    {t("mostPopular")}
                   </div>
-          
-                  <div className=" w-full flex items-center mt-1">
-                    <span className="w-4 h-4 rounded-full mr-2">
-                      <PrivetUniLogo />
-                    </span>
-                    <p className="text-[9px] font-medium text-gray-700">
+                )}
+
+                <div className="flex gap-2 items-center mb-3">
+                  <div className="w-12 h-12">
+                    <img
+                      src={"https://placehold.co/60x60"}
+                      alt="Logo"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h1 className="text-[16px] font-semibold flex items-center gap-1">
+                      {(() => {
+                        const uniName =
+                          language === "ar"
+                            ? university?.uniName?.ar
+                            : university?.uniName?.en || "N/A";
+
+                        return uniName.length > 20
+                          ? uniName.slice(0, 20) + "..."
+                          : uniName;
+                      })()}
+                      <span>
+                        <TickMark />
+                      </span>
+                    </h1>
+
+                    <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
+                      <p>
+                        {university?.uniCountry?.countryPhotos?.countryFlag}
+                      </p>
                       {language === "ar"
-                        ? university?.uniType === "Private"
-                          ? "جامعة خاصة"
-                          : "جامعة حكومية"
-                        : university?.uniType === "Private"
-                        ? "Private University"
-                        : "Public University"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-          
-              <div className="flex gap-1 justify-center">
-                {dynamicFeatures.flat().map((feature, index) => (
-                  <div key={index} className=" flex items-center gap-1 justify-center">
-                    <span className="rounded-full w-6 h-6 flex items-center justify-center border">
-                      {feature.icon}
-                    </span>
-                    <div>
-                      <p className="text-[9px] font-medium">{feature.title}</p>
-                      <p className="text-[9px] text-gray-600">{feature.description}</p>
+                        ? university?.uniCountry?.countryName?.ar
+                        : university?.uniCountry?.countryName?.en || "N/A"}
+                    </div>
+
+                    <div className=" w-full flex items-center mt-1">
+                      <span className="w-4 h-4 rounded-full mr-2">
+                        <PrivetUniLogo />
+                      </span>
+                      <p className="text-[9px] font-medium text-gray-700">
+                        {language === "ar"
+                          ? university?.uniType === "Private"
+                            ? "جامعة خاصة"
+                            : "جامعة حكومية"
+                          : university?.uniType === "Private"
+                          ? "Private University"
+                          : "Public University"}
+                      </p>
                     </div>
                   </div>
-                ))}
+                </div>
+
+                <div className="flex gap-1 justify-center">
+                  {dynamicFeatures.flat().map((feature, index) => (
+                    <div
+                      key={index}
+                      className=" flex items-center gap-1 justify-center"
+                    >
+                      <span className="rounded-full w-6 h-6 flex items-center justify-center border">
+                        {feature.icon}
+                      </span>
+                      <div>
+                        <p className="text-[9px] font-medium">
+                          {feature.title}
+                        </p>
+                        <p className="text-[9px] text-gray-600">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="w-full h-[1px] bg-gray-300"></div>
+
+              <div className="grid gap-4 px-2 grid-cols-2 mb-4 mt-2">
+                <button
+                  onClick={() => {
+                    handleApplyClick(
+                      university?.uniName,
+                      university?.uniCountry?.countryName
+                    );
+                    handleApply(
+                      university?._id,
+                      university?.customURLSlug?.[language]
+                    );
+                  }}
+                  className="bg-slateBlue text-white text-[10px] py-2 px-2 rounded-full"
+                >
+                  {t("applyNow")}
+                </button>
+                <button
+                  onClick={() => {
+                    handleLearnMore(university?.customURLSlug?.[language]);
+                  }}
+                  className="text-black text-[10px] px-2 py-2 rounded-full border-2 border-gray-800"
+                >
+                  {t("learnMore")}
+                </button>
               </div>
             </div>
-          
-            <div className="w-full h-[1px] bg-gray-300"></div>
-          
-            <div className="grid gap-4 px-2 grid-cols-2 mb-4 mt-2">
-              <button
-                onClick={() =>
-                  handleApply(university?._id, university?.customURLSlug?.[language])
-                }
-                className="bg-slateBlue text-white text-[10px] py-2 px-2 rounded-full"
-              >
-                {t("applyNow")}
-              </button>
-              <button
-                onClick={() => {
-                  handleLearnMore(university?.customURLSlug?.[language]);
-                }}
-                className="text-black text-[10px] px-2 py-2 rounded-full border-2 border-gray-800"
-              >
-                {t("learnMore")}
-              </button>
-            </div>
-          </div>
-          
           );
         })}
     </div>
