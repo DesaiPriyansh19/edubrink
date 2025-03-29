@@ -207,7 +207,7 @@ const CoursePage = () => {
     );
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className=" min-h-screen font-sans">
       {/* Course Type Banner - Only for non-university courses */}
       {!isUniversityCourse && (
         <div

@@ -19,7 +19,7 @@ const AboutPage = () => {
     });
   }, []);
   return (
-    <div className="space-y-12">
+    <div className="">
       {/* Hero Section */}
       <div data-aos="fade-in" data-aos-delay="150">
         <AboutHeader />
@@ -39,9 +39,9 @@ const AboutPage = () => {
         <AboutGlobalJourney />
       </div>
       {/* testimonal */}
-      <div data-aos="fade-up" data-aos-delay="200">
+      {/* <div data-aos="fade-up" data-aos-delay="200">
         <AboutTestimonal />
-      </div>
+      </div> */}
       {/* FAQ */}
       <div data-aos="fade-up" data-aos-delay="200">
         <AboutFQA />
