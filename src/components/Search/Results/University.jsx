@@ -13,6 +13,7 @@ import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
 import ReactGA from "react-ga4";
+import { ArrowRight } from "lucide-react";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
