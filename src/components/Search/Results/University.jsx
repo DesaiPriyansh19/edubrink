@@ -14,6 +14,9 @@ import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
 import ReactGA from "react-ga4";
 import { ArrowRight } from "lucide-react";
+import { getEmoji } from "../../../../libs/countryFlags";
+
+const isWindows = navigator.userAgent.includes("Windows");
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -21,6 +24,7 @@ const CollegeCard = ({ data, loading }) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const path = location.pathname;
+  console.log(data);
 
   const handleApplyClick = (uniName, countryName) => {
     const uniLabel =
@@ -175,7 +179,9 @@ const CollegeCard = ({ data, loading }) => {
                 <div className="flex gap-2 items-center mb-3">
                   <div className="w-12 h-12">
                     <img
-                      src={"https://placehold.co/60x60"}
+                      src={
+                        university?.uniSymbol || "https://placehold.co/60x60"
+                      }
                       alt="Logo"
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -198,12 +204,33 @@ const CollegeCard = ({ data, loading }) => {
                     </h1>
 
                     <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
-                      <p>
-                        {university?.uniCountry?.countryPhotos?.countryFlag}
-                      </p>
-                      {language === "ar"
-                        ? university?.uniCountry?.countryName?.ar
-                        : university?.uniCountry?.countryName?.en || "N/A"}
+                      <div className="text-[.7rem] font-medium gap-1 text-black flex items-center mt-1">
+                        {isWindows ? (
+                          university?.uniCountry ? (
+                            <img
+                              src={`https://flagcdn.com/w320/${getEmoji(
+                                university.uniCountry.countryCode
+                              )}.png`}
+                              alt="Country Flag"
+                              className="w-2.5 h-2.5 object-cover rounded-full"
+                            />
+                          ) : (
+                            <span className="text-[.5rem] font-medium">
+                              No flag
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-sm filter transition-all duration-300 group-hover:rotate-12">
+                            <p>
+                              {
+                                university?.uniCountry?.countryPhotos
+                                  ?.countryFlag
+                              }
+                            </p>
+                          </span>
+                        )}
+                        <p>{university?.uniCountry?.countryName?.[language]}</p>
+                      </div>
                     </div>
 
                     <div className=" w-full flex items-center mt-1">
@@ -501,15 +528,15 @@ function Univrsiry({
           >
             {t("viewAll")}
 
-            <ArrowRight
-              className={`inline-block ml-2 ${
-                language === "ar"
-                  ? "rotate-180 group-hover:-translate-x-1"
-                  : "rotate-0 group-hover:translate-x-1"
-              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
-            />
-          </button>
-        </div>
+                <ArrowRight
+                  className={`inline-block ml-2 ${
+                    language === "ar"
+                      ? "rotate-180 group-hover:-translate-x-1"
+                      : "rotate-0 group-hover:translate-x-1"
+                  } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                />
+              </button>
+            </div>
           </Link>
         </div>
       </div>

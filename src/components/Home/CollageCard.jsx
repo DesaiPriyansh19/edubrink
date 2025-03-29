@@ -9,7 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react";
 import { getEmoji } from "../../../libs/countryFlags";
 
-const CollegeCard = ({ college, idx, isWindows }) => {
+const isWindows = navigator.userAgent.includes("Windows");
+
+const CollegeCard = ({ college, idx }) => {
   const { language } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();

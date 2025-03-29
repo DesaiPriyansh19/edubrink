@@ -1,107 +1,124 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { getEmoji } from "../../../libs/countryFlags"
-import { useTranslation } from "react-i18next"
-import { ChevronDown, X, Check } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-const isWindows = navigator.userAgent.includes("Windows")
+import { useState, useRef, useEffect } from "react";
+import { getEmoji } from "../../../libs/countryFlags";
+import { useTranslation } from "react-i18next";
+import { ChevronDown, X, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+const isWindows = navigator.userAgent.includes("Windows");
 
 // Update the component props to receive originalData
-const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3d8d", onFilterChange }) => {
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const [expanded, setExpanded] = useState(false)
-  const contentRef = useRef(null)
+const UniversityLeftLayout = ({
+  data,
+  originalData,
+  language,
+  themeColor = "#3b3d8d",
+  onFilterChange,
+}) => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
+  const contentRef = useRef(null);
 
   // Updated state to support multiple selections
   const [activeFilters, setActiveFilters] = useState({
     studyLevel: [],
     modeOfStudy: [],
-  })
+  });
 
   // Store filter options in state
-  const [studyLevelOptions, setStudyLevelOptions] = useState([])
-  const [modeOfStudyOptions, setModeOfStudyOptions] = useState([])
+  const [studyLevelOptions, setStudyLevelOptions] = useState([]);
+  const [modeOfStudyOptions, setModeOfStudyOptions] = useState([]);
   // Add a state to track if initial options have been loaded
-  const [initialOptionsLoaded, setInitialOptionsLoaded] = useState(false)
+  const [initialOptionsLoaded, setInitialOptionsLoaded] = useState(false);
 
   // Add these constant arrays at the top of the component function
-  const studyLevels = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"]
-  const studyModes = ["Full-time", "Part-time", "Online", "Blended"]
+  const studyLevels = [
+    "Bachelor's",
+    "Master's",
+    "PhD",
+    "Diploma",
+    "Certificate",
+  ];
+  const studyModes = ["Full-time", "Part-time", "Online", "Blended"];
 
   // Replace the useEffect that sets studyLevelOptions and modeOfStudyOptions
   useEffect(() => {
     // Use the predefined arrays instead of extracting from data
-    setStudyLevelOptions(studyLevels)
-    setModeOfStudyOptions(studyModes)
-  }, [])
+    setStudyLevelOptions(studyLevels);
+    setModeOfStudyOptions(studyModes);
+  }, []);
 
   const isContentOverflowing = () => {
-    if (!contentRef.current) return false
-    const content = contentRef.current
-    const lineHeight = Number.parseInt(window.getComputedStyle(content).lineHeight, 10) || 24
-    const maxHeight = lineHeight * 6 // Show approximately 6 lines of text
-    return content.scrollHeight > maxHeight
-  }
+    if (!contentRef.current) return false;
+    const content = contentRef.current;
+    const lineHeight =
+      Number.parseInt(window.getComputedStyle(content).lineHeight, 10) || 24;
+    const maxHeight = lineHeight * 6; // Show approximately 6 lines of text
+    return content.scrollHeight > maxHeight;
+  };
 
   const toggleExpand = () => {
-    setExpanded((prev) => !prev)
-  }
+    setExpanded((prev) => !prev);
+  };
 
   // Updated to handle multiple selections for study level
   const handleStudyLevelClick = (level) => {
     setActiveFilters((prev) => {
       // Check if this level is already selected
-      const isSelected = prev.studyLevel.includes(level)
+      const isSelected = prev.studyLevel.includes(level);
 
       // If selected, remove it; otherwise, add it
-      const newStudyLevels = isSelected ? prev.studyLevel.filter((item) => item !== level) : [...prev.studyLevel, level]
+      const newStudyLevels = isSelected
+        ? prev.studyLevel.filter((item) => item !== level)
+        : [...prev.studyLevel, level];
 
       // Create new state with updated study levels
       const newState = {
         ...prev,
         studyLevel: newStudyLevels,
-      }
+      };
 
       // Notify parent component about the filter change
       if (typeof onFilterChange === "function") {
         onFilterChange({
           studyLevel: newStudyLevels.length > 0 ? newStudyLevels : null,
           modeOfStudy: prev.modeOfStudy.length > 0 ? prev.modeOfStudy : null,
-        })
+        });
       }
 
-      return newState
-    })
-  }
+      return newState;
+    });
+  };
 
   // Updated to handle multiple selections for mode of study
   const handleModeOfStudyClick = (mode) => {
     setActiveFilters((prev) => {
       // Check if this mode is already selected
-      const isSelected = prev.modeOfStudy.includes(mode)
+      const isSelected = prev.modeOfStudy.includes(mode);
 
       // If selected, remove it; otherwise, add it
-      const newModeOfStudy = isSelected ? prev.modeOfStudy.filter((item) => item !== mode) : [...prev.modeOfStudy, mode]
+      const newModeOfStudy = isSelected
+        ? prev.modeOfStudy.filter((item) => item !== mode)
+        : [...prev.modeOfStudy, mode];
 
       // Create new state with updated modes of study
       const newState = {
         ...prev,
         modeOfStudy: newModeOfStudy,
-      }
+      };
 
       // Notify parent component about the filter change
       if (typeof onFilterChange === "function") {
         onFilterChange({
           studyLevel: prev.studyLevel.length > 0 ? prev.studyLevel : null,
           modeOfStudy: newModeOfStudy.length > 0 ? newModeOfStudy : null,
-        })
+        });
       }
 
-      return newState
-    })
-  }
+      return newState;
+    });
+  };
 
   // Clear all filters
   const handleClearAllFilters = () => {
@@ -109,15 +126,15 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
     setActiveFilters({
       studyLevel: [],
       modeOfStudy: [],
-    })
+    });
 
     // Then notify parent component with a slight delay to prevent glitching
     setTimeout(() => {
       if (typeof onFilterChange === "function") {
-        onFilterChange({ studyLevel: null, modeOfStudy: null })
+        onFilterChange({ studyLevel: null, modeOfStudy: null });
       }
-    }, 0)
-  }
+    }, 0);
+  };
 
   // Clear specific filter type
   const handleClearFilterType = (filterType) => {
@@ -125,41 +142,46 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
       const newState = {
         ...prev,
         [filterType]: [],
-      }
+      };
 
       // Return the new state first
-      return newState
-    })
+      return newState;
+    });
 
     // Then notify parent with a slight delay
     setTimeout(() => {
       if (typeof onFilterChange === "function") {
         onFilterChange({
           studyLevel:
-            filterType === "studyLevel" ? null : activeFilters.studyLevel.length > 0 ? activeFilters.studyLevel : null,
+            filterType === "studyLevel"
+              ? null
+              : activeFilters.studyLevel.length > 0
+              ? activeFilters.studyLevel
+              : null,
           modeOfStudy:
             filterType === "modeOfStudy"
               ? null
               : activeFilters.modeOfStudy.length > 0
-                ? activeFilters.modeOfStudy
-                : null,
-        })
+              ? activeFilters.modeOfStudy
+              : null,
+        });
       }
-    }, 0)
-  }
+    }, 0);
+  };
 
   // Check if any filters are active
-  const hasActiveFilters = activeFilters.studyLevel.length > 0 || activeFilters.modeOfStudy.length > 0
+  const hasActiveFilters =
+    activeFilters.studyLevel.length > 0 || activeFilters.modeOfStudy.length > 0;
 
   useEffect(() => {
     // Reset expanded state when data changes
-    setExpanded(false)
-  }, [data, language])
+    setExpanded(false);
+  }, [data, language]);
 
   // Add a function to reset the filter options when needed (e.g., when data changes significantly)
   const resetFilterOptions = () => {
-    setInitialOptionsLoaded(false)
-  }
+    setInitialOptionsLoaded(false);
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
@@ -173,28 +195,40 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
             <div className="items-center inline-flex gap-2 mt-2 group">
               <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-gray-200 transition-transform duration-300 group-hover:scale-110">
                 <img
-                  src={`https://flagcdn.com/w320/${getEmoji(data?.country?.countryCode)}.png`}
+                  src={`https://flagcdn.com/w320/${getEmoji(
+                    data?.country?.countryCode
+                  )}.png`}
                   alt="Country Flag"
                   className="w-full h-full object-cover"
                 />
               </div>
               <p className="text-lg font-semibold text-[#3b3d8d] transition-all duration-300 group-hover:text-[#3b3d8d]/80 group-hover:translate-x-1">
-                {language === "ar" ? data?.country?.countryName?.ar : data?.country?.countryName?.en}
+                {language === "ar"
+                  ? data?.country?.countryName?.ar
+                  : data?.country?.countryName?.en}
               </p>
             </div>
           ) : (
-            <span className="text-sm font-medium text-gray-500">No flag available</span>
+            <span className="text-sm font-medium text-gray-500">
+              No flag available
+            </span>
           )
         ) : (
           <div
-            onClick={() => navigate(`/${language}/country/${data?.country?.customURLSlug?.[language]}`)}
+            onClick={() =>
+              navigate(
+                `/${language}/country/${data?.country?.customURLSlug?.[language]}`
+              )
+            }
             className="inline-flex cursor-pointer items-center gap-2 mt-2 group"
           >
             <span className="text-2xl transition-transform duration-300 group-hover:scale-125">
               {data?.country?.countryPhotos?.countryFlag}
             </span>
             <p className="text-lg font-semibold text-[#3b3d8d] transition-all duration-300 group-hover:text-[#3b3d8d]/80 group-hover:translate-x-1">
-              {language === "ar" ? data?.country?.countryName?.ar : data?.country?.countryName?.en}
+              {language === "ar"
+                ? data?.country?.countryName?.ar
+                : data?.country?.countryName?.en}
             </p>
           </div>
         )}
@@ -204,7 +238,9 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
         {/* Overview Section with Accordion */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-[#3b3d8d]">{t("UniversitySlugPage.Overview")}</h3>
+            <h3 className="text-lg font-semibold text-[#3b3d8d]">
+              {t("UniversitySlugPage.Overview")}
+            </h3>
           </div>
 
           <div className="relative">
@@ -215,7 +251,8 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
                 expanded ? "max-h-[2000px]" : "max-h-[144px]"
               }`}
               dangerouslySetInnerHTML={{
-                __html: data?.uniOverview?.[language] || "No overview available",
+                __html:
+                  data?.uniOverview?.[language] || "No overview available",
               }}
             />
 
@@ -230,8 +267,14 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
               onClick={toggleExpand}
               className="mt-3 bg-white text-[#3b3d8d] rounded-full text-sm font-medium hover:bg-[#3b3d8d]/5 transition-colors flex items-center gap-1.5"
             >
-              {expanded ? t("majorPage.readLess") || "Read Less" : t("majorPage.readMore") || "Read More"}
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
+              {expanded
+                ? t("majorPage.readLess") || "Read Less"
+                : t("majorPage.readMore") || "Read More"}
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-300 ${
+                  expanded ? "rotate-180" : ""
+                }`}
+              />
             </button>
           )}
         </div>
@@ -247,7 +290,8 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
                 onClick={handleClearAllFilters}
                 className="flex items-center gap-1 text-xs text-[#3b3d8d] hover:text-[#3b3d8d]/80 transition-colors"
               >
-                {t("UniversitySlugPage.clearAllFilters") || "Clear all filters"} <X className="w-3 h-3" />
+                {t("UniversitySlugPage.clearAllFilters") || "Clear all filters"}{" "}
+                <X className="w-3 h-3" />
               </button>
             </div>
 
@@ -255,7 +299,9 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
             {activeFilters.studyLevel.length > 0 && (
               <div className="mb-2">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-500">{t("UniversitySlugPage.StudyLevel")}:</span>
+                  <span className="text-xs text-gray-500">
+                    {t("UniversitySlugPage.StudyLevel")}:
+                  </span>
                   <button
                     onClick={() => handleClearFilterType("studyLevel")}
                     className="text-xs text-[#3b3d8d] hover:underline"
@@ -286,7 +332,9 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
             {activeFilters.modeOfStudy.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-500">{t("UniversitySlugPage.ModeOfStudy")}:</span>
+                  <span className="text-xs text-gray-500">
+                    {t("UniversitySlugPage.ModeOfStudy")}:
+                  </span>
                   <button
                     onClick={() => handleClearFilterType("modeOfStudy")}
                     className="text-xs text-[#3b3d8d] hover:underline"
@@ -319,12 +367,18 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
         {studyLevelOptions.length > 0 && (
           <div className="mt-6">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-gray-700">{t("UniversitySlugPage.StudyLevel")}</p>
+              <p className="text-sm font-semibold text-gray-700">
+                {t("UniversitySlugPage.StudyLevel")}
+              </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-8" data-aos="fade-up" data-aos-delay="100">
+            <div
+              className="flex flex-wrap gap-2 mb-8"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
               {studyLevelOptions.map((item, idx) => {
-                const isSelected = activeFilters.studyLevel.includes(item)
+                const isSelected = activeFilters.studyLevel.includes(item);
                 return (
                   <button
                     key={idx}
@@ -338,7 +392,7 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
                     {isSelected && <Check className="w-3.5 h-3.5" />}
                     {item}
                   </button>
-                )
+                );
               })}
             </div>
           </div>
@@ -347,10 +401,16 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
         {/* Mode of Study Section */}
         {modeOfStudyOptions.length > 0 && (
           <div className="mt-6">
-            <p className="text-sm font-semibold text-gray-700 mb-3">{t("UniversitySlugPage.ModeOfStudy")}</p>
-            <div className="flex flex-wrap gap-2" data-aos="fade-up" data-aos-delay="200">
+            <p className="text-sm font-semibold text-gray-700 mb-3">
+              {t("UniversitySlugPage.ModeOfStudy")}
+            </p>
+            <div
+              className="flex flex-wrap gap-2"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
               {modeOfStudyOptions.map((item, idx) => {
-                const isSelected = activeFilters.modeOfStudy.includes(item)
+                const isSelected = activeFilters.modeOfStudy.includes(item);
                 return (
                   <button
                     key={idx}
@@ -364,7 +424,7 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
                     {isSelected && <Check className="w-3.5 h-3.5" />}
                     {item}
                   </button>
-                )
+                );
               })}
             </div>
           </div>
@@ -373,8 +433,14 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
         {/* Subjects Section */}
         {data?.faculties?.length > 0 && (
           <div className="mt-6">
-            <p className="text-sm font-semibold text-gray-700 mb-3">{t("UniversitySlugPage.Subjects")}</p>
-            <div className="flex flex-wrap gap-2" data-aos="fade-up" data-aos-delay="300">
+            <p className="text-sm font-semibold text-gray-700 mb-3">
+              {t("UniversitySlugPage.Subjects")}
+            </p>
+            <div
+              className="flex flex-wrap gap-2"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
               {data?.faculties?.map((subject, index) => (
                 <span
                   key={subject?._id}
@@ -382,7 +448,9 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
                   data-aos="zoom-in"
                   data-aos-delay={300 + index * 50}
                 >
-                  {language === "ar" ? subject?.facultyName?.ar : subject?.facultyName?.en}
+                  {language === "ar"
+                    ? subject?.facultyName?.ar
+                    : subject?.facultyName?.en}
                 </span>
               ))}
             </div>
@@ -390,8 +458,7 @@ const UniversityLeftLayout = ({ data, originalData, language, themeColor = "#3b3
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UniversityLeftLayout
-
+export default UniversityLeftLayout;
