@@ -172,20 +172,20 @@ function ExploreBlogs({ language }) {
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
       {/* Heading */}
-      <h1 className="text-5xl text-center font-semibold mb-2">
+      <h1 className="text-4xl  md:text-4xl lg:text-5xl text-center font-semibold mb-2">
         {t("blog_resources.title")}{" "}
       </h1>
 
       {/* Description */}
-      <p className="text-black font-medium text-sm max-w-md mx-auto text-center mb-24">
+      <p className="text-black font-medium text-sm max-w-md mx-auto text-center mb-10">
         {t("blog_resources.description")}
       </p>
 
       {/* Dynamic Buttons */}
-      <h3 className="text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
+      <h3 className="text-3xl md:text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
-        className="grid grid-cols-1  lg:grid-cols-3 xlg:grid-cols-4 gap-20"
+        className="grid grid-cols-1 sm:grid-cols-2 mx-auto sm:mx-8 md:mx-8 lg:mx-3 xl:mx-0    lg:grid-cols-3 xl:grid-cols-4 gap-4  lg:gap-y-10"
       >
         {/* Blog Cards */}
         {blogs?.map((blog, idx) => (

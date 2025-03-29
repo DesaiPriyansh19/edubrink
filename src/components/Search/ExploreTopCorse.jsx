@@ -184,7 +184,7 @@ function ExploreTopCorse({ language }) {
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
       {/* Heading */}
-      <h1 className="text-5xl text-center max-w-2xl mx-auto font-semibold mb-2">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl text-center max-w-2xl mx-auto font-semibold mb-2">
         {t("explore_courses.title")}
       </h1>
 
@@ -194,13 +194,13 @@ function ExploreTopCorse({ language }) {
       </p>
 
       {/* Dynamic Buttons */}
-      <h3 className="text-4xl font-semibold mb-11">
+      <h3 className="text-3xl md:text-3xl lg:text-4xl font-semibold mb-11">
         {t("explore_courses.popular_courses")}
       </h3>
 
       <div
         dir={language === "ar" ? "rtl" : "ltr"}
-        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
       >
         {courses.length > 0 &&
           courses.map((course, index) => {
@@ -230,90 +230,84 @@ function ExploreTopCorse({ language }) {
 
             return (
               <div
-                key={index}
-                className="relative mt-3 border rounded-xl shadow-md bg-white"
+              key={index}
+              className="relative mt-2  rounded-xl shadow-sm bg-white p-2 hover:shadow-lg"
+            >
+              <div
+                className={`px-2 ${
+                  language === "ar"
+                    ? "pl-2 sm:pl-4 md:pl-5 lg:pl-8"
+                    : "pr-2 sm:pr-4 md:pr-5 lg:pr-8"
+                }`}
               >
-                <div
-                  className={`px-3 ${
-                    language === "ar"
-                      ? "pl-3 sm:pl-8 md:pl-9 lg:pl-16"
-                      : "pr-3 sm:pr-8 md:pr-9 lg:pr-16"
-                  } p-4`}
-                >
-                  <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
-                    <div className="w-20 h-20">
-                      <img
-                        src={
-                          course?.university?.uniSymbol ||
-                          "https://placehold.co/80x80" ||
-                          "/placeholder.svg"
-                        }
-                        alt="College Logo"
-                        className="w-full h-full rounded-full"
-                      />
-                    </div>
-                    <div>
-                      <h1 className="text-lg font-semibold flex items-center">
-                        {language === "ar"
-                          ? course?.CourseName?.ar
-                          : course?.CourseName?.en || "N/A"}
-                      </h1>
-                      <p className="text-[.8rem] font-medium text-black flex items-center mt-1">
-                        {language === "ar"
-                          ? course?.university?.uniName?.ar
-                          : course?.university?.uniName?.en || "N/A"}
-                      </p>
-                      <div className="flex items-center mt-1">
-                        <span className="w-5 h-5 rounded-full mr-1">
-                          <Master />
-                        </span>
-                      </div>
-                    </div>
+                <div className="flex gap-1.5 sm:gap-2 items-center mt-3 sm:mt-1.5 mb-3 md:mb-1.5">
+                  <div className="w-12 h-12">
+                    <img
+                      src={
+                        course?.university?.uniSymbol ||
+                        "https://placehold.co/50x50" ||
+                        "/placeholder.svg"
+                      }
+                      alt="College Logo"
+                      className="w-full h-full rounded-full"
+                    />
                   </div>
+                  <div>
+                  <h1 className="text-sm font-semibold">
+  {language === "ar"
+    ? course?.CourseName?.ar?.length > 20
+      ? course?.CourseName?.ar.substring(0, 20) + "..."
+      : course?.CourseName?.ar
+    : course?.CourseName?.en?.length > 20
+    ? course?.CourseName?.en.substring(0, 20) + "..."
+    : course?.CourseName?.en || "N/A"}
+</h1>
 
-                  <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                    {dynamicFeatures?.flat()?.map((feature, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-center"
-                      >
-                        <span className="rounded-full w-10 flex items-center justify-center h-10 border">
-                          {feature.icon}
-                        </span>
-                        <div className="ml-2">
-                          <p className="text-xs whitespace-nowrap font-medium">
-                            {feature.title}
-                          </p>
-                          <p className="text-xs font-medium whitespace-nowrap">
-                            {feature.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                    <p className="text-[0.7rem] font-medium text-black mt-0.5">
+                      {language === "ar"
+                        ? course?.university?.uniName?.ar
+                        : course?.university?.uniName?.en || "N/A"}
+                    </p>
+                    <div className="flex items-center mt-0.5">
+                      <span className="w-3.5 h-3.5">
+                        <Master />
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                  <button
-                    onClick={() =>
-                      handleApply(
-                        course?._id,
-                        course?.customURLSlug?.[language]
-                      )
-                    }
-                    className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
-                  >
-                    {t("applyNow")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleLearnMore(course?.customURLSlug?.[language]);
-                    }}
-                    className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
-                  >
-                    {t("learnMore")}
-                  </button>
+            
+                <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-4">
+                  {dynamicFeatures?.flat()?.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <span className="rounded-full h-3 w-3 px-2 sm:px-1 sm:w-6 sm:h-6 flex items-center justify-center border">
+                        {feature.icon}
+                      </span>
+                      <div className="ml-1">
+                        <p className="text-[0.60rem] sm:text-[0.65rem] font-medium">{feature.title}</p>
+                        <p className="text-[0.60rem] sm:text-[0.65rem] font-medium">{feature.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            
+              <div className="grid gap-3 px-2 grid-cols-2 mb-3 mt-2">
+                <button
+                  onClick={() => handleApply(course?._id, course?.customURLSlug?.[language])}
+                  className="bg-slateBlue text-white text-[0.7rem] py-1 px-2 rounded-full"
+                >
+                  {t("applyNow")}
+                </button>
+                <button
+                  onClick={() => handleLearnMore(course?.customURLSlug?.[language])}
+                  className="text-black text-[0.7rem] px-2 py-1 hover:font-medium rounded-full border border-gray-800"
+                >
+                  {t("learnMore")}
+                </button>
+              </div>
+            </div>
+            
+            
             );
           })}
 

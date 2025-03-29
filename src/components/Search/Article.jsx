@@ -11,6 +11,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import GradientSpinnerLoader from "./Results/ImprovedLoaders";
+import { ArrowRight } from "lucide-react";
 
 function Article({
   loading: initialLoading,
@@ -241,21 +242,37 @@ function Article({
           </p>
           <div className="w-full hidden sm:flex justify-end items-center px-4">
             <Link to={`/${language}/searchresults/AllBlogs`}>
-              <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4  rounded-full">
-                {t("viewAll")}
-              </button>
+            <div
+          className={`w-full flex mt-4 ${
+            language === "ar" ? "justify-start" : "justify-end"
+          } items-center px-4`}
+        >
+          <button
+            className={` flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
+            {t("viewAll")}
+
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
+          </button>
+        </div>
             </Link>{" "}
           </div>
         </div>
         {loading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-4  py-6 ">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4  py-6 ">
             <SkeletonLoader />
             <SkeletonLoader />
             <SkeletonLoader />
             <SkeletonLoader />
           </div>
         ) : (
-          <div className="grid grid-cols-1 max-w-[1240px] mx-auto  mt-8 lg:grid-cols-3 xl:grid-cols-4  gap-3  ">
+          <div className="grid grid-cols-1 max-w-[990px] xl:max-w-[1240px] mx-auto  mt-8 lg:grid-cols-3 xl:grid-cols-4 gap-y-2 lg:gap-y-6 ">
             {/* First Slide */}
             {blogs?.map((blog, idx) => (
               <div

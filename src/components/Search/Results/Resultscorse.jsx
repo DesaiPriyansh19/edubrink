@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
+import { ArrowRight } from "lucide-react";
 
 function ResultsCorses({
   loading: initialLoading,
@@ -243,9 +244,31 @@ function ResultsCorses({
             </p>
           </div>
           <Link to={`/${language}/searchresults/Allcorse`}>
-            <button className="hidden sm:block shadow-sm hover:shadow-md text-black text-sm py-1 px-3 rounded-full">
-              {t("viewAll")}
-            </button>
+          <div
+          className={`w-full flex mt-4 ${
+            language === "ar" ? "justify-start" : "justify-end"
+          } items-center px-4`}
+        >
+         <div
+                className={`w-full flex mt-4 ${
+                  language === "ar" ? "justify-start" : "justify-end"
+                } items-center px-4`}
+              >
+                <button
+                  className={` flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+                >
+                  {t("viewAll")}
+      
+                  <ArrowRight
+                    className={`inline-block ml-2 ${
+                      language === "ar"
+                        ? "rotate-180 group-hover:-translate-x-1"
+                        : "rotate-0 group-hover:translate-x-1"
+                    } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                  />
+                </button>
+              </div>
+        </div>
           </Link>
         </div>
       </div>
@@ -254,7 +277,7 @@ function ResultsCorses({
         dir={language === "ar" ? "rtl" : "ltr"}
         className={`${
           path === `/${language}/searchresults/courses`
-            ? "grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 gap-2 lg:gap-4"
+            ? "grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 gap-2 lg:gap-4 max-w-[1120px]"
             : "flex overflow-x-scroll scrollbar-hide flex-col gap-4 sm:flex-row"
         }`}
       >
@@ -262,7 +285,7 @@ function ResultsCorses({
           ? Array.from({ length: 4 }).map((_, index) => (
             <div
             key={index}
-            className="relative mt-2 border rounded-md shadow-sm bg-white w-[240px]"
+            className="relative mt-2 border rounded-xl shadow-sm bg-white w-[240px] lg:w-[350px]"
           >
             <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
               <div className="flex gap-2 items-center mt-3 mb-3">

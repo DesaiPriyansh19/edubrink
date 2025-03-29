@@ -12,6 +12,7 @@ import { useLanguage } from "../../../../context/LanguageContext";
 import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
+import { ArrowRight } from "lucide-react";
 
 const CollegeCard = ({ data, loading }) => {
   const { t } = useTranslation();
@@ -53,52 +54,58 @@ const CollegeCard = ({ data, loading }) => {
       <div
         className={`${
           path === "/en/searchresults/university"
-            ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
-            : "flex gap-2"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            : "flex gap-3 "
         }`}
       >
         {Array.from({ length: 4 }).map((_, index) => (
-          <div
-            key={index}
-            className="relative mt-6 border rounded-xl shadow-md bg-white max-w-sm sm:max-w-md md:max-w-lg"
-          >
-            <div className="p-4 sm:p-6">
-              <div className="absolute top-0 right-0 bg-red-500 text-white text-xs sm:text-sm px-2 py-1 rounded-bl-md rounded-tr-xl">
-                Most Popular
-              </div>
-
-              <div className="flex gap-3 sm:gap-4 items-center mb-6">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full"></div>
-                <div className="flex-1">
-                  <div className="w-32 h-5 bg-gray-300 rounded-md"></div>
-                  <div className="w-24 h-4 bg-gray-300 rounded-md mt-2"></div>
-                  <div className="w-16 h-4 bg-gray-300 rounded-md mt-1"></div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 justify-center"
+         <div
+         key={index}
+         className="relative mt-3 border  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
+       >
+         <div className="p-2 sm:p-3">
+           {/* Badge */}
+           <div
+                    className={`absolute top-0 ${
+                      language === "ar" ? "left-0 " : "right-0 "
+                    } bg-red-500 text-white rounded-tr-[8px] rounded-bl-[5px] text-[8px] px-4 py-2`}
                   >
-                    <div className="rounded-full w-10 h-10 bg-gray-300"></div>
-                    <div>
-                      <div className="w-20 h-4 bg-gray-300 rounded-md"></div>
-                      <div className="w-16 h-4 bg-gray-300 rounded-md mt-1"></div>
-                    </div>
+                    {t("mostPopular")}
                   </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="w-full h-[1px] bg-gray-300"></div>
-
-            <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-              <div className="w-full h-10 bg-gray-300 rounded-md"></div>
-              <div className="w-full h-10 bg-gray-300 rounded-md"></div>
-            </div>
-          </div>
+       
+           {/* Profile Section */}
+           <div className="flex gap-2 items-center mb-3">
+             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full"></div>
+             <div className="flex-1">
+               <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+               <div className="w-16 h-2.5 bg-gray-300 rounded-md mt-1"></div>
+             </div>
+           </div>
+       
+           {/* Small Icons Section */}
+           <div className="flex flex-wrap gap-2 justify-start">
+             {Array.from({ length: 3 }).map((_, index) => (
+               <div key={index} className="flex items-center gap-1">
+                 <div className="rounded-full w-6 h-6 bg-gray-300"></div>
+                 <div>
+                   <div className="w-14 h-2.5 bg-gray-300 rounded-md"></div>
+                   <div className="w-10 h-2 bg-gray-300 rounded-md mt-1"></div>
+                 </div>
+               </div>
+             ))}
+           </div>
+         </div>
+       
+         {/* Divider */}
+         <div className="w-full h-[1px] bg-gray-300"></div>
+       
+         {/* Buttons */}
+         <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
+           <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+           <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+         </div>
+       </div>
+       
         ))}
       </div>
     );
@@ -110,7 +117,7 @@ const CollegeCard = ({ data, loading }) => {
       className={`${
         path === `/${language}/searchresults/university`
           ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4  "
+          : "flex overflow-x-scroll scrollbar-hide flex-col  sm:flex-row  gap-4  "
       }`}
     >
       {[...(data || [])] // Create a copy of data to avoid mutating state
@@ -468,9 +475,25 @@ function Univrsiry({
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
           <Link to={`/${language}/searchresults/AllUniversity`}>
-            <button className="bg-white shadow-sm hover:shadow-lg text-black text-sm font-normal py-1 px-4 rounded-full">
-              {t("viewAll")}
-            </button>
+          <div
+          className={`w-full flex mt-4 ${
+            language === "ar" ? "justify-start" : "justify-end"
+          } items-center px-4`}
+        >
+          <button
+            className={` flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
+            {t("viewAll")}
+
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
+          </button>
+        </div>
           </Link>
         </div>
       </div>

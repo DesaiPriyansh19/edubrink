@@ -191,7 +191,7 @@ const CollegeCarousel = () => {
             language === "ar" ? "justify-start" : "justify-end "
           } items-center px-4`}
         >
-          <button className="bg-white whitespace-nowrap flex justify-center items-center shadow-sm hover:shadow-xl text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group">
+          <button className=" whitespace-nowrap flex justify-center items-center hover:font-medium text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group">
             {t("viewAll")}
 
             <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />

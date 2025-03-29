@@ -84,11 +84,25 @@ function RecentBlog() {
 
           <div className="hidden sm:block" data-aos="fade-left">
             <Link to={`/${language}/searchresults/AllBlogs`}>
-              <button className="bg-white flex justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group">
-                {t("viewAll")}
-
-                <ArrowRight className="inline-block ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
+           <div
+                  className={`w-full flex mt-4 ${
+                    language === "ar" ? "justify-start" : "justify-end"
+                  } items-center px-4`}
+                >
+                  <button
+                    className={` flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+                  >
+                    {t("viewAll")}
+        
+                    <ArrowRight
+                      className={`inline-block ml-2 ${
+                        language === "ar"
+                          ? "rotate-180 group-hover:-translate-x-1"
+                          : "rotate-0 group-hover:translate-x-1"
+                      } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                    />
+                  </button>
+                </div>
             </Link>
           </div>
         </div>
