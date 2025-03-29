@@ -1,18 +1,20 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import DollerRounded from "../../../svg/DollerRounded/Index"
-import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index"
-import DiscountLogo from "../../../svg/DiscountLogo/Index"
-import TickMark from "../../../svg/TickMark"
-import PrivetUniLogo from "../../../svg/PriUniLogo/Index"
-import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
-import { getEmoji } from "../../../libs/countryFlags"
-import GradientSpinnerLoader, { BouncingBarsLoader } from "./Results/ImprovedLoaders"
-import ReactGA from "react-ga4"
+import { useState, useEffect, useRef, useCallback } from "react";
+import DollerRounded from "../../../svg/DollerRounded/Index";
+import ScholerShipLogo from "../../../svg/ScolerShipLogo/Index";
+import DiscountLogo from "../../../svg/DiscountLogo/Index";
+import TickMark from "../../../svg/TickMark";
+import PrivetUniLogo from "../../../svg/PriUniLogo/Index";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { getEmoji } from "../../../libs/countryFlags";
+import GradientSpinnerLoader, {
+  BouncingBarsLoader,
+} from "./Results/ImprovedLoaders";
+import ReactGA from "react-ga4";
 
-const isWindows = navigator.userAgent.includes("Windows")
+const isWindows = navigator.userAgent.includes("Windows");
 
 // Create a cache object outside the component to persist between route changes
 const universityCache = {
@@ -20,42 +22,50 @@ const universityCache = {
   lastId: null,
   hasNextPage: true,
   language: null,
-}
+};
 
 function ExploreTopUniversity({ language }) {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const [universities, setUniversities] = useState(() => universityCache.data)
-  const [loading, setLoading] = useState(false)
-  const [initialLoading, setInitialLoading] = useState(universityCache.data.length === 0)
-  const [lastId, setLastId] = useState(universityCache.lastId)
-  const [hasNextPage, setHasNextPage] = useState(universityCache.hasNextPage)
-  const [initialFetch, setInitialFetch] = useState(universityCache.data.length === 0)
-  const observer = useRef(null)
-  const loadingRef = useRef(null)
-  const [fetchTrigger, setFetchTrigger] = useState(0) // Used to trigger fetches
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [universities, setUniversities] = useState(() => universityCache.data);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(
+    universityCache.data.length === 0
+  );
+  const [lastId, setLastId] = useState(universityCache.lastId);
+  const [hasNextPage, setHasNextPage] = useState(universityCache.hasNextPage);
+  const [initialFetch, setInitialFetch] = useState(
+    universityCache.data.length === 0
+  );
+  const observer = useRef(null);
+  const loadingRef = useRef(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0); // Used to trigger fetches
 
   // Check if language has changed, if so, reset cache
   useEffect(() => {
     if (universityCache.language && universityCache.language !== language) {
       // Language changed, reset cache
-      universityCache.data = []
-      universityCache.lastId = null
-      universityCache.hasNextPage = true
+      universityCache.data = [];
+      universityCache.lastId = null;
+      universityCache.hasNextPage = true;
 
-      setUniversities([])
-      setLastId(null)
-      setHasNextPage(true)
-      setInitialFetch(true)
-      setInitialLoading(true)
+      setUniversities([]);
+      setLastId(null);
+      setHasNextPage(true);
+      setInitialFetch(true);
+      setInitialLoading(true);
     }
 
-    universityCache.language = language
-  }, [language])
+    universityCache.language = language;
+  }, [language]);
 
   const handleApplyClick = (uniName, countryName) => {
-    const uniLabel = language === "ar" ? uniName?.ar : uniName?.en || "Unknown University"
-    const countryLabel = language === "ar" ? countryName?.ar : countryName?.en || "Unknown Country"
+    const uniLabel =
+      language === "ar" ? uniName?.ar : uniName?.en || "Unknown University";
+    const countryLabel =
+      language === "ar"
+        ? countryName?.ar
+        : countryName?.en || "Unknown Country";
 
     // Track event using ReactGA
     ReactGA.event({
@@ -64,165 +74,185 @@ function ExploreTopUniversity({ language }) {
       label: uniLabel, // University name in the correct language
       university_name: uniLabel,
       country_name: countryLabel,
-    })
-  }
+    });
+  };
 
   const handleApply = (courseId, customURLSlug) => {
-    navigate(`/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`)
-  }
+    navigate(
+      `/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`
+    );
+  };
 
   const handleLearnMore = (uniname) => {
-    navigate(`/${language}/university/${uniname}`)
-  }
+    navigate(`/${language}/university/${uniname}`);
+  };
 
   const fetchUniversities = useCallback(async () => {
     // Prevent multiple simultaneous fetches
-    if (loading) return
+    if (loading) return;
 
     try {
-      setLoading(true)
-      const limit = initialFetch ? 3 : 5
+      setLoading(true);
+      const limit = initialFetch ? 3 : 5;
 
-      console.log("Fetching universities with lastId:", lastId, "initialFetch:", initialFetch)
+      console.log(
+        "Fetching universities with lastId:",
+        lastId,
+        "initialFetch:",
+        initialFetch
+      );
 
       const url = `https://edu-brink-backend.vercel.app/api/university/getAll/User/Insta?limit=${limit}${
         lastId ? `&lastId=${lastId}` : ""
-      }`
+      }`;
 
-      console.log("Fetching:", url)
+      console.log("Fetching:", url);
 
-      const response = await fetch(url)
-      const result = await response.json()
+      const response = await fetch(url);
+      const result = await response.json();
 
       // Check if we received valid data
       if (!result.data || result.data.length === 0) {
-        setHasNextPage(false)
-        universityCache.hasNextPage = false
-        setLoading(false)
-        setInitialLoading(false)
-        return
+        setHasNextPage(false);
+        universityCache.hasNextPage = false;
+        setLoading(false);
+        setInitialLoading(false);
+        return;
       }
 
       // Process the new data
       setUniversities((prevUniversities) => {
-        let newUniversitiesList
+        let newUniversitiesList;
         if (initialFetch) {
-          setInitialFetch(false)
-          newUniversitiesList = result.data
+          setInitialFetch(false);
+          newUniversitiesList = result.data;
         } else {
           // Create a map of existing IDs for faster lookup
-          const existingIds = new Map(prevUniversities.map((uni) => [uni._id, true]))
+          const existingIds = new Map(
+            prevUniversities.map((uni) => [uni._id, true])
+          );
           // Filter out duplicates
-          const newUniversities = result.data.filter((uni) => !existingIds.has(uni._id))
-          newUniversitiesList = [...prevUniversities, ...newUniversities]
+          const newUniversities = result.data.filter(
+            (uni) => !existingIds.has(uni._id)
+          );
+          newUniversitiesList = [...prevUniversities, ...newUniversities];
         }
 
         // Update cache
-        universityCache.data = newUniversitiesList
-        return newUniversitiesList
-      })
+        universityCache.data = newUniversitiesList;
+        return newUniversitiesList;
+      });
 
-      setLastId(result.meta.lastId)
-      universityCache.lastId = result.meta.lastId
+      setLastId(result.meta.lastId);
+      universityCache.lastId = result.meta.lastId;
 
-      setHasNextPage(result.meta.hasNextPage)
-      universityCache.hasNextPage = result.meta.hasNextPage
+      setHasNextPage(result.meta.hasNextPage);
+      universityCache.hasNextPage = result.meta.hasNextPage;
     } catch (error) {
-      console.error("Error fetching universities:", error)
+      console.error("Error fetching universities:", error);
     } finally {
-      setLoading(false)
-      setInitialLoading(false)
+      setLoading(false);
+      setInitialLoading(false);
     }
-  }, [lastId, initialFetch, loading])
+  }, [lastId, initialFetch, loading]);
 
   // Initial data fetch - only if cache is empty
   useEffect(() => {
     // Only fetch initial data once when component mounts and cache is empty
     if (initialFetch && universityCache.data.length === 0) {
-      setInitialLoading(true)
-      fetchUniversities()
+      setInitialLoading(true);
+      fetchUniversities();
     }
 
     // Cleanup function
     return () => {
       if (observer.current) {
-        observer.current.disconnect()
+        observer.current.disconnect();
       }
-    }
-  }, [fetchUniversities, initialFetch])
+    };
+  }, [fetchUniversities, initialFetch]);
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
     // Don't set up observer if we're loading, there's no more data, or we're still in initial fetch
     if (loading || !hasNextPage || initialFetch) {
-      return
+      return;
     }
 
     // Clean up previous observer
     if (observer.current) {
-      observer.current.disconnect()
+      observer.current.disconnect();
     }
 
     // Use a debounced version of fetchUniversities to prevent multiple rapid calls
-    let timeoutId = null
+    let timeoutId = null;
     const debouncedFetch = () => {
-      if (timeoutId) clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         if (!loading && hasNextPage && !initialFetch) {
-          setFetchTrigger((prev) => prev + 1) // Trigger a fetch
+          setFetchTrigger((prev) => prev + 1); // Trigger a fetch
         }
-      }, 300) // 300ms debounce
-    }
+      }, 300); // 300ms debounce
+    };
 
     const callback = (entries) => {
       if (entries[0].isIntersecting) {
-        debouncedFetch()
+        debouncedFetch();
       }
-    }
+    };
 
     observer.current = new IntersectionObserver(callback, {
       rootMargin: "200px", // Increased margin to trigger earlier
       threshold: 0.1,
-    })
+    });
 
     if (loadingRef.current) {
-      observer.current.observe(loadingRef.current)
+      observer.current.observe(loadingRef.current);
     }
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId)
+      if (timeoutId) clearTimeout(timeoutId);
       if (observer.current) {
-        observer.current.disconnect()
+        observer.current.disconnect();
       }
-    }
-  }, [loading, hasNextPage, initialFetch, fetchUniversities])
+    };
+  }, [loading, hasNextPage, initialFetch, fetchUniversities]);
 
   // Handle fetch trigger
   useEffect(() => {
     if (fetchTrigger > 0 && !loading && hasNextPage && !initialFetch) {
-      fetchUniversities()
+      fetchUniversities();
     }
-  }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchUniversities])
+  }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchUniversities]);
 
   // Show full page loader for initial loading
   if (initialLoading) {
-    return <BouncingBarsLoader type="gradient" message={t("Loading Universities...")} />
+    return (
+      <BouncingBarsLoader
+        type="gradient"
+        message={t("Loading Universities...")}
+      />
+    );
   }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
       {/* Heading */}
-      <h1 className="text-5xl text-center max-w-2xl mx-auto font-semibold mb-2">{t("explore_university.title")}</h1>
+      <h1 className="text-5xl text-center max-w-2xl mx-auto font-semibold mb-2">
+        {t("explore_university.title")}
+      </h1>
 
       {/* Description */}
-      <p className="text-black font-medium max-w-xl mx-auto text-sm text-center mb-4">
+      <p className="text-black font-medium max-w-xl mx-auto text-sm text-center mb-24">
         {t("explore_university.description")}
       </p>
 
       {/* Dynamic Buttons */}
-      <h3 className="text-4xl font-semibold mb-11">{t("explore_university.top_university")}</h3>
+      <h3 className="text-4xl font-semibold mb-11">
+        {t("explore_university.top_university")}
+      </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {universities.length > 0 &&
           universities.map((university, idx) => {
             const dynamicFeatures = [
@@ -240,8 +270,8 @@ function ExploreTopUniversity({ language }) {
                       ? "متاح"
                       : "Available"
                     : language === "ar"
-                      ? "غير متاح"
-                      : "Not Available",
+                    ? "غير متاح"
+                    : "Not Available",
               },
               {
                 icon: <DiscountLogo />,
@@ -251,23 +281,24 @@ function ExploreTopUniversity({ language }) {
                     ? "متاح"
                     : "Available"
                   : language === "ar"
-                    ? "غير متاح"
-                    : "Not Available",
+                  ? "غير متاح"
+                  : "Not Available",
               },
-            ]
+            ];
 
             return (
               <div
-              key={idx}
-              dir={language === "ar" ? "rtl" : "ltr"}
-              className={`relative mt-2 rounded-xl bg-white md:min-w-[300px] mx-auto md:max-w-[30px] lg:max-w-[285px] lg:min-w-[285px] xl:max-w-[350px] xl:min-w-[350px]`}
-            >
-              <div className="p-3 sm:p-4">
-                {university?.uniFeatured && (
+                key={idx}
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full"
+              >
+                <div className="p-4 sm:p-6">
                   <div
                     className={`absolute top-0 ${
-                      language === "ar" ? "left-0 " : "right-0 "
-                    } bg-red-500 text-white rounded-tr-[8px] rounded-bl-[5px] text-[8px] px-2 py-1`}
+                      language === "ar"
+                        ? "left-0 rounded-br-[4px] rounded-tl-xl"
+                        : "right-0 rounded-bl-[4px] rounded-tr-xl"
+                    } bg-red-500 text-white text-xs sm:text-sm px-2 py-1`}
                   >
                     {t("mostPopular")}
                   </div>
@@ -275,14 +306,18 @@ function ExploreTopUniversity({ language }) {
                   <div className="flex gap-3 sm:gap-4 items-center mb-6">
                     <div className="w-16 h-16 sm:w-20 sm:h-20">
                       <img
-                        src={university.uniSymbol || "https://placehold.co/80x80"}
+                        src={
+                          university.uniSymbol || "https://placehold.co/80x80"
+                        }
                         alt="Logo"
                         className="w-full h-full rounded-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
                       <h1 className="text-lg font-semibold gap-1 flex">
-                        {language === "ar" ? university?.uniName?.ar : university?.uniName?.en || "N/A"}
+                        {language === "ar"
+                          ? university?.uniName?.ar
+                          : university?.uniName?.en || "N/A"}
                         <span>
                           <TickMark />
                         </span>
@@ -292,21 +327,31 @@ function ExploreTopUniversity({ language }) {
                         university?.uniCountry?.countryCode ? (
                           <div className="flex gap-1 items-center">
                             <img
-                              src={`https://flagcdn.com/w320/${getEmoji(university?.uniCountry?.countryCode)}.png`}
+                              src={`https://flagcdn.com/w320/${getEmoji(
+                                university?.uniCountry?.countryCode
+                              )}.png`}
                               alt="Country Flag"
                               className="w-3 h-3 object-cover rounded-full"
                             />
                             <p className="text-sm font-medium text-gray-700 flex items-center ">
-                              {university?.uniCountry ? university?.uniCountry?.countryName?.[language] : "N/A"}
+                              {university?.uniCountry
+                                ? university?.uniCountry?.countryName?.[
+                                    language
+                                  ]
+                                : "N/A"}
                             </p>
                           </div>
                         ) : (
-                          <span className="text-[.6rem] font-medium">No flag</span>
+                          <span className="text-[.6rem] font-medium">
+                            No flag
+                          </span>
                         )
                       ) : (
                         <p className="text-sm font-medium text-gray-700 flex items-center mt-1">
                           {university?.uniCountry?.countryPhotos?.countryFlag}{" "}
-                          {university?.uniCountry ? university?.uniCountry?.countryName?.[language] : "N/A"}
+                          {university?.uniCountry
+                            ? university?.uniCountry?.countryName?.[language]
+                            : "N/A"}
                         </p>
                       )}
 
@@ -321,8 +366,8 @@ function ExploreTopUniversity({ language }) {
                               ? "جامعة خاصة"
                               : "جامعة حكومية"
                             : university?.uniType === "Private"
-                              ? "Private University"
-                              : "Public University"}
+                            ? "Private University"
+                            : "Public University"}
                         </p>
                       </div>
                     </div>
@@ -330,13 +375,18 @@ function ExploreTopUniversity({ language }) {
 
                   <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
                     {dynamicFeatures.flat().map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2 justify-center">
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 justify-center"
+                      >
                         <span className="rounded-full w-10 flex items-center justify-center h-10 border">
                           {feature.icon}
                         </span>
                         <div>
                           <p className="text-xs font-medium">{feature.title}</p>
-                          <p className="text-xs font-medium">{feature.description}</p>
+                          <p className="text-xs font-medium">
+                            {feature.description}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -348,8 +398,14 @@ function ExploreTopUniversity({ language }) {
                 <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                   <button
                     onClick={() => {
-                      handleApplyClick(university?.uniName, university?.uniCountry?.countryName)
-                      handleApply(university?._id, university?.customURLSlug?.[language])
+                      handleApplyClick(
+                        university?.uniName,
+                        university?.uniCountry?.countryName
+                      );
+                      handleApply(
+                        university?._id,
+                        university?.customURLSlug?.[language]
+                      );
                     }}
                     className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                   >
@@ -357,7 +413,7 @@ function ExploreTopUniversity({ language }) {
                   </button>
                   <button
                     onClick={() => {
-                      handleLearnMore(university?.customURLSlug?.[language])
+                      handleLearnMore(university?.customURLSlug?.[language]);
                     }}
                     className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
                   >
@@ -365,7 +421,7 @@ function ExploreTopUniversity({ language }) {
                   </button>
                 </div>
               </div>
-            )
+            );
           })}
 
         {/* Loading indicator for more content */}
@@ -376,7 +432,12 @@ function ExploreTopUniversity({ language }) {
         )}
 
         {/* Loading reference element - this is what the IntersectionObserver watches */}
-        {hasNextPage && !loading && <div ref={loadingRef} className="h-20 w-full col-span-1 sm:col-span-2" />}
+        {hasNextPage && !loading && (
+          <div
+            ref={loadingRef}
+            className="h-20 w-full col-span-1 sm:col-span-2"
+          />
+        )}
       </div>
 
       {/* Load more button (optional alternative to infinite scroll) */}
@@ -393,11 +454,12 @@ function ExploreTopUniversity({ language }) {
 
       {/* No more universities message */}
       {!hasNextPage && universities.length > 0 && (
-        <p className="text-center mt-8 text-gray-500">{t("No More Universities")}</p>
+        <p className="text-center mt-8 text-gray-500">
+          {t("No More Universities")}
+        </p>
       )}
     </div>
-  )
+  );
 }
 
-export default ExploreTopUniversity
-
+export default ExploreTopUniversity;
