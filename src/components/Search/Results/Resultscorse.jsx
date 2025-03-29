@@ -283,6 +283,7 @@ function ResultsCorses({
       >
         {loading && courses?.length === 0
           ? Array.from({ length: 4 }).map((_, index) => (
+          //  Skeleton loader
             <div
             key={index}
             className="relative mt-2 border rounded-xl shadow-sm bg-white w-[240px] lg:w-[350px]"
@@ -351,7 +352,7 @@ function ResultsCorses({
               return (
                 <div
                 key={index}
-                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[300px] lg:max-w-[300px]  rounded-xl shadow-sm bg-white ${
+                className={`relative mt-2  rounded-xl shadow-sm bg-white ${
                   !isSearchResultsPath ? "min-w-[240px]" : ""
                 }`}
               >
