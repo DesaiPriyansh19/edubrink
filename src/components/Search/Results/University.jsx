@@ -159,7 +159,7 @@ const CollegeCard = ({ data, loading }) => {
             <div
               key={idx}
               dir={language === "ar" ? "rtl" : "ltr"}
-              className={`relative mt-3  rounded-xl  bg-white min-w-[290px] max-w-[290] lg:max-w-[290] lg:min-w-[350px]`}
+              className={`relative mt-3  rounded-xl  bg-white lg:min-w-[290px]`}
             >
               <div className="p-3 sm:p-4">
                 {university?.uniFeatured && (
