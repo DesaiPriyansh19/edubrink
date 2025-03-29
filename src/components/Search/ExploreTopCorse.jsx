@@ -202,7 +202,7 @@ function ExploreTopCorse({ language }) {
       {/* Dynamic Buttons */}
       <h3 className="text-4xl font-semibold mb-11">{t("explore_courses.popular_courses")}</h3>
 
-      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 gap-2 lg:gap-4 max-w-[1120px]">
         {courses.length > 0 &&
           courses.map((course, index) => {
             const dynamicFeatures = [
@@ -230,14 +230,16 @@ function ExploreTopCorse({ language }) {
             ]
 
             return (
-              <div key={index} className="relative mt-3 border rounded-xl shadow-md bg-white">
-                <div
-                  className={`px-3 ${
-                    language === "ar" ? "pl-3 sm:pl-8 md:pl-9 lg:pl-16" : "pr-3 sm:pr-8 md:pr-9 lg:pr-16"
-                  } p-4`}
+              <div key={index} className="relative mt-2  rounded-xl shadow-sm bg-white">
+                 <div
+                  className={`px-2 ${
+                    language === "ar"
+                      ? "pl-2 sm:pl-4 md:pl-5 lg:pl-10"
+                      : "pr-2 sm:pr-4 md:pr-5 lg:pr-10"
+                  } p-2`}
                 >
-                  <div className="flex gap-2 sm:gap-3 items-center mt-6 sm:mt-2 mb-6 md:mb-3">
-                    <div className="w-20 h-20">
+                 <div className="flex gap-2 items-center mt-3 sm:mt-2 mb-3">
+                 <div className="w-14 h-14">
                       <img
                         src={
                           course?.university?.uniSymbol ||
@@ -249,39 +251,48 @@ function ExploreTopCorse({ language }) {
                         className="w-full h-full rounded-full"
                       />
                     </div>
-                    <div>
-                      <h1 className="text-lg font-semibold flex items-center">
+                    <div className="pl-3">
+                    <h1 className="text-[16px] font-semibold flex items-center">
+  {(() => {
+    const courseName = language === "ar"
+     ? course?.CourseName?.ar : course?.CourseName?.en || "N/A"
+      
+    return courseName.length > 17 ? courseName.slice(0, 17 ) + "..." : courseName;
+  })()}
+</h1>
+                    {/* <h1 className="text-[16px] font-semibold flex items-center">
                         {language === "ar" ? course?.CourseName?.ar : course?.CourseName?.en || "N/A"}
-                      </h1>
-                      <p className="text-[.8rem] font-medium text-black flex items-center mt-1">
+                      </h1> */}
+                      <p className="text-[10px] font-medium text-black flex items-center mt-1">
                         {language === "ar" ? course?.university?.uniName?.ar : course?.university?.uniName?.en || "N/A"}
                       </p>
                       <div className="flex items-center mt-1">
-                        <span className="w-5 h-5 rounded-full mr-1">
+                      <span className="w-3.5 h-3.5 rounded-full mr-1">
                           <Master />
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
+
+                  <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-0 pl-2">
                     {dynamicFeatures?.flat()?.map((feature, index) => (
                       <div key={index} className="flex items-center justify-center">
-                        <span className="rounded-full w-10 flex items-center justify-center h-10 border">
+                        <span className="rounded-full w-6 h-6 flex items-center justify-center border">
                           {feature.icon}
                         </span>
                         <div className="ml-2">
-                          <p className="text-xs whitespace-nowrap font-medium">{feature.title}</p>
-                          <p className="text-xs font-medium whitespace-nowrap">{feature.description}</p>
+                          <p className="text-[9px] font-medium whitespace-nowrap">{feature.title}</p>
+                          <p className="text-[9px] font-medium whitespace-nowrap">{feature.description}</p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
+                <div className="grid gap-3 px-2 grid-cols-2 mb-2 mt-2">
                   <button
                     onClick={() => handleApply(course?._id, course?.customURLSlug?.[language])}
-                    className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
+                    className="bg-slateBlue text-white text-[10px] py-2 px-2 rounded-full"
                   >
                     {t("applyNow")}
                   </button>
@@ -289,7 +300,7 @@ function ExploreTopCorse({ language }) {
                     onClick={() => {
                       handleLearnMore(course?.customURLSlug?.[language])
                     }}
-                    className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
+                    className="text-black text-[10px] px-2 py-2 hover:font-medium rounded-full border border-gray-700"
                   >
                     {t("learnMore")}
                   </button>

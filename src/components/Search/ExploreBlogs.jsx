@@ -192,7 +192,7 @@ function ExploreBlogs({ language }) {
 
       {/* Dynamic Buttons */}
       <h3 className="text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
-      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1  lg:grid-cols-3 xlg:grid-cols-4 gap-20">
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid mx-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-16">
         {/* Blog Cards */}
         {blogs?.map((blog, idx) => (
           <div

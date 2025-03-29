@@ -378,7 +378,7 @@ function ResultsCorses({
       ? university?.CourseName?.ar
       : university?.CourseName?.en || "N/A";
       
-    return courseName.length > 18 ? courseName.slice(0, 18 ) + "..." : courseName;
+    return courseName.length > 17 ? courseName.slice(0, 17 ) + "..." : courseName;
   })()}
 </h1>
 
