@@ -32,7 +32,7 @@ function SearchResults() {
   // Keep track of previous filter props to prevent unnecessary API calls
   const prevFilterStringRef = useRef(null);
 
-  const API_BASE_URL = "http://localhost:4000/api/search"; // Base API URL
+  const API_BASE_URL = "https://edu-brink-backend.vercel.appapi/search"; // Base API URL
 
   // Memoize derived values to prevent unnecessary re-renders
   const memoizedUniIds = useMemo(
