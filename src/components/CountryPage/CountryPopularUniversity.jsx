@@ -69,7 +69,7 @@ const CountryPopularUniversity = ({ data }) => {
           </h1>
           <button
             onClick={() => handleViewAll(data?.countryName?.en)}
-            className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+            className={` flex  whitespace-nowrap  justify-center items-center text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}
 
@@ -121,146 +121,102 @@ const CountryPopularUniversity = ({ data }) => {
               ];
               return (
                 <div
-                  key={idx}
-                  dir={language === "ar" ? "rtl" : "ltr"}
-                  className="relative mt-6 border rounded-xl shadow-md bg-white max-w-full"
-                >
-                  <div className="p-4 sm:p-6">
-                    <div
-                      className={`absolute top-0 ${
-                        language === "ar"
-                          ? "left-0 rounded-br-[4px] rounded-tl-xl"
-                          : "right-0 rounded-bl-[4px] rounded-tr-xl"
-                      } bg-red-500 text-white text-xs sm:text-sm px-2 py-1`}
-                    >
-                      {t("mostPopular")}
+                key={idx}
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="relative w-[90%] sm:w-[48%] lg:w-[30%]  rounded-xl shadow-sm bg-white p-2"
+              >
+                <div className="p-3">
+                  <div
+                    className={`absolute top-0 ${
+                      language === "ar"
+                        ? "left-0 rounded-br-[6px] rounded-tl-xl "
+                        : "right-0 rounded-bl-[6px] rounded-tr-xl"
+                    } bg-red-500 text-white text-[0.6rem] px-2 py-1`}
+                  >
+                    {t("mostPopular")}
+                  </div>
+              
+                  <div className="flex gap-2 items-center mb-3">
+                    <div className="w-12 h-12">
+                      <img
+                        src={university.uniSymbol || "https://placehold.co/80x80"}
+                        alt="Logo"
+                        className="w-full h-full rounded-full object-cover"
+                      />
                     </div>
-
-                    <div className="flex gap-3 sm:gap-4 items-center mb-6">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20">
-                        <img
-                          src={
-                            university.uniSymbol || "https://placehold.co/80x80"
-                          }
-                          alt="Logo"
-                          className="w-full h-full rounded-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h1 className="text-lg font-semibold gap-1 flex">
+                    <div className="flex-1">
+                    <h1 className="text-sm font-semibold flex items-center">
+  {language === "ar" 
+    ? (university?.uniName?.ar?.length > 18 
+        ? `${university.uniName.ar.substring(0, 18)}...`
+        : university?.uniName?.ar || "N/A")
+    : (university?.uniName?.en?.length > 18 
+        ? `${university.uniName.en.substring(0, 18)}...`
+        : university?.uniName?.en || "N/A")}
+  <span className="ml-1">
+    <TickMark />
+  </span>
+</h1>
+              
+                      <p className="text-xs font-medium text-gray-700 mt-1">
+                        {data?.countryPhotos?.countryFlag} {data?.countryName?.[language] || "N/A"}
+                      </p>
+              
+                      <div className="flex items-center mt-1">
+                        <span className="w-4 h-4 rounded-full mr-1">
+                          <PrivetUniLogo />
+                        </span>
+                        <p className="text-xs capitalize font-medium text-gray-700">
                           {language === "ar"
-                            ? university?.uniName?.ar
-                            : university?.uniName?.en || "N/A"}
-                          <span>
-                            <TickMark />
-                          </span>
-                        </h1>
-
-                        {isWindows ? (
-                          data?.countryName?.[language] ? (
-                            <div className="flex gap-1 items-center">
-                              <img
-                                src={`https://flagcdn.com/w320/${getEmoji(
-                                  data?.countryCode
-                                )}.png`}
-                                alt="Country Flag"
-                                className="w-3 h-3 object-cover rounded-full"
-                              />
-                              <p className="text-sm font-medium text-gray-700 flex items-center ">
-                                {data?.countryName
-                                  ? data?.countryName?.[language]
-                                  : "N/A"}
-                              </p>
-                            </div>
-                          ) : (
-                            <span className="text-[.6rem] font-medium">
-                              No flag
-                            </span>
-                          )
-                        ) : (
-                          <p className="text-sm font-medium text-gray-700 flex items-center mt-1">
-                            {data?.countryPhotos?.countryFlag}{" "}
-                            {data?.countryName
-                              ? data?.countryName?.[language]
-                              : "N/A"}
-                          </p>
-                        )}
-
-                        <div className="flex items-center mt-1">
-                          <span className="w-5 h-5 rounded-full mr-2">
-                            <PrivetUniLogo />
-                          </span>
-
-                          <p className="text-sm capitalize font-medium text-gray-700">
-                            {language === "ar"
-                              ? university?.uniType === "Private"
-                                ? "جامعة خاصة"
-                                : "جامعة حكومية"
-                              : university?.uniType === "Private"
-                              ? "Private University"
-                              : "Public University"}
-                          </p>
-                        </div>
+                            ? university?.uniType === "Private"
+                              ? "جامعة خاصة"
+                              : "جامعة حكومية"
+                            : university?.uniType === "Private"
+                            ? "Private University"
+                            : "Public University"}
+                        </p>
                       </div>
-                    </div>
-
-                    <div className="flex flex-wrap sm:flex-nowrap gap-5 items-center sm:gap-3 justify-start sm:justify-center mr-10">
-                      {dynamicFeatures.flat().map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 justify-center"
-                        >
-                          <span className="rounded-full w-10 flex items-center justify-center h-10 border">
-                            {feature.icon}
-                          </span>
-                          <div>
-                            <p className="text-xs font-medium">
-                              {feature.title}
-                            </p>
-                            <p className="text-xs font-medium">
-                              {feature.description}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   </div>
-
-                  <div className="w-full h-[1px] bg-gray-300"></div>
-
-                  <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
-                    <button
-                      onClick={() => {
-                        handleApplyClick(
-                          university?.uniName,
-                          data?.countryName
-                        );
-                        handleNavigation(
-                          true,
-                          university?._id,
-                          "University",
-                          university?.customURLSlug?.en
-                        );
-                      }}
-                      className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
-                    >
-                      {t("applyNow")}
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleNavigation(
-                          false,
-                          university?._id,
-                          "University",
-                          university?.customURLSlug?.en
-                        )
-                      }
-                      className="text-black text-sm px-3 py-2 hover:font-medium rounded-full border-2 border-gray-800"
-                    >
-                      {t("learnMore")}
-                    </button>
+              
+                  <div className="grid grid-cols-3  gap-2 justify-start">
+                    {dynamicFeatures.flat().map((feature, index) => (
+                      <div key={index} className="flex items-center gap-1">
+                        <span className="rounded-full w-7 h-7 flex items-center justify-center border">
+                          {feature.icon}
+                        </span>
+                        <div>
+                          <p className="text-[0.55rem] font-medium">{feature.title}</p>
+                          <p className="text-[0.55rem] font-medium">{feature.description}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              
+                <div className="w-full h-[1px] bg-gray-300"></div>
+              
+                <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
+                  <button
+                    onClick={() => {
+                      handleApplyClick(university?.uniName, data?.countryName);
+                      handleNavigation(true, university?._id, "University", university?.customURLSlug?.en);
+                    }}
+                    className="bg-slateBlue text-white text-xs py-1 px-2 rounded-full"
+                  >
+                    {t("applyNow")}
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleNavigation(false, university?._id, "University", university?.customURLSlug?.en)
+                    }
+                    className="text-black text-xs px-2 py-1 hover:font-medium rounded-full border border-gray-800"
+                  >
+                    {t("learnMore")}
+                  </button>
+                </div>
+              </div>
+              
               );
             })}
           </div>

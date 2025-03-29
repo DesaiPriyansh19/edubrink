@@ -62,73 +62,71 @@ const AboutFQA = () => {
       </div>
 
       <div
-        className="w-[90%] rounded-3xl mb-16 mx-auto bg-white p-4 md:p-6 shadow-sm"
-        data-aos="fade-up"
-        data-aos-delay="100"
+  className="w-[90%] rounded-2xl mb-12 mx-auto bg-white p-3 md:p-4 shadow-sm"
+  data-aos="fade-up"
+  data-aos-delay="100"
+>
+  <div className="space-y-3 bg-white">
+    {faqItems.map((item, index) => (
+      <div
+        key={item.id}
+        className={`p-3 rounded-md transition-all duration-300 ease-in-out ${
+          openQuestion === item.id
+            ? "shadow-sm bg-gradient-to-r from-gray-100 to-gray-50"
+            : "bg-gray-100 hover:bg-gray-50"
+        }`}
       >
-        <div className="space-y-4 bg-white">
-          {faqItems.map((item, index) => (
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleQuestion(item.id)}
+        >
+          <div className="flex items-center gap-2">
             <div
-              key={item.id}
-              className={`p-4 rounded-lg transition-all duration-300 ease-in-out ${
+              className={`w-6 h-6 text-xs rounded-full flex items-center justify-center font-semibold transition-colors duration-300 ${
                 openQuestion === item.id
-                  ? "shadow-md bg-gradient-to-r from-gray-100 to-gray-50"
-                  : "bg-gray-100 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-[#380C95] to-[#E15754] text-white"
+                  : "bg-white text-black"
               }`}
-              
             >
-              <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleQuestion(item.id)}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold transition-colors duration-300 ${
-                      openQuestion === item.id
-                        ? "bg-gradient-to-r from-[#380C95] to-[#E15754] text-white"
-                        : "bg-white text-black"
-                    }`}
-                  >
-                    {item.id}
-                  </div>
-                  <h3
-                    className={`text-base md:text-lg font-semibold transition-colors duration-300 ${
-                      openQuestion === item.id ? "text-[#380C95]" : "text-black"
-                    }`}
-                  >
-                    {item.question}
-                  </h3>
-                </div>
-                <div
-                  className={`text-black bg-white rounded-full w-8 h-8 flex items-center justify-center transition-transform duration-300 ${
-                    openQuestion === item.id ? "rotate-90" : ""
-                  }`}
-                >
-                  {openQuestion === item.id ? (
-                    <ChevronDown className="w-5 h-5 text-[#E15754]" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5" />
-                  )}
-                </div>
-              </div>
-
-              <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  openQuestion === item.id
-                    ? "max-h-96 opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
-              >
-                {item.answer && (
-                  <div className="text-gray-600 mt-3 pl-11 pr-2">
-                    {item.answer}
-                  </div>
-                )}
-              </div>
+              {item.id}
             </div>
-          ))}
+            <h3
+              className={`text-sm md:text-base font-medium transition-colors duration-300 ${
+                openQuestion === item.id ? "text-[#380C95]" : "text-black"
+              }`}
+            >
+              {item.question}
+            </h3>
+          </div>
+          <div
+            className={`text-black bg-white rounded-full w-6 h-6 flex items-center justify-center transition-transform duration-300 ${
+              openQuestion === item.id ? "rotate-90" : ""
+            }`}
+          >
+            {openQuestion === item.id ? (
+              <ChevronDown className="w-4 h-4 text-[#E15754]" />
+            ) : (
+              <ChevronRight className="w-4 h-4" />
+            )}
+          </div>
+        </div>
+
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            openQuestion === item.id ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          {item.answer && (
+            <div className="text-gray-600 mt-2 pl-8 pr-2 text-xs">
+              {item.answer}
+            </div>
+          )}
         </div>
       </div>
+    ))}
+  </div>
+</div>
+
     </>
   );
 };

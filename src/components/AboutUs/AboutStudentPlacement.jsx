@@ -53,7 +53,7 @@ const AboutStudentPlacement = () => {
         {cards.map((card) => (
           <div
             key={card.id}
-            className={`absolute top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here
+            className={`absolute rounded-xl shadow-md top-0 left-1/2 -translate-x-[55%] md:-translate-x-1/2 -translate-y-0 ${card.marginLeft} ${card.marginTop} ${card.marginBottom} bg-white shadow-lg rounded-lg py-3 px-5 transform scale-95 z-10 w-[18rem] esm:w-[22rem] sm:w-[27rem] p-4 sm:p-6`} // Added padding here
           >
             <div className="flex items-center gap-2">
               <img
@@ -117,15 +117,15 @@ const AboutStudentPlacement = () => {
       {/* Right: Text Section */}
       <div className="w-full mmd:w-1/2 h-auto esm:h-[350px] md:h-[400px]">
         <div className="w-full mmd:max-w-xl">
-          <h2 className="text-3xl lg:text-5xl font-semibold text-[rgba(29,33,28,1)]">
+          <h2 className="text-3xl lg:text-4xl font-semibold text-[rgba(29,33,28,1)]">
             We make more than 20k+ successful students placement in the world
           </h2>
-          <p className="mt-4 text-[rgba(29,33,28,1)] font-medium text-lg leading-[155%]">
+          <p className="mt-4 text-[rgba(29,33,28,1)] font-medium text-[1rem] leading-[155%]">
             Investigate courses, universities and their locations. Look upon the
             teaching modules, research opportunities, campus life and employment
             prospects before you narrow down your selection.
           </p>
-          <button className="mt-6 text-lg leafding-[155%] text-[rgba(29,33,28,1)] bg-[rgba(255,255,255,1)] px-6 py-3 rounded-3xl w-[175px] h-[52px] pl-[28px] pr-[28px]">
+          <button className="mt-6 text-[1rem] font-medium leafding-[155%] text-[rgba(29,33,28,1)] bg-[rgba(255,255,255,1)]   rounded-3xl w-[175px] py-2 hover:scale-105">
             Learn more →
           </button>
         </div>

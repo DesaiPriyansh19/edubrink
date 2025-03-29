@@ -11,6 +11,7 @@ import AdminProtectedRoute from "../utils/AdminProtectedRoute"
 import AuthModal from "./components/AuthModal"
 import { trackPageView } from "../utils/google-analytics"
 import AppLayout from "./components/AppLayout"
+import Breadcrumbs from "./components/Breadcrumb/Breadcrumbs"
 
 // Lazy load components to reduce initial bundle size
 const HomePage = lazy(() => import("./components/Home/HomePage"))
@@ -78,6 +79,7 @@ function App() {
           <AppLayout>
             <LanguageRedirect />
             <Suspense fallback={<LoadingFallback />}>
+          
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Navigate to="/en" replace />} />

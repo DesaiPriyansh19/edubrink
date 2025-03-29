@@ -1,5 +1,5 @@
 import React from "react";
-import global from "../../assets/AboutpageImage/global.png";
+import global from "../../assets/AboutpageImage/clean3'.png";
 import VseuaxPeople from "../../../svg/AboutGlobalCOne";
 import VuesaxBuilding from "../../../svg/AboutGlobalCTwo";
 import VseuaxUser from "../../../svg/AboutGlobalCThree";
@@ -25,10 +25,10 @@ const AboutGlobalJourney = () => {
           alt="World Map"
         />
       </div>
-      <div className="flex flex-wrap justify-center gap-4 py-6 px-0 sm:px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 justify-center gap-4 md:gap-2 py-6 px-0 sm:px-4">
         {/* Card 1 */}
-        <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
+        <div className="bg-white flex flex-col w-full  md:w-[95%] rounded-3xl p-6">
+          <h2 className="font-semibold text-4xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             1,00,00+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>
@@ -42,8 +42,8 @@ const AboutGlobalJourney = () => {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
+        <div className="bg-white flex flex-col w-full  md:w-[95%] rounded-3xl p-6">
+          <h2 className="font-semibold text-4xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             3230+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>
@@ -57,8 +57,8 @@ const AboutGlobalJourney = () => {
         </div>
 
         {/* Card 3 */}
-        <div className="bg-white flex flex-col w-full sm:w-[300px] md:w-[320px] lg:w-[341px] rounded-3xl p-6">
-          <h2 className="font-semibold text-5xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
+        <div className="bg-white flex flex-col w-full  md:w-[95%] rounded-3xl p-6">
+          <h2 className="font-semibold text-4xl leading-[114.99%] flex justify-between w-full text-[rgba(29,33,28,1)]">
             160+
             <div className="bg-[rgba(248,248,248,1)] rounded-full flex items-center justify-center w-12 h-12">
               <span>

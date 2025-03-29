@@ -97,7 +97,7 @@ const FaqDropDown = ({ faqData = null, blog = null }) => {
 
   return (
     <>
-      <div className="faq-outer-text w-full mx-auto" data-aos="fade-up">
+      <div className="faq-outer-text w-full mx-auto" >
         <h2
           className={` ${
             blog ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl"
@@ -112,18 +112,17 @@ const FaqDropDown = ({ faqData = null, blog = null }) => {
         </p>
       </div>
 
-      <div className="w-full rounded-3xl mb-16 mx-auto shadow-sm">
-        <div className="space-y-4 bg-white">
+      <div className="w-full rounded-3xl mb-16 mx-auto ">
+        <div className="space-y-4  rounded-lg">
           {processedFaqItems.map((item) => (
             <div
               key={item.id}
-              className={`p-4 rounded-lg transition-all duration-300 ease-in-out ${
+              className={`p-4 rounded-lg bg-slate-50  ${
                 openQuestion === item.id
-                  ? "shadow-md bg-gradient-to-r from-gray-100 to-gray-50"
-                  : "bg-gray-100 hover:bg-gray-50"
+                  ? "bg-slate-50 "
+                  : " bg-slate-10"
               }`}
-              data-aos="fade-up"
-              data-aos-delay={100 + item.id * 50}
+             
             >
               <div
                 className="flex justify-between items-center cursor-pointer"

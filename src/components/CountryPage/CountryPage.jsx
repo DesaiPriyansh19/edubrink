@@ -136,7 +136,7 @@ const CountryPage = () => {
   console.log(data);
 
   return (
-    <div className="max-w-[1240px] px-4 sm:px-6 lg:px-10 mx-auto py-8 font-sans bg-gray-50">
+    <div className="max-w-[1240px] px-4 sm:px-6 lg:px-10 mx-auto py-8 font-sans ">
       <div
         className="text-sm mb-6 flex items-center text-gray-600"
         data-aos="fade-right"
@@ -174,26 +174,26 @@ const CountryPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
       </div>
 
-      <div className=" rounded-xl  shadow-sm mb-8">
+      <div className=" rounded-xl   mb-8">
         <div
           className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4"
           data-aos="fade-up"
         >
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-sans font-bold text-gray-900 leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-[2.6rem] font-sans font-bold text-gray-900 leading-tight">
             {language === "ar"
               ? `الدراسة في ${data?.countryName?.[language] || "غير متوفر"}`
               : `Study in ${data?.countryName?.[language] || "N/A"}`}
           </h1>
 
           {data?.hotDestination && (
-            <p className="inline-block bg-gradient-to-r text-sm from-rose-500 to-pink-600 font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+            <p className="inline-block bg-[#E82448] font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
               🔥 Hot Destination
             </p>
           )}
         </div>
 
         <p
-          className="text-base font-medium mt-2 mb-6 text-gray-700 leading-relaxed"
+          className="text-sm  mt-2 mb-6  leading-relaxed"
           data-aos="fade-up"
           data-aos-delay="100"
         >
@@ -222,18 +222,18 @@ const CountryPage = () => {
           data-aos-delay="200"
         >
           <div
-            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center px-5 py-2  rounded  bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="250"
           >
-            <div className="mr-4 bg-gray-100 p-3 rounded-full">
+            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
               <DollerRounded />
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5 text-gray-500">
+              <p className="font-sans font-medium text-sm leading-5 ">
                 {data?.countryCurrency}
               </p>
-              <p className="font-semibold text-gray-900">
+              <p className="text-[.8rem]">
                 {" "}
                 {t("countryPage.currency")}
               </p>
@@ -241,75 +241,75 @@ const CountryPage = () => {
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center px-5 py-2  rounded  bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="300"
           >
-            <div className="mr-4 bg-gray-100 p-3 rounded-full">
+            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
               <Home />
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5 text-gray-500">
+              <p className="font-sans font-medium text-sm leading-5">
                 ${data?.livingCost}
               </p>
-              <p className="font-semibold text-gray-900">
+              <p className=" text-[.8rem]">
                 {t("countryPage.livingCost")}
               </p>
             </div>
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center px-5 py-2  rounded  bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="350"
           >
-            <div className="mr-4 bg-gray-100 p-3 rounded-full">
+            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
               <LanguageLogo />
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5 text-gray-500">
+              <p className="font-sans font-medium text-sm leading-5 ">
                 {data?.countryLanguages[0]}
               </p>
-              <p className="font-semibold text-gray-900">
+              <p className="text-[.8rem]">
                 {t("UniversitySlugPage.Language")}
               </p>
             </div>
           </div>
 
           <div
-            className="flex items-center p-5 border rounded-xl shadow-sm bg-white hover:shadow-md transition-shadow duration-300"
+            className="flex items-center px-5 py-2  rounded  bg-white hover:shadow-md transition-shadow duration-300"
             data-aos="zoom-in"
             data-aos-delay="400"
           >
-            <div className="mr-4 bg-gray-100 p-3 rounded-full">
+            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
               <UniversityLogo />
             </div>
             <div>
-              <p className="font-sans font-medium text-sm leading-5 text-gray-500">
+              <p className="font-sans font-medium text-sm leading-5 ">
                 {data?.universities?.length}
               </p>
-              <p className="font-semibold text-gray-900">{t("universities")}</p>
+              <p className=" text-[.8rem]">{t("universities")}</p>
             </div>
           </div>
         </div>
 
         <div
-          className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm"
+          className="bg-[#f8f8f8] rounded p-6  "
           data-aos="fade-up"
           data-aos-delay="450"
         >
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">
+          <h2 className="text-4xl font-semibold mb-4 text-gray-900">
             {language === "ar" ? "نظرة عامة على البلد" : "Country Overview "}
           </h2>
 
           {!showFullOverview ? (
             <div className="space-y-4">
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-[1rem] ">
                 {createTruncatedOverview()}
               </p>
               <button
                 onClick={() => setShowFullOverview(true)}
-                className="text-rose-600 font-medium hover:text-rose-700 transition-colors duration-300 flex items-center"
+                className="text-rose-600 text-[1rem]  hover:text-rose-700 transition-colors duration-300 flex items-center"
               >
                 {language === "ar" ? "اقرأ المزيد" : "Read More "}
                 <svg
@@ -329,14 +329,14 @@ const CountryPage = () => {
           ) : (
             <div className="space-y-4">
               <div
-                className="text-gray-700 leading-relaxed"
+                className="text-[1rem] leading-relaxed"
                 dangerouslySetInnerHTML={{
                   __html: data?.countryOverview?.[language],
                 }}
               />
               <button
                 onClick={() => setShowFullOverview(false)}
-                className="text-rose-600 font-medium hover:text-rose-700 transition-colors duration-300 flex items-center"
+                className="text-rose-600 text-[1rem]  hover:text-rose-700 transition-colors duration-300 flex items-center"
               >
                 {language === "ar" ? "إظهار أقل" : "Show Less "}
                 <svg

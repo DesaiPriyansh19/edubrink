@@ -212,7 +212,7 @@ const CollegeCarousel = () => {
         dir={language === "ar" ? "rtl" : "ltr"}
       >
         <div
-          className={`flex flex-col  sm:flex-row ${
+          className={`flex flex-col gap-2  sm:flex-row ${
             language === "ar"
               ? "space-x-0 sm:space-x-4"
               : "space-x-0 sm:space-x-4"
@@ -221,7 +221,7 @@ const CollegeCarousel = () => {
           {data?.map((college, idx) => (
             <div
               key={idx}
-              className="snap-start w-[95%] mx-auto md:min-w-[290px] lg:min-w-[320px]"
+              className="snap-start w-[95%] sm:min-w-[280px] mx-auto  "
             >
               <CollegeCard
                 key={`${college._id}-${

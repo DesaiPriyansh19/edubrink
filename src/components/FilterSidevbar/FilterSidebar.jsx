@@ -27,10 +27,10 @@ const defaultDestinations = [
   { countryName: { en: "Georgia", ar: "جورجيا" }, countryCode: "GEO" },
   { countryName: { en: "Malaysia", ar: "ماليزيا" }, countryCode: "MYS" },
 ];
-
+const isWindows = navigator.userAgent.includes("Windows");
 const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
   const { t } = useTranslation();
-  const isWindows = navigator.userAgent.includes("Windows");
+ 
   const { filterProp, setFilterProp, initialState } = useSearch();
   const [tempFilterProp, setTempFilterProp] = useState(filterProp);
   const [destinations, setDestinations] = useState(defaultDestinations);
