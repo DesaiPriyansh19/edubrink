@@ -12,6 +12,7 @@ import AuthModal from "./components/AuthModal"
 import { trackPageView } from "../utils/google-analytics"
 import AppLayout from "./components/AppLayout"
 import Breadcrumbs from "./components/Breadcrumb/Breadcrumbs"
+import NotFoundPage from "./components/404Page/404Page"
 
 // Lazy load components to reduce initial bundle size
 const HomePage = lazy(() => import("./components/Home/HomePage"))
@@ -83,6 +84,7 @@ function App() {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Navigate to="/en" replace />} />
+                <Route path="*" element={<NotFoundPage/>} /> {/* Catch-all route */}
                 <Route path="/:lang" element={<HomePage />} />
 
                 {/* Protected Routes (All except HomePage) */}

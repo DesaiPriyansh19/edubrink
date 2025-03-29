@@ -13,6 +13,7 @@ import FindCourses from './FindCourses';
 import RecentBlog from './RecentBlog';
 import ContactSection from '../ContactSection';
 import FacultyPage from '../FacultyPage/FacultyPage';
+import NotFoundPage from '../404Page/404Page';
 
 
 function HomePage() {
