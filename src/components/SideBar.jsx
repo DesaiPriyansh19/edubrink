@@ -10,61 +10,59 @@ import AboutUsLogo from "../../svg/AbotUsLogo";
 import BlogLogo from "../../svg/BlogLogo/Index";
 import ContactLogo from "../../svg/ContactLogo/Index";
 import img from "../assets/Sidebar.png";
-import usa from "../assets/Flags/USAflag.png";
-import germny from "../assets/Flags/GermnyFlag.png";
-import Unitedarap from "../assets/Flags/UnitedAraPFlag.png";
-import uae from "../assets/Flags/uae.png";
-import swizrland from "../assets/Flags/SwitzerlandFlag.png";
-import canada from "../assets/Flags/CanadaFlag.png";
-import india from "../assets/Flags/IndiaFlag.png";
-import bangladesh from "../assets/Flags/BangladeshFlag.webp";
-import nigeria from "../assets/Flags/NigeriaFlag.webp";
-import newzealand from "../assets/Flags/NewZealandFlag.webp";
-import denmark from "../assets/Flags/DenmarkFlag.webp";
-import australia from "../assets/Flags/AustraliaFlag.png";
 import { Link, useNavigate } from "react-router-dom";
 import useDropdownData from "../../hooks/useDropdownData";
 import { useLanguage } from "../../context/LanguageContext";
 
-function SideBar({ isMenuOpen, setIsMenuOpen }) {
-  // Initialize AOS
+const isWindows = navigator.userAgent.includes("Windows");
 
+function SideBar({ isMenuOpen, setIsMenuOpen }) {
   const navigate = useNavigate();
   const handleClose = (Link) => {
-    navigate(`${Link}`); // Correct string interpolation
+    navigate(`${Link}`);
     setIsMenuOpen(false);
   };
-  const countries = [
-    { name: "United State of America", flag: usa },
-    { name: "Germany", flag: germny },
-    { name: "United Arab Emirates", flag: Unitedarap },
-    { name: "Canada", flag: canada },
-    { name: "United Arab Emirates", flag: uae },
-    { name: "Switzerland", flag: swizrland },
-    { name: "India", flag: india },
-    { name: "Bangladesh", flag: bangladesh },
-    { name: "Nigeria", flag: nigeria },
-    { name: "New Zealand", flag: newzealand },
-    { name: "Denmark", flag: denmark },
-    { name: "Australia", flag: australia },
-  ];
 
   const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
   const { filteredData } = useDropdownData();
   const { language } = useLanguage();
-  console.log(filteredData);
 
   const handleNavigate = (name) => {
-    navigate(`/country/${name}`);
+    navigate(`/${language}/country/${name}`);
     setIsMenuOpen(false);
+  };
+
+  const renderFlag = (country) => {
+    if (isWindows) {
+      if (country?.countryCode) {
+        return (
+          <img
+            src={`https://flagcdn.com/w320/${getEmoji(
+              country?.countryCode
+            )}.png`}
+            alt="Country Flag"
+            className="w-4 h-4 object-cover rounded-full"
+          />
+        );
+      }
+    } else if (country?.countryPhotos?.countryFlag) {
+      return (
+        <span className="text-base font-medium">
+          {country.countryPhotos.countryFlag}
+        </span>
+      );
+    }
+
+    // Fallback
+    return <span className="text-[.6rem] font-medium">🏳️</span>;
   };
 
   useEffect(() => {
     AOS.init({
-      duration: 800, // Default animation duration
-      offset: 100, // Trigger animations 100px before the element is visible
-      easing: "ease-in-out", // Easing for animations
-      once: true, // Run animation only once
+      duration: 800,
+      offset: 100,
+      easing: "ease-in-out",
+      once: true,
     });
   }, []);
   return (
@@ -109,7 +107,17 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
               >
                 <ul className="flex flex-col text-start gap-2">
                   {filteredData.courses.slice(0, 10).map((item) => (
-                    <li>{item.CourseName[language]}</li>
+                    <li
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        navigate(
+                          `/${language}/courses/${item?.CourseName?.[language]}`
+                        );
+                      }}
+                    >
+                      {item.CourseName[language]}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -130,25 +138,20 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
             {openDropdown === 3 && (
               <div className="py-2 px-1 rounded">
                 <ul className="flex flex-col text-start gap-4">
-                  {countries.map((country, index) => {
+                  {filteredData.countries.slice(0, 10).map((country, index) => {
                     return (
                       <li
                         key={country.name}
+                        onClick={() =>
+                          handleNavigate(country?.countryName?.[language])
+                        }
                         className="flex items-center cursor-pointer gap-2"
                         data-aos="fade-in" // Ensure AOS fade-in animation
                         data-aos-delay={`${index * 45}`}
                       >
-                        <img
-                          className="rounded-full h-5 w-5"
-                          src={country.flag}
-                          alt={country.name}
-                        />
-                        <p
-                          onClick={() => {
-                            handleNavigate(country.name);
-                          }}
-                        >
-                          {country.name}
+                        {renderFlag(country)}
+                        <p className="text-[.6rem] font-medium">
+                          {country?.countryName?.[language]}
                         </p>
                       </li>
                     );
