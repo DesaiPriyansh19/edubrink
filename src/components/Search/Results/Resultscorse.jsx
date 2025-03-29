@@ -351,7 +351,7 @@ function ResultsCorses({
               return (
                 <div
                 key={index}
-                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[300px] lg:max-w-[300px] mx-auto rounded-xl shadow-sm bg-white ${
+                className={`relative mt-2 min-w-[290px] max-w-[290px] lg:min-w-[300px] lg:max-w-[300px]  rounded-xl shadow-sm bg-white ${
                   !isSearchResultsPath ? "min-w-[240px]" : ""
                 }`}
               >
