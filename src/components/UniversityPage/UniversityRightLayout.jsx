@@ -70,10 +70,13 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                   </div>
                   <div>
                     <p className="text-lg font-semibold text-gray-800">
-                      ${data?.lowestCourseTuitionFees} - $
-                      {data?.highestCourseTuitionFees}{" "}
+                      {data?.lowestCourseTuitionFees ===
+                      data?.highestCourseTuitionFees
+                        ? `$${data?.highestCourseTuitionFees}${" "}`
+                        : `$${data?.lowestCourseTuitionFees} - $${data?.highestCourseTuitionFees}`}
                       {t("UniversitySlugPage.PerYear")}
                     </p>
+
                     <p className="text-sm text-gray-600">
                       {t("UniversitySlugPage.InterFees")}
                     </p>

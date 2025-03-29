@@ -10,6 +10,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import { useSearch } from "../../../context/SearchContext";
 import { useNavigate } from "react-router-dom";
 import { getEmoji } from "../../../libs/countryFlags";
+import ReactGA from "react-ga4";
 
 const isWindows = navigator.userAgent.includes("Windows");
 
@@ -26,6 +27,24 @@ const CountryPopularUniversity = ({ data }) => {
         : [selectedValue],
     }));
     navigate(`/${language}/searchresults/university`);
+  };
+
+  const handleApplyClick = (uniName, countryName) => {
+    const uniLabel =
+      language === "ar" ? uniName?.ar : uniName?.en || "Unknown University";
+    const countryLabel =
+      language === "ar"
+        ? countryName?.ar
+        : countryName?.en || "Unknown Country";
+
+    // Track event using ReactGA
+    ReactGA.event({
+      category: "University Application",
+      action: "Apply Click",
+      label: uniLabel, // University name in the correct language
+      university_name: uniLabel,
+      country_name: countryLabel,
+    });
   };
 
   const handleNavigation = (apply, id, category, slug) => {
@@ -211,14 +230,18 @@ const CountryPopularUniversity = ({ data }) => {
 
                   <div className="grid gap-6 px-3 grid-cols-2 mb-6 mt-4">
                     <button
-                      onClick={() =>
+                      onClick={() => {
+                        handleApplyClick(
+                          university?.uniName,
+                          data?.countryName
+                        );
                         handleNavigation(
                           true,
                           university?._id,
                           "University",
                           university?.customURLSlug?.en
-                        )
-                      }
+                        );
+                      }}
                       className="bg-slateBlue text-white text-sm py-2 px-3 rounded-full"
                     >
                       {t("applyNow")}
