@@ -112,15 +112,15 @@ const FaqDropDown = ({ faqData = null, blog = null }) => {
         </p>
       </div>
 
-      <div className="w-full rounded-3xl mb-16 mx-auto shadow-sm">
-        <div className="space-y-4 bg-white rounded-lg">
+      <div className="w-full rounded-3xl mb-16 mx-auto ">
+        <div className="space-y-4  rounded-lg">
           {processedFaqItems.map((item) => (
             <div
               key={item.id}
-              className={`p-4 rounded-lg   ${
+              className={`p-4 rounded-lg bg-slate-50  ${
                 openQuestion === item.id
-                  ? "shadow-md bg-gradient-to-r from-gray-100 to-gray-50"
-                  : ""
+                  ? "bg-slate-50 "
+                  : " bg-slate-10"
               }`}
              
             >

@@ -53,7 +53,7 @@ const Footer = () => {
               className="w-full h-12 pl-4 pr-12 rounded-full bg-[#F8F8F8] text-black placeholder:text-black"
             />
             <button
-              className="absolute right-1 top-1 w-10 h-10 flex items-center justify-center bg-gradient-to-r from-[#380C95] to-[#E15754] rounded-full shadow-md hover:scale-105 transition-transform"
+              className="absolute right-1 top-1 w-10 h-10 flex items-center justify-center bg-gradient-to-r bg-[#3A3D8D] rounded-full shadow-md hover:scale-105 transition-transform"
               aria-label="Submit"
             >
               <span className="text-white text-xl">
