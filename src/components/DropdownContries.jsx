@@ -32,7 +32,6 @@ const DropdownCountries = forwardRef(
       setShowCountriesDropdown(false);
     };
 
-    console.log(data);
 
     // Helper function to render flag
     const renderFlag = (country) => {
