@@ -462,33 +462,51 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             {t("budget", "Budget")}
           </div>
           <p className="font-medium mb-2">{t("feeRange", "Fee Range")}</p>
-          <div className="range-inputs">
-            <input
-              type="number"
-              value={tempFilterProp.minBudget}
-              onChange={(e) => {
-                const newValue = Math.min(
-                  Number(e.target.value),
-                  tempFilterProp.maxBudget - 1
-                );
-                setTempFilterProp((prev) => ({ ...prev, minBudget: newValue }));
-              }}
-              min={sliderMin}
-              max={sliderMax}
-            />
-            <input
-              type="number"
-              value={tempFilterProp.maxBudget}
-              onChange={(e) => {
-                const newValue = Math.max(
-                  Number(e.target.value),
-                  tempFilterProp.minBudget + 1
-                );
-                setTempFilterProp((prev) => ({ ...prev, maxBudget: newValue }));
-              }}
-              min={sliderMin}
-              max={sliderMax}
-            />
+          <div className="range-inputs flex items-center gap-2">
+            <div className="relative flex items-center w-full">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium">
+                $
+              </div>
+              <input
+                type="number"
+                value={tempFilterProp.minBudget}
+                onChange={(e) => {
+                  const newValue = Math.min(
+                    Number(e.target.value),
+                    tempFilterProp.maxBudget - 1
+                  );
+                  setTempFilterProp((prev) => ({
+                    ...prev,
+                    minBudget: newValue,
+                  }));
+                }}
+                min={sliderMin}
+                max={sliderMax}
+                className="pl-8 w-full py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div className="relative flex items-center w-full">
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium">
+                $
+              </div>
+              <input
+                type="number"
+                value={tempFilterProp.maxBudget}
+                onChange={(e) => {
+                  const newValue = Math.max(
+                    Number(e.target.value),
+                    tempFilterProp.minBudget + 1
+                  );
+                  setTempFilterProp((prev) => ({
+                    ...prev,
+                    maxBudget: newValue,
+                  }));
+                }}
+                min={sliderMin}
+                max={sliderMax}
+                className="pl-8 w-full py-2 border border-gray-300 rounded-md"
+              />
+            </div>
           </div>
 
           {/* React Slider (Range) */}
