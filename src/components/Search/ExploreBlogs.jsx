@@ -176,9 +176,9 @@ function ExploreBlogs({ language }) {
   }
 
   // Show full page loader for initial loading
-  if (initialLoading) {
-    return <BouncingBarsLoader type="gradient" message={t("Loading Blogs...")} />
-  }
+  // if (initialLoading) {
+  //   return <BouncingBarsLoader type="gradient" message={t("Loading Blogs...")} />
+  // }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -192,6 +192,32 @@ function ExploreBlogs({ language }) {
 
       {/* Dynamic Buttons */}
       <h3 className="text-4xl font-semibold mb-11">{t("recentBlog.title")}</h3>
+      {initialLoading
+   ? // Show skeletons while loading
+    
+    
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 py-6">
+   {Array.from({ length: 8 }).map((_, idx) => (
+     <div key={idx} className="blog-card">
+       {/* Skeleton for Image */}
+       <div className="h-[160px] w-full bg-gray-200 rounded-t-2xl"></div>
+
+       {/* Skeleton for 'Study in <Country Name>' Text */}
+       <div className="h-4 w-32 bg-gray-200 rounded mt-4"></div>
+
+       {/* Skeleton for Blog Title */}
+       <div className="h-6 w-3/4 bg-gray-200 rounded mt-2"></div>
+
+       {/* Skeleton for Date and Calendar */}
+       <div className="flex items-center mt-2 pb-8">
+         <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
+         <div className="h-4 w-24 bg-gray-200 rounded ml-2"></div>
+       </div>
+     </div>
+   ))}
+ </div>
+      :(
+
       <div dir={language === "ar" ? "rtl" : "ltr"} className="grid mx-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-16">
         {/* Blog Cards */}
         {blogs?.map((blog, idx) => (
@@ -236,7 +262,7 @@ function ExploreBlogs({ language }) {
 
         {/* Loading reference element - this is what the IntersectionObserver watches */}
         {hasNextPage && !loading && <div ref={loadingRef} className="h-20 w-full col-span-1 lg:col-span-3" />}
-      </div>
+      </div>)}
 
       {hasNextPage && !loading && (
         <div className="flex justify-center mt-8">

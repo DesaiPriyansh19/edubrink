@@ -284,7 +284,7 @@ function SearchResults() {
       <div className="relative p-4 px-5 sm:px-9 lg:px-16">
         {/* Buttons */}
         <div className="flex items-center sm:mb-16 md:mb-20  text-sm justify-between overflow-x-auto whitespace-nowrap no-scrollbar">
-          <div className="flex space-x-4">
+          <div className="flex space-x-0 md:space-x-4">
             <Link to={`/${language}/searchresults`}>
               <button
                 className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${

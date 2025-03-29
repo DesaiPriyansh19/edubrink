@@ -185,9 +185,9 @@ function ExploreTopCorse({ language }) {
   }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchCourses])
 
   // Show full page loader for initial loading
-  if (initialLoading) {
-    return <BouncingBarsLoader type="gradient" message={t("Loading courses...")} />
-  }
+  // if (initialLoading) {
+  //   return <BouncingBarsLoader type="gradient" message={t("Loading courses...")} />
+  // }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -202,7 +202,47 @@ function ExploreTopCorse({ language }) {
       {/* Dynamic Buttons */}
       <h3 className="text-4xl font-semibold mb-11">{t("explore_courses.popular_courses")}</h3>
 
-      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 gap-2 lg:gap-4 max-w-[1120px]">
+      {initialLoading
+   ? // Show skeletons while loading
+    
+    
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 xl:gap-8">
+     {Array.from({ length: 6 }).map((_, idx) => (
+          <div
+          key={idx}
+          className="relative mt-2 px-4 rounded-xl shadow-sm bg-white "
+        >
+          <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
+            <div className="flex gap-2 items-center mt-3 mb-3">
+              <div className="w-14 h-14 bg-gray-300 rounded-full"></div>
+              <div className="flex flex-col gap-1 mx-auto">
+                <div className="w-24 h-4 bg-gray-300 rounded-md"></div>
+                <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+                <div className="w-12 h-3 bg-gray-300 rounded-md"></div>
+              </div>
+            </div>
+        
+            <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-center gap-1">
+                  <span className="rounded-full w-7 h-7 bg-gray-300"></span>
+                  <div>
+                    <div className="w-8 h-3 bg-gray-300 rounded-md"></div>
+                    <div className="w-8 h-3 bg-gray-300 rounded-md mt-1"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-3 px-2 grid-cols-2 mb-3 mt-2">
+            <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+            <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+          </div>
+        </div>
+     ))}
+   </div>
+      :(
+      <div dir={language === "ar" ? "rtl" : "ltr"} className="grid grid-cols-1 sm:grid-cols-2 mx-auto lg:grid-cols-3 xl:grid-cols-4 gap-2 lg:gap-4 max-w-[1120px] xl:max-w-[1500px]">
         {courses.length > 0 &&
           courses.map((course, index) => {
             const dynamicFeatures = [
@@ -319,7 +359,7 @@ function ExploreTopCorse({ language }) {
         {/* Loading reference element - this is what the IntersectionObserver watches */}
         {hasNextPage && !loading && <div ref={loadingRef} className="h-20 w-full col-span-1 sm:col-span-2" />}
       </div>
-
+      )}
       {/* Load more button (optional alternative to infinite scroll) */}
       {hasNextPage && !loading && (
         <div className="flex justify-center mt-8">

@@ -226,14 +226,67 @@ function ExploreTopUniversity({ language }) {
   }, [fetchTrigger, loading, hasNextPage, initialFetch, fetchUniversities]);
 
   // Show full page loader for initial loading
-  if (initialLoading) {
-    return (
-      <BouncingBarsLoader
-        type="gradient"
-        message={t("Loading Universities...")}
-      />
-    );
-  }
+  // if (initialLoading) {
+  //   return (
+  //     <div
+  //     className={
+       
+  //          "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+         
+  //     }
+  //   >
+  //     {Array.from({ length: 6 }).map((_, index) => (
+  //      <div
+  //      key={index}
+  //      className="relative mt-3 border px-2 py-1  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
+  //    >
+  //      <div className="p-2 sm:p-3">
+  //        {/* Badge */}
+  //        <div
+  //                 className={`absolute top-0 ${
+  //                   language === "ar" ? "left-0 " : "right-0 "
+  //                 } bg-red-500 text-white rounded-tr-[8px] rounded-bl-[5px] text-[8px] px-4 py-2`}
+  //               >
+  //                 {t("mostPopular")}
+  //               </div>
+     
+  //        {/* Profile Section */}
+  //        <div className="flex gap-2 items-center mb-3">
+  //          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full"></div>
+  //          <div className="flex-1">
+  //            <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+  //            <div className="w-16 h-2.5 bg-gray-300 rounded-md mt-1"></div>
+  //          </div>
+  //        </div>
+     
+  //        {/* Small Icons Section */}
+  //        <div className="flex flex-wrap gap-2 justify-start">
+  //          {Array.from({ length: 3 }).map((_, index) => (
+  //            <div key={index} className="flex items-center gap-1">
+  //              <div className="rounded-full w-6 h-6 bg-gray-300"></div>
+  //              <div>
+  //                <div className="w-14 h-2.5 bg-gray-300 rounded-md"></div>
+  //                <div className="w-10 h-2 bg-gray-300 rounded-md mt-1"></div>
+  //              </div>
+  //            </div>
+  //          ))}
+  //        </div>
+  //      </div>
+     
+  //      {/* Divider */}
+  //      <div className="w-full h-[1px] bg-gray-300"></div>
+     
+  //      {/* Buttons */}
+  //      <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
+  //        <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+  //        <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+  //      </div>
+  //    </div>
+     
+  //     ))}
+  //   </div>
+  //   );
+  // }
 
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="p-4">
@@ -251,7 +304,36 @@ function ExploreTopUniversity({ language }) {
       <h3 className="text-4xl font-semibold mb-11">
         {t("explore_university.top_university")}
       </h3>
+      {initialLoading
+    ? // Show skeletons while loading
+    
+    
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 xl:gap-8">
+  {Array.from({ length: 6 }).map((_, idx) => (
+    <div
+      key={idx}
+      className="relative mt-3 rounded-xl bg-white lg:min-w-[290px] p-4 "
+    >
+      <div className="w-12 h-12 bg-gray-300 rounded-full mb-3"></div>
+      <div className="w-32 h-4 bg-gray-300 rounded-md mb-2"></div>
+      <div className="w-24 h-3 bg-gray-300 rounded-md mb-3"></div>
+      <div className="flex gap-2">
+        <div className="w-16 h-3 bg-gray-300 rounded-md"></div>
+        <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+      </div>
+      <div className="w-full h-[1px] bg-gray-300 my-3"></div>
+      <div className="grid gap-2 grid-cols-2">
+        <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+        <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+      </div>
+    </div>
+  ))}
+</div>
 
+    : // Show actual universities when loaded
+    (
+     <>  
+   
       <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4  gap-4 xl:gap-8">
         {universities.length > 0 &&
           universities.map((university, idx) => {
@@ -422,7 +504,8 @@ function ExploreTopUniversity({ language }) {
           />
         )}
       </div>
-
+      </>
+    )}
       {/* Load more button (optional alternative to infinite scroll) */}
       {hasNextPage && !loading && (
         <div className="flex justify-center mt-8">
