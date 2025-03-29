@@ -33,7 +33,7 @@ function CountryBlogs({ data }) {
           </h1>
           <button
             onClick={() => handleViewAll(data?.countryName?.en)}
-            className={`bg-white flex  whitespace-nowrap  justify-center items-center shadow-sm hover:shadow-xl text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+            className={` flex  whitespace-nowrap  justify-center items-center   text-black text-sm font-normal py-2 px-6 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}
 
