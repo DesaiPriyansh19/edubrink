@@ -6,6 +6,7 @@ import "aos/dist/aos.css";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
+import { getEmoji } from "../../libs/countryFlags";
 
 const isWindows = navigator.userAgent.includes("Windows");
 
@@ -31,13 +32,16 @@ const DropdownCountries = forwardRef(
       setShowCountriesDropdown(false);
     };
 
+
     // Helper function to render flag
     const renderFlag = (country) => {
       if (isWindows) {
         if (country?.countryCode) {
           return (
             <img
-              src={`https://flagcdn.com/w320/${country.countryCode.toLowerCase()}.png`}
+              src={`https://flagcdn.com/w320/${getEmoji(
+                country?.countryCode
+              )}.png`}
               alt="Country Flag"
               className="w-4 h-4 object-cover rounded-full"
             />
