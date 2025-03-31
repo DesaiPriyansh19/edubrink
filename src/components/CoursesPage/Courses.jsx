@@ -21,6 +21,7 @@ import {
   Globe,
   School,
   BadgeIcon as Certificate,
+  ArrowRight,
 } from "lucide-react";
 import useFetch from "../../../hooks/useFetch";
 import ShareCard from "../../../utils/ShareCard";
@@ -28,6 +29,9 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../../context/LanguageContext";
 import FaqDropDown from "../../../utils/FaqDropDown";
 import CourseSkeleton from "./CourseSkeleton";
+import LanguageLogo from "../../../svg/LanguageLogo";
+import DollerRounded from "../../../svg/DollerRounded/Index";
+import Master from "../../../svg/AboutStudent/Master";
 
 const CoursePage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -45,12 +49,11 @@ const CoursePage = () => {
 
   const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
   const apiUrl = isObjectId
-    ? `https://edu-brink-backend.vercel.app/api/course/${id}`
-    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
-        id
-      )}`;
+    ? `http://localhost:4000/api/course/${id}`
+    : `http://localhost:4000/api/course/name/${encodeURIComponent(id)}`;
 
   const { data, loading } = useFetch(apiUrl);
+  console.log(data?.university?.courseId);
   const navigate = useNavigate();
 
   // Update document head for SEO
@@ -157,6 +160,15 @@ const CoursePage = () => {
     }
   }, [data, loading, language]);
 
+  const formatLanguages = (languages) => {
+    if (!languages || !Array.isArray(languages) || languages.length === 0)
+      return "English";
+    if (languages.length === 1) return languages[0];
+
+    // Show first language + count of additional languages
+    return `${languages[0]} +${languages.length - 1}`;
+  };
+
   // Helper function to update or create meta tags
   const updateMetaTag = (property, content) => {
     let metaTag = document.querySelector(`meta[property="${property}"]`);
@@ -200,10 +212,9 @@ const CoursePage = () => {
         gradient: "from-teal-600 to-teal-400", // Using Tailwind classes for gradient
       };
 
-  if (!data){
-    return (
-    <CourseSkeleton/>
-    );}
+  if (!data) {
+    return <CourseSkeleton />;
+  }
 
   return (
     <div className=" min-h-screen font-sans">
@@ -224,7 +235,7 @@ const CoursePage = () => {
       )}
 
       {/* Breadcrumb Navigation */}
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div
           className="flex items-center text-sm text-gray-600 mb-6"
@@ -436,42 +447,7 @@ const CoursePage = () => {
             </div>
 
             <FaqDropDown faqData={data?.faq} />
-
-            {/* Career Prospects - Only for non-university courses */}
-            {/* {!isUniversityCourse && (
-              <div
-                className="bg-white rounded-xl shadow-sm p-6 mt-8"
-                data-aos="fade-up"
-                data-aos-delay="450"
-              >
-                <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                  <Briefcase className="w-5 h-5 mr-2 text-teal-600" />
-                  {t("CourseSlugPage.CareerProspects")}
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {data?.CareerProspects?.[language]?.length > 0 ? (
-                    data.CareerProspects?.[language].map((career, index) => (
-                      <div
-                        key={index}
-                        className="bg-teal-50 p-4 rounded-lg flex items-start gap-3 border border-teal-100"
-                        data-aos="fade-up"
-                        data-aos-delay={450 + index * 50}
-                      >
-                        <Award className="w-5 h-5 flex-shrink-0 mt-1 text-teal-600" />
-                        <span className="font-medium text-gray-700">
-                          {career}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      Career information not available.
-                    </p>
-                  )}
-                </div>
-              </div>
-            )} */}
+            <div></div>
           </div>
 
           {/* Course Details Card - 1/3 width on desktop */}
@@ -513,7 +489,7 @@ const CoursePage = () => {
                   </div>
                   <div>
                     <p className="text-[1rem] font-medium ">
-                      {data?.CourseDuration  || "N/A"} year
+                      {data?.CourseDuration || "N/A"} year
                     </p>
                     <p className="text-sm ">
                       {t("UniversitySlugPage.Duration")}
@@ -624,9 +600,7 @@ const CoursePage = () => {
                 {/* Apply Button */}
                 <button
                   className={`w-full mt-4 bg-gradient-to-r ${
-                    isUniversityCourse
-                      ? "bg-[#3A3D8D]"
-                      : "bg-[#3A3D8D]"
+                    isUniversityCourse ? "bg-[#3A3D8D]" : "bg-[#3A3D8D]"
                   } text-white py-2 text-sm rounded-full font-semibold hover:shadow-lg transition-all`}
                   onClick={() => {
                     handleApplyNow(data?._id, "course");
@@ -645,9 +619,7 @@ const CoursePage = () => {
             >
               <div
                 className={`inline-flex ${
-                  isUniversityCourse
-                    ? "bg-[#F8F8F8] "
-                    : "bg-[#F8F8F8] "
+                  isUniversityCourse ? "bg-[#F8F8F8] " : "bg-[#F8F8F8] "
                 } font-medium px-4 py-1.5 rounded-full mb-4`}
               >
                 {t("UniversitySlugPage.CounsellorTitle")}
@@ -674,9 +646,7 @@ const CoursePage = () => {
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <button
                   className={`bg-gradient-to-r ${
-                    isUniversityCourse
-                      ? "bg-[#3A3D8D]"
-                      : ""
+                    isUniversityCourse ? "bg-[#3A3D8D]" : ""
                   } text-white text-sm py-2.5 rounded-full font-medium hover:shadow-md transition-all`}
                 >
                   {t("UniversitySlugPage.CallNow")}
@@ -698,6 +668,243 @@ const CoursePage = () => {
         contentType={"course"}
         contentUrl={courseUrl}
       />
+
+      {data?.university?.courseId?.length > 0 && (
+        <div className="max-w-[1200px] mx-auto">
+          <div>
+            <div
+              dir={language === "ar" ? "rtl" : "ltr"}
+              className="flex items-center justify-between mt-6 mb-4"
+            >
+              <div className="">
+                <h1 className="text-2xl sm:text-4xl font-semibold">
+                  📚 {t("ourCourseSection.title")}
+                </h1>
+                <p className="text-sm mt-3 max-w-xl font-medium">
+                  {t("ourCourseSection.description")}
+                </p>
+              </div>
+              <Link to={`/${language}/searchresults/Allcorse`}>
+                <div
+                  className={`w-full flex mt-4 ${
+                    language === "ar" ? "justify-start" : "justify-end"
+                  } items-center px-4`}
+                >
+                  <div
+                    className={`w-full flex mt-4 ${
+                      language === "ar" ? "justify-start" : "justify-end"
+                    } items-center px-4`}
+                  >
+                    <button
+                      className={`hidden md:flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+                    >
+                      {t("viewAll")}
+
+                      <ArrowRight
+                        className={`inline-block ml-2 ${
+                          language === "ar"
+                            ? "rotate-180 group-hover:-translate-x-1"
+                            : "rotate-0 group-hover:translate-x-1"
+                        } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
+          <div
+            dir={language === "ar" ? "rtl" : "ltr"}
+            className={`flex overflow-x-scroll scrollbar-hide col-span-3 flex-col gap-4 sm:flex-row
+           }`}
+          >
+            {loading && data?.university?.courseId?.length === 0
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  //  Skeleton loader
+                  <div
+                    key={index}
+                    className="relative mt-2 px-4 rounded-xl shadow-sm bg-white "
+                  >
+                    <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
+                      <div className="flex gap-2 items-center mt-3 mb-3">
+                        <div className="w-14 h-14 bg-gray-300 rounded-full"></div>
+                        <div className="flex flex-col gap-1 mx-auto">
+                          <div className="w-24 h-4 bg-gray-300 rounded-md"></div>
+                          <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+                          <div className="w-12 h-3 bg-gray-300 rounded-md"></div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-4">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center justify-center gap-1"
+                          >
+                            <span className="rounded-full w-7 h-7 bg-gray-300"></span>
+                            <div>
+                              <div className="w-8 h-3 bg-gray-300 rounded-md"></div>
+                              <div className="w-8 h-3 bg-gray-300 rounded-md mt-1"></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid gap-3 px-2 grid-cols-2 mb-3 mt-2">
+                      <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+                      <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+                    </div>
+                  </div>
+                ))
+              : data?.university?.courseId?.map((university, index) => {
+                  const dynamicFeatures = [
+                    {
+                      icon: <DollerRounded />,
+                      title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
+                      description: university?.CourseFees || "N/A",
+                    },
+                    {
+                      icon: <LanguageLogo />,
+                      title: language === "ar" ? "اللغة" : "Language",
+                      description: formatLanguages(
+                        Array.isArray(university?.Languages)
+                          ? university?.Languages
+                          : []
+                      ),
+                    },
+                    {
+                      icon: <DollerRounded />,
+                      title: language === "ar" ? "الموعد النهائي" : "Deadline",
+                      description: university?.DeadLine
+                        ? new Date(university?.DeadLine).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            }
+                          )
+                        : "N/A",
+                    },
+                  ];
+
+                  return (
+                    <div
+                      key={index}
+                      className={`relative mt-2  rounded-xl shadow-sm bg-white `}
+                    >
+                      <div
+                        className={`px-2 ${
+                          language === "ar"
+                            ? "pl-2 sm:pl-4 md:pl-5 lg:pl-10"
+                            : "pr-2 sm:pr-4 md:pr-5 lg:pr-10"
+                        } p-2`}
+                      >
+                        <div className="flex gap-2 items-center mt-3 sm:mt-2 mb-3">
+                          <div className="w-14 h-14">
+                            <img
+                              src={
+                                data.university.uniSymbol ||
+                                "https://placehold.co/56x56"
+                              }
+                              alt="College Logo"
+                              className="w-full h-full rounded-full"
+                            />
+                          </div>
+                          <div className="pl-3">
+                            <h1 className="text-[16px] font-semibold flex items-center">
+                              {(() => {
+                                const courseName =
+                                  language === "ar"
+                                    ? university?.CourseName?.ar
+                                    : university?.CourseName?.en || "N/A";
+
+                                return courseName.length > 17
+                                  ? courseName.slice(0, 17) + "..."
+                                  : courseName;
+                              })()}
+                            </h1>
+
+                            <p className="text-[10px] font-medium text-black flex items-center mt-1">
+                              {(() => {
+                                const universityName =
+                                  language === "ar"
+                                    ? data?.university?.uniName?.ar
+                                    : data?.university?.uniName?.en || "N/A";
+
+                                return universityName.length > 30
+                                  ? universityName.slice(0, 30) + "..."
+                                  : universityName;
+                              })()}
+                            </p>
+                            <div className="flex items-center mt-1">
+                              <span className="w-3.5 h-3.5 rounded-full mr-1">
+                                <Master />
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-0 pl-2">
+                          {dynamicFeatures?.flat()?.map((feature, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-center"
+                            >
+                              <span className="rounded-full w-6 h-6 flex items-center justify-center border">
+                                {feature.icon}
+                              </span>
+                              <div className="ml-1">
+                                <p className="text-[9px] font-medium whitespace-nowrap">
+                                  {feature.title}
+                                </p>
+                                <p className="text-[9px] font-medium whitespace-nowrap">
+                                  {feature.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="w-full px-2 mb-2 mt-2">
+                        <button
+                          onClick={() => {
+                            navigate(
+                              `/${language}/courses/${university?.customURLSlug?.en}`
+                            );
+                          }}
+                          className="text-white w-full bg-slateBlue text-[10px] px-2 py-2 hover:font-medium rounded-full border border-gray-700"
+                        >
+                          {t("learnMore")}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+            <div
+              className={`w-full flex mt-4 ${
+                language === "ar" ? "justify-start" : "justify-end"
+              } items-center px-4`}
+            >
+              <button
+                className={`md:hidden flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+              >
+                {t("viewAll")}
+
+                <ArrowRight
+                  className={`inline-block ml-2 ${
+                    language === "ar"
+                      ? "rotate-180 group-hover:-translate-x-1"
+                      : "rotate-0 group-hover:translate-x-1"
+                  } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

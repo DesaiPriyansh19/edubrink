@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import {
   Plus,
   Search,
@@ -9,396 +9,409 @@ import {
   Users,
   Clock,
   Bookmark,
-  Loader2,
   ChevronLeft,
   ChevronRight,
   Building2,
   Filter,
   SortAsc,
-} from "lucide-react";
-import { useLanguage } from "../../../../context/LanguageContext";
-import axios from "axios";
-import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup";
+  CircleDollarSign,
+} from "lucide-react"
+import { useLanguage } from "../../../../context/LanguageContext"
+import axios from "axios"
+import DeleteConfirmationPopup from "../../../../utils/DeleteConfirmationPopup"
 
 export default function CourseCRUD() {
-  const { language } = useLanguage();
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
-  const [courseToDelete, setCourseToDelete] = useState(null);
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
-  const [isSearching, setIsSearching] = useState(false);
+  const { language } = useLanguage()
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false)
+  const [courseToDelete, setCourseToDelete] = useState(null)
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
+  const [isSearching, setIsSearching] = useState(false)
+
+  // Add search mode toggle state
+  const [searchMode, setSearchMode] = useState("duration") // "duration" or "fees"
 
   // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalItems, setTotalItems] = useState(0)
 
   // Data states
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [courses, setCourses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [stats, setStats] = useState({
     totalCourses: 0,
     scholarshipCourses: 0,
     popularCourses: 0,
-  });
+  })
 
   // Add these state variables after the other state declarations
-  const [sortBy, setSortBy] = useState("name");
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortBy, setSortBy] = useState("name")
+  const [sortDirection, setSortDirection] = useState("asc")
 
   // Add these state variables after the other state declarations
   const [activeFilters, setActiveFilters] = useState({
     mostPopular: false,
     scholarships: false,
     discount: false,
-  });
+  })
 
   // Add these state variables after the other state declarations
-  const [showDurationSuggestions, setShowDurationSuggestions] = useState(false);
-  const [durationValue, setDurationValue] = useState("");
-  const durationUnits = ["Years", "Months", "Weeks"];
+  const [showDurationSuggestions, setShowDurationSuggestions] = useState(false)
+  const [durationValue, setDurationValue] = useState("")
+  const durationUnits = ["Years", "Months", "Weeks"]
 
   // Add these state variables for keyboard navigation
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0)
+
+  // Toggle search mode function
+  const toggleSearchMode = () => {
+    setSearchMode((prev) => (prev === "duration" ? "fees" : "duration"))
+    setShowDurationSuggestions(false)
+  }
 
   // Debounce search input
   useEffect(() => {
-    setIsSearching(true);
+    setIsSearching(true)
     const handler = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 500); // 500ms delay
+      setDebouncedSearch(searchQuery)
+    }, 500) // 500ms delay
 
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
+    return () => clearTimeout(handler)
+  }, [searchQuery])
 
   // Modify the handleSearchInput function to detect partial duration unit matches
   const handleSearchInput = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
+    const value = e.target.value
+    setSearchQuery(value)
 
-    // Check if the input contains a number followed by text (potentially a partial duration unit)
-    const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/;
-    const durationMatch = value.match(durationPattern);
+    if (searchMode === "duration") {
+      // Check if the input contains a number followed by text (potentially a partial duration unit)
+      const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/
+      const durationMatch = value.match(durationPattern)
 
-    if (durationMatch) {
-      // Extract the number and partial unit text
-      const number = durationMatch[1];
-      const partialUnit = durationMatch[3].toLowerCase();
+      if (durationMatch) {
+        // Extract the number and partial unit text
+        const number = durationMatch[1]
+        const partialUnit = durationMatch[3].toLowerCase()
 
-      // Find matching duration units
-      const matchingUnits = durationUnits.filter((unit) =>
-        unit.toLowerCase().startsWith(partialUnit)
-      );
+        // Find matching duration units
+        const matchingUnits = durationUnits.filter((unit) => unit.toLowerCase().startsWith(partialUnit))
 
-      if (matchingUnits.length > 0) {
-        setDurationValue(number);
-        setShowDurationSuggestions(true);
-        return;
+        if (matchingUnits.length > 0) {
+          setDurationValue(number)
+          setShowDurationSuggestions(true)
+          return
+        }
+      }
+
+      // Check for just a number (original logic)
+      const containsNumber = /\d+(\.\d+)?/.test(value)
+      const lastWord = value.split(" ").pop()
+
+      // If the last word is a number (including decimals), show duration suggestions
+      if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
+        setDurationValue(lastWord)
+        setShowDurationSuggestions(true)
+      } else {
+        setShowDurationSuggestions(false)
+      }
+    } else if (searchMode === "fees") {
+      // Check for just a number for fees
+      const containsNumber = /\d+(\.\d+)?/.test(value)
+      const lastWord = value.split(" ").pop()
+
+      // If the last word is a number (including decimals), use it directly for fees search
+      if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
+        // Use the number directly
+        setSearchQuery(lastWord)
       }
     }
 
-    // Check for just a number (original logic)
-    const containsNumber = /\d+(\.\d+)?/.test(value);
-    const lastWord = value.split(" ").pop();
-
-    // If the last word is a number (including decimals), show duration suggestions
-    if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
-      setDurationValue(lastWord);
-      setShowDurationSuggestions(true);
-    } else {
-      setShowDurationSuggestions(false);
-    }
-
     // Reset selected index when input changes
-    setSelectedSuggestionIndex(0);
-  };
+    setSelectedSuggestionIndex(0)
+  }
 
   // Add a keyboard event handler for the search input
   const handleSearchKeyDown = (e) => {
-    if (!showDurationSuggestions) return;
+    if (!showDurationSuggestions || searchMode !== "duration") return
 
     switch (e.key) {
       case "ArrowDown":
-        e.preventDefault();
-        setSelectedSuggestionIndex((prev) =>
-          prev < durationUnits.length - 1 ? prev + 1 : prev
-        );
-        break;
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) => (prev < durationUnits.length - 1 ? prev + 1 : prev))
+        break
       case "ArrowUp":
-        e.preventDefault();
-        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        break;
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0))
+        break
       case "Enter":
-        e.preventDefault();
-        if (
-          selectedSuggestionIndex >= 0 &&
-          selectedSuggestionIndex < durationUnits.length
-        ) {
-          selectDurationUnit(durationUnits[selectedSuggestionIndex]);
+        e.preventDefault()
+        if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < durationUnits.length) {
+          selectDurationUnit(durationUnits[selectedSuggestionIndex])
         }
-        break;
+        break
       case "Escape":
-        e.preventDefault();
-        setShowDurationSuggestions(false);
-        break;
+        e.preventDefault()
+        setShowDurationSuggestions(false)
+        break
     }
-  };
+  }
 
   // Add a function to handle selecting a duration unit
   const selectDurationUnit = (unit) => {
     // Check if the search query already contains a number pattern
-    const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)?/;
-    const match = searchQuery.match(durationPattern);
+    const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)?/
+    const match = searchQuery.match(durationPattern)
 
     if (match) {
       // If there's already a number pattern, replace it with the complete duration
-      const newSearchQuery = searchQuery.replace(
-        durationPattern,
-        `${durationValue} ${unit}`
-      );
-      setSearchQuery(newSearchQuery);
+      const newSearchQuery = searchQuery.replace(durationPattern, `${durationValue} ${unit}`)
+      setSearchQuery(newSearchQuery)
     } else {
       // If there's no existing pattern, just set the duration as the search query
-      setSearchQuery(`${durationValue} ${unit}`);
+      setSearchQuery(`${durationValue} ${unit}`)
     }
 
-    setShowDurationSuggestions(false);
-  };
+    setShowDurationSuggestions(false)
+  }
 
   // Modify the fetchCourses function to include the filter parameters
   const fetchCourses = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       // Build query parameters including filters
-      let queryParams = `page=${currentPage}&limit=${itemsPerPage}`;
+      let queryParams = `page=${currentPage}&limit=${itemsPerPage}`
       if (debouncedSearch) {
-        // Check if the search includes a duration pattern (e.g., "3 Years" or partial like "3 Yea")
-        const fullDurationMatch = debouncedSearch.match(
-          /(\d+(\.\d+)?)\s+(Years|Months|Weeks)/i
-        );
-        const partialDurationMatch = debouncedSearch.match(
-          /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/i
-        );
+        if (searchMode === "duration") {
+          // Check if the search includes a duration pattern (e.g., "3 Years" or partial like "3 Yea")
+          const fullDurationMatch = debouncedSearch.match(/(\d+(\.\d+)?)\s+(Years|Months|Weeks)/i)
+          const partialDurationMatch = debouncedSearch.match(/(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/i)
 
-        if (fullDurationMatch) {
-          const [fullMatch, duration, _, unit] = fullDurationMatch;
-          // Add duration parameters to the query
-          queryParams += `&duration=${duration}&durationUnit=${unit}`;
-
-          // Also include the rest of the search term without the duration part
-          const remainingSearch = debouncedSearch.replace(fullMatch, "").trim();
-          if (remainingSearch) {
-            queryParams += `&search=${remainingSearch}`;
-          }
-        } else if (partialDurationMatch) {
-          const [fullMatch, duration, _, partialUnit] = partialDurationMatch;
-
-          // Find the matching duration unit
-          const matchingUnit = durationUnits.find((unit) =>
-            unit.toLowerCase().startsWith(partialUnit.toLowerCase())
-          );
-
-          if (matchingUnit) {
+          if (fullDurationMatch) {
+            const [fullMatch, duration, _, unit] = fullDurationMatch
             // Add duration parameters to the query
-            queryParams += `&duration=${duration}&durationUnit=${matchingUnit}`;
+            queryParams += `&duration=${duration}&durationUnit=${unit}`
 
             // Also include the rest of the search term without the duration part
-            const remainingSearch = debouncedSearch
-              .replace(fullMatch, "")
-              .trim();
+            const remainingSearch = debouncedSearch.replace(fullMatch, "").trim()
             if (remainingSearch) {
-              queryParams += `&search=${remainingSearch}`;
+              queryParams += `&search=${remainingSearch}`
+            }
+          } else if (partialDurationMatch) {
+            const [fullMatch, duration, _, partialUnit] = partialDurationMatch
+
+            // Find the matching duration unit
+            const matchingUnit = durationUnits.find((unit) => unit.toLowerCase().startsWith(partialUnit.toLowerCase()))
+
+            if (matchingUnit) {
+              // Add duration parameters to the query
+              queryParams += `&duration=${duration}&durationUnit=${matchingUnit}`
+
+              // Also include the rest of the search term without the duration part
+              const remainingSearch = debouncedSearch.replace(fullMatch, "").trim()
+              if (remainingSearch) {
+                queryParams += `&search=${remainingSearch}`
+              }
+            } else {
+              // Regular search without duration
+              queryParams += `&search=${debouncedSearch}`
             }
           } else {
             // Regular search without duration
-            queryParams += `&search=${debouncedSearch}`;
+            queryParams += `&search=${debouncedSearch}`
+          }
+        } else if (searchMode === "fees") {
+          // Check if the search is just a number
+          const numberMatch = debouncedSearch.match(/^(\d+(\.\d+)?)$/)
+
+          if (numberMatch) {
+            const [_, amount] = numberMatch
+            // Use the exact parameter name expected by your API
+            queryParams += `&courseFees=${amount}`
+          } else {
+            // Regular search without fees pattern
+            queryParams += `&search=${debouncedSearch}`
           }
         } else {
-          // Regular search without duration
-          queryParams += `&search=${debouncedSearch}`;
+          // Regular search if no specific mode is active
+          queryParams += `&search=${debouncedSearch}`
         }
       }
-      if (activeFilters.mostPopular) queryParams += `&mostPopular=true`;
-      if (activeFilters.scholarships) queryParams += `&scholarships=true`;
-      if (activeFilters.discount) queryParams += `&discount=true`;
 
-      const response = await axios.get(
-        `https://edu-brink-backend.vercel.app/api/course?${queryParams}`
-      );
+      if (activeFilters.mostPopular) queryParams += `&mostPopular=true`
+      if (activeFilters.scholarships) queryParams += `&scholarships=true`
+      if (activeFilters.discount) queryParams += `&discount=true`
 
-      setCourses(response.data.data || []);
-      setTotalPages(response.data.pagination?.totalPages || 1);
-      setTotalItems(response.data.pagination?.totalCount || 0);
+      const response = await axios.get(`https://edu-brink-backend.vercel.app/api/course?${queryParams}`)
+
+      setCourses(response.data.data || [])
+      setTotalPages(response.data.pagination?.totalPages || 1)
+      setTotalItems(response.data.pagination?.totalCount || 0)
 
       // Calculate stats
-      const allCourses = response.data.data || [];
+      const allCourses = response.data.data || []
       setStats({
         totalCourses: response.data.pagination?.totalCount || 0,
-        scholarshipCourses: allCourses.filter((c) => c.scholarshipsAvailable)
-          .length,
+        scholarshipCourses: allCourses.filter((c) => c.scholarshipsAvailable).length,
         popularCourses: allCourses.filter((c) => c.MostPopular).length,
-      });
+      })
 
-      setError(null);
+      setError(null)
     } catch (err) {
-      setError("Failed to fetch courses. Please try again.");
-      console.error("Error fetching courses:", err);
+      setError("Failed to fetch courses. Please try again.")
+      console.error("Error fetching courses:", err)
     } finally {
-      setLoading(false);
-      setIsSearching(false);
+      setLoading(false)
+      setIsSearching(false)
     }
-  };
+  }
 
   // Add a function to toggle filters
   const toggleFilter = (filter) => {
     setActiveFilters((prev) => ({
       ...prev,
       [filter]: !prev[filter],
-    }));
-    setCurrentPage(1); // Reset to first page when changing filters
-  };
+    }))
+    setCurrentPage(1) // Reset to first page when changing filters
+  }
 
   // Update useEffect to include activeFilters in the dependency array
   useEffect(() => {
-    fetchCourses();
-  }, [currentPage, itemsPerPage, debouncedSearch, activeFilters]);
+    fetchCourses()
+  }, [currentPage, itemsPerPage, debouncedSearch, activeFilters])
 
   const handleDelete = (course) => {
-    setCourseToDelete(course);
-    setIsDeletePopupOpen(true);
-  };
+    setCourseToDelete(course)
+    setIsDeletePopupOpen(true)
+  }
 
   const confirmDelete = async (id) => {
-    if (!courseToDelete) return;
+    if (!courseToDelete) return
 
     try {
-      await axios.delete(
-        `https://edu-brink-backend.vercel.app/api/course/${id}`
-      );
-      setIsDeletePopupOpen(false);
-      setCourseToDelete(null);
-      fetchCourses(); // Refresh data after deletion
+      await axios.delete(`https://edu-brink-backend.vercel.app/api/course/${id}`)
+      setIsDeletePopupOpen(false)
+      setCourseToDelete(null)
+      fetchCourses() // Refresh data after deletion
     } catch (error) {
-      console.error("Error deleting course:", error);
+      console.error("Error deleting course:", error)
     }
-  };
+  }
 
   // Pagination controls
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      setCurrentPage(page)
     }
-  };
+  }
 
   // Generate page numbers for pagination
   const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxPagesToShow = 5;
+    const pageNumbers = []
+    const maxPagesToShow = 5
 
     if (totalPages <= maxPagesToShow) {
       // Show all pages if total pages are less than max pages to show
       for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
+        pageNumbers.push(i)
       }
     } else {
       // Always show first page
-      pageNumbers.push(1);
+      pageNumbers.push(1)
 
       // Calculate start and end of middle pages
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
+      let startPage = Math.max(2, currentPage - 1)
+      let endPage = Math.min(totalPages - 1, currentPage + 1)
 
       // Adjust if we're near the beginning
       if (currentPage <= 3) {
-        endPage = 4;
+        endPage = 4
       }
 
       // Adjust if we're near the end
       if (currentPage >= totalPages - 2) {
-        startPage = totalPages - 3;
+        startPage = totalPages - 3
       }
 
       // Add ellipsis after first page if needed
       if (startPage > 2) {
-        pageNumbers.push("...");
+        pageNumbers.push("...")
       }
 
       // Add middle pages
       for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
+        pageNumbers.push(i)
       }
 
       // Add ellipsis before last page if needed
       if (endPage < totalPages - 1) {
-        pageNumbers.push("...");
+        pageNumbers.push("...")
       }
 
       // Always show last page
-      pageNumbers.push(totalPages);
+      pageNumbers.push(totalPages)
     }
 
-    return pageNumbers;
-  };
+    return pageNumbers
+  }
 
   // Add this function before the return statement
   const handleSort = (option) => {
     if (sortBy === option) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
     } else {
-      setSortBy(option);
-      setSortDirection("asc");
+      setSortBy(option)
+      setSortDirection("asc")
     }
-  };
+  }
 
   // Add this function before the return statement
   const sortCourses = (a, b) => {
-    const direction = sortDirection === "asc" ? 1 : -1;
+    const direction = sortDirection === "asc" ? 1 : -1
 
     switch (sortBy) {
       case "name":
-        return (
-          direction *
-          (a.CourseName.en || "").localeCompare(b.CourseName.en || "")
-        );
+        return direction * (a.CourseName.en || "").localeCompare(b.CourseName.en || "")
       case "university":
-        return (
-          direction *
-          (a.university?.uniName?.en || "" || "").localeCompare(
-            b.university?.uniName?.en || "" || ""
-          )
-        );
+        return direction * (a.university?.uniName?.en || "" || "").localeCompare(b.university?.uniName?.en || "" || "")
       case "duration":
         // Convert durations to a common unit (days) for comparison
         const getDurationInDays = (course) => {
-          const duration = course.CourseDuration || 0;
-          const unit = course.CourseDurationUnits || "Years";
+          const duration = course.CourseDuration || 0
+          const unit = course.CourseDurationUnits || "Years"
 
           switch (unit) {
             case "Years":
-              return duration * 365;
+              return duration * 365
             case "Months":
-              return duration * 30;
+              return duration * 30
             case "Weeks":
-              return duration * 7;
+              return duration * 7
             default:
-              return duration;
+              return duration
           }
-        };
+        }
 
-        const durationA = getDurationInDays(a);
-        const durationB = getDurationInDays(b);
-        return direction * (durationA - durationB);
+        const durationA = getDurationInDays(a)
+        const durationB = getDurationInDays(b)
+        return direction * (durationA - durationB)
+      case "fees":
+        // Compare by course fees
+        const feesA = a.CourseFees || 0
+        const feesB = b.CourseFees || 0
+        return direction * (feesA - feesB)
       default:
-        return 0;
+        return 0
     }
-  };
+  }
 
   // Modify the courses mapping to use the sorted courses
   // Replace the courses.map() with sortedCourses.map()
-  const sortedCourses = [...courses].sort(sortCourses);
+  const sortedCourses = [...courses].sort(sortCourses)
 
   // if (loading && courses.length === 0) {
   //   return (
@@ -421,11 +434,7 @@ export default function CourseCRUD() {
         </button>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
 
       <div className="bg-white rounded-lg shadow mb-6">
         <div className="p-4 border-b">
@@ -435,19 +444,49 @@ export default function CourseCRUD() {
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search courses by name, university or duration (e.g. 3 for duration suggestions)"
+                placeholder={
+                  searchMode === "duration"
+                    ? "Search courses by name, university or duration (e.g. 3 for duration suggestions)"
+                    : "Search courses by fees (enter a number)"
+                }
                 value={searchQuery}
                 onChange={handleSearchInput}
                 onKeyDown={handleSearchKeyDown}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               />
 
+              {/* Search mode toggle */}
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                <div className="flex items-center bg-gray-100 rounded-full p-1">
+                  <button
+                    onClick={toggleSearchMode}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+                      searchMode === "duration"
+                        ? "bg-blue-500 text-white"
+                        : "bg-transparent text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <Clock className="w-3 h-3" />
+                    Duration
+                  </button>
+                  <button
+                    onClick={toggleSearchMode}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+                      searchMode === "fees"
+                        ? "bg-blue-500 text-white"
+                        : "bg-transparent text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <CircleDollarSign className="w-3 h-3" />
+                    Fees
+                  </button>
+                </div>
+              </div>
+
               {/* Duration suggestions dropdown */}
-              {showDurationSuggestions && (
+              {showDurationSuggestions && searchMode === "duration" && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
-                  <div className="p-2 text-xs text-gray-500">
-                    Select duration unit:
-                  </div>
+                  <div className="p-2 text-xs text-gray-500">Select duration unit:</div>
                   <div className="max-h-60 overflow-y-auto">
                     {durationUnits.map((unit, index) => (
                       <button
@@ -455,9 +494,7 @@ export default function CourseCRUD() {
                         type="button"
                         onClick={() => selectDurationUnit(unit)}
                         className={`w-full px-4 py-2 text-left flex items-center ${
-                          index === selectedSuggestionIndex
-                            ? "bg-blue-50 text-blue-700"
-                            : "hover:bg-gray-100"
+                          index === selectedSuggestionIndex ? "bg-blue-50 text-blue-700" : "hover:bg-gray-100"
                         }`}
                       >
                         <Clock className="w-4 h-4 mr-2 text-blue-500" />
@@ -478,8 +515,8 @@ export default function CourseCRUD() {
                 id="itemsPerPage"
                 value={itemsPerPage}
                 onChange={(e) => {
-                  setItemsPerPage(Number(e.target.value));
-                  setCurrentPage(1); // Reset to first page when changing items per page
+                  setItemsPerPage(Number(e.target.value))
+                  setCurrentPage(1) // Reset to first page when changing items per page
                 }}
                 className="border rounded-lg px-2 py-2 focus:outline-none focus:border-blue-500"
               >
@@ -507,11 +544,7 @@ export default function CourseCRUD() {
             >
               Name
               {sortBy === "name" && (
-                <SortAsc
-                  className={`w-4 h-4 ${
-                    sortDirection === "desc" ? "transform rotate-180" : ""
-                  }`}
-                />
+                <SortAsc className={`w-4 h-4 ${sortDirection === "desc" ? "transform rotate-180" : ""}`} />
               )}
             </button>
             <button
@@ -522,11 +555,7 @@ export default function CourseCRUD() {
             >
               University
               {sortBy === "university" && (
-                <SortAsc
-                  className={`w-4 h-4 ${
-                    sortDirection === "desc" ? "transform rotate-180" : ""
-                  }`}
-                />
+                <SortAsc className={`w-4 h-4 ${sortDirection === "desc" ? "transform rotate-180" : ""}`} />
               )}
             </button>
             <button
@@ -537,11 +566,18 @@ export default function CourseCRUD() {
             >
               Duration
               {sortBy === "duration" && (
-                <SortAsc
-                  className={`w-4 h-4 ${
-                    sortDirection === "desc" ? "transform rotate-180" : ""
-                  }`}
-                />
+                <SortAsc className={`w-4 h-4 ${sortDirection === "desc" ? "transform rotate-180" : ""}`} />
+              )}
+            </button>
+            <button
+              onClick={() => handleSort("fees")}
+              className={`flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 ${
+                sortBy === "fees" ? "text-blue-600 font-medium" : ""
+              }`}
+            >
+              Fees
+              {sortBy === "fees" && (
+                <SortAsc className={`w-4 h-4 ${sortDirection === "desc" ? "transform rotate-180" : ""}`} />
               )}
             </button>
 
@@ -560,8 +596,8 @@ export default function CourseCRUD() {
                   <span
                     className="ml-1 flex items-center justify-center w-4 h-4 bg-yellow-200 rounded-full hover:bg-yellow-300"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFilter("mostPopular");
+                      e.stopPropagation()
+                      toggleFilter("mostPopular")
                     }}
                   >
                     ×
@@ -581,8 +617,8 @@ export default function CourseCRUD() {
                   <span
                     className="ml-1 flex items-center justify-center w-4 h-4 bg-green-200 rounded-full hover:bg-green-300"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFilter("scholarships");
+                      e.stopPropagation()
+                      toggleFilter("scholarships")
                     }}
                   >
                     ×
@@ -592,9 +628,7 @@ export default function CourseCRUD() {
               <button
                 onClick={() => toggleFilter("discount")}
                 className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs ${
-                  activeFilters.discount
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  activeFilters.discount ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 Discount
@@ -602,8 +636,8 @@ export default function CourseCRUD() {
                   <span
                     className="ml-1 flex items-center justify-center w-4 h-4 bg-blue-200 rounded-full hover:bg-blue-300"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFilter("discount");
+                      e.stopPropagation()
+                      toggleFilter("discount")
                     }}
                   >
                     ×
@@ -618,10 +652,7 @@ export default function CourseCRUD() {
             {isSearching && (
               <div className="space-y-4 p-4">
                 {[...Array(itemsPerPage)].map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-4 animate-none"
-                  >
+                  <div key={index} className="flex items-center space-x-4 animate-none">
                     <div className="flex-1 space-y-2">
                       <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                       <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -641,35 +672,24 @@ export default function CourseCRUD() {
 
             {/* Actual Content */}
             {!isSearching && courses.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                No courses found matching your search.
-              </div>
+              <div className="p-4 text-center text-gray-500">No courses found matching your search.</div>
             ) : (
               !isSearching &&
               sortedCourses.map((course) => (
-                <div
-                  key={course._id}
-                  className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0"
-                >
+                <div key={course._id} className="flex items-center p-4 hover:bg-gray-50 border-b last:border-b-0">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium">
-                        {course.CourseName[language]}
-                      </h3>
+                      <h3 className="font-medium">{course.CourseName[language]}</h3>
                       {course.MostPopular && (
                         <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                           Most Popular
                         </span>
                       )}
                       {course.scholarshipsAvailable && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                          Scholarships
-                        </span>
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Scholarships</span>
                       )}
                       {course.DiscountAvailable && (
-                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                          Discount
-                        </span>
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Discount</span>
                       )}
                     </div>
                     <div className="flex items-center gap-4 mt-1">
@@ -685,13 +705,17 @@ export default function CourseCRUD() {
                           {course.CourseDuration} {course.CourseDurationUnits}
                         </div>
                       )}
+
+                      {course.CourseFees && (
+                        <div className="flex items-center text-sm text-gray-500">
+                          <CircleDollarSign className="w-4 h-4 mr-1" />
+                          {course.CourseFees}
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {course.StudyLevel?.map((level) => (
-                        <span
-                          key={level}
-                          className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full"
-                        >
+                        <span key={level} className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full">
                           {level}
                         </span>
                       ))}
@@ -699,17 +723,12 @@ export default function CourseCRUD() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() =>
-                        navigate(`/${language}/admin/courses/${course._id}`)
-                      }
+                      onClick={() => navigate(`/${language}/admin/courses/${course._id}`)}
                       className="text-blue-600 hover:text-blue-800 px-3 py-1"
                     >
                       Edit
                     </button>
-                    <button
-                      onClick={() => handleDelete(course)}
-                      className="text-red-600 hover:text-red-800 px-3 py-1"
-                    >
+                    <button onClick={() => handleDelete(course)} className="text-red-600 hover:text-red-800 px-3 py-1">
                       Delete
                     </button>
                   </div>
@@ -722,8 +741,7 @@ export default function CourseCRUD() {
           {!loading && !isSearching && totalPages > 1 && (
             <div className="flex items-center justify-between border-t p-4">
               <div className="text-sm text-gray-500">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
                 {totalItems} courses
               </div>
 
@@ -732,9 +750,7 @@ export default function CourseCRUD() {
                   onClick={() => goToPage(currentPage - 1)}
                   disabled={currentPage === 1}
                   className={`p-2 rounded-md ${
-                    currentPage === 1
-                      ? "text-gray-300 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-100"
+                    currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -748,8 +764,8 @@ export default function CourseCRUD() {
                       page === currentPage
                         ? "bg-blue-600 text-white"
                         : page === "..."
-                        ? "text-gray-500 cursor-default"
-                        : "text-gray-700 hover:bg-gray-100"
+                          ? "text-gray-500 cursor-default"
+                          : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
                     {page}
@@ -760,9 +776,7 @@ export default function CourseCRUD() {
                   onClick={() => goToPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   className={`p-2 rounded-md ${
-                    currentPage === totalPages
-                      ? "text-gray-300 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-100"
+                    currentPage === totalPages ? "text-gray-300 cursor-not-allowed" : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -779,9 +793,7 @@ export default function CourseCRUD() {
               <h2 className="text-lg font-semibold">Total Courses</h2>
             </div>
             <p className="text-3xl font-bold">{stats.totalCourses}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Across all universities
-            </p>
+            <p className="text-sm text-gray-500 mt-1">Across all universities</p>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -790,9 +802,7 @@ export default function CourseCRUD() {
               <h2 className="text-lg font-semibold">With Scholarships</h2>
             </div>
             <p className="text-3xl font-bold">{stats.scholarshipCourses}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Courses offering scholarships
-            </p>
+            <p className="text-sm text-gray-500 mt-1">Courses offering scholarships</p>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -814,5 +824,6 @@ export default function CourseCRUD() {
         />
       </div>
     </div>
-  );
+  )
 }
+

@@ -14,6 +14,7 @@ import {
   Languages,
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import axios from "axios";
@@ -28,6 +29,9 @@ export default function MajorCRUD() {
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Add search mode toggle state
+  const [searchMode, setSearchMode] = useState("duration"); // "duration" or "tuition"
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -36,7 +40,6 @@ export default function MajorCRUD() {
 
   // Data states
   const [majors, setMajors] = useState([]);
-  console.log(majors);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
@@ -51,6 +54,12 @@ export default function MajorCRUD() {
   const [showDurationSuggestions, setShowDurationSuggestions] = useState(false);
   const [durationValue, setDurationValue] = useState("");
   const durationUnits = ["Years", "Months", "Weeks"];
+
+  // Add tuition fee suggestions state
+  const [showTuitionSuggestions, setShowTuitionSuggestions] = useState(false);
+  const [tuitionValue, setTuitionValue] = useState("");
+  const [selectedTuitionIndex, setSelectedTuitionIndex] = useState(0);
+  const tuitionOptions = [];
 
   // Add these state variables for keyboard navigation
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
@@ -70,6 +79,13 @@ export default function MajorCRUD() {
     setCurrentPage(1); // Reset to first page when changing filters
   };
 
+  // Toggle search mode function
+  const toggleSearchMode = () => {
+    setSearchMode((prev) => (prev === "duration" ? "tuition" : "duration"));
+    setShowDurationSuggestions(false);
+    setShowTuitionSuggestions(false);
+  };
+
   // Debounce search input
   useEffect(() => {
     setIsSearching(true);
@@ -85,71 +101,113 @@ export default function MajorCRUD() {
     const value = e.target.value;
     setSearchQuery(value);
 
-    // Check if the input contains a number followed by text (potentially a partial duration unit)
-    const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/;
-    const durationMatch = value.match(durationPattern);
+    if (searchMode === "duration") {
+      // Check if the input contains a number followed by text (potentially a partial duration unit)
+      const durationPattern = /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/;
+      const durationMatch = value.match(durationPattern);
 
-    if (durationMatch) {
-      // Extract the number and partial unit text
-      const number = durationMatch[1];
-      const partialUnit = durationMatch[3].toLowerCase();
+      if (durationMatch) {
+        // Extract the number and partial unit text
+        const number = durationMatch[1];
+        const partialUnit = durationMatch[3].toLowerCase();
 
-      // Find matching duration units
-      const matchingUnits = durationUnits.filter((unit) =>
-        unit.toLowerCase().startsWith(partialUnit)
-      );
+        // Find matching duration units
+        const matchingUnits = durationUnits.filter((unit) =>
+          unit.toLowerCase().startsWith(partialUnit)
+        );
 
-      if (matchingUnits.length > 0) {
-        setDurationValue(number);
-        setShowDurationSuggestions(true);
-        return;
+        if (matchingUnits.length > 0) {
+          setDurationValue(number);
+          setShowDurationSuggestions(true);
+          return;
+        }
       }
-    }
 
-    // Check for just a number (original logic)
-    const containsNumber = /\d+(\.\d+)?/.test(value);
-    const lastWord = value.split(" ").pop();
+      // Check for just a number (original logic)
+      const containsNumber = /\d+(\.\d+)?/.test(value);
+      const lastWord = value.split(" ").pop();
 
-    // If the last word is a number (including decimals), show duration suggestions
-    if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
-      setDurationValue(lastWord);
-      setShowDurationSuggestions(true);
-    } else {
-      setShowDurationSuggestions(false);
+      // If the last word is a number (including decimals), show duration suggestions
+      if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
+        setDurationValue(lastWord);
+        setShowDurationSuggestions(true);
+      } else {
+        setShowDurationSuggestions(false);
+      }
+    } else if (searchMode === "tuition") {
+      // Check for just a number for tuition
+      const containsNumber = /\d+(\.\d+)?/.test(value);
+      const lastWord = value.split(" ").pop();
+
+      // If the last word is a number (including decimals), use it directly for tuition search
+      if (containsNumber && /^\d+(\.\d+)?$/.test(lastWord)) {
+        setTuitionValue(lastWord);
+        // Don't show suggestions since we don't have options
+        setShowTuitionSuggestions(false);
+        // Use the number directly
+        setSearchQuery(lastWord);
+      }
     }
 
     // Reset selected index when input changes
     setSelectedSuggestionIndex(0);
+    setSelectedTuitionIndex(0);
   };
 
   // Add a keyboard event handler for the search input
   const handleSearchKeyDown = (e) => {
-    if (!showDurationSuggestions) return;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setSelectedSuggestionIndex((prev) =>
-          prev < durationUnits.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (
-          selectedSuggestionIndex >= 0 &&
-          selectedSuggestionIndex < durationUnits.length
-        ) {
-          selectDurationUnit(durationUnits[selectedSuggestionIndex]);
-        }
-        break;
-      case "Escape":
-        e.preventDefault();
-        setShowDurationSuggestions(false);
-        break;
+    if (searchMode === "duration" && showDurationSuggestions) {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedSuggestionIndex((prev) =>
+            prev < durationUnits.length - 1 ? prev + 1 : prev
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (
+            selectedSuggestionIndex >= 0 &&
+            selectedSuggestionIndex < durationUnits.length
+          ) {
+            selectDurationUnit(durationUnits[selectedSuggestionIndex]);
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          setShowDurationSuggestions(false);
+          break;
+      }
+    } else if (searchMode === "tuition" && showTuitionSuggestions) {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedTuitionIndex((prev) =>
+            prev < tuitionOptions.length - 1 ? prev + 1 : prev
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedTuitionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (
+            selectedTuitionIndex >= 0 &&
+            selectedTuitionIndex < tuitionOptions.length
+          ) {
+            selectTuitionOption(tuitionOptions[selectedTuitionIndex]);
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          setShowTuitionSuggestions(false);
+          break;
+      }
     }
   };
 
@@ -174,6 +232,37 @@ export default function MajorCRUD() {
     setShowDurationSuggestions(false);
   };
 
+  // Add a function to handle selecting a tuition option
+  const selectTuitionOption = (option) => {
+    let newSearchQuery;
+
+    // Handle different tuition options
+    if (option === "Between") {
+      // For "Between", prompt for a range
+      newSearchQuery = `${tuitionValue} to ? ${option}`;
+    } else if (option === "Below" || option === "Above") {
+      newSearchQuery = `${tuitionValue} ${option}`;
+    } else {
+      // For currencies
+      newSearchQuery = `${tuitionValue} ${option}`;
+    }
+
+    // Check if the search query already contains a tuition pattern
+    const tuitionPattern = /(\d+(\.\d+)?)\s+(USD|EUR|GBP|below|above|between)/i;
+    const match = searchQuery.match(tuitionPattern);
+
+    if (match) {
+      // If there's already a tuition pattern, replace it
+      const updatedQuery = searchQuery.replace(tuitionPattern, newSearchQuery);
+      setSearchQuery(updatedQuery);
+    } else {
+      // If there's no existing pattern, just set the tuition as the search query
+      setSearchQuery(newSearchQuery);
+    }
+
+    setShowTuitionSuggestions(false);
+  };
+
   // Update the fetchMajors function to include duration parameters
   const fetchMajors = async () => {
     setLoading(true);
@@ -183,35 +272,19 @@ export default function MajorCRUD() {
 
       // Add search parameter if present
       if (debouncedSearch) {
-        // Check if the search includes a duration pattern (e.g., "3 Years" or partial like "3 Yea")
-        const fullDurationMatch = debouncedSearch.match(
-          /(\d+(\.\d+)?)\s+(Years|Months|Weeks)/i
-        );
-        const partialDurationMatch = debouncedSearch.match(
-          /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/i
-        );
-
-        if (fullDurationMatch) {
-          const [fullMatch, duration, _, unit] = fullDurationMatch;
-          // Add duration parameters to the query
-          queryParams += `&duration=${duration}&durationUnit=${unit}`;
-
-          // Also include the rest of the search term without the duration part
-          const remainingSearch = debouncedSearch.replace(fullMatch, "").trim();
-          if (remainingSearch) {
-            queryParams += `&search=${remainingSearch}`;
-          }
-        } else if (partialDurationMatch) {
-          const [fullMatch, duration, _, partialUnit] = partialDurationMatch;
-
-          // Find the matching duration unit
-          const matchingUnit = durationUnits.find((unit) =>
-            unit.toLowerCase().startsWith(partialUnit.toLowerCase())
+        if (searchMode === "duration") {
+          // Check if the search includes a duration pattern (e.g., "3 Years" or partial like "3 Yea")
+          const fullDurationMatch = debouncedSearch.match(
+            /(\d+(\.\d+)?)\s+(Years|Months|Weeks)/i
+          );
+          const partialDurationMatch = debouncedSearch.match(
+            /(\d+(\.\d+)?)\s+([YyMmWw][a-zA-Z]*)/i
           );
 
-          if (matchingUnit) {
+          if (fullDurationMatch) {
+            const [fullMatch, duration, _, unit] = fullDurationMatch;
             // Add duration parameters to the query
-            queryParams += `&duration=${duration}&durationUnit=${matchingUnit}`;
+            queryParams += `&duration=${duration}&durationUnit=${unit}`;
 
             // Also include the rest of the search term without the duration part
             const remainingSearch = debouncedSearch
@@ -220,12 +293,47 @@ export default function MajorCRUD() {
             if (remainingSearch) {
               queryParams += `&search=${remainingSearch}`;
             }
+          } else if (partialDurationMatch) {
+            const [fullMatch, duration, _, partialUnit] = partialDurationMatch;
+
+            // Find the matching duration unit
+            const matchingUnit = durationUnits.find((unit) =>
+              unit.toLowerCase().startsWith(partialUnit.toLowerCase())
+            );
+
+            if (matchingUnit) {
+              // Add duration parameters to the query
+              queryParams += `&duration=${duration}&durationUnit=${matchingUnit}`;
+
+              // Also include the rest of the search term without the duration part
+              const remainingSearch = debouncedSearch
+                .replace(fullMatch, "")
+                .trim();
+              if (remainingSearch) {
+                queryParams += `&search=${remainingSearch}`;
+              }
+            } else {
+              // Regular search without duration
+              queryParams += `&search=${debouncedSearch}`;
+            }
           } else {
             // Regular search without duration
             queryParams += `&search=${debouncedSearch}`;
           }
+        } else if (searchMode === "tuition") {
+          // Check if the search is just a number
+          const numberMatch = debouncedSearch.match(/^(\d+(\.\d+)?)$/);
+
+          if (numberMatch) {
+            const [_, amount] = numberMatch;
+            // Use the exact parameter name expected by your API
+            queryParams += `&majorTuitionFees=${amount}`;
+          } else {
+            // Regular search without tuition pattern
+            queryParams += `&search=${debouncedSearch}`;
+          }
         } else {
-          // Regular search without duration
+          // Regular search if no specific mode is active
           queryParams += `&search=${debouncedSearch}`;
         }
       }
@@ -322,6 +430,11 @@ export default function MajorCRUD() {
         const durationA = getDurationInDays(a);
         const durationB = getDurationInDays(b);
         return direction * (durationA - durationB);
+      case "tuition":
+        // Compare by tuition fees
+        const tuitionA = a.majorTuitionFees || 0;
+        const tuitionB = b.majorTuitionFees || 0;
+        return direction * (tuitionA - tuitionB);
       default:
         return 0;
     }
@@ -438,15 +551,53 @@ export default function MajorCRUD() {
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search majors by name, university, or duration (e.g. 3 for duration suggestions)"
+                placeholder={
+                  searchMode === "duration"
+                    ? "Search majors by name, university, or duration (e.g. 3 for duration suggestions)"
+                    : "Search majors by tuition fees (enter a number)"
+                }
                 value={searchQuery}
                 onChange={handleSearchInput}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setShowDurationSuggestions(false);
+                    setShowTuitionSuggestions(false);
+                  }, 200);
+                }}
                 onKeyDown={handleSearchKeyDown}
                 className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
               />
 
+              {/* Search mode toggle */}
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center">
+                <div className="flex items-center bg-gray-100 rounded-full p-1">
+                  <button
+                    onClick={toggleSearchMode}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+                      searchMode === "duration"
+                        ? "bg-blue-500 text-white"
+                        : "bg-transparent text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <Clock className="w-3 h-3" />
+                    Duration
+                  </button>
+                  <button
+                    onClick={toggleSearchMode}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+                      searchMode === "tuition"
+                        ? "bg-blue-500 text-white"
+                        : "bg-transparent text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <CircleDollarSign className="w-3 h-3" />
+                    Tuition
+                  </button>
+                </div>
+              </div>
+
               {/* Duration suggestions dropdown */}
-              {showDurationSuggestions && (
+              {showDurationSuggestions && searchMode === "duration" && (
                 <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
                   <div className="p-2 text-xs text-gray-500">
                     Select duration unit:
@@ -524,6 +675,21 @@ export default function MajorCRUD() {
             >
               Duration
               {sortBy === "duration" && (
+                <ChevronLeft
+                  className={`w-4 h-4 transform rotate-90 ${
+                    sortDirection === "desc" ? "rotate-[270deg]" : ""
+                  }`}
+                />
+              )}
+            </button>
+            <button
+              onClick={() => handleSort("tuition")}
+              className={`flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 ${
+                sortBy === "tuition" ? "text-blue-600 font-medium" : ""
+              }`}
+            >
+              Tuition Fees
+              {sortBy === "tuition" && (
                 <ChevronLeft
                   className={`w-4 h-4 transform rotate-90 ${
                     sortDirection === "desc" ? "rotate-[270deg]" : ""
@@ -643,6 +809,13 @@ export default function MajorCRUD() {
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock className="w-4 h-4 mr-1" />
                         {major.duration} {major.durationUnits}
+                      </div>
+                    )}
+
+                    {major.majorTuitionFees && (
+                      <div className="flex items-center text-sm text-gray-500">
+                        <CircleDollarSign className="w-4 h-4 mr-1" />
+                        {major.majorTuitionFees}
                       </div>
                     )}
                   </div>
