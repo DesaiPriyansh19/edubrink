@@ -49,8 +49,10 @@ const CoursePage = () => {
 
   const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
   const apiUrl = isObjectId
-    ? `http://localhost:4000/api/course/${id}`
-    : `http://localhost:4000/api/course/name/${encodeURIComponent(id)}`;
+    ? `https://edu-brink-backend.vercel.app/api/course/${id}`
+    : `https://edu-brink-backend.vercel.app/api/course/name/${encodeURIComponent(
+        id
+      )}`;
 
   const { data, loading } = useFetch(apiUrl);
   console.log(data?.university?.courseId);
