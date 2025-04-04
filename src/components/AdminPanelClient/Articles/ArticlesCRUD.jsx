@@ -121,7 +121,7 @@ export default function ArticlesCRUD() {
       // Remove sort parameters from API request - we'll sort client-side
 
       const response = await axios.get(
-        `https://edu-brink-backend.vercel.appapi/blog/?${queryParams}`
+        `https://edu-brink-backend.vercel.app/api/blog/?${queryParams}`
       );
 
       setArticles(response.data.data || []);
