@@ -24,7 +24,6 @@ const CollegeCard = ({ data, loading }) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
   const path = location.pathname;
-  console.log(data);
 
   const handleApplyClick = (uniName, countryName) => {
     const uniLabel =
@@ -64,53 +63,52 @@ const CollegeCard = ({ data, loading }) => {
         }`}
       >
         {Array.from({ length: 4 }).map((_, index) => (
-         <div
-         key={index}
-         className="relative mt-3 border px-2 py-1  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
-       >
-         <div className="p-2 sm:p-3">
-           {/* Badge */}
-           <div
-                    className={`absolute top-0 ${
-                      language === "ar" ? "left-0 " : "right-0 "
-                    } bg-red-500 text-white rounded-tr-[8px] rounded-bl-[5px] text-[8px] px-4 py-2`}
-                  >
-                    {t("mostPopular")}
+          <div
+            key={index}
+            className="relative mt-3 border px-2 py-1  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
+          >
+            <div className="p-2 sm:p-3">
+              {/* Badge */}
+              <div
+                className={`absolute top-0 ${
+                  language === "ar" ? "left-0 " : "right-0 "
+                } bg-red-500 text-white rounded-tr-[8px] rounded-bl-[5px] text-[8px] px-4 py-2`}
+              >
+                {t("mostPopular")}
+              </div>
+
+              {/* Profile Section */}
+              <div className="flex gap-2 items-center mb-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+                  <div className="w-16 h-2.5 bg-gray-300 rounded-md mt-1"></div>
+                </div>
+              </div>
+
+              {/* Small Icons Section */}
+              <div className="flex flex-wrap gap-2 justify-start">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    <div className="rounded-full w-6 h-6 bg-gray-300"></div>
+                    <div>
+                      <div className="w-14 h-2.5 bg-gray-300 rounded-md"></div>
+                      <div className="w-10 h-2 bg-gray-300 rounded-md mt-1"></div>
+                    </div>
                   </div>
-       
-           {/* Profile Section */}
-           <div className="flex gap-2 items-center mb-3">
-             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full"></div>
-             <div className="flex-1">
-               <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
-               <div className="w-16 h-2.5 bg-gray-300 rounded-md mt-1"></div>
-             </div>
-           </div>
-       
-           {/* Small Icons Section */}
-           <div className="flex flex-wrap gap-2 justify-start">
-             {Array.from({ length: 3 }).map((_, index) => (
-               <div key={index} className="flex items-center gap-1">
-                 <div className="rounded-full w-6 h-6 bg-gray-300"></div>
-                 <div>
-                   <div className="w-14 h-2.5 bg-gray-300 rounded-md"></div>
-                   <div className="w-10 h-2 bg-gray-300 rounded-md mt-1"></div>
-                 </div>
-               </div>
-             ))}
-           </div>
-         </div>
-       
-         {/* Divider */}
-         <div className="w-full h-[1px] bg-gray-300"></div>
-       
-         {/* Buttons */}
-         <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
-           <div className="w-full h-7 bg-gray-300 rounded-md"></div>
-           <div className="w-full h-7 bg-gray-300 rounded-md"></div>
-         </div>
-       </div>
-       
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="w-full h-[1px] bg-gray-300"></div>
+
+            {/* Buttons */}
+            <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
+              <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+              <div className="w-full h-7 bg-gray-300 rounded-md"></div>
+            </div>
+          </div>
         ))}
       </div>
     );
@@ -324,6 +322,7 @@ function Univrsiry({
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [initialFetch, setInitialFetch] = useState(true);
+  const [totalUniversities, setTotalUniversities] = useState(0);
   const loaderRef = useRef(null);
   const observer = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -332,44 +331,70 @@ function Univrsiry({
   const filterPropRef = useRef(filterProp);
   const initialDataRef = useRef(null);
 
-  // API base URL
+  // API base URL - use the production URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
   const isSearchResultsPath = path === `/${language}/searchresults`;
+
+  // Debug logging function
+  const logDebug = (message) => {
+    console.log(`[University Component] ${message}`);
+  };
 
   useEffect(() => {
     const isFilterChanged =
       JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
 
-    // Always update universities when initialData changes, even if it's empty
+    // Always update universities when initialData changes
     if (initialData !== initialDataRef.current) {
       initialDataRef.current = initialData;
-      setUniversities(initialData || []);
+
+      if (initialData && initialData.length > 0) {
+        setUniversities(initialData);
+        logDebug(`Initial data loaded: ${initialData.length} universities`);
+      } else {
+        setUniversities([]);
+        logDebug("Initial data is empty");
+      }
+
       setPage(1);
-      setHasMore((initialData || []).length > 0);
-      setInitialFetch(false); // Mark initial fetch as complete when we get data
+
+      // If we have pagination info from the parent component
+      if (initialData && initialData._pagination) {
+        setTotalUniversities(initialData._pagination.totalUniversities || 0);
+        setHasMore(initialData._pagination.hasMore || false);
+        logDebug(
+          `Initial pagination: total=${initialData._pagination.totalUniversities}, hasMore=${initialData._pagination.hasMore}`
+        );
+      } else {
+        // Default to true to try at least one fetch
+        setHasMore(true);
+        logDebug("No initial pagination info, will attempt to fetch more");
+      }
+
+      setInitialFetch(false);
     }
 
     if (isFilterChanged) {
       filterPropRef.current = filterProp;
       setPage(1);
       setHasMore(true);
-      setInitialFetch(true); // Reset initial fetch when filters change
+      setInitialFetch(true);
+      logDebug("Filters changed, resetting pagination");
     }
   }, [filterProp, initialData]);
 
   useEffect(() => {
-    // Set loading state based on initialLoading
     setLoading(initialLoading);
   }, [initialLoading]);
 
-  // Function to fetch more universities - use useCallback to maintain reference
-  const fetchMoreUniversities = useCallback(async () => {
-    if (!hasMore || loadingMore || isSearchResultsPath) return;
+  // Function to fetch all universities in one go
+  const fetchAllUniversities = useCallback(async () => {
+    if (loadingMore || isSearchResultsPath) return;
 
     try {
       setLoadingMore(true);
+      logDebug("Fetching all universities at once");
 
-      // Create university filters object with all the necessary filters
       const universityFilters = {
         countryIds: countryIds?.length ? countryIds.join(",") : "",
         StudyLevel: filterProp.StudyLevel,
@@ -377,8 +402,9 @@ function Univrsiry({
         UniType: filterProp.UniType,
         IntakeYear: filterProp.IntakeYear,
         IntakeMonth: filterProp.IntakeMonth,
-        Destination: filterProp.Destination, // Required to filter universities by country
-        page: page + 1, // Next page
+        Destination: filterProp.Destination,
+        page: 1,
+        limit: 5,
       };
 
       // Make API request with all filters
@@ -386,57 +412,55 @@ function Univrsiry({
         params: universityFilters,
       });
 
-      // Check if we got data back
       if (response.data.data && response.data.data.length > 0) {
+        // Merge with existing universities, avoiding duplicates
         setUniversities((prevUniversities) => {
-          // Create a map of existing IDs for faster lookup
-          const existingIds = new Map(
-            prevUniversities.map((uni) => [uni._id, true])
-          );
-          // Filter out duplicates
-          const newUniversities = response.data.data.filter(
+          const existingIds = new Set(prevUniversities.map((uni) => uni._id));
+          const newUnis = response.data.data.filter(
             (uni) => !existingIds.has(uni._id)
           );
-          return [...prevUniversities, ...newUniversities];
+          const mergedUnis = [...prevUniversities, ...newUnis];
+
+          logDebug(
+            `Fetched ${response.data.data.length} universities, added ${newUnis.length} new ones`
+          );
+          return mergedUnis;
         });
-        setPage(page + 1);
-        setHasMore(response.data.pagination.hasMore);
+
+        // Update total count
+        setTotalUniversities(response.data.pagination.totalUniversities);
+
+        // No more pagination needed
+        setHasMore(false);
+        logDebug(
+          `Total universities: ${response.data.pagination.totalUniversities}`
+        );
       } else {
         setHasMore(false);
+        logDebug("No additional universities found");
       }
     } catch (error) {
-      console.error("Error fetching more universities:", error);
+      console.error("Error fetching universities:", error);
+      setHasMore(false);
     } finally {
       setLoadingMore(false);
     }
-  }, [hasMore, loadingMore, isSearchResultsPath, countryIds, filterProp, page]);
+  }, [API_BASE_URL, countryIds, filterProp, isSearchResultsPath, loadingMore]);
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
-    // Don't set up observer if we're on the searchresults path, loading, or there's no more data
-    if (isSearchResultsPath || !hasMore || initialFetch) {
+    if (isSearchResultsPath || !hasMore || initialFetch || loadingMore) {
       return;
     }
 
-    // Clean up previous observer
     if (observer.current) {
       observer.current.disconnect();
     }
 
-    // Use a debounced version of fetchMoreUniversities to prevent multiple rapid calls
-    let timeoutId = null;
-    const debouncedFetch = () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        if (!loadingMore && hasMore && !isSearchResultsPath) {
-          setFetchTrigger((prev) => prev + 1);
-        }
-      }, 300);
-    };
-
     const callback = (entries) => {
-      if (entries[0].isIntersecting) {
-        debouncedFetch();
+      if (entries[0].isIntersecting && hasMore && !loadingMore) {
+        logDebug("Intersection observed, triggering fetch");
+        fetchAllUniversities();
       }
     };
 
@@ -450,31 +474,16 @@ function Univrsiry({
     }
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
       if (observer.current) {
         observer.current.disconnect();
       }
     };
-  }, [hasMore, loadingMore, isSearchResultsPath, initialFetch]);
-
-  // Handle fetch trigger
-  useEffect(() => {
-    if (
-      fetchTrigger > 0 &&
-      !loadingMore &&
-      hasMore &&
-      !isSearchResultsPath &&
-      !initialFetch
-    ) {
-      fetchMoreUniversities();
-    }
   }, [
-    fetchTrigger,
-    loadingMore,
     hasMore,
+    loadingMore,
     isSearchResultsPath,
     initialFetch,
-    fetchMoreUniversities,
+    fetchAllUniversities,
   ]);
 
   // Force check for scroll position after initial data load
@@ -486,18 +495,24 @@ function Univrsiry({
 
         // If the content doesn't fill the viewport, trigger a fetch
         if (scrollHeight <= clientHeight) {
-          setFetchTrigger((prev) => prev + 1);
+          logDebug("Content doesn't fill viewport, triggering fetch");
+          fetchAllUniversities();
         }
       }, 100);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [initialFetch, isSearchResultsPath, hasMore, loadingMore]);
+  }, [
+    initialFetch,
+    isSearchResultsPath,
+    hasMore,
+    loadingMore,
+    fetchAllUniversities,
+  ]);
 
   // Reset component state when unmounting
   useEffect(() => {
     return () => {
-      // Clean up everything when component unmounts
       if (observer.current) {
         observer.current.disconnect();
       }
@@ -518,15 +533,15 @@ function Univrsiry({
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
           <Link to={`/${language}/searchresults/AllUniversity`}>
-          <div
-          className={`w-full flex mt-4 ${
-            language === "ar" ? "justify-start" : "justify-end"
-          } items-center px-4`}
-        >
-          <button
-            className={` hidden md:flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
-          >
-            {t("viewAll")}
+            <div
+              className={`w-full flex mt-4 ${
+                language === "ar" ? "justify-start" : "justify-end"
+              } items-center px-4`}
+            >
+              <button
+                className={` hidden md:flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+              >
+                {t("viewAll")}
 
                 <ArrowRight
                   className={`inline-block ml-2 ${
@@ -571,25 +586,25 @@ function Univrsiry({
             </p>
           </div>
         )}
-         <div
-                className={`w-full flex mt-4 ${
-                  language === "ar" ? "justify-start" : "justify-end"
-                } items-center px-4`}
-              >
-                <button
-                  className={`md:hidden flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
-                >
-                  {t("viewAll")}
-      
-                  <ArrowRight
-                    className={`inline-block ml-2 ${
-                      language === "ar"
-                        ? "rotate-180 group-hover:-translate-x-1"
-                        : "rotate-0 group-hover:translate-x-1"
-                    } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
-                  />
-                </button>
-              </div>
+        <div
+          className={`w-full flex mt-4 ${
+            language === "ar" ? "justify-start" : "justify-end"
+          } items-center px-4`}
+        >
+          <button
+            className={`md:hidden flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+          >
+            {t("viewAll")}
+
+            <ArrowRight
+              className={`inline-block ml-2 ${
+                language === "ar"
+                  ? "rotate-180 group-hover:-translate-x-1"
+                  : "rotate-0 group-hover:translate-x-1"
+              } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+            />
+          </button>
+        </div>
       </div>
     </>
   );

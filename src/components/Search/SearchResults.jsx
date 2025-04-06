@@ -29,12 +29,10 @@ function SearchResults() {
   const [loading, setLoading] = useState(false);
   const [hasResults, setHasResults] = useState(true); // New state to track if we have results
 
-  // Keep track of previous filter props to prevent unnecessary API calls
   const prevFilterStringRef = useRef(null);
 
-  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search"; // Base API URL
+  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
 
-  // Memoize derived values to prevent unnecessary re-renders
   const memoizedUniIds = useMemo(
     () => searchResults?.universities?.map((item) => item._id) || [],
     [searchResults?.universities]
@@ -53,32 +51,51 @@ function SearchResults() {
       };
       const queryParam = encodeURIComponent(JSON.stringify(countryFilters));
 
-      const universityFilters = {
-        StudyLevel: filterProp.StudyLevel,
-        EntranceExam: filterProp.EntranceExam,
-        ModeOfStudy: filterProp.ModeOfStudy,
-        minBudget: filterProp.minBudget,
-        maxBudget: filterProp.maxBudget,
-        searchQuery: filterProp.searchQuery
-          ? JSON.stringify(filterProp.searchQuery)
-          : undefined,
-        CourseDuration: filterProp.CourseDuration,
-        UniType: filterProp.UniType,
-        IntakeYear: filterProp.IntakeYear,
-        IntakeMonth: filterProp.IntakeMonth,
-        Destination: filterProp.Destination, // Required to filter universities by country
-      };
+      const universityFilters = {};
 
-      const courseFilters = {
-        universityIds: "", // This will be updated after fetching universities
-        ModeOfStudy: filterProp.ModeOfStudy,
-        CourseDuration: filterProp.CourseDuration,
-        minBudget: filterProp.minBudget,
-        maxBudget: filterProp.maxBudget,
-        searchQuery: filterProp.searchQuery
-          ? JSON.stringify(filterProp.searchQuery)
-          : undefined,
-      };
+      // Only add properties that have actual values
+      if (filterProp.StudyLevel)
+        universityFilters.StudyLevel = filterProp.StudyLevel;
+      if (filterProp.EntranceExam)
+        universityFilters.EntranceExam = filterProp.EntranceExam;
+      if (filterProp.ModeOfStudy)
+        universityFilters.ModeOfStudy = filterProp.ModeOfStudy;
+      if (filterProp.minBudget !== 0)
+        universityFilters.minBudget = filterProp.minBudget;
+      if (filterProp.maxBudget !== 100000)
+        universityFilters.maxBudget = filterProp.maxBudget;
+      if (filterProp.CourseDuration)
+        universityFilters.CourseDuration = filterProp.CourseDuration;
+      if (filterProp.UniType) universityFilters.UniType = filterProp.UniType;
+      if (filterProp.IntakeYear)
+        universityFilters.IntakeYear = filterProp.IntakeYear;
+      if (filterProp.IntakeMonth)
+        universityFilters.IntakeMonth = filterProp.IntakeMonth;
+
+      // Handle searchQuery separately since it's an object
+      if (
+        filterProp.searchQuery &&
+        (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+      ) {
+        universityFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
+      }
+
+      const courseFilters = {};
+      courseFilters.universityIds = ""; // This will be updated after fetching universities
+      if (filterProp.ModeOfStudy)
+        courseFilters.ModeOfStudy = filterProp.ModeOfStudy;
+      if (filterProp.CourseDuration)
+        courseFilters.CourseDuration = filterProp.CourseDuration;
+      if (filterProp.minBudget) courseFilters.minBudget = filterProp.minBudget;
+      if (filterProp.maxBudget) courseFilters.maxBudget = filterProp.maxBudget;
+
+      // Handle searchQuery for courses
+      if (
+        filterProp.searchQuery &&
+        (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+      ) {
+        courseFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
+      }
 
       // ✅ Step 1: Fetch Countries First
       const { data: countryData } = await axios.get(
