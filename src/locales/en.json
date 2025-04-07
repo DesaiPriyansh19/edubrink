@@ -15,7 +15,8 @@
   "courses": "Courses",
   "countries": "Countries",
   "about": "About",
-
+  "majors": "Majors",
+  "loadMore": "Load more",
   "destination": "Destination",
   "studyLevel": "Study Level",
   "entranceExam": "Entrance Exam",
@@ -167,6 +168,11 @@
     "description": "Effortlessly explore diverse courses, find programs tailored to your academic goals, compare study opportunities, and make informed decisions."
   },
 
+  "ourMajorSection": {
+    "title": "Our Majors",
+    "description": "Effortlessly explore diverse majors, find programs tailored to your academic goals, compare study opportunities, and make informed decisions."
+  },
+
   "recentBlog": {
     "title": "📑 Recent blog",
     "description": "Stay informed with our study abroad blog, featuring expert tips, destination guides, student experiences, and the latest updates on scholarships, visas."
@@ -176,10 +182,16 @@
     "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities."
   },
 
+  "NoMoreMajors": "No more majors to show",
   "explore_courses": {
     "title": "Explore top courses with your favourite destination",
     "description": "Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
     "popular_courses": "📚 Popular Courses"
+  },
+  "explore_majors": {
+    "title": "Explore top majors aligned with your goals",
+    "description": "Effortlessly browse a wide variety of majors, discover programs that match your interests, and make smart academic decisions.",
+    "popular_majors": "🎓 Popular Majors"
   },
 
   "explore_university": {
@@ -226,10 +238,10 @@
     "TuitionFees": "Tuition Fees",
     "NoCoursesFound": "No Courses Found",
     "NoCoursesWithFilter": "No Courses With Filter",
-    "NoCoursesAvailable":"No Courses Available",
+    "NoCoursesAvailable": "No Courses Available",
     "NoMajorsFound": "No Courses Found",
     "NoMajorsWithFilter": "No Courses With Filter",
-    "NoMajorsAvailable":"No Courses Available",
+    "NoMajorsAvailable": "No Courses Available",
     "FeaturedCourses": "Featured Courses",
     "Majors": "Majors",
     "FeaturedPrograms": "Featured Programs",
@@ -285,7 +297,7 @@
     "CounsellorDesc": "Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out. Thanks for connecting! I’m excited to connect with professionals in the [industry/field]. I look forward to sharing insights and learning from each other. If there's anything I can assist with, feel free to reach out.",
     "CallNow": "Call Now",
     "clearAllFilters": "Clear Filter",
-    "clear":"Clear",
+    "clear": "Clear",
     "ChatNow": "Chat Now",
     "Highlight": "Highlight",
     "HighlightArray": [

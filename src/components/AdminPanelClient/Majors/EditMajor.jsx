@@ -13,6 +13,7 @@ import {
   AlertCircle,
   Building2,
   Tag,
+  X,
 } from "lucide-react";
 import { useLanguage } from "../../../../context/LanguageContext";
 import InputField from "../../../../utils/InputField";
@@ -51,6 +52,7 @@ const initialFormData = {
     entranceExamRequired: false,
     featuredMajor: false,
   },
+  Tags: { en: [], ar: [] },
   seo: {
     metaTitle: {
       en: "",
@@ -110,7 +112,7 @@ const months = [
 
 export default function EditMajor() {
   const { id } = useParams();
-  const { filteredData } = useDropdownData();
+  const { filteredData, addTags } = useDropdownData();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -130,6 +132,76 @@ export default function EditMajor() {
     `https://edu-brink-backend.vercel.app/api/majors/${id}`
   );
   const [activeSection, setActiveSection] = useState(null);
+  const [searchInput, setSearchInput] = useState({ tagEn: "", tagAr: "" });
+  const [showDropdown, setShowDropdown] = useState({
+    tagEn: false,
+    tagAr: false,
+  });
+
+  // Extract English & Arabic tags from addTags
+  const tagOptions = {
+    tagEn: addTags[0]?.tags?.en || [],
+    tagAr: addTags[0]?.tags?.ar || [],
+  };
+
+  // Filter tags based on search input
+  const filteredTags = {
+    tagEn: tagOptions.tagEn.filter((tag) =>
+      tag.toLowerCase().includes(searchInput.tagEn.toLowerCase())
+    ),
+    tagAr: tagOptions.tagAr.filter((tag) =>
+      tag.toLowerCase().includes(searchInput.tagAr.toLowerCase())
+    ),
+  };
+
+  const toggleDropdown = (key) => {
+    setShowDropdown((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Handle tag selection
+  const onSelect = (key, tag, drop) => {
+    setFormData((prev) => ({
+      ...prev,
+      Tags: {
+        ...prev.Tags,
+        [key]: prev.Tags[key].includes(tag)
+          ? prev.Tags[key]
+          : [...prev.Tags[key], tag], // Prevent duplicates
+      },
+    }));
+
+    // Mark as touched
+    setTouched((prev) => ({ ...prev, [`Tags.${key}`]: true }));
+
+    // Validate
+    const error = validateField(`Tags.${key}`, [...formData.Tags[key], tag]);
+    setValidationErrors((prev) => ({
+      ...prev,
+      [`Tags.${key}`]: error,
+    }));
+
+    setShowDropdown((prev) => ({ ...prev, [drop]: false })); // Close dropdown
+  };
+
+  // Handle tag removal
+  const onRemove = (key, tag) => {
+    const updatedTags = formData.Tags[key].filter((t) => t !== tag);
+
+    setFormData((prev) => ({
+      ...prev,
+      Tags: {
+        ...prev.Tags,
+        [key]: updatedTags, // Remove the tag
+      },
+    }));
+
+    // Validate
+    const error = validateField(`Tags.${key}`, updatedTags);
+    setValidationErrors((prev) => ({
+      ...prev,
+      [`Tags.${key}`]: error,
+    }));
+  };
 
   useEffect(() => {
     if (data) {
@@ -164,6 +236,10 @@ export default function EditMajor() {
           entranceExamRequired:
             data?.majorCheckBox?.entranceExamRequired ?? false,
           featuredMajor: data?.majorCheckBox?.featuredMajor ?? false,
+        },
+        Tags: {
+          en: Array.isArray(data?.Tags?.en) ? data.Tags.en : [],
+          ar: Array.isArray(data?.Tags?.ar) ? data.Tags.ar : [],
         },
         seo: {
           metaTitle: {
@@ -295,6 +371,19 @@ export default function EditMajor() {
       const lang = name.split(".")[1];
       if (!value || (typeof value === "string" && value.trim() === "")) {
         error = lang === "en" ? "This field is required" : "هذا الحقل مطلوب";
+      }
+    }
+
+    if (name.includes("Tags")) {
+      const lang = name.split(".")[1]; // Extract language (en or ar)
+      const tagsArray = Array.isArray(value)
+        ? value
+        : formData.Tags?.[lang] || [];
+      if (!tagsArray.length) {
+        error =
+          lang === "en"
+            ? "At least one tag must be selected"
+            : "يجب تحديد علامة واحدة على الأقل";
       }
     }
 
@@ -439,6 +528,10 @@ export default function EditMajor() {
       formData.customURLSlug?.ar
     );
 
+    // Validate tags
+    errors["Tags.en"] = validateField("Tags.en", formData.Tags?.en);
+    errors["Tags.ar"] = validateField("Tags.ar", formData.Tags?.ar);
+
     setValidationErrors(errors);
 
     // Check if there are any errors
@@ -486,6 +579,8 @@ export default function EditMajor() {
       "seo.metaDescription.ar": true,
       "customURLSlug.en": true,
       "customURLSlug.ar": true,
+      "Tags.en": true,
+      "Tags.ar": true,
     };
     setTouched(allFields);
 
@@ -925,6 +1020,113 @@ export default function EditMajor() {
                   : ""
               }
             />
+          </div>
+
+          <div className="mb-4">
+            {/* Tags Section */}
+            {[
+              { label: "Tags (English)", key: "tagEn", value: "en" },
+              { label: "Tags (Arabic)", key: "tagAr", value: "ar" },
+            ].map(({ label, key, value }) => (
+              <div key={key} className="mb-4">
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {label}
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleDropdown(key);
+                        setTouched((prev) => ({
+                          ...prev,
+                          [`Tags.${value}`]: true,
+                        }));
+                      }}
+                      className={`w-full flex items-center justify-between px-4 py-2 border rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-white ${
+                        touched[`Tags.${value}`] &&
+                        validationErrors[`Tags.${value}`]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <span className="text-gray-600">
+                        {searchInput[key] || "Select Tags..."}
+                      </span>
+                      <Search className="w-5 h-5 text-gray-400" />
+                    </button>
+
+                    {touched[`Tags.${value}`] &&
+                      validationErrors[`Tags.${value}`] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {validationErrors[`Tags.${value}`]}
+                        </p>
+                      )}
+
+                    {showDropdown[key] && (
+                      <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+                        <div className="p-2 border-b">
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <input
+                              type="text"
+                              placeholder="Search tags..."
+                              value={searchInput[key]}
+                              onChange={(e) =>
+                                setSearchInput((prev) => ({
+                                  ...prev,
+                                  [key]: e.target.value,
+                                }))
+                              }
+                              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                            />
+                          </div>
+                        </div>
+                        <div className="max-h-60 overflow-y-auto">
+                          {filteredTags[key]?.length > 0 ? (
+                            filteredTags[key].map((tag, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => onSelect(value, tag, key)} // Pass "en" or "ar"
+                                className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center justify-between"
+                              >
+                                <span className="font-medium">{tag}</span>
+                              </button>
+                            ))
+                          ) : (
+                            <div className="p-4 text-gray-500 text-center">
+                              No results found
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Selected Tags */}
+                <div className="mt-4">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.Tags[value].map((tag, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
+                      >
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() => onRemove(value, tag)}
+                          className="text-blue-500 hover:text-blue-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* SEO Fields */}

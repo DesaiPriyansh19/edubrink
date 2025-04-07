@@ -57,7 +57,7 @@ const CollegeCard = ({ data, loading }) => {
     return (
       <div
         className={`${
-          path === "/en/searchresults/university"
+          path === `/${language}/searchresults/university`
             ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
             : "flex gap-3 "
         }`}
@@ -316,8 +316,8 @@ function Univrsiry({
   const { filterProp } = useSearch();
 
   // State for infinite scrolling
-  const [universities, setUniversities] = useState(initialData || []);
-  const [loading, setLoading] = useState(initialLoading);
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -326,77 +326,46 @@ function Univrsiry({
   const loaderRef = useRef(null);
   const observer = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [directFetchCompleted, setDirectFetchCompleted] = useState(false);
 
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp);
   const initialDataRef = useRef(null);
 
-  // API base URL - use the production URL
+  // API base URL - use environment variable or fallback to production URL
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
+
+  // Check if we're on the university-specific page
+  const isUniversityPath = path === `/${language}/searchresults/university`;
+
+  // Update the isSearchResultsPath variable to check for the main search results path
   const isSearchResultsPath = path === `/${language}/searchresults`;
 
-  // Debug logging function
-  const logDebug = (message) => {
-    console.log(`[University Component] ${message}`);
-  };
-
-  useEffect(() => {
-    const isFilterChanged =
-      JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
-
-    // Always update universities when initialData changes
-    if (initialData !== initialDataRef.current) {
-      initialDataRef.current = initialData;
-
-      if (initialData && initialData.length > 0) {
-        setUniversities(initialData);
-        logDebug(`Initial data loaded: ${initialData.length} universities`);
-      } else {
-        setUniversities([]);
-        logDebug("Initial data is empty");
-      }
-
-      setPage(1);
-
-      // If we have pagination info from the parent component
-      if (initialData && initialData._pagination) {
-        setTotalUniversities(initialData._pagination.totalUniversities || 0);
-        setHasMore(initialData._pagination.hasMore || false);
-        logDebug(
-          `Initial pagination: total=${initialData._pagination.totalUniversities}, hasMore=${initialData._pagination.hasMore}`
-        );
-      } else {
-        // Default to true to try at least one fetch
-        setHasMore(true);
-        logDebug("No initial pagination info, will attempt to fetch more");
-      }
-
-      setInitialFetch(false);
-    }
-
-    if (isFilterChanged) {
-      filterPropRef.current = filterProp;
-      setPage(1);
-      setHasMore(true);
-      setInitialFetch(true);
-      logDebug("Filters changed, resetting pagination");
-    }
-  }, [filterProp, initialData]);
-
-  useEffect(() => {
-    setLoading(initialLoading);
-  }, [initialLoading]);
-
-  // Function to fetch all universities in one go
-  const fetchAllUniversities = useCallback(async () => {
-    if (loadingMore || isSearchResultsPath) return;
+  // Function to fetch initial universities data directly
+  const fetchInitialUniversities = useCallback(async () => {
+    if (directFetchCompleted) return;
 
     try {
-      setLoadingMore(true);
-      logDebug("Fetching all universities at once");
+      setLoading(true);
+
+      // Get country IDs from context if not provided as props
+      let countryIdsToUse = countryIds;
+      if (!countryIdsToUse || countryIdsToUse.length === 0) {
+        // If no countryIds provided, try to fetch all countries first
+        try {
+          const countriesResponse = await axios.get(`${API_BASE_URL}`);
+          if (countriesResponse.data && countriesResponse.data.data) {
+            countryIdsToUse = countriesResponse.data.data.map(
+              (country) => country._id
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching countries:", error);
+        }
+      }
 
       const universityFilters = {
-        countryIds: countryIds?.length ? countryIds.join(",") : "",
+        countryIds: countryIdsToUse?.length ? countryIdsToUse.join(",") : "",
         StudyLevel: filterProp.StudyLevel,
         EntranceExam: filterProp.EntranceExam,
         UniType: filterProp.UniType,
@@ -404,7 +373,117 @@ function Univrsiry({
         IntakeMonth: filterProp.IntakeMonth,
         Destination: filterProp.Destination,
         page: 1,
-        limit: 5,
+        limit: 10,
+      };
+
+      // Make API request with all filters
+      const response = await axios.get(`${API_BASE_URL}/university`, {
+        params: universityFilters,
+      });
+
+      if (response.data.data && response.data.data.length > 0) {
+        setUniversities(response.data.data);
+        setTotalUniversities(response.data.pagination.totalUniversities);
+        setHasMore(response.data.pagination.hasMore);
+      } else {
+        setUniversities([]);
+        setHasMore(false);
+      }
+
+      setDirectFetchCompleted(true);
+      setInitialFetch(false);
+    } catch (error) {
+      console.error("Error in direct fetch:", error);
+      setHasMore(false);
+      setInitialFetch(false);
+      setDirectFetchCompleted(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, countryIds, filterProp, directFetchCompleted]);
+
+  // Effect to handle initial data or perform direct fetch if needed
+  useEffect(() => {
+    // If we have initial data from props, use it
+    if (initialData && initialData.length > 0) {
+      setUniversities(initialData);
+      setLoading(initialLoading);
+      setInitialFetch(false);
+      setDirectFetchCompleted(true);
+
+      // If we have pagination info from the parent component
+      if (initialData._pagination) {
+        setTotalUniversities(initialData._pagination.totalUniversities || 0);
+        setHasMore(initialData._pagination.hasMore || false);
+      } else {
+        setHasMore(true);
+      }
+    }
+    // If we're on the university page and don't have data yet, fetch directly
+    else if (isUniversityPath && !directFetchCompleted) {
+      fetchInitialUniversities();
+    }
+  }, [
+    initialData,
+    initialLoading,
+    isUniversityPath,
+    directFetchCompleted,
+    fetchInitialUniversities,
+  ]);
+
+  // Effect to handle filter changes
+  useEffect(() => {
+    const isFilterChanged =
+      JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
+
+    if (isFilterChanged) {
+      filterPropRef.current = filterProp;
+      setPage(1);
+      setHasMore(true);
+      setInitialFetch(true);
+      setDirectFetchCompleted(false); // Reset to allow a new direct fetch with new filters
+
+      // Trigger a new fetch with the updated filters
+      if (isUniversityPath) {
+        fetchInitialUniversities();
+      }
+    }
+  }, [filterProp, isUniversityPath, fetchInitialUniversities]);
+
+  // Function to fetch more universities with pagination
+  const fetchMoreUniversities = useCallback(async () => {
+    // Don't fetch more if we're on the main search results page
+    if (loadingMore || !hasMore || isSearchResultsPath) return;
+
+    try {
+      setLoadingMore(true);
+
+      // Get country IDs from context if not provided as props
+      let countryIdsToUse = countryIds;
+      if (!countryIdsToUse || countryIdsToUse.length === 0) {
+        // Use IDs from existing universities if available
+        const existingCountryIds = new Set();
+        universities.forEach((uni) => {
+          if (uni.uniCountry && uni.uniCountry._id) {
+            existingCountryIds.add(uni.uniCountry._id);
+          }
+        });
+
+        if (existingCountryIds.size > 0) {
+          countryIdsToUse = Array.from(existingCountryIds);
+        }
+      }
+
+      const universityFilters = {
+        countryIds: countryIdsToUse?.length ? countryIdsToUse.join(",") : "",
+        StudyLevel: filterProp.StudyLevel,
+        EntranceExam: filterProp.EntranceExam,
+        UniType: filterProp.UniType,
+        IntakeYear: filterProp.IntakeYear,
+        IntakeMonth: filterProp.IntakeMonth,
+        Destination: filterProp.Destination,
+        page: page + 1,
+        limit: 10,
       };
 
       // Make API request with all filters
@@ -421,23 +500,15 @@ function Univrsiry({
           );
           const mergedUnis = [...prevUniversities, ...newUnis];
 
-          logDebug(
-            `Fetched ${response.data.data.length} universities, added ${newUnis.length} new ones`
-          );
           return mergedUnis;
         });
 
-        // Update total count
+        // Update pagination state
+        setPage(page + 1);
+        setHasMore(response.data.pagination.hasMore);
         setTotalUniversities(response.data.pagination.totalUniversities);
-
-        // No more pagination needed
-        setHasMore(false);
-        logDebug(
-          `Total universities: ${response.data.pagination.totalUniversities}`
-        );
       } else {
         setHasMore(false);
-        logDebug("No additional universities found");
       }
     } catch (error) {
       console.error("Error fetching universities:", error);
@@ -445,11 +516,21 @@ function Univrsiry({
     } finally {
       setLoadingMore(false);
     }
-  }, [API_BASE_URL, countryIds, filterProp, isSearchResultsPath, loadingMore]);
+  }, [
+    API_BASE_URL,
+    countryIds,
+    filterProp,
+    hasMore,
+    loadingMore,
+    page,
+    universities,
+    isSearchResultsPath,
+  ]);
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
-    if (isSearchResultsPath || !hasMore || initialFetch || loadingMore) {
+    // Don't set up observer if we're on the main search results page
+    if (!hasMore || initialFetch || loadingMore || isSearchResultsPath) {
       return;
     }
 
@@ -459,8 +540,7 @@ function Univrsiry({
 
     const callback = (entries) => {
       if (entries[0].isIntersecting && hasMore && !loadingMore) {
-        logDebug("Intersection observed, triggering fetch");
-        fetchAllUniversities();
+        setFetchTrigger((prev) => prev + 1);
       }
     };
 
@@ -478,37 +558,44 @@ function Univrsiry({
         observer.current.disconnect();
       }
     };
+  }, [hasMore, loadingMore, initialFetch, isSearchResultsPath]);
+
+  // Handle fetch trigger
+  useEffect(() => {
+    if (
+      fetchTrigger > 0 &&
+      !loadingMore &&
+      hasMore &&
+      !initialFetch &&
+      !isSearchResultsPath
+    ) {
+      fetchMoreUniversities();
+    }
   }, [
-    hasMore,
+    fetchTrigger,
     loadingMore,
-    isSearchResultsPath,
+    hasMore,
     initialFetch,
-    fetchAllUniversities,
+    fetchMoreUniversities,
+    isSearchResultsPath,
   ]);
 
   // Force check for scroll position after initial data load
   useEffect(() => {
-    if (!initialFetch && !isSearchResultsPath && hasMore && !loadingMore) {
+    if (!initialFetch && hasMore && !loadingMore && !isSearchResultsPath) {
       const timeoutId = setTimeout(() => {
         const scrollHeight = document.documentElement.scrollHeight;
         const clientHeight = document.documentElement.clientHeight;
 
         // If the content doesn't fill the viewport, trigger a fetch
         if (scrollHeight <= clientHeight) {
-          logDebug("Content doesn't fill viewport, triggering fetch");
-          fetchAllUniversities();
+          setFetchTrigger((prev) => prev + 1);
         }
       }, 100);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [
-    initialFetch,
-    isSearchResultsPath,
-    hasMore,
-    loadingMore,
-    fetchAllUniversities,
-  ]);
+  }, [initialFetch, hasMore, loadingMore, isSearchResultsPath]);
 
   // Reset component state when unmounting
   useEffect(() => {
@@ -562,7 +649,7 @@ function Univrsiry({
       >
         <CollegeCard data={universities} loading={loading} />
 
-        {/* Loading indicator at the bottom - only show if not on searchresults path */}
+        {/* Loading indicator at the bottom */}
         {hasMore && universities?.length > 0 && !isSearchResultsPath && (
           <div
             ref={loaderRef}
@@ -578,11 +665,11 @@ function Univrsiry({
         )}
 
         {/* No results message */}
-        {!loading && universities?.length === 0 && !isSearchResultsPath && (
+        {!loading && universities?.length === 0 && (
           <div className="col-span-full text-center py-8">
             <p className="text-lg text-gray-500">
               {t("noUniversitiesFound") ||
-                "No univeristies found. Try adjusting your filters."}
+                "No universities found. Try adjusting your filters."}
             </p>
           </div>
         )}

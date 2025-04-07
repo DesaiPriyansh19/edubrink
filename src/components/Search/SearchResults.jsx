@@ -8,8 +8,7 @@ import Results from "./Results/Results";
 import Article from "./Article";
 import ContactSection from "../ContactSection";
 import Univrsiry from "./Results/University";
-import ResultsCorses from "./Results/Resultscorse";
-import ExploreTopCorse from "./ExploreTopCorse";
+
 import ExploreTopUniversity from "./ExploreTopUniversity";
 import ExploreBlogs from "./ExploreBlogs";
 import { useSearch } from "../../../context/SearchContext";
@@ -17,6 +16,8 @@ import { useLanguage } from "../../../context/LanguageContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import NoResultsFound from "../../../utils/NoResultsFound";
+import ExploreTopMajor from "./ExploreTopMajor";
+import ResultsMajors from "./Results/ResultsMajors";
 
 function SearchResults() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -64,8 +65,9 @@ function SearchResults() {
         universityFilters.minBudget = filterProp.minBudget;
       if (filterProp.maxBudget !== 100000)
         universityFilters.maxBudget = filterProp.maxBudget;
-      if (filterProp.CourseDuration)
-        universityFilters.CourseDuration = filterProp.CourseDuration;
+      if (filterProp.MajorDuration)
+        // Changed from CourseDuration
+        universityFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration
       if (filterProp.UniType) universityFilters.UniType = filterProp.UniType;
       if (filterProp.IntakeYear)
         universityFilters.IntakeYear = filterProp.IntakeYear;
@@ -80,21 +82,22 @@ function SearchResults() {
         universityFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
       }
 
-      const courseFilters = {};
-      courseFilters.universityIds = ""; // This will be updated after fetching universities
+      const majorFilters = {}; // Changed from courseFilters
+      majorFilters.universityIds = ""; // This will be updated after fetching universities
       if (filterProp.ModeOfStudy)
-        courseFilters.ModeOfStudy = filterProp.ModeOfStudy;
-      if (filterProp.CourseDuration)
-        courseFilters.CourseDuration = filterProp.CourseDuration;
-      if (filterProp.minBudget) courseFilters.minBudget = filterProp.minBudget;
-      if (filterProp.maxBudget) courseFilters.maxBudget = filterProp.maxBudget;
+        majorFilters.ModeOfStudy = filterProp.ModeOfStudy;
+      if (filterProp.MajorDuration)
+        // Changed from CourseDuration
+        majorFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration
+      if (filterProp.minBudget) majorFilters.minBudget = filterProp.minBudget;
+      if (filterProp.maxBudget) majorFilters.maxBudget = filterProp.maxBudget;
 
-      // Handle searchQuery for courses
+      // Handle searchQuery for majors
       if (
         filterProp.searchQuery &&
         (filterProp.searchQuery.en || filterProp.searchQuery.ar)
       ) {
-        courseFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
+        majorFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
       }
 
       // ✅ Step 1: Fetch Countries First
@@ -115,11 +118,11 @@ function SearchResults() {
 
       // Extract university IDs
       const universityIds = universityData.data.map((uni) => uni._id);
-      courseFilters.universityIds = universityIds.join(",");
+      majorFilters.universityIds = universityIds.join(",");
 
-      // ✅ Step 3: Fetch Courses Based on University IDs
-      const [courseData, blogData] = await Promise.all([
-        axios.get(`${API_BASE_URL}/course`, { params: courseFilters }),
+      // ✅ Step 3: Fetch Majors Based on University IDs
+      const [majorData, blogData] = await Promise.all([
+        axios.get(`${API_BASE_URL}/major`, { params: majorFilters }), // Changed from course to major
         axios.get(`${API_BASE_URL}/blog`, {
           params: { countryIds: countryIds.join(",") },
         }),
@@ -129,11 +132,11 @@ function SearchResults() {
       return {
         countries: countryData.data,
         universities: universityData.data,
-        courses: courseData.data.data,
+        majors: majorData.data.data, // Changed from courses to majors
         blogs: blogData.data.data,
         pagination: {
           universities: universityData.pagination,
-          courses: courseData.data.pagination,
+          majors: majorData.data.pagination, // Changed from courses to majors
           blogs: blogData.data.pagination,
         },
       };
@@ -169,15 +172,15 @@ function SearchResults() {
       const totalUniversities =
         data?.pagination?.universities.totalUniversities || 0;
       const totalBlogs = data?.pagination?.blogs.totalBlogs || 0;
-      const totalCourses = data?.pagination?.courses.totalCourses || 0;
-      const totalResults = totalUniversities + totalBlogs + totalCourses;
+      const totalMajors = data?.pagination?.majors.totalMajors || 0; // Changed from totalCourses
+      const totalResults = totalUniversities + totalBlogs + totalMajors;
 
       // Update sumData with the new counts
       setSumData({
         sumResult: totalResults,
         sumUniversities: totalUniversities,
         sumBlogs: totalBlogs,
-        sumCourses: totalCourses,
+        sumMajors: totalMajors, // Changed from sumCourses
       });
 
       // Set hasResults based on total count
@@ -222,16 +225,16 @@ function SearchResults() {
                 </button>
               </Link>
 
-              <Link to={`/${language}/searchresults/courses`}>
+              <Link to={`/${language}/searchresults/majors`}>
                 <button
                   className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
-                    location.pathname === `/${language}/searchresults/courses`
+                    location.pathname === `/${language}/searchresults/majors`
                       ? "bg-black text-white"
                       : "text-black"
                   }`}
                 >
                   <span className="font-thin mr-1">0</span>
-                  {t("courses")}
+                  {t("majors")} {/* Changed from courses to majors */}
                 </button>
               </Link>
 
@@ -317,18 +320,18 @@ function SearchResults() {
               </button>
             </Link>
 
-            <Link to={`/${language}/searchresults/courses`}>
+            <Link to={`/${language}/searchresults/majors`}>
               <button
                 className={`text-sm font-medium flex rounded-full justify-center items-center px-4 py-2 ${
-                  location.pathname === `/${language}/searchresults/courses`
+                  location.pathname === `/${language}/searchresults/majors`
                     ? "bg-black text-white"
                     : "text-black"
                 }`}
               >
                 <span className="font-thin mr-1">
-                  {sumData?.sumCourses || 0}
+                  {sumData?.sumMajors || 0} {/* Changed from sumCourses */}
                 </span>
-                {t("courses")}
+                {t("majors")} {/* Changed from courses to majors */}
               </button>
             </Link>
 
@@ -393,11 +396,11 @@ function SearchResults() {
             element={<Results filteredData={searchResults} loading={loading} />}
           />
           <Route
-            path="courses"
+            path="majors" // Changed from courses to majors
             element={
-              <ResultsCorses
+              <ResultsMajors // Changed from ResultsCorses
                 loading={loading || !searchResults}
-                filteredData={searchResults?.courses || []}
+                filteredData={searchResults?.majors || []} // Changed from courses to majors
                 uniIds={memoizedUniIds}
               />
             }
@@ -424,8 +427,8 @@ function SearchResults() {
             }
           />
           <Route
-            path="Allcorse"
-            element={<ExploreTopCorse language={language} />}
+            path="Allmajor" // Changed from Allcorse
+            element={<ExploreTopMajor language={language} />} // Changed from ExploreTopCorse
           />
           <Route
             path="AllUniversity"

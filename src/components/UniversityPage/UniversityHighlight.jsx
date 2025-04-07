@@ -73,6 +73,22 @@ const UniversityHighlight = ({ data, language }) => {
     }
   }, [activeSection, data, language])
 
+  // Set initial active section to first available section
+  useEffect(() => {
+    const availableSections = [
+      { name: "overview", hasData: !!data?.uniOverview?.[language] },
+      { name: "accommodation", hasData: !!data?.uniAccomodation?.[language] },
+      { name: "library", hasData: !!data?.uniLibrary?.libraryDescription?.[language] },
+      { name: "sports", hasData: !!data?.uniSports?.sportsDescription?.[language] },
+      { name: "studentLife", hasData: !!data?.studentLifeStyleInUni?.lifestyleDescription?.[language] },
+    ]
+
+    const firstAvailableSection = availableSections.find((section) => section.hasData)
+    if (firstAvailableSection) {
+      setActiveSection(firstAvailableSection.name)
+    }
+  }, [data, language])
+
   const highlights = t("UniversitySlugPage.HighlightArray", {
     returnObjects: true,
   })
@@ -100,6 +116,17 @@ const UniversityHighlight = ({ data, language }) => {
                     : index === 3
                       ? "sports"
                       : "studentLife"
+
+            // Check if data exists for this section
+            const hasData =
+              (sectionName === "overview" && data?.uniOverview?.[language]) ||
+              (sectionName === "accommodation" && data?.uniAccomodation?.[language]) ||
+              (sectionName === "library" && data?.uniLibrary?.libraryDescription?.[language]) ||
+              (sectionName === "sports" && data?.uniSports?.sportsDescription?.[language]) ||
+              (sectionName === "studentLife" && data?.studentLifeStyleInUni?.lifestyleDescription?.[language])
+
+            // Only render the button if data exists
+            if (!hasData) return null
 
             const isActive = activeSection === sectionName
 

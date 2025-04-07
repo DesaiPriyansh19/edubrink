@@ -34,7 +34,6 @@ const initialFormData = {
   faculty: [],
   major: [],
   courseId: [],
-  uniTutionFees: "",
   uniMainImage: "",
   uniCountry: "",
   countryName: { en: "", ar: "" },
@@ -250,9 +249,7 @@ export default function AddUniversity() {
     if (!formData.uniType) {
       errors["uniType"] = "University Type is required";
     }
-    if (!formData.uniTutionFees) {
-      errors["uniTutionFees"] = "Tuition Fees is required";
-    }
+  
     if (!formData.uniMainImage) {
       errors["uniMainImage"] = "Main Image URL is required";
     }
@@ -300,12 +297,12 @@ export default function AddUniversity() {
     if (!formData.living_cost) {
       errors["living_cost"] = "Living Cost is required";
     }
-    if (!formData.uniAccomodation.en) {
-      errors["uniAccomodation.en"] = "Accommodation (English) is required";
-    }
-    if (!formData.uniAccomodation.ar) {
-      errors["uniAccomodation.ar"] = "Accommodation (Arabic) is required";
-    }
+    // if (!formData.uniAccomodation.en) {
+    //   errors["uniAccomodation.en"] = "Accommodation (English) is required";
+    // }
+    // if (!formData.uniAccomodation.ar) {
+    //   errors["uniAccomodation.ar"] = "Accommodation (Arabic) is required";
+    // }
 
     setValidationErrors(errors);
 
@@ -653,17 +650,7 @@ export default function AddUniversity() {
               error={validationErrors["uniDeadline"]}
             />
 
-            <InputField
-              label="Tuition Fees (per year)"
-              type="text"
-              name="uniTutionFees"
-              placeholder="e.g., $20,000 "
-              value={formData.uniTutionFees}
-              onChange={handleInputChange}
-              variant={3}
-              error={validationErrors["uniTutionFees"]}
-            />
-
+          
             <InputField
               label="Living Cost (per month)"
               type="text"

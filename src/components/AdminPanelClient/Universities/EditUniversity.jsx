@@ -35,7 +35,6 @@ const initialFormData = {
   study_programs: [],
   major: [],
   courseId: [],
-  uniTutionFees: "",
   uniMainImage: "",
   uniCountry: {},
   countryName: { en: "", ar: "" },
@@ -179,7 +178,6 @@ export default function EditUniversity() {
         major: data?.major || [],
         courseId: data?.courseId || [],
         uniSymbol: data?.uniSymbol || "",
-        uniTutionFees: data?.uniTutionFees || "",
         uniMainImage: data?.uniMainImage || "",
         uniCountry: data?.uniCountry || null,
         countryName: {
@@ -390,9 +388,7 @@ export default function EditUniversity() {
     if (!formData.uniType) {
       errors["uniType"] = "University Type is required";
     }
-    if (!formData.uniTutionFees) {
-      errors["uniTutionFees"] = "Tuition Fees is required";
-    }
+
     if (!formData.uniMainImage) {
       errors["uniMainImage"] = "Main Image URL is required";
     }
@@ -808,17 +804,6 @@ export default function EditUniversity() {
             />
 
             {/* UniLocation End */}
-
-            <InputField
-              label="Tuition Fees (per year)"
-              type="text"
-              name="uniTutionFees"
-              placeholder="e.g., $20,000 "
-              value={formData.uniTutionFees}
-              onChange={handleInputChange}
-              variant={3}
-              error={validationErrors["uniTutionFees"]}
-            />
 
             <InputField
               label="Living Cost (per month)"
