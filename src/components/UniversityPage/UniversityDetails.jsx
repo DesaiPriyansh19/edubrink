@@ -106,6 +106,23 @@ const UniversityDetails = ({ data, language, themeColor = "#3b3d8d" }) => {
     },
   ]
 
+  // Get the appropriate study programs based on language
+  const getStudyPrograms = () => {
+    if (!data?.study_programs) return []
+
+    // If study_programs is an object with en/ar properties (new format)
+    if (data.study_programs.en || data.study_programs.ar) {
+      return language === "ar" ? data.study_programs.ar || [] : data.study_programs.en || []
+    }
+
+    // If study_programs is still an array (old format)
+    if (Array.isArray(data.study_programs)) {
+      return data.study_programs
+    }
+
+    return []
+  }
+
   if (!mounted) return null
 
   return (
@@ -387,7 +404,8 @@ const UniversityDetails = ({ data, language, themeColor = "#3b3d8d" }) => {
         {/* Programs Tab */}
         {activeTab === "programs" && (
           <div className="space-y-6" data-aos="fade-up">
-            {data?.study_programs && data.study_programs.length > 0 && (
+            {/* Study Programs - Updated to handle new format */}
+            {data?.study_programs && (
               <div
                 className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
                 data-aos="fade-up"
@@ -399,7 +417,7 @@ const UniversityDetails = ({ data, language, themeColor = "#3b3d8d" }) => {
                   </div>
                   <h3 className="font-semibold text-[#3b3d8d]">{t("UniversitySlugPage.university.studyPrograms")}</h3>
                 </div>
-                {renderArray(data.study_programs)}
+                {renderArray(getStudyPrograms())}
               </div>
             )}
 
@@ -440,4 +458,3 @@ const UniversityDetails = ({ data, language, themeColor = "#3b3d8d" }) => {
 }
 
 export default UniversityDetails
-

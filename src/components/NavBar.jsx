@@ -37,6 +37,7 @@ const NavBar = ({ setIsModalOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [forceRender, setForceRender] = useState(0); // Add a state to force re-render
 
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0
@@ -95,6 +96,11 @@ const NavBar = ({ setIsModalOpen }) => {
       code: "ae",
     },
   };
+
+  // Force re-render when language changes
+  useEffect(() => {
+    setForceRender((prev) => prev + 1);
+  }, [language]);
 
   // Check if user is logged in
   useEffect(() => {
@@ -159,6 +165,20 @@ const NavBar = ({ setIsModalOpen }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isSearchOpen]);
+
+  // Re-filter search results when language changes
+  useEffect(() => {
+    // If there's a search term, re-filter the results based on the new language
+    if (searchState.searchTerm) {
+      handleSearchInput(searchState.searchTerm);
+    } else {
+      // If no search term, clear the results to prevent showing results from previous language
+      setSearchState((prev) => ({
+        ...prev,
+        filteredResults: [],
+      }));
+    }
+  }, [language]);
 
   const getIconForType = (type) => {
     switch (type) {
@@ -432,6 +452,7 @@ const NavBar = ({ setIsModalOpen }) => {
     }
   };
 
+  // Modify the handleSearchInput function to properly include course and country data
   const handleSearchInput = (eventOrValue) => {
     const value =
       typeof eventOrValue === "string"
@@ -440,35 +461,24 @@ const NavBar = ({ setIsModalOpen }) => {
 
     if (value === undefined) return; // Prevents errors if value is missing
 
+    // Set loading state to true when search begins
     setSearchState((prevState) => ({
       ...prevState,
       searchTerm: value.toLowerCase(),
+      isLoading: true,
     }));
-
-    // Process keywords for standard structures (blog, country, university, course)
-    const matchedKeywords = keywords
-      .filter((item) => item.type !== "tag") // Exclude "tag" for now
-      .flatMap((item) =>
-        item.data
-          .filter((entry) =>
-            entry.keywords.some((keyword) =>
-              keyword.toLowerCase().includes(value.toLowerCase())
-            )
-          )
-          .map((entry) => ({
-            type: item.type,
-            keyword: entry.keywords.find((keyword) =>
-              keyword.toLowerCase().includes(value.toLowerCase())
-            ), // Keep matched keyword
-            customURLSlug: entry.customURLSlug, // Include the slug
-          }))
-      );
 
     // Process keywords for "tag" structure (inside `data`)
     const tagData = keywords.find((item) => item.type === "tag");
     const tagKeywords = tagData
-      ? tagData.data.flatMap((tag) =>
-          [...tag.keywords.en, ...tag.keywords.ar] // Merge English & Arabic tags
+      ? tagData.data.flatMap((tag) => {
+          // If language is Arabic, ONLY use Arabic keywords
+          const keywordsToUse =
+            language === "ar"
+              ? tag.keywords.ar
+              : tag.keywords[language] || tag.keywords.en;
+
+          return keywordsToUse
             .filter((keyword) =>
               keyword.toLowerCase().includes(value.toLowerCase())
             )
@@ -476,16 +486,114 @@ const NavBar = ({ setIsModalOpen }) => {
               keyword,
               type: "tag",
               customURLSlug: tag.customURLSlug || null,
-            }))
-        )
+            }));
+        })
       : [];
 
-    const filteredResults = [...matchedKeywords, ...tagKeywords];
+    // Also modify the standard keywords filtering to respect language
+    const matchedKeywords = keywords
+      .filter((item) => item.type !== "tag") // Exclude "tag" for now
+      .flatMap((item) =>
+        item.data
+          .filter((entry) => {
+            // For Arabic language, only match Arabic keywords
+            if (language === "ar") {
+              // Check if there are Arabic-specific keywords
+              const arabicKeywords = entry.keywords.filter(
+                (keyword) => /[\u0600-\u06FF]/.test(keyword) // Test for Arabic characters
+              );
 
+              if (arabicKeywords.length > 0) {
+                return arabicKeywords.some((keyword) =>
+                  keyword.toLowerCase().includes(value.toLowerCase())
+                );
+              }
+            }
+
+            // For other languages or if no Arabic keywords found
+            return entry.keywords.some((keyword) =>
+              keyword.toLowerCase().includes(value.toLowerCase())
+            );
+          })
+          .map((entry) => {
+            // For Arabic, prefer Arabic keywords
+            let matchedKeyword;
+            if (language === "ar") {
+              matchedKeyword = entry.keywords.find(
+                (keyword) =>
+                  /[\u0600-\u06FF]/.test(keyword) &&
+                  keyword.toLowerCase().includes(value.toLowerCase())
+              );
+            }
+
+            // Fallback to any matching keyword
+            if (!matchedKeyword) {
+              matchedKeyword = entry.keywords.find((keyword) =>
+                keyword.toLowerCase().includes(value.toLowerCase())
+              );
+            }
+
+            return {
+              type: item.type,
+              keyword: matchedKeyword,
+              customURLSlug: entry.customURLSlug,
+            };
+          })
+      );
+
+    // Add course data to search results
+    const courseResults = CoursesData
+      ? CoursesData.filter((course) => {
+          const courseName =
+            language === "ar" ? course.courseNameAr : course.courseName;
+          return (
+            courseName && courseName.toLowerCase().includes(value.toLowerCase())
+          );
+        }).map((course) => ({
+          type: "course",
+          keyword: language === "ar" ? course.courseNameAr : course.courseName,
+          customURLSlug: course.customURLSlug || course._id,
+        }))
+      : [];
+
+    // Add country data to search results
+    const countryResults = CountryData
+      ? CountryData.filter((country) => {
+          const countryName =
+            language === "ar" ? country.countryName.ar : country.countryName.en;
+          return (
+            countryName &&
+            countryName.toLowerCase().includes(value.toLowerCase())
+          );
+        }).map((country) => ({
+          type: "country",
+          keyword:
+            language === "ar" ? country.countryName.ar : country.countryName.en,
+          customURLSlug: country.customURLSlug || country.countryCode,
+        }))
+      : [];
+
+    // Combine all results
+    const filteredResults = [
+      ...matchedKeywords,
+      ...tagKeywords,
+      ...courseResults,
+      ...countryResults,
+    ];
+
+    // Set the filtered results and turn off loading state
     setSearchState((prevState) => ({
       ...prevState,
       filteredResults,
+      isLoading: false,
     }));
+  };
+
+  // Modify the changeLanguage function to preserve dropdown states
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    navigate(`/${lang}${location.pathname.substring(3)}${location.search}`); // Update URL while keeping the existing path
+    setShowFlagsDropdown(false); // Close only the flags dropdown
   };
 
   const handleKeyDown = (e) => {
@@ -529,12 +637,6 @@ const NavBar = ({ setIsModalOpen }) => {
         return { ...prevState, selectedIndex: newIndex };
       });
     }
-  };
-
-  const changeLanguage = (lang) => {
-    setLanguage(lang);
-    navigate(`/${lang}${location.pathname.substring(3)}${location.search}`); // Update URL while keeping the existing path
-    setShowFlagsDropdown(false); // Close dropdown
   };
 
   const countActiveFilters = () => {
@@ -626,6 +728,7 @@ const NavBar = ({ setIsModalOpen }) => {
               placeholder={t("search_placeholder")}
               language={language}
               dropdownRef={dropdownRef}
+              isLoading={searchState.isLoading}
             />
           </div>
 
@@ -677,8 +780,7 @@ const NavBar = ({ setIsModalOpen }) => {
                   ref={dropDownLanguageRef}
                   className={`absolute top-10 z-30 ${
                     language === "ar" ? "left-0" : "right-0"
-                  } mt-2 w-40 bg-white border rounded-xl shadow-xl
-      transform transition-all duration-300 ease-in-out opacity-100 scale-100  origin-top`}
+                  } mt-2 w-40 bg-white border rounded-xl shadow-xl transform transition-all duration-300 ease-in-out opacity-100 scale-100  origin-top`}
                 >
                   <li
                     className="cursor-pointer flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
@@ -687,7 +789,7 @@ const NavBar = ({ setIsModalOpen }) => {
                     }}
                   >
                     <img
-                      src={unitedStates}
+                      src={unitedStates || "/placeholder.svg"}
                       alt={"USAICON"}
                       className="w-5 h-5 object-cover rounded-full"
                     />
@@ -700,7 +802,7 @@ const NavBar = ({ setIsModalOpen }) => {
                     }}
                   >
                     <img
-                      src={uaeIcon}
+                      src={uaeIcon || "/placeholder.svg"}
                       alt={"UAEICON"}
                       className="w-5 h-5 object-cover rounded-full"
                     />
@@ -724,6 +826,7 @@ const NavBar = ({ setIsModalOpen }) => {
                   data={CoursesData}
                   // facultyData={FacultyData}
                   setShowCoursesDropdown={setShowCoursesDropdown}
+                  key={`courses-dropdown-${language}-${forceRender}`}
                 />
               </div>
             </div>
@@ -738,6 +841,7 @@ const NavBar = ({ setIsModalOpen }) => {
                 <DropdownContries
                   data={CountryData}
                   setShowCountriesDropdown={setShowCountriesDropdown}
+                  key={`countries-dropdown-${language}-${forceRender}`}
                 />
               </div>
             </div>
@@ -776,7 +880,7 @@ const NavBar = ({ setIsModalOpen }) => {
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <img
-                      src={unitedStates}
+                      src={unitedStates || "/placeholder.svg"}
                       alt={"USAICON"}
                       className="w-5 h-5 object-cover rounded-full"
                     />
@@ -787,7 +891,7 @@ const NavBar = ({ setIsModalOpen }) => {
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <img
-                      src={uaeIcon}
+                      src={uaeIcon || "/placeholder.svg"}
                       alt={"UAEICON"}
                       className="w-5 h-5 object-cover rounded-full"
                     />
@@ -826,6 +930,7 @@ const NavBar = ({ setIsModalOpen }) => {
           ref={dropDownCountryRef}
           setShowCountriesDropdown={setShowCountriesDropdown}
           navbarHeight={navbarHeight}
+          key={`countries-dropdown-mobile-${language}-${forceRender}`}
         />
       )}
       {showCoursesDropdown && (
@@ -835,6 +940,7 @@ const NavBar = ({ setIsModalOpen }) => {
           ref={dropDownCourseRef}
           setShowCoursesDropdown={setShowCoursesDropdown}
           navbarHeight={navbarHeight}
+          key={`courses-dropdown-mobile-${language}-${forceRender}`}
         />
       )}
       {isMenuOpen && (
@@ -929,64 +1035,66 @@ const NavBar = ({ setIsModalOpen }) => {
           </div>
 
           {/* Search results */}
-          {searchState.searchTerm && searchState.filteredResults.length > 0 && (
+          {searchState.searchTerm && (
             <div
               ref={dropdownRef}
               className="max-h-[70vh] overflow-y-auto bg-white"
             >
-              {searchState.filteredResults.map((result, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center px-4 py-3 cursor-pointer transition-colors duration-150 border-b ${
-                    index === searchState.selectedIndex
-                      ? "bg-blue-50"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() => onSelectResult(result)}
-                >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100">
-                      {getIconForType(result.type)}
-                    </div>
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-gray-900 block">
-                        {result.keyword}
-                      </span>
-                      <span className="text-xs text-gray-500 capitalize">
-                        {result.type}
-                      </span>
+              {searchState.isLoading ? (
+                <div className="flex items-center justify-center p-6">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3b3d8d]"></div>
+                </div>
+              ) : searchState.filteredResults.length > 0 ? (
+                searchState.filteredResults.map((result, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center px-4 py-3 cursor-pointer transition-colors duration-150 border-b ${
+                      index === searchState.selectedIndex
+                        ? "bg-blue-50"
+                        : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => onSelectResult(result)}
+                  >
+                    <div className="flex items-center gap-3 w-full">
+                      <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100">
+                        {getIconForType(result.type)}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-gray-900 block">
+                          {result.keyword}
+                        </span>
+                        <span className="text-xs text-gray-500 capitalize">
+                          {result.type}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="p-6 text-center text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 mx-auto mb-4 text-gray-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <p>{t("noResultsFound") || "No results found"}</p>
+                  <p className="text-sm mt-2">
+                    {t("tryDifferentKeywords") ||
+                      "Try different keywords or check spelling"}
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           )}
-
-          {/* No results message */}
-          {searchState.searchTerm &&
-            searchState.filteredResults.length === 0 && (
-              <div className="p-6 text-center text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-12 w-12 mx-auto mb-4 text-gray-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <p>{t("noResultsFound") || "No results found"}</p>
-                <p className="text-sm mt-2">
-                  {t("tryDifferentKeywords") ||
-                    "Try different keywords or check spelling"}
-                </p>
-              </div>
-            )}
         </div>
       )}
 
