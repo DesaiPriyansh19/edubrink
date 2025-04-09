@@ -184,7 +184,7 @@ const UniversityLeftLayout = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
+    <div className=" rounded-2xl  p-6 transition-all duration-300 ">
       <div className="mb-6">
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3 transition-colors duration-300 hover:text-[#3b3d8d]">
           {language === "ar" ? data?.uniName?.ar : data?.uniName?.en}
@@ -265,7 +265,7 @@ const UniversityLeftLayout = ({
           {isContentOverflowing() && (
             <button
               onClick={toggleExpand}
-              className="mt-3 bg-white text-[#3b3d8d] rounded-full text-sm font-medium hover:bg-[#3b3d8d]/5 transition-colors flex items-center gap-1.5"
+              className="mt-3 px-4 py-2 text-[#3b3d8d] rounded-full text-sm font-medium hover:bg-[#3b3d8d]/5 transition-colors flex items-center gap-1.5"
             >
               {expanded
                 ? t("majorPage.readLess") || "Read Less"

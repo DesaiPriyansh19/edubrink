@@ -13,7 +13,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import UniversityPrograms from "./UniversityPrograms";
-
+import verify from '../../../svg/verify/verify.svg'
 const UniversityPage = () => {
   const { slug } = useParams();
   const { language } = useLanguage();
@@ -114,19 +114,19 @@ const UniversityPage = () => {
     setMajorPage(newPage);
   };
 
-  useEffect(() => {
-    // Initialize AOS animation library
-    if (typeof window !== "undefined") {
-      import("aos").then((AOS) => {
-        AOS.init({
-          duration: 800,
-          once: true,
-          easing: "ease-in-out",
-          mirror: true,
-        });
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Initialize AOS animation library
+  //   if (typeof window !== "undefined") {
+  //     import("aos").then((AOS) => {
+  //       AOS.init({
+  //         duration: 800,
+  //         once: true,
+  //         easing: "ease-in-out",
+  //         mirror: true,
+  //       });
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (data && !loading) {
@@ -254,9 +254,9 @@ const UniversityPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16 bg-gray-50">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-16 ">
       <div className="relative mb-16" data-aos="fade-up">
-        <div className="h-[300px] sm:h-[350px] md:h-[426px] overflow-hidden rounded-xl shadow-lg">
+        <div className="h-[250px] sm:h-[300px] lg:h-[400px] overflow-hidden rounded-xl bg-transparent ">
           <img
             src={data?.uniMainImage || "https://placehold.co/1376x426"}
             alt={`${data?.uniName?.[language]} Campus`}
@@ -264,16 +264,16 @@ const UniversityPage = () => {
             width="1376"
             height="426"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent"></div>
         </div>
 
         {/* University Logo */}
         <div
           className={`absolute -bottom-8  -translate-y-1/2 
-          ${language === "ar" ? "right-8" : "left-8"} 
-          w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-white shadow-xl 
+          ${language === "ar" ? "right-8" :"left-8"} 
+          w-24 h-24 sm:w-28 sm:h-28 md:w-[7.5rem] md:h-32 bg-white shadow-xl
           flex items-center justify-center rounded-2xl 
-          transition-all duration-300 hover:shadow-2xl hover:-translate-y-[55%]`}
+          transition-all duration-300 `}
           data-aos="zoom-in"
           data-aos-delay="300"
         >
@@ -284,8 +284,8 @@ const UniversityPage = () => {
             width="80"
             height="80"
           />
-          <span className="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
-            <TickMark />
+          <span className="absolute -bottom-3 -right-3 w-9 h-9 rounded-full flex items-center justify-center ">
+            <img src={verify}/>
           </span>
         </div>
       </div>
