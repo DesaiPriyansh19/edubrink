@@ -1,38 +1,49 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import { Search, X, FileText, Landmark, BookOpen, GraduationCap, Globe, Tag, TrendingUp, Clock } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
-import AOS from "aos"
-import "aos/dist/aos.css"
-import { useLanguage } from "../../../context/LanguageContext"
+import { useEffect, useRef, useState } from "react";
+import {
+  Search,
+  X,
+  FileText,
+  Landmark,
+  BookOpen,
+  GraduationCap,
+  Globe,
+  Tag,
+  TrendingUp,
+  Clock,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeCategory, setActiveCategory] = useState(null)
-  const { language } = useLanguage()
-  const inputRef = useRef(null)
-  const containerRef = useRef(null)
-  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState(null);
+  const { language } = useLanguage();
+  const inputRef = useRef(null);
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   // Group keywords by type - Fixed by initializing with an empty object and checking data structure
   const groupedKeywords =
     keywordData?.reduce((acc, item) => {
       // Initialize the accumulator properly
-      if (!acc) acc = {}
+      if (!acc) acc = {};
 
       // Check if the item has a type property
-      if (!item || !item.type) return acc
+      if (!item || !item.type) return acc;
 
       // Initialize the array for this type if it doesn't exist
       if (!acc[item.type]) {
-        acc[item.type] = []
+        acc[item.type] = [];
       }
 
       // Add the item to the appropriate type array
-      acc[item.type].push(item)
-      return acc
-    }, {}) || {} // Ensure we return an empty object if reduce returns undefined
+      acc[item.type].push(item);
+      return acc;
+    }, {}) || {}; // Ensure we return an empty object if reduce returns undefined
 
   // Define categories with icons and titles
   const categories = [
@@ -43,151 +54,156 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
     },
     { id: "course", icon: <BookOpen className="w-5 h-5" />, title: "Courses" },
     { id: "country", icon: <Globe className="w-5 h-5" />, title: "Countries" },
-    {
-      id: "faculty",
-      icon: <GraduationCap className="w-5 h-5" />,
-      title: "Faculties",
-    },
+
     { id: "blog", icon: <FileText className="w-5 h-5" />, title: "Articles" },
-  ]
+  ];
 
   // Get trending keywords (most frequent ones)
   const getTrendingKeywords = () => {
     // Make sure we have valid data before slicing
-    return Array.isArray(keywordData) ? keywordData.slice(0, 6) : []
-  }
+    return Array.isArray(keywordData) ? keywordData.slice(0, 6) : [];
+  };
 
   // Get recent searches (could be stored in localStorage in a real app)
   const getRecentSearches = () => {
     // Make sure we have valid data before slicing
-    return Array.isArray(keywordData) ? keywordData.slice(0, 4) : []
-  }
+    return Array.isArray(keywordData) ? keywordData.slice(0, 4) : [];
+  };
 
   // Filter keywords based on search query - Fixed to handle potential undefined values
   const getFilteredKeywords = () => {
-    if (!searchQuery.trim() || !groupedKeywords) return {}
+    if (!searchQuery.trim() || !groupedKeywords) return {};
 
-    const filtered = {}
+    const filtered = {};
 
     Object.keys(groupedKeywords).forEach((type) => {
       // Check if groupedKeywords[type] is an array before filtering
       if (Array.isArray(groupedKeywords[type])) {
         const matchingKeywords = groupedKeywords[type]
-          .filter((item) => item && item.keyword && item.keyword.toLowerCase().includes(searchQuery.toLowerCase()))
-          .slice(0, 5) // Limit to 5 results per category
+          .filter(
+            (item) =>
+              item &&
+              item.keyword &&
+              item.keyword.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .slice(0, 5); // Limit to 5 results per category
 
         if (matchingKeywords.length > 0) {
-          filtered[type] = matchingKeywords
+          filtered[type] = matchingKeywords;
         }
       }
-    })
+    });
 
-    return filtered
-  }
+    return filtered;
+  };
 
-  const filteredKeywords = getFilteredKeywords()
-  const hasFilteredResults = Object.keys(filteredKeywords).length > 0
+  const filteredKeywords = getFilteredKeywords();
+  const hasFilteredResults = Object.keys(filteredKeywords).length > 0;
 
   // Handle keyword selection
   const handleSelectKeyword = (keyword) => {
-    if (!keyword) return
+    if (!keyword) return;
 
     // For admin routes, use ID-based navigation
     if (window.location.pathname.includes("/admin")) {
       switch (keyword.type) {
         case "country":
-          navigate(`/${language}/admin/countries/${keyword._id}`)
-          break
+          navigate(`/${language}/admin/countries/${keyword._id}`);
+          break;
         case "university":
-          navigate(`/${language}/admin/universities/${keyword._id}`)
-          break
+          navigate(`/${language}/admin/universities/${keyword._id}`);
+          break;
         case "course":
-          navigate(`/${language}/admin/courses/${keyword._id}`)
-          break
+          navigate(`/${language}/admin/courses/${keyword._id}`);
+          break;
         case "blog":
-          navigate(`/${language}/admin/articles/${keyword._id}`)
-          break
+          navigate(`/${language}/admin/articles/${keyword._id}`);
+          break;
         case "faculty":
-          navigate(`/${language}/admin/faculties/${keyword._id}`)
-          break
+          navigate(`/${language}/admin/faculties/${keyword._id}`);
+          break;
         default:
-          navigate(`/${language}/admin/search?q=${keyword.keyword}`)
+          navigate(`/${language}/admin/search?q=${keyword.keyword}`);
       }
     } else {
       // For public routes, use keyword-based navigation
       switch (keyword.type) {
         case "country":
-          navigate(`/${language}/country/${keyword.keyword}`)
-          break
+          navigate(`/${language}/country/${keyword.keyword}`);
+          break;
         case "tag":
-          navigate(`/${language}/searchresults?tag=${keyword.keyword}`)
-          break
+          navigate(`/${language}/searchresults?tag=${keyword.keyword}`);
+          break;
         case "university":
-          navigate(`/${language}/university/${keyword.keyword}`)
-          break
+          navigate(`/${language}/university/${keyword.keyword}`);
+          break;
         case "course":
-          navigate(`/${language}/courses/${keyword.keyword}`)
-          break
+          navigate(`/${language}/courses/${keyword.keyword}`);
+          break;
         case "blog":
-          navigate(`/${language}/blog/${keyword.keyword}`)
-          break
+          navigate(`/${language}/blog/${keyword.keyword}`);
+          break;
         case "faculty":
-          navigate(`/${language}/faculty/${keyword.keyword}`)
-          break
+          navigate(`/${language}/faculty/${keyword.keyword}`);
+          break;
         default:
-          navigate(`/${language}/searchresults?q=${keyword.keyword}`)
+          navigate(`/${language}/searchresults?q=${keyword.keyword}`);
       }
     }
 
-    setSearchBar(false)
-  }
+    setSearchBar(false);
+  };
 
   // Get icon for keyword type
   const getIconForType = (type) => {
     switch (type) {
       case "university":
-        return <Landmark className="w-4 h-4 text-emerald-500" />
+        return <Landmark className="w-4 h-4 text-emerald-500" />;
       case "course":
-        return <BookOpen className="w-4 h-4 text-purple-500" />
+        return <BookOpen className="w-4 h-4 text-purple-500" />;
       case "country":
-        return <Globe className="w-4 h-4 text-red-500" />
+        return <Globe className="w-4 h-4 text-red-500" />;
       case "faculty":
-        return <GraduationCap className="w-4 h-4 text-purple-500" />
+        return <GraduationCap className="w-4 h-4 text-purple-500" />;
       case "tag":
-        return <Tag className="w-4 h-4 text-blue-500" />
+        return <Tag className="w-4 h-4 text-blue-500" />;
       case "blog":
-        return <FileText className="w-4 h-4 text-blue-500" />
+        return <FileText className="w-4 h-4 text-blue-500" />;
       default:
-        return <Search className="w-4 h-4 text-gray-400" />
+        return <Search className="w-4 h-4 text-gray-400" />;
     }
-  }
+  };
 
   // Handle click outside to close
   useEffect(() => {
     const handleEvent = (event) => {
       if (searchBar && inputRef.current) {
-        inputRef.current.focus()
+        inputRef.current.focus();
       }
 
       if (event.type === "keydown" && event.key === "Escape") {
-        setSearchBar(false)
+        setSearchBar(false);
       }
 
-      if (event.type === "mousedown" && containerRef.current && !containerRef.current.contains(event.target)) {
-        setSearchBar(false)
+      if (
+        event.type === "mousedown" &&
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setSearchBar(false);
       }
-    }
+    };
 
     if (searchBar) {
-      document.addEventListener("keydown", handleEvent)
-      document.addEventListener("mousedown", handleEvent)
+      document.addEventListener("keydown", handleEvent);
+      document.addEventListener("mousedown", handleEvent);
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEvent)
-      document.removeEventListener("mousedown", handleEvent)
-    }
-  }, [searchBar, setSearchBar])
+      document.removeEventListener("keydown", handleEvent);
+      document.removeEventListener("mousedown", handleEvent);
+    };
+  }, [searchBar, setSearchBar]);
 
   // Initialize AOS
   useEffect(() => {
@@ -195,50 +211,53 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
       duration: 800,
       easing: "ease-in-out",
       once: false,
-    })
-  }, [])
+    });
+  }, []);
 
   // Add this useEffect to set the active category based on the URL
   useEffect(() => {
-    const path = window.location.pathname.toLowerCase()
+    const path = window.location.pathname.toLowerCase();
 
     // Check for admin routes
     if (path.includes("/admin/")) {
       if (path.includes("/admin/countries")) {
-        setActiveCategory("country")
+        setActiveCategory("country");
       } else if (path.includes("/admin/universities")) {
-        setActiveCategory("university")
+        setActiveCategory("university");
       } else if (path.includes("/admin/courses")) {
-        setActiveCategory("course")
+        setActiveCategory("course");
       } else if (path.includes("/admin/faculties")) {
-        setActiveCategory("faculty")
-      } else if (path.includes("/admin/articles") || path.includes("/admin/blogs")) {
-        setActiveCategory("blog")
+        setActiveCategory("faculty");
+      } else if (
+        path.includes("/admin/articles") ||
+        path.includes("/admin/blogs")
+      ) {
+        setActiveCategory("blog");
       }
     }
     // Check for public routes
     else {
       if (path.includes("/university") || path.includes("/universities")) {
-        setActiveCategory("university")
+        setActiveCategory("university");
       } else if (path.includes("/course") || path.includes("/courses")) {
-        setActiveCategory("course")
+        setActiveCategory("course");
       } else if (path.includes("/country") || path.includes("/countries")) {
-        setActiveCategory("country")
+        setActiveCategory("country");
       } else if (path.includes("/faculty") || path.includes("/faculties")) {
-        setActiveCategory("faculty")
+        setActiveCategory("faculty");
       } else if (
         path.includes("/blog") ||
         path.includes("/blogs") ||
         path.includes("/article") ||
         path.includes("/articles")
       ) {
-        setActiveCategory("blog")
+        setActiveCategory("blog");
       }
     }
-  }, [window.location.pathname])
+  }, [window.location.pathname]);
 
   if (!searchBar) {
-    return null
+    return null;
   }
 
   return (
@@ -262,7 +281,9 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
             autoFocus
           />
           <div className="flex justify-end items-center gap-2 ml-2">
-            <span className="text-gray-400 text-sm px-2 py-1 bg-gray-100 rounded-md">[esc]</span>
+            <span className="text-gray-400 text-sm px-2 py-1 bg-gray-100 rounded-md">
+              [esc]
+            </span>
             <button
               onClick={() => setSearchBar(false)}
               className="p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -276,7 +297,9 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
           {/* Search Results */}
           {searchQuery && hasFilteredResults ? (
             <div className="p-4">
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">SEARCH RESULTS</h3>
+              <h3 className="text-sm font-semibold text-gray-500 mb-3">
+                SEARCH RESULTS
+              </h3>
               <div className="space-y-4">
                 {Object.keys(filteredKeywords).map((type) => (
                   <div key={type} className="space-y-2">
@@ -308,19 +331,25 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
             <div className="grid md:grid-cols-2 gap-6 p-6">
               {/* Categories */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 mb-3">CATEGORIES</h3>
+                <h3 className="text-sm font-semibold text-gray-500 mb-3">
+                  CATEGORIES
+                </h3>
                 <div className="grid grid-cols-2 gap-2">
                   {categories.map((category) => (
                     <div
                       key={category.id}
                       className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        activeCategory === category.id ? "bg-blue-50 text-blue-600" : "text-gray-700"
+                        activeCategory === category.id
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700"
                       }`}
                       data-aos="fade-up"
                     >
                       <div
                         className={`w-10 h-10 flex items-center justify-center rounded-lg ${
-                          activeCategory === category.id ? "bg-blue-100" : "bg-gray-100"
+                          activeCategory === category.id
+                            ? "bg-blue-100"
+                            : "bg-gray-100"
                         }`}
                       >
                         {category.icon}
@@ -380,7 +409,9 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
 
                 {/* Quick Links */}
                 <div className="mt-6">
-                  <h3 className="text-sm font-semibold text-gray-500 mb-3">QUICK LINKS</h3>
+                  <h3 className="text-sm font-semibold text-gray-500 mb-3">
+                    QUICK LINKS
+                  </h3>
                   <div className="grid grid-cols-2 gap-2">
                     <Link
                       to={`/${language}/admin/courses`}
@@ -430,12 +461,13 @@ const SearchBar = ({ searchBar, setSearchBar, keywordData = [] }) => {
 
         {/* Footer with additional info */}
         <div className="border-t border-gray-200 p-4 bg-gray-50 text-center text-sm text-gray-500">
-          Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Enter</kbd> to search or select a result
+          Press{" "}
+          <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">Enter</kbd> to
+          search or select a result
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SearchBar
-
+export default SearchBar;

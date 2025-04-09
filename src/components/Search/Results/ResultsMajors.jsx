@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import DollerRounded from "../../../../svg/DollerRounded/Index";
-import Master from "../../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../../svg/LanguageLogo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../../context/LanguageContext";
@@ -10,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useSearch } from "../../../../context/SearchContext";
 import GradientSpinnerLoader from "./ImprovedLoaders";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BookOpenText } from "lucide-react";
 
 function ResultsMajors({
   loading: initialLoading,
@@ -23,7 +22,6 @@ function ResultsMajors({
   const location = useLocation();
   const path = location.pathname;
   const { filterProp } = useSearch();
-
   // State for infinite scrolling
   const [majors, setMajors] = useState([]);
 
@@ -35,14 +33,13 @@ function ResultsMajors({
   const loaderRef = useRef(null);
   const observer = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
+  console.log(majors);
 
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp);
   const initialDataRef = useRef(null);
   const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
 
-  // This is the key variable that's causing the issue
-  // It's checking if we're on the main search results page
   const isSearchResultsPath = path === `/${language}/searchresults`;
 
   // We need a separate variable to check if we're on the majors-specific page
@@ -274,6 +271,50 @@ function ResultsMajors({
     return `${languages[0]} +${languages.length - 1}`;
   };
 
+  const formatStudyLevel = (studyLevel) => {
+    if (!studyLevel || !Array.isArray(studyLevel) || studyLevel.length === 0)
+      return "N/A";
+
+    // Define study level names in both languages
+    const englishLevels = [
+      "Bachelor's",
+      "Master's",
+      "PhD",
+      "Diploma",
+      "Certificate",
+    ];
+    const arabicLevels = ["بكالوريوس", "ماجستير", "دكتوراه", "دبلوم", "شهادة"];
+
+    // Choose the appropriate array based on language
+    const levelsArray = language === "ar" ? arabicLevels : englishLevels;
+
+    // Map the English study level to the appropriate language
+    if (studyLevel.length === 1) {
+      // Find the index of the study level in the English array
+      const index = englishLevels.findIndex(
+        (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+      );
+
+      // If found, return the corresponding level in the selected language
+      if (index !== -1) {
+        return levelsArray[index];
+      }
+
+      // If not found in our mapping, return the original value
+      return studyLevel[0];
+    }
+
+    // For multiple study levels, show the first one + count
+    const firstLevelIndex = englishLevels.findIndex(
+      (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+    );
+
+    const firstLevel =
+      firstLevelIndex !== -1 ? levelsArray[firstLevelIndex] : studyLevel[0];
+
+    return `${firstLevel} +${studyLevel.length - 1}`;
+  };
+
   const handleApply = (majorId, customURLSlug) => {
     navigate(
       `/${language}/applications/${majorId}?category=major&slug=${customURLSlug}`
@@ -422,7 +463,8 @@ function ResultsMajors({
                         <img
                           src={
                             university.university.uniSymbol ||
-                            "https://placehold.co/56x56"
+                            "https://placehold.co/56x56" ||
+                            "/placeholder.svg"
                           }
                           alt="College Logo"
                           className="w-full h-full rounded-full"
@@ -448,9 +490,12 @@ function ResultsMajors({
                             : university?.university?.uniName?.en || "N/A"}
                         </p>
                         <div className="flex items-center mt-1">
-                          <span className="w-3.5 h-3.5 rounded-full mr-1">
-                            <Master />
-                          </span>
+                          <p className="flex items-center gap-1 rounded-full mr-1">
+                            <BookOpenText className="w-3.5 font-semibold h-3.5" />
+                            <span className="text-xs">
+                              {formatStudyLevel(university.studyLevel)}
+                            </span>
+                          </p>
                         </div>
                       </div>
                     </div>

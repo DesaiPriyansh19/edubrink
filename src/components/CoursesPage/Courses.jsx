@@ -494,7 +494,7 @@ const CoursePage = () => {
                       {data?.CourseDuration || "N/A"} year
                     </p>
                     <p className="text-sm ">
-                      {t("UniversitySlugPage.Duration")}
+                      {t("majorPage.duration")}
                     </p>
                   </div>
                 </div>

@@ -101,14 +101,7 @@ const Dashboard = () => {
       color: "bg-pink-500",
       iconColor: "text-pink-500",
     },
-    {
-      label: "Add Faculty",
-      value: "faculties",
-      icon: Users,
-      description: "Add a new faculty member",
-      color: "bg-cyan-500",
-      iconColor: "text-cyan-500",
-    },
+
     {
       label: "Add Major",
       value: "majors",
@@ -134,7 +127,6 @@ const Dashboard = () => {
       iconColor: "text-rose-500",
     },
   ];
-  
 
   const getNotificationIcon = (message) => {
     if (message?.en?.includes("created")) {

@@ -20,8 +20,6 @@ const FacultyRightLayout = ({ data, language }) => {
     <>
       <div className="mt-5">
         <div className="container">
-       
-
           <div className="bg-white shadow rounded-xl mt-5">
             <div className="mt-6">
               <div>
@@ -51,7 +49,7 @@ const FacultyRightLayout = ({ data, language }) => {
                           {data?.uniDuration}
                         </p>
                         <p className="text-sm font-sans font-normal leading-5">
-                          {t("UniversitySlugPage.Duration")}
+                          {t("majorPage.duration")}
                         </p>
                       </div>
                     </div>
@@ -138,7 +136,7 @@ const FacultyRightLayout = ({ data, language }) => {
             </div>
           </div>
         </div>
-        <FacultyRightLayoutCard/>
+        <FacultyRightLayoutCard />
       </div>
       <ShareCard
         isOpen={isShareModalOpen}
