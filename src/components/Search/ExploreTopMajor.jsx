@@ -363,18 +363,82 @@ function ExploreTopMajor({ language }) {
                         />
                       </div>
                       <div className="pl-3">
-                        <h1 className="text-[16px] font-semibold flex items-center">
-                          {(() => {
-                            const majorName =
-                              language === "ar"
-                                ? major?.majorName?.ar
-                                : major?.majorName?.en || "N/A";
+                      <div className="min-h-[2em] flex items-center">
+  <h1 className="text-[16px] flex  xl:hidden font-semibold leading-tight">
+    {(() => {
+      const majorName = 
+        language === "ar" 
+          ? major?.majorName?.ar 
+          : major?.majorName?.en || "N/A";
 
-                            return majorName.length > 17
-                              ? majorName.slice(0, 17) + "..."
-                              : majorName;
-                          })()}
-                        </h1>
+      // Handle N/A case
+      if (majorName === "N/A") return majorName;
+
+      // If longer than 34 characters
+      if (majorName.length > 34) {
+        const firstPart = majorName.slice(0, 17);
+        const secondPart = majorName.slice(17, 34);
+        return (
+          <>
+            {firstPart}-
+            <br />
+            {secondPart}...
+          </>
+        );
+      }
+      // If between 17-34 characters (original behavior)
+      else if (majorName.length > 17) {
+        return majorName.slice(0, 17) + "...";
+      }
+      // If less than 17 characters
+      else {
+        return (
+          <>
+            {majorName}
+            <span className="inline-block opacity-0 w-0 h-[1em]">.</span>
+          </>
+        );
+      }
+    })()}
+  </h1>
+  <h1 className="text-[16px] hidden xl:flex font-semibold leading-tight">
+    {(() => {
+      const majorName = 
+        language === "ar" 
+          ? major?.majorName?.ar 
+          : major?.majorName?.en || "N/A";
+
+      // Handle N/A case
+      if (majorName === "N/A") return majorName;
+
+      // If longer than 34 characters
+      if (majorName.length > 34) {
+        const firstPart = majorName.slice(0, 30);
+        const secondPart = majorName.slice(30, 34);
+        return (
+          <>
+            {firstPart}
+            
+            {secondPart}...
+          </>
+        );
+      }
+      // If between 30-34 characters (original behavior)
+      else if (majorName.length > 30) {
+        return majorName.slice(0, 30) + "...";
+      }
+      // If less than 17 characters
+      else {
+        return (
+          <>
+            {majorName}
+            <span className="inline-block opacity-0 w-0 h-[1em]">.</span>
+          </>
+        );
+      }
+    })()}
+  </h1>
+</div>
                         <p className="text-[10px] font-medium text-black flex items-center mt-1">
                           {language === "ar"
                             ? major?.university?.uniName?.ar

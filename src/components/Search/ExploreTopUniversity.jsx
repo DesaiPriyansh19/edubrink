@@ -243,7 +243,7 @@ function ExploreTopUniversity({ language }) {
       {initialLoading ? (
         // Show skeletons while loading
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 xl:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 xl:gap-8">
           {Array.from({ length: 6 }).map((_, idx) => (
             <div
               key={idx}
@@ -267,7 +267,7 @@ function ExploreTopUniversity({ language }) {
       ) : (
         // Show actual universities when loaded
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4  gap-4 xl:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3 gap-4 xl:gap-8">
             {universities.length > 0 &&
               universities.map((university, idx) => {
                 const dynamicFeatures = [
@@ -309,7 +309,8 @@ function ExploreTopUniversity({ language }) {
                     className={`relative mt-3  rounded-xl  bg-white lg:min-w-[290px]`}
                   >
                     <div className="p-3 sm:p-4">
-                      {university?.uniFeatured && (
+                <div className="mb-2">
+                       {university?.uniFeatured && (
                         <div
                           className={`absolute top-0 ${
                             language === "ar" ? "left-0 " : "right-0 "
@@ -318,7 +319,7 @@ function ExploreTopUniversity({ language }) {
                           {t("mostPopular")}
                         </div>
                       )}
-
+</div> 
                       <div className="flex gap-2 items-center mb-3">
                         <div className="w-12 h-12">
                           <img
@@ -328,21 +329,77 @@ function ExploreTopUniversity({ language }) {
                           />
                         </div>
                         <div className="flex-1">
-                          <h1 className="text-[16px] font-semibold flex items-center gap-1">
-                            {(() => {
-                              const uniName =
-                                language === "ar"
-                                  ? university?.uniName?.ar
-                                  : university?.uniName?.en || "N/A";
+                        <div className="flex  items-baseline gap-1">
+  <h1 className="text-[16px] font-semibold leading-tight inline-flex flex-wrap items-baseline">
+    {(() => {
+      const uniName = 
+        language === "ar" 
+          ? university?.uniName?.ar 
+          : university?.uniName?.en || "N/A";
 
-                              return uniName.length > 20
-                                ? uniName.slice(0, 20) + "..."
-                                : uniName;
-                            })()}
-                            <span>
-                              <TickMark />
-                            </span>
-                          </h1>
+      if (uniName === "N/A") {
+        return (
+          <>
+            {uniName}
+            <span className="ml-1 relative top-[2px]">
+              <TickMark />
+            </span>
+          </>
+        );
+      }
+
+      if (uniName.length > 40) {
+        const firstBreak = uniName.lastIndexOf(' ', 20) > 0 
+          ? uniName.lastIndexOf(' ', 20) 
+          : 20;
+        const secondBreak = uniName.lastIndexOf(' ', 40) > 0 
+          ? uniName.lastIndexOf(' ', 40) 
+          : 40;
+        
+        return (
+          <>
+            {uniName.substring(0, firstBreak)}-
+            <br />
+            <span className="inline-flex items-baseline">
+              {uniName.substring(firstBreak + 1, secondBreak)}...
+              <span className="ml-1 relative top-[2px]">
+                <TickMark />
+              </span>
+            </span>
+          </>
+        );
+      }
+      else if (uniName.length > 20) {
+        // Consistent line-breaking behavior for 20-40 characters
+        const breakPoint = uniName.lastIndexOf(' ', 20) > 0 
+          ? uniName.lastIndexOf(' ', 20) 
+          : 20;
+        
+        return (
+          <>
+            {uniName.substring(0, breakPoint)}-
+            <br />
+            <span className="inline-flex items-baseline">
+              {uniName.substring(breakPoint + 1)}
+              <span className="ml-1 relative top-[2px]">
+                <TickMark />
+              </span>
+            </span>
+          </>
+        );
+      }
+      return (
+        <>
+          {uniName}
+          <span className="ml-1 relative top-[2px]">
+            <TickMark />
+          </span>
+        </>
+      );
+    })()}
+  </h1>
+</div>
+
 
                           <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
                             <p>

@@ -470,19 +470,59 @@ function ResultsMajors({
                           className="w-full h-full rounded-full"
                         />
                       </div>
-                      <div className="pl-3">
-                        <h1 className="text-[16px] font-semibold flex items-center">
-                          {(() => {
-                            const majorName =
-                              language === "ar"
-                                ? university?.majorName?.ar
-                                : university?.majorName?.en || "N/A";
+                      <div className="pl-3 ">
+                      <div className="min-h-[2em] w-full    flex items-center">
+  <h1 className="text-[16px] font-semibold leading-tight">
+    {(() => {
+      const majorName = 
+        language === "ar" 
+          ? university?.majorName?.ar 
+          : university?.majorName?.en || "N/A";
 
-                            return majorName.length > 17
-                              ? majorName.slice(0, 17) + "..."
-                              : majorName;
-                          })()}
-                        </h1>
+      if (majorName === "N/A") return majorName;
+
+      if (majorName.length > 28) {
+        // Find last space before 28 character
+        const lastSpaceIndex = majorName.lastIndexOf(' ', 28);
+        // Split at space if found, otherwise at 28 character
+        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 28;
+        
+        // First line break at 17 chars
+        const firstBreakIndex = majorName.lastIndexOf(' ', 25) > 0 
+          ? majorName.lastIndexOf(' ', 25) 
+          : 25;
+          
+        return (
+          <>
+            {majorName.substring(0, firstBreakIndex)}
+            <br />
+            {majorName.substring(firstBreakIndex + 1, splitIndex)}...
+          </>
+        );
+      }
+      else if (majorName.length > 17) {
+        // Normal line break (original behavior)
+        const lastSpaceIndex = majorName.lastIndexOf(' ', 17);
+        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 17;
+        
+        return (
+          <>
+            {majorName.substring(0, splitIndex)}
+            <br />
+            {majorName.substring(splitIndex + 1)}
+          </>
+        );
+      }
+      // For short names
+      return (
+        <>
+          {majorName}
+          <span className="inline-block opacity-0 w-0 h-[1em]">.</span>
+        </>
+      );
+    })()}
+  </h1>
+</div>
 
                         <p className="text-[10px] font-medium text-black flex items-center mt-1">
                           {language === "ar"

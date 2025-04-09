@@ -52,11 +52,11 @@ const CollegeCard = ({ data, loading }) => {
       <div
         className={`${
           path === `/${language}/searchresults/university`
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
             : "flex gap-3 "
         }`}
       >
-        {Array.from({ length: 4 }).map((_, index) => (
+        {Array.from({ length: 16 }).map((_, index) => (
           <div
             key={index}
             className="relative mt-3 border px-2 py-1  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
@@ -158,18 +158,19 @@ const CollegeCard = ({ data, loading }) => {
               className={`relative mt-3  rounded-xl  bg-white lg:min-w-[290px]`}
             >
               <div className="p-3 sm:p-4">
-                {university?.uniFeatured && (
+              <div className="mb-2">
+                  {university?.uniFeatured && (
                   <div
-                    className={`absolute top-0 ${
+                    className={`absolute  top-0 ${
                       language === "ar" ? "left-0 " : "right-0 "
-                    }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1`}
+                    }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1 `}
                   >
                     {t("mostPopular")}
                   </div>
-                )}
+                )}</div>
 
                 <div className="flex gap-2 items-center mb-3">
-                  <div className="w-12 h-12">
+                  <div className="w-12 h-12 xl:w-16 xl:h-16">
                     <img
                       src={university?.uniSymbol || "https://placehold.co/60x60"}
                       alt="Logo"
@@ -177,16 +178,78 @@ const CollegeCard = ({ data, loading }) => {
                     />
                   </div>
                   <div className="flex-1">
-                    <h1 className="text-[16px] font-semibold flex items-center gap-1">
-                      {(() => {
-                        const uniName = language === "ar" ? university?.uniName?.ar : university?.uniName?.en || "N/A"
+                  <div className="flex  items-baseline gap-1">
+  <h1 className="text-[16px] font-semibold leading-tight inline-flex flex-wrap items-baseline">
+    {(() => {
+      const uniName = 
+        language === "ar" 
+          ? university?.uniName?.ar 
+          : university?.uniName?.en || "N/A";
 
-                        return uniName.length > 20 ? uniName.slice(0, 20) + "..." : uniName
-                      })()}
-                      <span>
-                        <TickMark />
-                      </span>
-                    </h1>
+      if (uniName === "N/A") {
+        return (
+          <>
+            {uniName}
+            <span className="ml-1 relative top-[2px]">
+              <TickMark />
+            </span>
+          </>
+        );
+      }
+
+      if (uniName.length > 40) {
+        const firstBreak = uniName.lastIndexOf(' ', 20) > 0 
+          ? uniName.lastIndexOf(' ', 20) 
+          : 20;
+        const secondBreak = uniName.lastIndexOf(' ', 40) > 0 
+          ? uniName.lastIndexOf(' ', 40) 
+          : 40;
+        
+        return (
+          <>
+            {uniName.substring(0, firstBreak)}-
+            <br />
+            <span className="inline-flex items-baseline">
+              {uniName.substring(firstBreak + 1, secondBreak)}...
+              <span className="ml-1 relative top-[2px]">
+                <TickMark />
+              </span>
+            </span>
+          </>
+        );
+      }
+      else if (uniName.length > 20) {
+        // Consistent line-breaking behavior for 20-40 characters
+        const breakPoint = uniName.lastIndexOf(' ', 20) > 0 
+          ? uniName.lastIndexOf(' ', 20) 
+          : 20;
+        
+        return (
+          <>
+            {uniName.substring(0, breakPoint)}-
+            <br />
+            <span className="inline-flex items-baseline">
+              {uniName.substring(breakPoint + 1)}
+              <span className="ml-1 relative top-[2px]">
+                <TickMark />
+              </span>
+            </span>
+          </>
+        );
+      }
+      return (
+        <>
+          {uniName}
+          <span className="ml-1 relative top-[2px]">
+            <TickMark />
+          </span>
+        </>
+      );
+    })()}
+  </h1>
+</div>
+
+
 
                     <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
                       <div className="text-[.7rem] font-medium gap-1 text-black flex items-center mt-1">

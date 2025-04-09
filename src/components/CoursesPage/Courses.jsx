@@ -672,13 +672,13 @@ const CoursePage = () => {
       />
 
       {data?.university?.courseId?.length > 0 && (
-        <div className="max-w-[1200px] mx-auto">
+        <div className="max-w-[1200px] mx-auto  md:ml-5 lg:ml-9">
           <div>
             <div
               dir={language === "ar" ? "rtl" : "ltr"}
               className="flex items-center justify-between mt-6 mb-4"
             >
-              <div className="">
+              <div className="ml-5 md:ml-0">
                 <h1 className="text-2xl sm:text-4xl font-semibold">
                   📚 {t("ourCourseSection.title")}
                 </h1>
@@ -718,7 +718,7 @@ const CoursePage = () => {
 
           <div
             dir={language === "ar" ? "rtl" : "ltr"}
-            className={`flex overflow-x-scroll scrollbar-hide col-span-3 flex-col gap-4 sm:flex-row
+            className={`flex overflow-x-scroll scrollbar-hide col-span-3 flex-col gap-4 sm:flex-row mx-3 md:ml-0
            }`}
           >
             {loading && data?.university?.courseId?.length === 0
@@ -815,18 +815,36 @@ const CoursePage = () => {
                             />
                           </div>
                           <div className="pl-3">
-                            <h1 className="text-[16px] font-semibold flex items-center">
-                              {(() => {
-                                const courseName =
-                                  language === "ar"
-                                    ? university?.CourseName?.ar
-                                    : university?.CourseName?.en || "N/A";
+                          <div className="min-h-[2em]"> {/* Container that reserves space */}
+  <h1 className="text-[16px] font-semibold leading-tight">
+    {(() => {
+      const courseName = 
+        language === "ar" 
+          ? university?.CourseName?.ar 
+          : university?.CourseName?.en || "N/A";
 
-                                return courseName.length > 17
-                                  ? courseName.slice(0, 17) + "..."
-                                  : courseName;
-                              })()}
-                            </h1>
+      if (courseName.length > 17) {
+        const lastSpaceIndex = courseName.lastIndexOf(' ', 17);
+        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 17;
+        
+        return (
+          <>
+            {courseName.substring(0, splitIndex)}
+            <br />
+            {courseName.substring(splitIndex + 1)}
+          </>
+        );
+      }
+      return (
+        <>
+          {courseName}
+          {/* This invisible span creates the space for second line */}
+          <span className="block opacity-0 h-[1em]">.</span>
+        </>
+      );
+    })()}
+  </h1>
+</div>
 
                             <p className="text-[10px] font-medium text-black flex items-center mt-1">
                               {(() => {
