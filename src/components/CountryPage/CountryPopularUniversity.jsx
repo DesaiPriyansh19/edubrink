@@ -123,7 +123,7 @@ const CountryPopularUniversity = ({ data }) => {
                 <div
                 key={idx}
                 dir={language === "ar" ? "rtl" : "ltr"}
-                className="relative w-[90%] sm:w-[48%] lg:w-[30%]  rounded-xl shadow-sm bg-white p-2"
+                className="relative w-[90%] sm:w-[48%] lg:w-[30%]  rounded-xl shadow-sm bg-white p-2" 
               >
                 <div className="p-3">
                   <div
@@ -145,17 +145,44 @@ const CountryPopularUniversity = ({ data }) => {
                       />
                     </div>
                     <div className="flex-1">
-                    <h1 className="text-sm font-semibold flex items-center">
-  {language === "ar" 
-    ? (university?.uniName?.ar?.length > 18 
-        ? `${university.uniName.ar.substring(0, 18)}...`
-        : university?.uniName?.ar || "N/A")
-    : (university?.uniName?.en?.length > 18 
-        ? `${university.uniName.en.substring(0, 18)}...`
-        : university?.uniName?.en || "N/A")}
-  <span className="ml-1">
-    <TickMark />
-  </span>
+                    <h1 className="text-sm font-semibold inline-flex flex-wrap items-baseline">
+  {(() => {
+    const uniName = language === "ar" ? university?.uniName?.ar : university?.uniName?.en;
+    if (!uniName) return (
+      <>
+        N/A
+        <span className="ml-1 relative top-0.5">
+          <TickMark />
+        </span>
+      </>
+    );
+    
+    if (uniName.length > 18) {
+      const lastSpaceIndex = uniName.lastIndexOf(' ', 18);
+      const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 18;
+      
+      return (
+        <>
+          {uniName.substring(0, splitIndex)}
+          <br className="block w-full" />
+          <span className="inline-flex items-baseline">
+            {uniName.substring(splitIndex + 1)}
+            <span className="ml-1 relative top-0.5">
+              <TickMark />
+            </span>
+          </span>
+        </>
+      );
+    }
+    return (
+      <>
+        {uniName}
+        <span className="ml-1 relative top-0.5">
+          <TickMark />
+        </span>
+      </>
+    );
+  })()}
 </h1>
               
                       <p className="text-xs font-medium text-gray-700 mt-1">

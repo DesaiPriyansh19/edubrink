@@ -106,13 +106,26 @@ const CountryPopularCourse = ({ data }) => {
             </div>
             <div>
             <h1 className="text-sm font-semibold">
-  {language === "ar" 
-    ? (course?.CourseName?.ar?.length > 18 
-        ? `${course.CourseName.ar.substring(0, 18)}...`
-        : course?.CourseName?.ar || "N/A")
-    : (course?.CourseName?.en?.length > 18 
-        ? `${course.CourseName.en.substring(0, 18)}...`
-        : course?.CourseName?.en || "N/A")}
+  {(() => {
+    const courseName = language === "ar" ? course?.CourseName?.ar : course?.CourseName?.en;
+    if (!courseName) return "N/A";
+    
+    if (courseName.length > 25) {
+      // Find the last space before the 20th character
+      const lastSpaceIndex = courseName.lastIndexOf(' ', 25);
+      // If a space was found, split there, otherwise at 20 (as fallback)
+      const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 25;
+      
+      return (
+        <>
+          {courseName.substring(0, splitIndex)}
+          <br />
+          {courseName.substring(splitIndex + 1)}
+        </>
+      );
+    }
+    return courseName;
+  })()}
 </h1>
               <p className="text-[0.7rem] font-medium text-black mt-1">
                 {language === "ar" ? university?.uniName?.ar : university?.uniName?.en || "N/A"}

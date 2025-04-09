@@ -110,7 +110,7 @@ const UniversityPrograms = ({
   }, [hasCourses, hasMajors]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
+    <div className=" rounded-2xl  p-6 transition-all duration-300 ">
       {/* Header with tabs if we have both courses and majors */}
       <div className={`flex items-center justify-between ${
           activeTab === "courses" ? "mb-0" : "mb-6"

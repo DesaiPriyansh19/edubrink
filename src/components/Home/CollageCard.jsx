@@ -74,7 +74,7 @@ const CollegeCard = ({ college, idx }) => {
 
     {/* College Info - Fixed height container */}
     <div className="flex gap-3 items-start mt-5 sm:mt-3 mb-4 min-h-[72px]">
-      <div className="flex-shrink-0 w-16 h-16">
+      <div className="flex-shrink-0 w-20 h-20">
         <img
           src={college.uniSymbol || "https://placehold.co/64x64"}
           alt="Logo"
@@ -82,23 +82,28 @@ const CollegeCard = ({ college, idx }) => {
         />
       </div>
       <div className="flex-1 min-w-0">
-        <h1 className="text-base font-semibold leading-tight">
-          {(() => {
-            const name = language === "ar" ? college?.uniName?.ar : college?.uniName?.en;
-            if (!name) return null;
-            
-            if (name.length > 22) {
-              return (
-                <>
-                  {name.substring(0, 22)}
-                  <br />
-                  {name.substring(22)}
-                </>
-              );
-            }
-            return name;
-          })()}
-        </h1>
+      <h1 className="text-base font-semibold leading-tight">
+  {(() => {
+    const name = language === "ar" ? college?.uniName?.ar : college?.uniName?.en;
+    if (!name) return null;
+    
+    if (name.length > 22) {
+      // Find the last space before the 22nd character
+      const lastSpaceIndex = name.lastIndexOf(' ', 22);
+      // If a space was found, split there, otherwise split at 22 (as fallback)
+      const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 22;
+      
+      return (
+        <>
+          {name.substring(0, splitIndex)}
+          <br />
+          {name.substring(splitIndex).trimStart()}
+        </>
+      );
+    }
+    return name;
+  })()}
+</h1>
         
         {/* Country info with consistent spacing */}
         <div className="mt-2">

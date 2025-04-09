@@ -30,7 +30,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
   return (
     <>
       <div className="sticky top-24">
-        <div className="bg-white rounded-2xl shadow-md p-6 transition-all duration-300 hover:shadow-lg">
+        <div className=" rounded-2xl  p-6 transition-all duration-300 ">
           <div className="flex gap-4 items-center mb-6">
             {/* Share Button */}
             <button
@@ -57,7 +57,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
           </div>
 
           <div
-            className="rounded-xl overflow-hidden border border-gray-100 shadow-sm"
+            className="rounded-xl overflow-hidden  bg-white shadow-sm"
             data-aos="fade-up"
           >
             {/* University Details */}
