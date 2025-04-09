@@ -271,6 +271,17 @@ function ResultsMajors({
     return `${languages[0]} +${languages.length - 1}`;
   };
 
+  const formatDeadline = (deadline) => {
+    if (!deadline || !Array.isArray(deadline) || deadline.length === 0)
+      return "N/A";
+
+    const shortMonths = deadline.map((month) => month.slice(0, 3));
+
+    if (shortMonths.length === 1) return shortMonths[0];
+
+    return `${shortMonths[0]} +${shortMonths.length - 1}`;
+  };
+
   const formatStudyLevel = (studyLevel) => {
     if (!studyLevel || !Array.isArray(studyLevel) || studyLevel.length === 0)
       return "N/A";
@@ -438,9 +449,7 @@ function ResultsMajors({
                 {
                   icon: <DollerRounded />,
                   title: language === "ar" ? "الموعد النهائي" : "Deadline",
-                  description: university?.majorIntakeMonth
-                    ? university?.majorIntakeMonth.join(", ")
-                    : "N/A",
+                  description: formatDeadline(university?.majorIntakeMonth),
                 },
               ];
 
