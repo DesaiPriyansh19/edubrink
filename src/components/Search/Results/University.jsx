@@ -1,37 +1,33 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import DollerRounded from "../../../../svg/DollerRounded/Index";
-import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index";
-import DiscountLogo from "../../../../svg/DiscountLogo/Index";
-import PrivetUniLogo from "../../../../svg/PriUniLogo/Index";
-import { useTranslation } from "react-i18next";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import TickMark from "../../../../svg/TickMark";
-import { useLanguage } from "../../../../context/LanguageContext";
-import axios from "axios";
-import { useSearch } from "../../../../context/SearchContext";
-import GradientSpinnerLoader from "./ImprovedLoaders";
-import ReactGA from "react-ga4";
-import { ArrowRight } from "lucide-react";
-import { getEmoji } from "../../../../libs/countryFlags";
+import { useEffect, useRef, useState, useCallback } from "react"
+import DollerRounded from "../../../../svg/DollerRounded/Index"
+import ScholerShipLogo from "../../../../svg/ScolerShipLogo/Index"
+import DiscountLogo from "../../../../svg/DiscountLogo/Index"
+import PrivetUniLogo from "../../../../svg/PriUniLogo/Index"
+import { useTranslation } from "react-i18next"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import TickMark from "../../../../svg/TickMark"
+import { useLanguage } from "../../../../context/LanguageContext"
+import axios from "axios"
+import { useSearch } from "../../../../context/SearchContext"
+import GradientSpinnerLoader from "./ImprovedLoaders"
+import ReactGA from "react-ga4"
+import { ArrowRight } from "lucide-react"
+import { getEmoji } from "../../../../libs/countryFlags"
 
-const isWindows = navigator.userAgent.includes("Windows");
+const isWindows = navigator.userAgent.includes("Windows")
 
 const CollegeCard = ({ data, loading }) => {
-  const { t } = useTranslation();
-  const location = useLocation();
-  const { language } = useLanguage();
-  const navigate = useNavigate();
-  const path = location.pathname;
+  const { t } = useTranslation()
+  const location = useLocation()
+  const { language } = useLanguage()
+  const navigate = useNavigate()
+  const path = location.pathname
 
   const handleApplyClick = (uniName, countryName) => {
-    const uniLabel =
-      language === "ar" ? uniName?.ar : uniName?.en || "Unknown University";
-    const countryLabel =
-      language === "ar"
-        ? countryName?.ar
-        : countryName?.en || "Unknown Country";
+    const uniLabel = language === "ar" ? uniName?.ar : uniName?.en || "Unknown University"
+    const countryLabel = language === "ar" ? countryName?.ar : countryName?.en || "Unknown Country"
 
     // Track event using ReactGA
     ReactGA.event({
@@ -40,17 +36,15 @@ const CollegeCard = ({ data, loading }) => {
       label: uniLabel, // University name in the correct language
       university_name: uniLabel,
       country_name: countryLabel,
-    });
-  };
+    })
+  }
   const handleApply = (courseId, customURLSlug) => {
-    navigate(
-      `/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`
-    );
-  };
+    navigate(`/${language}/applications/${courseId}?category=University&slug=${customURLSlug}`)
+  }
 
   const handleLearnMore = (uniname) => {
-    navigate(`/${language}/university/${uniname}`);
-  };
+    navigate(`/${language}/university/${uniname}`)
+  }
 
   // Skeleton loader
   if (loading && (!data || data.length === 0)) {
@@ -111,7 +105,7 @@ const CollegeCard = ({ data, loading }) => {
           </div>
         ))}
       </div>
-    );
+    )
   }
 
   // Actual Content
@@ -142,8 +136,8 @@ const CollegeCard = ({ data, loading }) => {
                     ? "متاح"
                     : "Available"
                   : language === "ar"
-                  ? "غير متاح"
-                  : "Not Available",
+                    ? "غير متاح"
+                    : "Not Available",
             },
             {
               icon: <DiscountLogo />,
@@ -153,10 +147,10 @@ const CollegeCard = ({ data, loading }) => {
                   ? "متاح"
                   : "Available"
                 : language === "ar"
-                ? "غير متاح"
-                : "Not Available",
+                  ? "غير متاح"
+                  : "Not Available",
             },
-          ];
+          ]
           return (
             <div
               key={idx}
@@ -177,9 +171,7 @@ const CollegeCard = ({ data, loading }) => {
                 <div className="flex gap-2 items-center mb-3">
                   <div className="w-12 h-12">
                     <img
-                      src={
-                        university?.uniSymbol || "https://placehold.co/60x60"
-                      }
+                      src={university?.uniSymbol || "https://placehold.co/60x60"}
                       alt="Logo"
                       className="w-full h-full rounded-full object-cover"
                     />
@@ -187,14 +179,9 @@ const CollegeCard = ({ data, loading }) => {
                   <div className="flex-1">
                     <h1 className="text-[16px] font-semibold flex items-center gap-1">
                       {(() => {
-                        const uniName =
-                          language === "ar"
-                            ? university?.uniName?.ar
-                            : university?.uniName?.en || "N/A";
+                        const uniName = language === "ar" ? university?.uniName?.ar : university?.uniName?.en || "N/A"
 
-                        return uniName.length > 20
-                          ? uniName.slice(0, 20) + "..."
-                          : uniName;
+                        return uniName.length > 20 ? uniName.slice(0, 20) + "..." : uniName
                       })()}
                       <span>
                         <TickMark />
@@ -206,25 +193,16 @@ const CollegeCard = ({ data, loading }) => {
                         {isWindows ? (
                           university?.uniCountry ? (
                             <img
-                              src={`https://flagcdn.com/w320/${getEmoji(
-                                university.uniCountry.countryCode
-                              )}.png`}
+                              src={`https://flagcdn.com/w320/${getEmoji(university.uniCountry.countryCode)}.png`}
                               alt="Country Flag"
                               className="w-2.5 h-2.5 object-cover rounded-full"
                             />
                           ) : (
-                            <span className="text-[.5rem] font-medium">
-                              No flag
-                            </span>
+                            <span className="text-[.5rem] font-medium">No flag</span>
                           )
                         ) : (
                           <span className="text-sm filter transition-all duration-300 group-hover:rotate-12">
-                            <p>
-                              {
-                                university?.uniCountry?.countryPhotos
-                                  ?.countryFlag
-                              }
-                            </p>
+                            <p>{university?.uniCountry?.countryPhotos?.countryFlag}</p>
                           </span>
                         )}
                         <p>{university?.uniCountry?.countryName?.[language]}</p>
@@ -241,8 +219,8 @@ const CollegeCard = ({ data, loading }) => {
                             ? "جامعة خاصة"
                             : "جامعة حكومية"
                           : university?.uniType === "Private"
-                          ? "Private University"
-                          : "Public University"}
+                            ? "Private University"
+                            : "Public University"}
                       </p>
                     </div>
                   </div>
@@ -250,20 +228,13 @@ const CollegeCard = ({ data, loading }) => {
 
                 <div className="flex gap-1 justify-center">
                   {dynamicFeatures.flat().map((feature, index) => (
-                    <div
-                      key={index}
-                      className=" flex items-center gap-1 justify-center"
-                    >
+                    <div key={index} className=" flex items-center gap-1 justify-center">
                       <span className="rounded-full w-6 h-6 flex items-center justify-center border">
                         {feature.icon}
                       </span>
                       <div>
-                        <p className="text-[9px] font-medium">
-                          {feature.title}
-                        </p>
-                        <p className="text-[9px] text-gray-600">
-                          {feature.description}
-                        </p>
+                        <p className="text-[9px] font-medium">{feature.title}</p>
+                        <p className="text-[9px] text-gray-600">{feature.description}</p>
                       </div>
                     </div>
                   ))}
@@ -275,14 +246,8 @@ const CollegeCard = ({ data, loading }) => {
               <div className="grid gap-4 px-2 grid-cols-2 mb-4 mt-2">
                 <button
                   onClick={() => {
-                    handleApplyClick(
-                      university?.uniName,
-                      university?.uniCountry?.countryName
-                    );
-                    handleApply(
-                      university?._id,
-                      university?.customURLSlug?.[language]
-                    );
+                    handleApplyClick(university?.uniName, university?.uniCountry?.countryName)
+                    handleApply(university?._id, university?.customURLSlug?.[language])
                   }}
                   className="bg-slateBlue text-white text-[10px] py-2 px-2 rounded-full"
                 >
@@ -290,7 +255,7 @@ const CollegeCard = ({ data, loading }) => {
                 </button>
                 <button
                   onClick={() => {
-                    handleLearnMore(university?.customURLSlug?.[language]);
+                    handleLearnMore(university?.customURLSlug?.[language])
                   }}
                   className="text-black text-[10px] px-2 py-2 rounded-full border-2 border-gray-800"
                 >
@@ -298,69 +263,63 @@ const CollegeCard = ({ data, loading }) => {
                 </button>
               </div>
             </div>
-          );
+          )
         })}
     </div>
-  );
-};
+  )
+}
 
-function Univrsiry({
-  loading: initialLoading,
-  filteredData: initialData,
-  countryIds,
-}) {
-  const { t } = useTranslation();
-  const { language } = useLanguage();
-  const location = useLocation();
-  const path = location.pathname;
-  const { filterProp } = useSearch();
+function Univrsiry({ loading: initialLoading, filteredData: initialData, countryIds }) {
+  const { t } = useTranslation()
+  const { language } = useLanguage()
+  const location = useLocation()
+  const path = location.pathname
+  const { filterProp } = useSearch()
 
   // State for infinite scrolling
-  const [universities, setUniversities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [initialFetch, setInitialFetch] = useState(true);
-  const [totalUniversities, setTotalUniversities] = useState(0);
-  const loaderRef = useRef(null);
-  const observer = useRef(null);
-  const [fetchTrigger, setFetchTrigger] = useState(0);
-  const [directFetchCompleted, setDirectFetchCompleted] = useState(false);
+  const [universities, setUniversities] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [initialFetch, setInitialFetch] = useState(true)
+  const [totalUniversities, setTotalUniversities] = useState(0)
+  const loaderRef = useRef(null)
+  const observer = useRef(null)
+  const [fetchTrigger, setFetchTrigger] = useState(0)
+  const [directFetchCompleted, setDirectFetchCompleted] = useState(false)
 
   // Keep track of previous filter state to detect changes
-  const filterPropRef = useRef(filterProp);
-  const initialDataRef = useRef(null);
+  const filterPropRef = useRef(filterProp)
+  const initialDataRef = useRef(null)
 
   // API base URL - use environment variable or fallback to production URL
-  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search";
+  const API_BASE_URL = "https://edu-brink-backend.vercel.app/api/search"
 
   // Check if we're on the university-specific page
-  const isUniversityPath = path === `/${language}/searchresults/university`;
+  const isUniversityPath = path === `/${language}/searchresults/university`
 
   // Update the isSearchResultsPath variable to check for the main search results path
-  const isSearchResultsPath = path === `/${language}/searchresults`;
+  const isSearchResultsPath = path === `/${language}/searchresults`
 
   // Function to fetch initial universities data directly
   const fetchInitialUniversities = useCallback(async () => {
-    if (directFetchCompleted) return;
+    if (directFetchCompleted) return
 
     try {
-      setLoading(true);
+      setLoading(true)
 
       // Get country IDs from context if not provided as props
-      let countryIdsToUse = countryIds;
+      let countryIdsToUse = countryIds
       if (!countryIdsToUse || countryIdsToUse.length === 0) {
         // If no countryIds provided, try to fetch all countries first
         try {
-          const countriesResponse = await axios.get(`${API_BASE_URL}`);
+          const countriesResponse = await axios.get(`${API_BASE_URL}`)
           if (countriesResponse.data && countriesResponse.data.data) {
-            countryIdsToUse = countriesResponse.data.data.map(
-              (country) => country._id
-            );
+            countryIdsToUse = countriesResponse.data.data.map((country) => country._id)
           }
         } catch (error) {
-          console.error("Error fetching countries:", error);
+          console.error("Error fetching countries:", error)
         }
       }
 
@@ -372,105 +331,110 @@ function Univrsiry({
         IntakeYear: filterProp.IntakeYear,
         IntakeMonth: filterProp.IntakeMonth,
         Destination: filterProp.Destination,
+        // Add course-related filters
+        ModeOfStudy: filterProp.ModeOfStudy,
+        minBudget: filterProp.minBudget !== 0 ? filterProp.minBudget : undefined,
+        maxBudget: filterProp.maxBudget !== 100000 ? filterProp.maxBudget : undefined,
+        CourseDuration: filterProp.CourseDuration,
+        // Add search query if it exists
+        searchQuery:
+          filterProp.searchQuery && (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+            ? JSON.stringify(filterProp.searchQuery)
+            : undefined,
         page: 1,
         limit: 10,
-      };
+      }
 
       // Make API request with all filters
       const response = await axios.get(`${API_BASE_URL}/university`, {
         params: universityFilters,
-      });
+      })
+
+      console.log("Universities from dedicated page:", response.data.data.length)
 
       if (response.data.data && response.data.data.length > 0) {
-        setUniversities(response.data.data);
-        setTotalUniversities(response.data.pagination.totalUniversities);
-        setHasMore(response.data.pagination.hasMore);
+        setUniversities(response.data.data)
+        setTotalUniversities(response.data.pagination.totalUniversities)
+        setHasMore(response.data.pagination.hasMore)
       } else {
-        setUniversities([]);
-        setHasMore(false);
+        setUniversities([])
+        setHasMore(false)
       }
 
-      setDirectFetchCompleted(true);
-      setInitialFetch(false);
+      setDirectFetchCompleted(true)
+      setInitialFetch(false)
     } catch (error) {
-      console.error("Error in direct fetch:", error);
-      setHasMore(false);
-      setInitialFetch(false);
-      setDirectFetchCompleted(true);
+      console.error("Error in direct fetch:", error)
+      setHasMore(false)
+      setInitialFetch(false)
+      setDirectFetchCompleted(true)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [API_BASE_URL, countryIds, filterProp, directFetchCompleted]);
+  }, [API_BASE_URL, countryIds, filterProp, directFetchCompleted])
 
   // Effect to handle initial data or perform direct fetch if needed
   useEffect(() => {
     // If we have initial data from props, use it
     if (initialData && initialData.length > 0) {
-      setUniversities(initialData);
-      setLoading(initialLoading);
-      setInitialFetch(false);
-      setDirectFetchCompleted(true);
+      setUniversities(initialData)
+      setLoading(initialLoading)
+      setInitialFetch(false)
+      setDirectFetchCompleted(true)
 
       // If we have pagination info from the parent component
       if (initialData._pagination) {
-        setTotalUniversities(initialData._pagination.totalUniversities || 0);
-        setHasMore(initialData._pagination.hasMore || false);
+        setTotalUniversities(initialData._pagination.totalUniversities || 0)
+        setHasMore(initialData._pagination.hasMore || false)
       } else {
-        setHasMore(true);
+        setHasMore(true)
       }
     }
     // If we're on the university page and don't have data yet, fetch directly
     else if (isUniversityPath && !directFetchCompleted) {
-      fetchInitialUniversities();
+      fetchInitialUniversities()
     }
-  }, [
-    initialData,
-    initialLoading,
-    isUniversityPath,
-    directFetchCompleted,
-    fetchInitialUniversities,
-  ]);
+  }, [initialData, initialLoading, isUniversityPath, directFetchCompleted, fetchInitialUniversities])
 
   // Effect to handle filter changes
   useEffect(() => {
-    const isFilterChanged =
-      JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp);
+    const isFilterChanged = JSON.stringify(filterPropRef.current) !== JSON.stringify(filterProp)
 
     if (isFilterChanged) {
-      filterPropRef.current = filterProp;
-      setPage(1);
-      setHasMore(true);
-      setInitialFetch(true);
-      setDirectFetchCompleted(false); // Reset to allow a new direct fetch with new filters
+      filterPropRef.current = filterProp
+      setPage(1)
+      setHasMore(true)
+      setInitialFetch(true)
+      setDirectFetchCompleted(false) // Reset to allow a new direct fetch with new filters
 
       // Trigger a new fetch with the updated filters
       if (isUniversityPath) {
-        fetchInitialUniversities();
+        fetchInitialUniversities()
       }
     }
-  }, [filterProp, isUniversityPath, fetchInitialUniversities]);
+  }, [filterProp, isUniversityPath, fetchInitialUniversities])
 
   // Function to fetch more universities with pagination
   const fetchMoreUniversities = useCallback(async () => {
     // Don't fetch more if we're on the main search results page
-    if (loadingMore || !hasMore || isSearchResultsPath) return;
+    if (loadingMore || !hasMore || isSearchResultsPath) return
 
     try {
-      setLoadingMore(true);
+      setLoadingMore(true)
 
       // Get country IDs from context if not provided as props
-      let countryIdsToUse = countryIds;
+      let countryIdsToUse = countryIds
       if (!countryIdsToUse || countryIdsToUse.length === 0) {
         // Use IDs from existing universities if available
-        const existingCountryIds = new Set();
+        const existingCountryIds = new Set()
         universities.forEach((uni) => {
           if (uni.uniCountry && uni.uniCountry._id) {
-            existingCountryIds.add(uni.uniCountry._id);
+            existingCountryIds.add(uni.uniCountry._id)
           }
-        });
+        })
 
         if (existingCountryIds.size > 0) {
-          countryIdsToUse = Array.from(existingCountryIds);
+          countryIdsToUse = Array.from(existingCountryIds)
         }
       }
 
@@ -482,148 +446,128 @@ function Univrsiry({
         IntakeYear: filterProp.IntakeYear,
         IntakeMonth: filterProp.IntakeMonth,
         Destination: filterProp.Destination,
+        // Add course-related filters
+        ModeOfStudy: filterProp.ModeOfStudy,
+        minBudget: filterProp.minBudget !== 0 ? filterProp.minBudget : undefined,
+        maxBudget: filterProp.maxBudget !== 100000 ? filterProp.maxBudget : undefined,
+        CourseDuration: filterProp.CourseDuration,
+        // Add search query if it exists
+        searchQuery:
+          filterProp.searchQuery && (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+            ? JSON.stringify(filterProp.searchQuery)
+            : undefined,
         page: page + 1,
         limit: 10,
-      };
+      }
 
       // Make API request with all filters
       const response = await axios.get(`${API_BASE_URL}/university`, {
         params: universityFilters,
-      });
+      })
 
       if (response.data.data && response.data.data.length > 0) {
         // Merge with existing universities, avoiding duplicates
         setUniversities((prevUniversities) => {
-          const existingIds = new Set(prevUniversities.map((uni) => uni._id));
-          const newUnis = response.data.data.filter(
-            (uni) => !existingIds.has(uni._id)
-          );
-          const mergedUnis = [...prevUniversities, ...newUnis];
+          const existingIds = new Set(prevUniversities.map((uni) => uni._id))
+          const newUnis = response.data.data.filter((uni) => !existingIds.has(uni._id))
+          const mergedUnis = [...prevUniversities, ...newUnis]
 
-          return mergedUnis;
-        });
+          return mergedUnis
+        })
 
         // Update pagination state
-        setPage(page + 1);
-        setHasMore(response.data.pagination.hasMore);
-        setTotalUniversities(response.data.pagination.totalUniversities);
+        setPage(page + 1)
+        setHasMore(response.data.pagination.hasMore)
+        setTotalUniversities(response.data.pagination.totalUniversities)
       } else {
-        setHasMore(false);
+        setHasMore(false)
       }
     } catch (error) {
-      console.error("Error fetching universities:", error);
-      setHasMore(false);
+      console.error("Error fetching universities:", error)
+      setHasMore(false)
     } finally {
-      setLoadingMore(false);
+      setLoadingMore(false)
     }
-  }, [
-    API_BASE_URL,
-    countryIds,
-    filterProp,
-    hasMore,
-    loadingMore,
-    page,
-    universities,
-    isSearchResultsPath,
-  ]);
+  }, [API_BASE_URL, countryIds, filterProp, hasMore, loadingMore, page, universities, isSearchResultsPath])
 
   // Set up intersection observer for infinite scrolling
   useEffect(() => {
     // Don't set up observer if we're on the main search results page
     if (!hasMore || initialFetch || loadingMore || isSearchResultsPath) {
-      return;
+      return
     }
 
     if (observer.current) {
-      observer.current.disconnect();
+      observer.current.disconnect()
     }
 
     const callback = (entries) => {
       if (entries[0].isIntersecting && hasMore && !loadingMore) {
-        setFetchTrigger((prev) => prev + 1);
+        setFetchTrigger((prev) => prev + 1)
       }
-    };
+    }
 
     observer.current = new IntersectionObserver(callback, {
       rootMargin: "200px",
       threshold: 0.1,
-    });
+    })
 
     if (loaderRef.current) {
-      observer.current.observe(loaderRef.current);
+      observer.current.observe(loaderRef.current)
     }
 
     return () => {
       if (observer.current) {
-        observer.current.disconnect();
+        observer.current.disconnect()
       }
-    };
-  }, [hasMore, loadingMore, initialFetch, isSearchResultsPath]);
+    }
+  }, [hasMore, loadingMore, initialFetch, isSearchResultsPath])
 
   // Handle fetch trigger
   useEffect(() => {
-    if (
-      fetchTrigger > 0 &&
-      !loadingMore &&
-      hasMore &&
-      !initialFetch &&
-      !isSearchResultsPath
-    ) {
-      fetchMoreUniversities();
+    if (fetchTrigger > 0 && !loadingMore && hasMore && !initialFetch && !isSearchResultsPath) {
+      fetchMoreUniversities()
     }
-  }, [
-    fetchTrigger,
-    loadingMore,
-    hasMore,
-    initialFetch,
-    fetchMoreUniversities,
-    isSearchResultsPath,
-  ]);
+  }, [fetchTrigger, loadingMore, hasMore, initialFetch, fetchMoreUniversities, isSearchResultsPath])
 
   // Force check for scroll position after initial data load
   useEffect(() => {
     if (!initialFetch && hasMore && !loadingMore && !isSearchResultsPath) {
       const timeoutId = setTimeout(() => {
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = document.documentElement.clientHeight;
+        const scrollHeight = document.documentElement.scrollHeight
+        const clientHeight = document.documentElement.clientHeight
 
         // If the content doesn't fill the viewport, trigger a fetch
         if (scrollHeight <= clientHeight) {
-          setFetchTrigger((prev) => prev + 1);
+          setFetchTrigger((prev) => prev + 1)
         }
-      }, 100);
+      }, 100)
 
-      return () => clearTimeout(timeoutId);
+      return () => clearTimeout(timeoutId)
     }
-  }, [initialFetch, hasMore, loadingMore, isSearchResultsPath]);
+  }, [initialFetch, hasMore, loadingMore, isSearchResultsPath])
 
   // Reset component state when unmounting
   useEffect(() => {
     return () => {
       if (observer.current) {
-        observer.current.disconnect();
+        observer.current.disconnect()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   return (
     <>
       <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-20">
         <div className="mt-6 mb-1">
-          <h1 className="text-start text-3xl sm:text-4xl font-semibold">
-            🏫 {t("searchResult.uniTitle")}
-          </h1>
-          <p className="text-sm mt-3 max-w-xl font-medium">
-            {t("searchResult.uniDesc")}
-          </p>
+          <h1 className="text-start text-3xl sm:text-4xl font-semibold">🏫 {t("searchResult.uniTitle")}</h1>
+          <p className="text-sm mt-3 max-w-xl font-medium">{t("searchResult.uniDesc")}</p>
         </div>
 
         <div className="w-full hidden sm:flex justify-end items-center px-4">
           <Link to={`/${language}/searchresults/AllUniversity`}>
             <div
-              className={`w-full flex mt-4 ${
-                language === "ar" ? "justify-start" : "justify-end"
-              } items-center px-4`}
+              className={`w-full flex mt-4 ${language === "ar" ? "justify-start" : "justify-end"} items-center px-4`}
             >
               <button
                 className={` hidden md:flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
@@ -632,9 +576,7 @@ function Univrsiry({
 
                 <ArrowRight
                   className={`inline-block ml-2 ${
-                    language === "ar"
-                      ? "rotate-180 group-hover:-translate-x-1"
-                      : "rotate-0 group-hover:translate-x-1"
+                    language === "ar" ? "rotate-180 group-hover:-translate-x-1" : "rotate-0 group-hover:translate-x-1"
                   } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
                 />
               </button>
@@ -643,23 +585,14 @@ function Univrsiry({
         </div>
       </div>
 
-      <div
-        dir={language === "ar" ? "rtl" : "ltr"}
-        className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}
-      >
+      <div dir={language === "ar" ? "rtl" : "ltr"} className={`overflow-x-auto scrollbar-hide whitespace-nowrap`}>
         <CollegeCard data={universities} loading={loading} />
 
         {/* Loading indicator at the bottom */}
         {hasMore && universities?.length > 0 && !isSearchResultsPath && (
-          <div
-            ref={loaderRef}
-            className="w-full flex justify-center py-4 mt-2"
-            style={{ minHeight: "80px" }}
-          >
+          <div ref={loaderRef} className="w-full flex justify-center py-4 mt-2" style={{ minHeight: "80px" }}>
             <div className="col-span-1 lg:col-span-3">
-              <GradientSpinnerLoader
-                message={t("Loading more universities...")}
-              />
+              <GradientSpinnerLoader message={t("Loading more universities...")} />
             </div>
           </div>
         )}
@@ -668,16 +601,11 @@ function Univrsiry({
         {!loading && universities?.length === 0 && (
           <div className="col-span-full text-center py-8">
             <p className="text-lg text-gray-500">
-              {t("noUniversitiesFound") ||
-                "No universities found. Try adjusting your filters."}
+              {t("noUniversitiesFound") || "No universities found. Try adjusting your filters."}
             </p>
           </div>
         )}
-        <div
-          className={`w-full flex mt-4 ${
-            language === "ar" ? "justify-start" : "justify-end"
-          } items-center px-4`}
-        >
+        <div className={`w-full flex mt-4 ${language === "ar" ? "justify-start" : "justify-end"} items-center px-4`}>
           <button
             className={`md:hidden flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
@@ -685,16 +613,14 @@ function Univrsiry({
 
             <ArrowRight
               className={`inline-block ml-2 ${
-                language === "ar"
-                  ? "rotate-180 group-hover:-translate-x-1"
-                  : "rotate-0 group-hover:translate-x-1"
+                language === "ar" ? "rotate-180 group-hover:-translate-x-1" : "rotate-0 group-hover:translate-x-1"
               } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
             />
           </button>
         </div>
       </div>
     </>
-  );
+  )
 }
 
-export default Univrsiry;
+export default Univrsiry

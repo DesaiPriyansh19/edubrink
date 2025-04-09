@@ -783,7 +783,7 @@ const NavBar = ({ setIsModalOpen }) => {
                   } mt-2 w-40 bg-white border rounded-xl shadow-xl transform transition-all duration-300 ease-in-out opacity-100 scale-100  origin-top`}
                 >
                   <li
-                    className="cursor-pointer flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
+                    className="cursor-pointer  flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 first:rounded-t-xl"
                     onClick={() => {
                       changeLanguage("en");
                     }}
@@ -796,7 +796,7 @@ const NavBar = ({ setIsModalOpen }) => {
                     English
                   </li>
                   <li
-                    className="cursor-pointer flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
+                    className="cursor-pointer  flex items-center gap-2 px-4 py-3 hover:bg-gray-100 transition-colors duration-200 last:rounded-b-xl"
                     onClick={() => {
                       changeLanguage("ar");
                     }}
@@ -874,7 +874,7 @@ const NavBar = ({ setIsModalOpen }) => {
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
               <div className="absolute top-full right-0 mt-1 w-40 bg-white rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-                <div className="py-1 rounded-xl">
+                <div className=" rounded-xl">
                   <button
                     onClick={() => changeLanguage("en")}
                     className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -888,7 +888,7 @@ const NavBar = ({ setIsModalOpen }) => {
                   </button>
                   <button
                     onClick={() => changeLanguage("ar")}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:rounded-b-xl hover:bg-gray-100"
                   >
                     <img
                       src={uaeIcon || "/placeholder.svg"}

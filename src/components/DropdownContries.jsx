@@ -63,7 +63,7 @@ const DropdownCountries = forwardRef(({ setShowCountriesDropdown, navbarHeight, 
       ref={ref}
       className={`absolute ${
         language === "ar"
-          ? "mmd:left-[20%] lg:left-[18%] xl:left-[22%] xlg:left-[19%]"
+          ? "mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
           : "mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
       } md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%] px-4 py-5 
         w-[90vw] mmd:w-[60vw] lg:w-[50vw] xl:w-[40vw] h-auto z-10 flex flex-col gap-4 mt-2 

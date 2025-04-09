@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import GradientSpinnerLoader, {
   BouncingBarsLoader,
 } from "./Results/ImprovedLoaders";
+import { BookOpenText } from "lucide-react";
 
 // Create a cache object outside the component to persist between route changes
 const majorCache = {
@@ -57,6 +58,50 @@ function ExploreTopMajor({ language }) {
     navigate(
       `/${language}/applications/${majorId}?category=major&slug=${customURLSlug}`
     );
+  };
+
+  const formatStudyLevel = (studyLevel) => {
+    if (!studyLevel || !Array.isArray(studyLevel) || studyLevel.length === 0)
+      return "N/A";
+
+    // Define study level names in both languages
+    const englishLevels = [
+      "Bachelor's",
+      "Master's",
+      "PhD",
+      "Diploma",
+      "Certificate",
+    ];
+    const arabicLevels = ["بكالوريوس", "ماجستير", "دكتوراه", "دبلوم", "شهادة"];
+
+    // Choose the appropriate array based on language
+    const levelsArray = language === "ar" ? arabicLevels : englishLevels;
+
+    // Map the English study level to the appropriate language
+    if (studyLevel.length === 1) {
+      // Find the index of the study level in the English array
+      const index = englishLevels.findIndex(
+        (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+      );
+
+      // If found, return the corresponding level in the selected language
+      if (index !== -1) {
+        return levelsArray[index];
+      }
+
+      // If not found in our mapping, return the original value
+      return studyLevel[0];
+    }
+
+    // For multiple study levels, show the first one + count
+    const firstLevelIndex = englishLevels.findIndex(
+      (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+    );
+
+    const firstLevel =
+      firstLevelIndex !== -1 ? levelsArray[firstLevelIndex] : studyLevel[0];
+
+    return `${firstLevel} +${studyLevel.length - 1}`;
   };
 
   const handleLearnMore = (major) => {
@@ -336,9 +381,12 @@ function ExploreTopMajor({ language }) {
                             : major?.university?.uniName?.en || "N/A"}
                         </p>
                         <div className="flex items-center mt-1">
-                          <span className="w-3.5 h-3.5 rounded-full mr-1">
-                            <Master />
-                          </span>
+                          <p className="flex items-center gap-1 rounded-full mr-1">
+                            <BookOpenText className="w-3.5 font-semibold h-3.5" />
+                            <span className="text-xs">
+                              {formatStudyLevel(major.studyLevel)}
+                            </span>
+                          </p>
                         </div>
                       </div>
                     </div>
