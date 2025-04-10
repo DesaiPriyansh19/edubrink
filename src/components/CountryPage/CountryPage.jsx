@@ -187,12 +187,12 @@ const CountryPage = () => {
 
           {data?.hotDestination && (
             <p className="hidden sm:inline-block   bg-[#E82448] font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
-              🔥 Hot Destination
+              🔥{t("hot destination")}
             </p>
           )}
             {data?.hotDestination && (
-            <p className=" sm:hidden min-w-[20%] max-w-[25%] text-sm  bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1  rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
-              🔥 Hot 
+            <p className=" sm:hidden min-w-[20%] max-w-[25%] text-[.5rem] px-2 bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1  rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+              🔥{t("hot destination")}
             </p>
           )}
         </div>
@@ -231,7 +231,7 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="250"
           >
-            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
+            <div className={`${language === 'ar' ? 'ml-2' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
               <DollerRounded />
             </div>
             <div>

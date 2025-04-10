@@ -33,8 +33,11 @@
   "feeRange": "Fee Range",
   "resetFilter": "Reset Filter",
   "showAllCourses": "Show All Courses",
-
-  "search_placeholder": "Search for courses",
+  "hot destination":"Hot Destination",
+"Contact us":" Contact us",
+"Effortlessly explore":" Effortlessly explore a wide range of universities, discover the perfect courses tailored to your goals, and compare study opportunities.",
+"If you need support":"If you need support regarding your subscription, or if you have specific questions, don't hesitate to contact us.", 
+"search_placeholder": "Search for courses",
 
   "universities": "Universities",
   "blogs": "Blogs",

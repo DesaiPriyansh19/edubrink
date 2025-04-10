@@ -114,19 +114,19 @@ const UniversityPage = () => {
     setMajorPage(newPage);
   };
 
-  // useEffect(() => {
-  //   // Initialize AOS animation library
-  //   if (typeof window !== "undefined") {
-  //     import("aos").then((AOS) => {
-  //       AOS.init({
-  //         duration: 800,
-  //         once: true,
-  //         easing: "ease-in-out",
-  //         mirror: true,
-  //       });
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    // Initialize AOS animation library
+    if (typeof window !== "undefined") {
+      import("aos").then((AOS) => {
+        AOS.init({
+          duration: 800,
+          once: true,
+          easing: "ease-in-out",
+          mirror: true,
+        });
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (data && !loading) {

@@ -47,7 +47,7 @@ const CollegeCard = ({ college, idx }) => {
 
   return (
 <div
-  className={`relative mt-2 w-[340px]  sm:max-w-[330px] lg:min-w-[280px] xl:min-w-[350px] rounded-2xl shadow-md bg-white ${
+  className={`relative mt-2 w-[340px]  sm:max-w-[330px] lg:min-w-[280px] xl:min-w-[350px] rounded-2xl shadow-md hover:scale-95 hover:shadow-lg transition duration-700 bg-white ${
     language === "ar"
       ? `text-right ${idx === 0 ? "xl:mr-4 ml-2" : ""}`
       : `text-left ${idx === 0 ? "xl:ml-4" : ""}`

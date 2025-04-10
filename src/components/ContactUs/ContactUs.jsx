@@ -4,21 +4,21 @@ import YouTube from "../../../svg/Youtube";
 import Facebook from "../../../svg/Facebook";
 import Twitter from "../../../svg/Twitter";
 import ContactUsFooter from "./ContactUsFooter";
-
+import { useTranslation } from "react-i18next";
 const ContactUs = () => {
+   const { t } = useTranslation();
   return (
     <div className="container mx-auto px-4 mt-10 md:mt-14 lg:mt-24">
       <div className="wrapper">
         <div className="flex items-center justify-center">
           <div className="text-center w-full max-w-xl">
             <div className="cont-heading font-general-sans font-semibold text-4xl md:text-6xl">
-              <h1>Contact us</h1>
+              <h1>  {t("Contact us")}</h1>
             </div>
             <div className="p-wrapper font-sans text-gray-700 font-medium text-base md:text-lg mt-4">
               <p>
-                Effortlessly explore a wide range of universities, discover the
-                perfect courses tailored to your goals, and compare study
-                opportunities.
+              {t("Effortlessly explore")}
+               
               </p>
             </div>
           </div>
@@ -27,8 +27,7 @@ const ContactUs = () => {
         <div className="flex items-center justify-center mt-8 mb-8">
           <div className="bg-white shadow-md rounded-2xl p-6 w-[50%] text-center">
             <p className="text-gray-800 mb-4 text-sm md:text-base">
-              If you need support regarding your subscription, or if you have
-              specific questions, don't hesitate to contact us.
+            {t("If you need support")} 
             </p>
             <div className="bg-gray-100 text-gray-800 rounded-2xl py-2 px-8 mb-4 inline-block text-sm">
               contact@example.com
@@ -49,7 +48,7 @@ const ContactUs = () => {
             </div>
           </div>
         </div>
-   
+    
       </div>
     </div>
   );

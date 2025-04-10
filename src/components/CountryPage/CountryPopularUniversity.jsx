@@ -123,7 +123,7 @@ const CountryPopularUniversity = ({ data }) => {
                 <div
                 key={idx}
                 dir={language === "ar" ? "rtl" : "ltr"}
-                className="relative w-[90%] sm:w-[48%] lg:w-[30%]  rounded-xl shadow-sm bg-white p-2" 
+                className="relative w-[90%] sm:min-w-[300px] shadow-md mb-4 rounded-xl hover:shadow-xl bg-white p-2" 
               >
                 <div className="p-3">
                   <div

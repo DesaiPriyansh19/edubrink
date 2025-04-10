@@ -24,40 +24,41 @@ function HowToApply() {
         {t("howToApplySection.description")}
       </p>
       {/* Four Divs in One Line */}
-      <div className="grid grid-cols-1 ew:grid-cols-2 gap-4 lg:flex  w-[90%] max-w-[1050px] mx-auto rounded-3xl justify-between px-2  ">
-        {items.map((item, index) => (
+      <div className="ew:grid ew:grid-cols-2 gap-4 lg:flex w-[90%] max-w-[1050px] mx-auto rounded-3xl justify-between px-2 overflow-x-auto sm:overflow-visible">
+  <div className="flex  sm:grid-cols-2 gap-4 w-max sm:w-auto">
+    {items.map((item, index) => (
+      <div
+        key={index}
+        className={`p-1  ${language === "ar" ? "xl:p-12 sm:p-10" : "sm:p-4"} pb-2 sm:pb-4 rounded-3xl max-h-72 bg-white w-[250px] md:box hover:scale-105 hover:shadow-lg transition duration-700 sm:w-auto text-center 
+      `}
+      >
+        {/* Icon */}
+        <div className="mt-4 mb-5 md:mt-4 md:mb-4">
           <div
-            key={index}
-            className={` p-1 box ${language==="ar"?"xl:p-12 sm:p-10":"sm:p-4"} pb-2  sm:pb-4 rounded-3xl max-h-72   bg-white w-auto text-center`}
+            style={{ backgroundColor: `${item.color}` }}
+            className="flex items-center justify-center w-24 h-24 md:w-24 md:h-24 mx-auto rounded-full"
           >
-            {/* P tag and round div in one line */}
-            <div className="mt-4 mb-5 md:mt-4 md:mb-4">
-              <div
-                style={{ backgroundColor: `${item.color}` }}
-                className="flex items-center justify-center w-24 h-24  md:w-24 md:h-24 mx-auto rounded-full"
-              >
-                <span>
-                  {" "}
-                  <span >
-                    {index === 0 && <BookLogo />}
-                    {index === 1 && <TrakeLogo />}
-                    {index === 2 && <TestLogo />}
-                    {index === 3 && <ChatLogo />}
-                  </span>
-                </span>
-              </div>
-            </div>
-            {/* H3 Title */}
-            <h3 className="text-sm sm:text-xl px-4 sm:px-0 font-semibold mb-2">
-              {item.title}
-            </h3>
-            {/* P Description */}
-            <p className="text-black lg:max-w-max max-w-56 md:max-w-72 mx-auto text-[11px] pb-2 sm:text-[.9rem] font-normal">
-              {item.description}
-            </p>
+            <span>
+              {index === 0 && <BookLogo />}
+              {index === 1 && <TrakeLogo />}
+              {index === 2 && <TestLogo />}
+              {index === 3 && <ChatLogo />}
+            </span>
           </div>
-        ))}
+        </div>
+        {/* Title */}
+        <h3 className="text-sm sm:text-xl px-4 sm:px-0 font-semibold mb-2">
+          {item.title}
+        </h3>
+        {/* Description */}
+        <p className="text-black lg:max-w-max max-w-56 md:max-w-72 mx-auto text-[11px] pb-2 sm:text-[.9rem] font-normal">
+          {item.description}
+        </p>
       </div>
+    ))}
+  </div>
+</div>
+
     </section>
   );
 }
