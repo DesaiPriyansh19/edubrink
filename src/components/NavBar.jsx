@@ -906,7 +906,7 @@ const NavBar = ({ setIsModalOpen }) => {
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium items-center text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              className="hidden mmd:flex px-6 py-2.5 text-sm font-medium items-center text-white rounded-full bg-[#3b3d8d] "
             >
               <LogOut className="w-4 h-4 mr-2" />
               {t("logOut")}
@@ -914,7 +914,8 @@ const NavBar = ({ setIsModalOpen }) => {
           ) : (
             <button
               onClick={handleLogin}
-              className="hidden mmd:flex px-6 py-2.5 text-sm items-center font-medium text-white rounded-full bg-[#3b3d8d] hover:bg-[#4A2370] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+              className="hidden mmd:flex px-6 py-2.5 text-sm items-center font-medium
+               text-white rounded-full bg-[#3b3d8d]"
             >
               <LogIn className="w-4 h-4 mr-2" />
               {t("login")}

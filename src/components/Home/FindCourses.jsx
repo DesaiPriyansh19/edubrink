@@ -49,7 +49,7 @@ const FindCourses = () => {
   }
 
   return (
-    <div className="bg-white w-[90%] sm:w-[85%] mb-24 h-auto mx-auto p-6 rounded-3xl mt-5 py-14 shadow-lg">
+    <div className="bg-white w-[90%] sm:w-[85%] mb-24 h-auto mx-auto p-6 rounded-3xl mt-5 py-14 shadow-sm">
       <h1 className="text-2xl sm:text-3xl font-semibold mb-12 text-center">{t("findCourses.title")}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Study Level Dropdown */}

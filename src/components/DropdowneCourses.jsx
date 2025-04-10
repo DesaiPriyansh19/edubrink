@@ -45,7 +45,7 @@ const DropdowneCourses = forwardRef(({ setShowCoursesDropdown, navbarHeight, dat
           language === "ar"
             ? "right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
             : "mmd:right-[20%] lg:right-[18%] xl:right-[22%] xlg:right-[19%]"
-        }   md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%]  w-[40vw] lg:max-w-[25vw]  h-auto z-10 flex gap-3  mt-2 
+        }   md:top-[5%] lg:top-[15%] xlg:top-[8%] xl:top-[0%] 2xl:top-[2%]  w-[40vw] lg:max-w-[30vw]  h-auto z-10 flex gap-3  mt-2 
 bg-[#f8f8f8] rounded-xl`}
         data-aos="fade-out"
         data-aos-delay="0"
