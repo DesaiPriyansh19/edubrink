@@ -157,7 +157,7 @@ const CountryPage = () => {
       </div>
 
       <div
-        className="w-full rounded-xl relative overflow-hidden mb-8 max-w-[1376px] mx-auto shadow-lg"
+        className="w-full rounded-xl relative overflow-hidden mb-8 max-w-[1376px] mx-auto shado-md sm:shadow-lg"
         data-aos="zoom-in"
       >
         <img
@@ -166,7 +166,7 @@ const CountryPage = () => {
             "https://placehold.co/1376x426"
           }
           alt={`Study in ${data?.countryName?.[language]}`}
-          className="w-full h-auto max-h-[426px] object-cover transform  transition-transform duration-500"
+          className="w-full sm:h-auto h-[44vh] sm:max-h-[426px] object-cover transform  transition-transform duration-500"
           width="1376"
           height="426"
           style={{ aspectRatio: "1376/426" }}
@@ -176,7 +176,7 @@ const CountryPage = () => {
 
       <div className=" rounded-xl   mb-8">
         <div
-          className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4"
+          className="mb-6 w-full  flex justify-start content-start items-start  flex-row sm:items-center gap-3 sm:gap-4"
           data-aos="fade-up"
         >
           <h1 className="text-3xl md:text-4xl lg:text-[2.6rem] font-sans font-bold text-gray-900 leading-tight">
@@ -186,8 +186,13 @@ const CountryPage = () => {
           </h1>
 
           {data?.hotDestination && (
-            <p className="inline-block bg-[#E82448] font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+            <p className="hidden sm:inline-block   bg-[#E82448] font-sans font-medium  text-white py-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
               🔥 Hot Destination
+            </p>
+          )}
+            {data?.hotDestination && (
+            <p className=" sm:inline-block text-sm  bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+              🔥 Hot 
             </p>
           )}
         </div>

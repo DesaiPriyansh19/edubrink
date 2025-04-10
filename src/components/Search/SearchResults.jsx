@@ -365,9 +365,9 @@ function SearchResults() {
           </div>
 
           {/* Filter Button (Hidden on Small Screens) */}
-          <div className="hidden sm:block relative p-4">
+          <div className="block relative p-4">
             <button
-              className="hidden sm:flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-[#3A3D8D]"
+              className="flex items-center gap-1 px-3 py-1 text-sm text-white rounded-full bg-[#3A3D8D]"
               onClick={() => setShowFilter(!showFilter)}
             >
               <FilterLogo2 />
