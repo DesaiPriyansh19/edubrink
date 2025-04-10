@@ -179,7 +179,7 @@ const CountryPage = () => {
           className="mb-6 w-full  flex justify-start content-start items-start  flex-row sm:items-center gap-3 sm:gap-4"
           data-aos="fade-up"
         >
-          <h1 className="text-3xl md:text-4xl lg:text-[2.6rem] font-sans font-bold text-gray-900 leading-tight">
+          <h1 className="text-3xl   md:text-4xl lg:text-[2.6rem] font-sans font-bold text-gray-900 leading-tight">
             {language === "ar"
               ? `الدراسة في ${data?.countryName?.[language] || "غير متوفر"}`
               : `Study in ${data?.countryName?.[language] || "N/A"}`}
@@ -191,7 +191,7 @@ const CountryPage = () => {
             </p>
           )}
             {data?.hotDestination && (
-            <p className=" sm:inline-block text-sm  bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1 px-3 rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
+            <p className=" sm:hidden min-w-[20%] max-w-[25%] text-sm  bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1  rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
               🔥 Hot 
             </p>
           )}
