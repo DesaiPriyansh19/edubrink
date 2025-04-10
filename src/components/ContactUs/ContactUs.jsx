@@ -7,14 +7,14 @@ import ContactUsFooter from "./ContactUsFooter";
 
 const ContactUs = () => {
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 mt-10 md:mt-14 lg:mt-24">
       <div className="wrapper">
         <div className="flex items-center justify-center">
           <div className="text-center w-full max-w-xl">
             <div className="cont-heading font-general-sans font-semibold text-4xl md:text-6xl">
               <h1>Contact us</h1>
             </div>
-            <div className="p-wrapper font-sans font-medium text-base md:text-lg mt-4">
+            <div className="p-wrapper font-sans text-gray-700 font-medium text-base md:text-lg mt-4">
               <p>
                 Effortlessly explore a wide range of universities, discover the
                 perfect courses tailored to your goals, and compare study
@@ -25,8 +25,8 @@ const ContactUs = () => {
         </div>
 
         <div className="flex items-center justify-center mt-8 mb-8">
-          <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md text-center">
-            <p className="text-gray-600 mb-4 text-sm md:text-base">
+          <div className="bg-white shadow-md rounded-2xl p-6 w-[50%] text-center">
+            <p className="text-gray-800 mb-4 text-sm md:text-base">
               If you need support regarding your subscription, or if you have
               specific questions, don't hesitate to contact us.
             </p>
@@ -34,16 +34,16 @@ const ContactUs = () => {
               contact@example.com
             </div>
             <div className="flex justify-center space-x-4 mt-4 text-gray-500">
-              <a href="#" aria-label="Twitter" className="hover:text-blue-500">
+              <a href="#" aria-label="Twitter" className="hover:text-blue-500 hover:scale-110">
                 <Twitter />
               </a>
-              <a href="#" aria-label="LinkedIn" className="hover:text-blue-700">
+              <a href="#" aria-label="LinkedIn" className="hover:text-blue-700 hover:scale-110">
                 <LinkedIn />
               </a>
-              <a href="#" aria-label="YouTube" className="hover:text-red-500">
+              <a href="#" aria-label="YouTube" className="hover:text-red-500 hover:scale-110">
                 <YouTube />
               </a>
-              <a href="#" aria-label="Facebook" className="hover:text-blue-600">
+              <a href="#" aria-label="Facebook" className="hover:text-blue-600 hover:scale-110">
                 <Facebook />
               </a>
             </div>

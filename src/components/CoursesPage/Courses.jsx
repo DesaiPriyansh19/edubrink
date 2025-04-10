@@ -272,10 +272,10 @@ const CoursePage = () => {
                   />
                 )}
                 <span
-                  className={`text-sm font-medium px-3 py-1 rounded-full ${
+                  className={`text-sm text-gray-700 font-medium px-3 py-1 rounded-full ${
                     isUniversityCourse
-                      ? "bg-purple-100 text-purple-800"
-                      : "bg-teal-100 text-teal-800"
+                      ? "bg-violet-100"
+                      : "bg-slate-200"
                   }`}
                 >
                   {isUniversityCourse
@@ -424,7 +424,7 @@ const CoursePage = () => {
                   data.Requirements?.[language].map((req, index) => (
                     <div
                       key={index}
-                      className="bg-white p-4 rounded-lg flex items-start gap-3"
+                      className="bg-white p-4 rounded-xl flex items-start gap-3"
                       data-aos="fade-up"
                       data-aos-delay={400 + index * 50}
                     >
@@ -447,7 +447,7 @@ const CoursePage = () => {
                 )}
               </div>
             </div>
-
+{/* FAQS section  */}
             <FaqDropDown faqData={data?.faq} />
             <div></div>
           </div>
@@ -718,7 +718,7 @@ const CoursePage = () => {
 
           <div
             dir={language === "ar" ? "rtl" : "ltr"}
-            className={`flex overflow-x-scroll scrollbar-hide col-span-3 flex-col gap-4 sm:flex-row mx-3 md:ml-0
+            className={`flex overflow-x-scroll scrollbar-hide col-span-3  gap-4 flex-row mx-3 md:ml-0
            }`}
           >
             {loading && data?.university?.courseId?.length === 0
@@ -794,7 +794,7 @@ const CoursePage = () => {
                   return (
                     <div
                       key={index}
-                      className={`relative mt-2  rounded-xl shadow-sm bg-white `}
+                      className={`relative mt-2 min-w-[300px] lg:min-w-[320px] rounded-xl shadow-md bg-white `}
                     >
                       <div
                         className={`px-2 ${

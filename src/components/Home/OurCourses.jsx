@@ -202,7 +202,7 @@ function OurCourses() {
       <div
         ref={carouselRef}
         dir={language === "ar" ? "rtl" : "ltr"}
-        className="flex sm:flex-row mb-20 flex-col px-4 gap-6 scrollbar-hide overflow-x-auto snap-x snap-mandatory"
+        className="flex flex-row mb-20  px-4 gap-3  sm:gap-6 scrollbar-hide overflow-x-auto snap-x snap-mandatory"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -220,7 +220,7 @@ function OurCourses() {
               key={`${course._id}-${
                 course.countryNameEn || course.countryNameAr
               }`}
-              className={`sm:min-w-[320px] w-full flex ${
+              className={`min-w-[330px] sm:min-w-[320px] flex ${
                 isEven ? "flex-col" : "flex-col-reverse"
               } justify-between py-2 px-2 rounded-3xl  transition-all duration-500 snap-start transform hover:scale-[1.03] backdrop-blur-sm relative overflow-hidden`}
               style={{

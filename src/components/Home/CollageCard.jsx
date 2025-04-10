@@ -47,7 +47,7 @@ const CollegeCard = ({ college, idx }) => {
 
   return (
 <div
-  className={`relative mt-2 w-full min-w-[280px] max-w-[350px] lg:min-w-[310px] xl:min-w-[350px] rounded-2xl shadow-sm bg-white ${
+  className={`relative mt-2 w-[340px]  sm:max-w-[330px] lg:min-w-[280px] xl:min-w-[350px] rounded-2xl shadow-md bg-white ${
     language === "ar"
       ? `text-right ${idx === 0 ? "xl:mr-4 ml-2" : ""}`
       : `text-left ${idx === 0 ? "xl:ml-4" : ""}`
@@ -81,7 +81,7 @@ const CollegeCard = ({ college, idx }) => {
           className="w-full h-full rounded-full object-cover"
         />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 min-h-[4rem]">
       <h1 className="text-base font-semibold leading-tight">
   {(() => {
     const name = language === "ar" ? college?.uniName?.ar : college?.uniName?.en;
@@ -227,11 +227,11 @@ const CollegeCarousel = () => {
       </div>
 
       <div
-        className={`overflow-x-auto snap-x snap-mandatory scrollbar-hide mx-2 mb-0 md:mx-4 my-3 whitespace-nowrap py-2 sm:py-8`}
+        className={`overflow-x-auto snap-x snap-mandatory scrollbar-hide ml-3 mb-0 md:mx-4 my-3 whitespace-nowrap py-2 sm:py-8`}
         dir={language === "ar" ? "rtl" : "ltr"}
       >
         <div
-          className={`flex flex-col gap-2 lg:gap-6 xl:gap-20    sm:flex-row ${
+          className={`flex gap-2 md:gap-14  lg:gap-10 xl:gap-20    flex-row ${
             language === "ar"
               ? "space-x-0 sm:space-x-4"
               : "space-x-0 sm:space-x-4"
@@ -240,7 +240,7 @@ const CollegeCarousel = () => {
           {data?.map((college, idx) => (
             <div
               key={idx}
-              className="snap-start w-[95%] sm:min-w-[280px]  mx-auto   "
+              className="snap-start  sm:min-w-[280px]  mx-auto   "
             >
               <CollegeCard
                 key={`${college._id}-${

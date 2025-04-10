@@ -69,7 +69,8 @@ function HomePage() {
       <div data-aos="fade-up" data-aos-delay="200">
       <ContactSection/>
       </div>
-    </div></>
+    </div>
+    </>
   );
 }
 

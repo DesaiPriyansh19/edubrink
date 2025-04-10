@@ -117,7 +117,7 @@ const FaqDropDown = ({ faqData = null, blog = null }) => {
           {processedFaqItems.map((item) => (
             <div
               key={item.id}
-              className={`p-4 rounded-lg bg-slate-50  ${
+              className={`p-4  bg-white rounded-xl  ${
                 openQuestion === item.id
                   ? "bg-slate-50 "
                   : " bg-slate-10"
