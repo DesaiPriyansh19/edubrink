@@ -9,11 +9,11 @@ const AboutStudentPlacement = () => {
     {
       id: 1,
       image: studentThree,
-      title: "MSc Advanced Computer Science",
-      university: "TH KHONE - Cologne University of Applied Science",
-      tuitionFees: "€3,867.00 / Year",
-      language: "English",
-      deadline: "31 July 2025",
+      title:   t("abut us card1"),
+      university: t("abut us card1uni"),
+      tuitionFees: t("abut us card1fees"),
+      language: t("abut us card1eng"),
+      deadline: t("abut us card1date25"),
       buttonWidths: ["w-1/2", "w-1/2"],
       marginTop: "mt-[0%]",
       marginBottom: "mb-[8%]",
@@ -22,11 +22,11 @@ const AboutStudentPlacement = () => {
     {
       id: 2,
       image: studentTwo,
-      title: "MSc Advanced Computer Science",
-      university: "TH KHONE - Cologne University of Applied Science",
-      tuitionFees: "€3,867.00 / Year",
-      language: "English",
-      deadline: "31 July 2025",
+      title:   t("abut us card1"),
+      university: t("abut us card1uni"),
+      tuitionFees: t("abut us card1fees"),
+      language: t("abut us card1eng"),
+      deadline: t("abut us card1date25"),
       buttonWidths: ["w-[40%]", "w-[40%]"],
       marginTop: "mt-[10%]",
       marginBottom: "mb-[6%]",
@@ -35,11 +35,11 @@ const AboutStudentPlacement = () => {
     {
       id: 3,
       image: studentOne,
-      title: "MSc Advanced Computer Science",
-      university: "TH KHONE - Cologne University of Applied Science",
-      tuitionFees: "€3,867.00 / Year",
-      language: "English",
-      deadline: "31 July 2025",
+      title:   t("abut us card1"),
+      university: t("abut us card1uni"),
+      tuitionFees: t("abut us card1fees"),
+      language: t("abut us card1eng"),
+      deadline: t("abut us card1date25"),
       buttonWidths: ["w-[45%]", "w-[45%]"],
       marginTop: "mt-[20%]",
       marginBottom: "mb-[6%]",
@@ -75,21 +75,21 @@ const AboutStudentPlacement = () => {
             <div className="mt-4 flex justify-between items-center">
               <div>
                 <p className="text-black font-medium text-[.8rem]">
-                  Tuition Fees
+                {t("abut us card1tutuionfees")}
                 </p>
                 <p className="text-black font-medium text-[.8rem]">
                   {card.tuitionFees}
                 </p>
               </div>
               <div>
-                <p className="text-black font-medium text-[.8rem]">Language</p>
+                <p className="text-black font-medium text-[.8rem]">{t("abut us card1lang")}</p>
                 <p className="text-black font-medium text-[.8rem]">
                   {card.language}
                 </p>
               </div>
               <div>
                 <p className="text-gray-700 font-medium text-[.8rem]">
-                  Deadline
+                {t("abut us card1deadline")}
                 </p>
                 <p className="text-gray-900 font-medium text-[.8rem]">
                   {card.deadline}
@@ -103,12 +103,12 @@ const AboutStudentPlacement = () => {
               <button
                 className={`w-[211.42px] h-[40.42px] pl-[21.76px] pr-[21.76px] text-sm text-[rgba(255,255,255,1)] bg-gradient-to-r from-[rgba(58,61,141,1)] to-[rgba(73,75,134,1)] rounded-[1.5rem] ${card.buttonWidths[0]}`}
               >
-                Apply Now
+                {t("apply now")}
               </button>
               <button
                 className={`w-[211.42px] h-[40.42px] pl-[21.76px] pr-[21.76px] text-sm border border-black rounded-[1.5rem] ${card.buttonWidths[1]}`}
               >
-                Learn More
+              {t("Learn More")}
               </button>
             </div>
           </div>
