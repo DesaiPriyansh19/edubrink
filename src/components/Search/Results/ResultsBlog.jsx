@@ -46,7 +46,7 @@ function ResultsBlog({ filteredData, loading }) {
   return (
     <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-11 text-black">
       <div>
-        <h1 className="text-start text-3xl sm:text-4xl mb-4 font-semibold pl-1">
+        <h1 className="text-start text-3xl sm:text-4xl mb-4 md:mb-2 font-semibold pl-1">
           {t("recentBlog.title")}
         </h1>
 
@@ -55,7 +55,7 @@ function ResultsBlog({ filteredData, loading }) {
             language === "ar"
               ? " px-0 pl-1 md:pl-[39%]"
               : " px-0 pl-4 pr-1 md:pr-[39%]"
-          } text-start font-normal text-sm sm:text-[.8rem] `}
+          } text-start font-medium text-sm sm:text-[.9rem] `}
         >
           {t("recentBlog.description")}
         </p>
@@ -92,7 +92,7 @@ function ResultsBlog({ filteredData, loading }) {
           ))}
         </div>
       ) : (
-        <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex gap-6 overflow-x-auto pb-4 mt-4 sm:mt-0 scrollbar-hide">
           {filteredData?.map((card, idx) => (
             <div
               onClick={() => handleNavigate(card?.customURLSlug?.[language])}

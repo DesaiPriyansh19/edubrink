@@ -396,7 +396,7 @@ function ResultsMajors({
               <div
                 key={index}
                 className={`relative mt-2 px-4 rounded-xl shadow-sm bg-white ${
-                  !isMajorsPath ? "min-w-[240px] flex-shrink-0" : ""
+                  !isMajorsPath ? "minw-[290px] sm:min-w-[240px] flex-shrink-0" : ""
                 }`}
               >
                 <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
@@ -456,8 +456,8 @@ function ResultsMajors({
               return (
                 <div
                   key={index}
-                  className={`relative mt-2 rounded-xl shadow-sm bg-white ${
-                    !isMajorsPath ? "min-w-[240px] flex-shrink-0" : ""
+                  className={`relative mt-2 rounded-xl shadow-md hover:shadow-xl bg-white ${
+                    !isMajorsPath ? "min-w-[300px] sm:min-w-[240px] flex-shrink-0" : ""
                   }`}
                 >
                   <div

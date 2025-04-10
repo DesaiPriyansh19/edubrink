@@ -52,14 +52,14 @@ const CollegeCard = ({ data, loading }) => {
       <div
         className={`${
           path === `/${language}/searchresults/university`
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
+            ? "grid  sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
             : "flex gap-3 "
         }`}
       >
         {Array.from({ length: 16 }).map((_, index) => (
           <div
             key={index}
-            className="relative mt-3 border px-2 py-1  shadow rounded-xl bg-white max-w-[220px] sm:max-w-[350px]"
+            className="relative mt-3 border px-2 py-1  shadow-md rounded-xl bg-white min-w-[300px] sm:max-w-[350px]"
           >
             <div className="p-2 sm:p-3">
               {/* Badge */}
@@ -114,7 +114,7 @@ const CollegeCard = ({ data, loading }) => {
       className={`${
         path === `/${language}/searchresults/university`
           ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          : "flex overflow-x-scroll scrollbar-hide flex-col  sm:flex-row  gap-4  "
+          : "flex overflow-x-scroll scrollbar-hide flex-row  gap-4  "
       }`}
     >
       {[...(data || [])] // Create a copy of data to avoid mutating state
@@ -155,7 +155,7 @@ const CollegeCard = ({ data, loading }) => {
             <div
               key={idx}
               dir={language === "ar" ? "rtl" : "ltr"}
-              className={`relative mt-3  rounded-xl  bg-white lg:min-w-[290px]`}
+              className={`relative mt-3  rounded-xl shadow-md hover:shadow-xl mb-2 bg-white min-w-[320px] sm:min-w-[290px]`}
             >
               <div className="p-3 sm:p-4">
               <div className="mb-2">
