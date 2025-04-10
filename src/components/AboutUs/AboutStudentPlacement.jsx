@@ -2,8 +2,9 @@ import React from "react";
 import studentTwo from "../../assets/AboutpageImage/StudentTwo.png";
 import studentThree from "../../assets/AboutpageImage/StudentThree.png";
 import studentOne from "../../assets/AboutpageImage/Studentone.png";
-
+import { useTranslation } from "react-i18next";
 const AboutStudentPlacement = () => {
+    const { t } = useTranslation();
   const cards = [
     {
       id: 1,
@@ -118,15 +119,13 @@ const AboutStudentPlacement = () => {
       <div className="w-full mmd:w-1/2 h-auto esm:h-[350px] md:h-[400px]">
         <div className="w-full mmd:max-w-xl">
           <h2 className="text-3xl lg:text-4xl font-semibold text-[rgba(29,33,28,1)]">
-            We make more than 20k+ successful students placement in the world
+          {t("we make more than 20k")}
           </h2>
           <p className="mt-4 text-[rgba(29,33,28,1)] font-medium text-[1rem] leading-[155%]">
-            Investigate courses, universities and their locations. Look upon the
-            teaching modules, research opportunities, campus life and employment
-            prospects before you narrow down your selection.
+          {t("investigate corses")}
           </p>
           <button className="mt-6 text-[1rem] font-medium leafding-[155%] text-[rgba(29,33,28,1)] bg-[rgba(255,255,255,1)]   rounded-3xl w-[175px] py-2 hover:scale-105">
-            Learn more →
+           {t("Learn More")}
           </button>
         </div>
       </div>

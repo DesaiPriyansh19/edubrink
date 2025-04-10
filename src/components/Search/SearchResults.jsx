@@ -374,7 +374,7 @@ function SearchResults() {
               {t("filters")}
             </button>
             {activeFilters > 0 && (
-              <div className="absolute top-[8px] right-[9px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-[#3A3D8D] rounded-full shadow-md border-2 border-white">
+              <div className="absolute top-[8px] right-[9px] w-5 h-5 flex items-center justify-center text-xs font-semibold text-white bg-[#c35251] rounded-full shadow-md border-2 border-white">
                 {activeFilters}
               </div>
             )}

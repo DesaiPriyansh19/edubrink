@@ -35,9 +35,9 @@ const AboutPage = () => {
       </div>
 
       {/* global  */}
-      <div data-aos="fade-up" data-aos-delay="200">
+      {/* <div data-aos="fade-up" data-aos-delay="200">
         <AboutGlobalJourney />
-      </div>
+      </div> */}
       {/* testimonal */}
       {/* <div data-aos="fade-up" data-aos-delay="200">
         <AboutTestimonal />
