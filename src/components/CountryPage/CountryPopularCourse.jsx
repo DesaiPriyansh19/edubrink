@@ -135,15 +135,16 @@ const CountryPopularCourse = ({ data }) => {
 
           <div className="flex flex-wrap gap-2 justify-start">
             {dynamicFeatures?.map((feature, index) => (
-              <div key={index} className="flex items-center">
-                <span className="rounded-full w-7 h-7 flex items-center justify-center border">
-                  {feature.icon}
-                </span>
-                <div className="ml-1">
-                  <p className="text-[0.55rem] font-medium">{feature.title}</p>
-                  <p className="text-[0.55rem] font-medium">{feature.description}</p>
-                </div>
-              </div>
+            <div key={index} className="flex items-center">
+            <span className="rounded-full w-7 h-7 flex items-center justify-center border">
+              {feature.icon}
+            </span>
+            <div className={`${language === 'ar' ? 'mr-2' : 'ml-1'}`}>
+              <p className="text-[0.55rem] font-medium">{feature.title}</p>
+              <p className="text-[0.55rem] font-medium">{feature.description}</p>
+            </div>
+          </div>
+          
             ))}
           </div>
 

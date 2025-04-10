@@ -231,7 +231,7 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="250"
           >
-            <div className={`${language === 'ar' ? 'ml-2' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
+            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
               <DollerRounded />
             </div>
             <div>
@@ -250,7 +250,7 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="300"
           >
-            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
+            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
               <Home />
             </div>
             <div>
@@ -268,7 +268,7 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="350"
           >
-            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
+            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
               <LanguageLogo />
             </div>
             <div>
@@ -286,7 +286,7 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="400"
           >
-            <div className="mr-4 bg-[#f8f8f8] p-3 rounded-full">
+            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
               <UniversityLogo />
             </div>
             <div>

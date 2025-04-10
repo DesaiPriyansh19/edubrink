@@ -29,7 +29,7 @@ function HowToApply() {
     {items.map((item, index) => (
       <div
         key={index}
-        className={`p-1  ${language === "ar" ? "xl:p-12 sm:p-10" : "sm:p-4"} pb-2 sm:pb-4 rounded-3xl max-h-72 bg-white w-[250px] md:box hover:scale-105 hover:shadow-lg transition duration-700 sm:w-auto text-center 
+        className={`p-1  ${language === "ar" ? "xl:p-12 sm:p-10" : "sm:p-4"} pb-2 sm:pb-4 rounded-3xl max-h-72 bg-white w-[250px] my-6 sm:my-3 hover:scale-105 hover:shadow-lg transition duration-700 sm:w-auto text-center 
       `}
       >
         {/* Icon */}

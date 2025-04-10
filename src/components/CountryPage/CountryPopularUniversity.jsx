@@ -206,13 +206,13 @@ const CountryPopularUniversity = ({ data }) => {
                     </div>
                   </div>
               
-                  <div className="grid grid-cols-3  gap-2 justify-start">
+                  <div className="grid grid-cols-3  gap-3 justify-start">
                     {dynamicFeatures.flat().map((feature, index) => (
-                      <div key={index} className="flex items-center gap-1">
+                      <div key={index} className={`${language === 'ar' ? '' : ''}flex items-center gap-1`}>
                         <span className="rounded-full w-7 h-7 flex items-center justify-center border">
                           {feature.icon}
                         </span>
-                        <div>
+                        <div className={`${language === 'ar' ? 'mr-[2.5px]' : 'ml-1'}`}>
                           <p className="text-[0.55rem] font-medium">{feature.title}</p>
                           <p className="text-[0.55rem] font-medium">{feature.description}</p>
                         </div>
