@@ -75,7 +75,10 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
           <div className="flex mt-1 flex-col gap-3 shadow-md bg-white py-7 px-4 rounded-3xl items-start">
             <div onClick={() => handleClose("/")} className="cursor-pointer flex items-center justify-start">
               <HomeLogo />
-              <p className="ml-4 font-medium">{language === "ar" ? "الرئيسية" : "Home"}</p>
+              <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>
+  {language === "ar" ? "الرئيسية" : "Home"}
+</p>
+
             </div>
 
             <div
@@ -84,7 +87,7 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
             >
               <div className="flex items-center justify-start">
                 <CoursesLogo />
-                <p className="ml-4 font-medium">{language === "ar" ? "الدورات" : "Courses"}</p>
+                <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>{language === "ar" ? "الدورات" : "Courses"}</p>
                 <span className={`absolute ${language === "ar" ? "left-9 rotate-180" : "right-9"} `}>
                   <RightArrow />
                 </span>
@@ -121,7 +124,7 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
             >
               <div className="flex items-center justify-start">
                 <CoountriesLogo />
-                <p className="ml-4 font-medium">{language === "ar" ? "الدول" : "Countries"}</p>
+                <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>{language === "ar" ? "الدول" : "Countries"}</p>
                 <span className={`absolute ${language === "ar" ? "left-9 rotate-180" : "right-9"} `}>
                   <RightArrow />
                 </span>
@@ -161,20 +164,20 @@ function SideBar({ isMenuOpen, setIsMenuOpen }) {
               onClick={() => handleClose("/about")} // Ensure it's a function
             >
               <AboutUsLogo />
-              <p className="ml-4 font-medium">{language === "ar" ? "من نحن" : "About Us"}</p>
+              <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>{language === "ar" ? "من نحن" : "About Us"}</p>
             </div>
 
             <div onClick={() => handleClose("/searchresults/AllBlogs")} className="flex items-center cursor-pointer">
               <div className="flex items-center justify-start">
                 <BlogLogo />
-                <p className="ml-4 font-medium">{language === "ar" ? "المدونة" : "Blog"}</p>
+                <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>{language === "ar" ? "المدونة" : "Blog"}</p>
               </div>
             </div>
 
             <div onClick={() => handleClose("/contact")} className="flex items-center cursor-pointer">
               <div className="flex items-center justify-start">
                 <ContactLogo />
-                <p className="ml-4 font-medium">{language === "ar" ? "اتصل بنا" : "Contact"}</p>
+                <p className={`${language === "ar" ? "mr-4" : "ml-4"} font-medium`}>{language === "ar" ? "اتصل بنا" : "Contact"}</p>
               </div>
             </div>
           </div>
