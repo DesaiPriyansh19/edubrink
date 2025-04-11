@@ -128,7 +128,7 @@ export default function AddMajor() {
   const [validationErrors, setValidationErrors] = useState({});
   const [touched, setTouched] = useState({});
   const { addNew } = useApiData(
-    "https://edu-brink-backend.vercel.app/api/api/majors"
+    "https://edu-brink-backend.vercel.app/api/majors"
   );
   const [activeSection, setActiveSection] = useState(null);
   const [searchInput, setSearchInput] = useState({ tagEn: "", tagAr: "" });
