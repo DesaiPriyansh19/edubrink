@@ -126,7 +126,7 @@ function ExploreTopMajor({ language }) {
     try {
       setLoading(true);
       // Use a smaller limit for initial load (3 items)
-      const limit = initialFetch ? 3 : 5;
+      const limit = initialFetch ? 5 : 10;
 
       const response = await fetch(
         `https://edu-brink-backend.vercel.app/api/majors/getAll/User/Insta?limit=${limit}${

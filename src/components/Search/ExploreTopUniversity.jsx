@@ -93,7 +93,7 @@ function ExploreTopUniversity({ language }) {
 
     try {
       setLoading(true);
-      const limit = initialFetch ? 3 : 5;
+      const limit = initialFetch ? 5 : 10;
 
       console.log(
         "Fetching universities with lastId:",
@@ -309,97 +309,105 @@ function ExploreTopUniversity({ language }) {
                     className={`relative mt-3  rounded-xl  bg-white lg:min-w-[290px]`}
                   >
                     <div className="p-3 sm:p-4">
-                <div className="mb-2">
-                       {university?.uniFeatured && (
-                        <div
-                          className={`absolute top-0 ${
-                            language === "ar" ? "left-0 " : "right-0 "
-                          }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1`}
-                        >
-                          {t("mostPopular")}
-                        </div>
-                      )}
-</div> 
+                      <div className="mb-2">
+                        {university?.uniFeatured && (
+                          <div
+                            className={`absolute top-0 ${
+                              language === "ar" ? "left-0 " : "right-0 "
+                            }  bg-red-500 text-white rounded-tr-[10px] rounded-bl-[6px] text-[8px] px-2 py-1`}
+                          >
+                            {t("mostPopular")}
+                          </div>
+                        )}
+                      </div>
                       <div className="flex gap-2 items-center mb-3">
                         <div className="w-12 h-12">
                           <img
-                            src={"https://placehold.co/60x60"}
+                            src={
+                              university.uniSymbol ||
+                              "https://placehold.co/60x60"
+                            }
                             alt="Logo"
                             className="w-full h-full rounded-full object-cover"
                           />
                         </div>
                         <div className="flex-1">
-                        <div className="flex  items-baseline gap-1">
-  <h1 className="text-[16px] font-semibold leading-tight inline-flex flex-wrap items-baseline">
-    {(() => {
-      const uniName = 
-        language === "ar" 
-          ? university?.uniName?.ar 
-          : university?.uniName?.en || "N/A";
+                          <div className="flex  items-baseline gap-1">
+                            <h1 className="text-[16px] font-semibold leading-tight inline-flex flex-wrap items-baseline">
+                              {(() => {
+                                const uniName =
+                                  language === "ar"
+                                    ? university?.uniName?.ar
+                                    : university?.uniName?.en || "N/A";
 
-      if (uniName === "N/A") {
-        return (
-          <>
-            {uniName}
-            <span className="ml-1 relative top-[2px]">
-              <TickMark />
-            </span>
-          </>
-        );
-      }
+                                if (uniName === "N/A") {
+                                  return (
+                                    <>
+                                      {uniName}
+                                      <span className="ml-1 relative top-[2px]">
+                                        <TickMark />
+                                      </span>
+                                    </>
+                                  );
+                                }
 
-      if (uniName.length > 40) {
-        const firstBreak = uniName.lastIndexOf(' ', 20) > 0 
-          ? uniName.lastIndexOf(' ', 20) 
-          : 20;
-        const secondBreak = uniName.lastIndexOf(' ', 40) > 0 
-          ? uniName.lastIndexOf(' ', 40) 
-          : 40;
-        
-        return (
-          <>
-            {uniName.substring(0, firstBreak)}-
-            <br />
-            <span className="inline-flex items-baseline">
-              {uniName.substring(firstBreak + 1, secondBreak)}...
-              <span className="ml-1 relative top-[2px]">
-                <TickMark />
-              </span>
-            </span>
-          </>
-        );
-      }
-      else if (uniName.length > 20) {
-        // Consistent line-breaking behavior for 20-40 characters
-        const breakPoint = uniName.lastIndexOf(' ', 20) > 0 
-          ? uniName.lastIndexOf(' ', 20) 
-          : 20;
-        
-        return (
-          <>
-            {uniName.substring(0, breakPoint)}-
-            <br />
-            <span className="inline-flex items-baseline">
-              {uniName.substring(breakPoint + 1)}
-              <span className="ml-1 relative top-[2px]">
-                <TickMark />
-              </span>
-            </span>
-          </>
-        );
-      }
-      return (
-        <>
-          {uniName}
-          <span className="ml-1 relative top-[2px]">
-            <TickMark />
-          </span>
-        </>
-      );
-    })()}
-  </h1>
-</div>
+                                if (uniName.length > 40) {
+                                  const firstBreak =
+                                    uniName.lastIndexOf(" ", 20) > 0
+                                      ? uniName.lastIndexOf(" ", 20)
+                                      : 20;
+                                  const secondBreak =
+                                    uniName.lastIndexOf(" ", 40) > 0
+                                      ? uniName.lastIndexOf(" ", 40)
+                                      : 40;
 
+                                  return (
+                                    <>
+                                      {uniName.substring(0, firstBreak)}-
+                                      <br />
+                                      <span className="inline-flex items-baseline">
+                                        {uniName.substring(
+                                          firstBreak + 1,
+                                          secondBreak
+                                        )}
+                                        ...
+                                        <span className="ml-1 relative top-[2px]">
+                                          <TickMark />
+                                        </span>
+                                      </span>
+                                    </>
+                                  );
+                                } else if (uniName.length > 20) {
+                                  // Consistent line-breaking behavior for 20-40 characters
+                                  const breakPoint =
+                                    uniName.lastIndexOf(" ", 20) > 0
+                                      ? uniName.lastIndexOf(" ", 20)
+                                      : 20;
+
+                                  return (
+                                    <>
+                                      {uniName.substring(0, breakPoint)}-
+                                      <br />
+                                      <span className="inline-flex items-baseline">
+                                        {uniName.substring(breakPoint + 1)}
+                                        <span className="ml-1 relative top-[2px]">
+                                          <TickMark />
+                                        </span>
+                                      </span>
+                                    </>
+                                  );
+                                }
+                                return (
+                                  <>
+                                    {uniName}
+                                    <span className="ml-1 relative top-[2px]">
+                                      <TickMark />
+                                    </span>
+                                  </>
+                                );
+                              })()}
+                            </h1>
+                          </div>
 
                           <div className="text-xs font-medium text-gray-700 flex items-center mt-1">
                             <p>
