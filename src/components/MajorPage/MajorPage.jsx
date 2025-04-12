@@ -228,22 +228,6 @@ const MajorPage = () => {
 
   return (
     <div className="min-h-screen font-sans">
-      {/* Featured Major Banner */}
-      {majorData?.majorCheckBox?.featuredMajor && (
-        <div
-          className="bg-[#3b3d8d] text-white py-3 px-4 text-center shadow-md"
-          data-aos="fade-down"
-        >
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-            <Certificate className="w-5 h-5" />
-            <p className="font-medium text-base">
-              {t("majorPage.featuredMajor")} -{" "}
-              {majorData.majorName?.[language] || "N/A"}
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Breadcrumb Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div
@@ -495,8 +479,12 @@ const MajorPage = () => {
                   </div>
                   <div>
                     <p className="text-[1rem] font-medium text-gray-900">
-                      Main Campus
+                      {(majorData?.university?.uniName?.[language]?.length > 30
+                        ? majorData.university.uniName[language].slice(0, 30) +
+                          "..."
+                        : majorData?.university?.uniName?.[language]) || "N/A"}
                     </p>
+
                     <p className="text-sm text-gray-800">
                       {t("majorPage.campus")}
                     </p>
@@ -570,7 +558,7 @@ const MajorPage = () => {
             </div>
 
             {/* Key Features */}
-            <div
+            {/* <div
               className="bg-white rounded-xl shadow-sm p-6 mt-6"
               data-aos="fade-left"
               data-aos-delay="200"
@@ -658,28 +646,8 @@ const MajorPage = () => {
                     </p>
                   </div>
                 </div>
-
-                <div className="flex items-start">
-                  <div
-                    className="p-2 rounded-full mr-3"
-                    style={{ backgroundColor: "rgba(59, 61, 141, 0.1)" }}
-                  >
-                    <Briefcase
-                      className="w-5 h-5"
-                      style={{ color: themeColor }}
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      {t("majorPage.careerOpportunities")}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      {t("majorPage.careerRoles")}
-                    </p>
-                  </div>
-                </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Counselor Card */}
             <div
