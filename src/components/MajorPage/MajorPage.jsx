@@ -50,7 +50,7 @@ const MajorPage = () => {
   }, []);
 
   // Fetch major data
-  const apiUrl = `http://localhost:4000/api/majors/name/${encodeURIComponent(
+  const apiUrl = `https://edu-brink-backend.vercel.app/api/majors/name/${encodeURIComponent(
     slug
   )}`;
   const { data: majorData, loading } = useFetch(apiUrl, false);
