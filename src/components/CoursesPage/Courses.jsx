@@ -54,7 +54,7 @@ const CoursePage = () => {
         id
       )}`;
 
-  const { data, loading } = useFetch(apiUrl);
+  const { data, loading } = useFetch(apiUrl, false);
   console.log(data?.university?.courseId);
   const navigate = useNavigate();
 
@@ -273,9 +273,7 @@ const CoursePage = () => {
                 )}
                 <span
                   className={`text-sm text-gray-700 font-medium px-3 py-1 rounded-full ${
-                    isUniversityCourse
-                      ? "bg-violet-100"
-                      : "bg-slate-200"
+                    isUniversityCourse ? "bg-violet-100" : "bg-slate-200"
                   }`}
                 >
                   {isUniversityCourse
@@ -447,7 +445,7 @@ const CoursePage = () => {
                 )}
               </div>
             </div>
-{/* FAQS section  */}
+            {/* FAQS section  */}
             <FaqDropDown faqData={data?.faq} />
             <div></div>
           </div>
@@ -493,9 +491,7 @@ const CoursePage = () => {
                     <p className="text-[1rem] font-medium ">
                       {data?.CourseDuration || "N/A"} year
                     </p>
-                    <p className="text-sm ">
-                      {t("majorPage.duration")}
-                    </p>
+                    <p className="text-sm ">{t("majorPage.duration")}</p>
                   </div>
                 </div>
 
@@ -815,36 +811,42 @@ const CoursePage = () => {
                             />
                           </div>
                           <div className="pl-3">
-                          <div className="min-h-[2em]"> {/* Container that reserves space */}
-  <h1 className="text-[16px] font-semibold leading-tight">
-    {(() => {
-      const courseName = 
-        language === "ar" 
-          ? university?.CourseName?.ar 
-          : university?.CourseName?.en || "N/A";
+                            <div className="min-h-[2em]">
+                              {" "}
+                              {/* Container that reserves space */}
+                              <h1 className="text-[16px] font-semibold leading-tight">
+                                {(() => {
+                                  const courseName =
+                                    language === "ar"
+                                      ? university?.CourseName?.ar
+                                      : university?.CourseName?.en || "N/A";
 
-      if (courseName.length > 17) {
-        const lastSpaceIndex = courseName.lastIndexOf(' ', 17);
-        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 17;
-        
-        return (
-          <>
-            {courseName.substring(0, splitIndex)}
-            <br />
-            {courseName.substring(splitIndex + 1)}
-          </>
-        );
-      }
-      return (
-        <>
-          {courseName}
-          {/* This invisible span creates the space for second line */}
-          <span className="block opacity-0 h-[1em]">.</span>
-        </>
-      );
-    })()}
-  </h1>
-</div>
+                                  if (courseName.length > 17) {
+                                    const lastSpaceIndex =
+                                      courseName.lastIndexOf(" ", 17);
+                                    const splitIndex =
+                                      lastSpaceIndex > 0 ? lastSpaceIndex : 17;
+
+                                    return (
+                                      <>
+                                        {courseName.substring(0, splitIndex)}
+                                        <br />
+                                        {courseName.substring(splitIndex + 1)}
+                                      </>
+                                    );
+                                  }
+                                  return (
+                                    <>
+                                      {courseName}
+                                      {/* This invisible span creates the space for second line */}
+                                      <span className="block opacity-0 h-[1em]">
+                                        .
+                                      </span>
+                                    </>
+                                  );
+                                })()}
+                              </h1>
+                            </div>
 
                             <p className="text-[10px] font-medium text-black flex items-center mt-1">
                               {(() => {

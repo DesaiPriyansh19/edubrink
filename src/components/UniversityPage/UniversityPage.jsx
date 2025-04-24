@@ -73,7 +73,7 @@ const UniversityPage = () => {
       : ""
   }`;
 
-  const { data, loading, refetch } = useFetch(apiUrl);
+  const { data, loading, refetch } = useFetch(apiUrl,false);
   const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
   const token = userInfo?.token || "";
 

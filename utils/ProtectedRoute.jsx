@@ -1,11 +1,8 @@
 "use client"
 
-import { Outlet, useLocation } from "react-router-dom"
-import { useLanguage } from "../context/LanguageContext"
+import { Outlet } from "react-router-dom"
 
 const ProtectedRoute = ({ setIsModalOpen }) => {
-  const { language } = useLanguage()
-  const location = useLocation()
 
   // Get user info from localStorage
   const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}")

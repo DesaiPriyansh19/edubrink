@@ -27,7 +27,8 @@ const CountryPage = () => {
   const [showFullOverview, setShowFullOverview] = useState(false);
 
   const { data, loading } = useFetch(
-    `https://edu-brink-backend.vercel.app/api/country/name/${slug}`
+    `https://edu-brink-backend.vercel.app/api/country/name/${slug}`,
+    false
   );
 
   // Initialize AOS
@@ -190,7 +191,7 @@ const CountryPage = () => {
               🔥{t("hot destination")}
             </p>
           )}
-            {data?.hotDestination && (
+          {data?.hotDestination && (
             <p className=" sm:hidden min-w-[20%] max-w-[25%] text-[.5rem] px-2 bg-[#E82448] font-sans font-medium  text-white py-[1px] mt-1  rounded-full leading-7 shadow-md transform hover:scale-105 transition-transform duration-300">
               🔥{t("hot destination")}
             </p>
@@ -231,17 +232,18 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="250"
           >
-            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
+            <div
+              className={`${
+                language === "ar" ? "ml-4" : "mr-4"
+              } bg-[#f8f8f8] p-3 rounded-full`}
+            >
               <DollerRounded />
             </div>
             <div>
               <p className="font-sans font-medium text-sm leading-5 ">
                 {data?.countryCurrency}
               </p>
-              <p className="text-[.8rem]">
-                {" "}
-                {t("countryPage.currency")}
-              </p>
+              <p className="text-[.8rem]"> {t("countryPage.currency")}</p>
             </div>
           </div>
 
@@ -250,16 +252,18 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="300"
           >
-            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
+            <div
+              className={`${
+                language === "ar" ? "ml-4" : "mr-4"
+              } bg-[#f8f8f8] p-3 rounded-full`}
+            >
               <Home />
             </div>
             <div>
               <p className="font-sans font-medium text-sm leading-5">
                 ${data?.livingCost}
               </p>
-              <p className=" text-[.8rem]">
-                {t("countryPage.livingCost")}
-              </p>
+              <p className=" text-[.8rem]">{t("countryPage.livingCost")}</p>
             </div>
           </div>
 
@@ -268,16 +272,18 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="350"
           >
-            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
+            <div
+              className={`${
+                language === "ar" ? "ml-4" : "mr-4"
+              } bg-[#f8f8f8] p-3 rounded-full`}
+            >
               <LanguageLogo />
             </div>
             <div>
               <p className="font-sans font-medium text-sm leading-5 ">
                 {data?.countryLanguages[0]}
               </p>
-              <p className="text-[.8rem]">
-                {t("UniversitySlugPage.Language")}
-              </p>
+              <p className="text-[.8rem]">{t("UniversitySlugPage.Language")}</p>
             </div>
           </div>
 
@@ -286,7 +292,11 @@ const CountryPage = () => {
             data-aos="zoom-in"
             data-aos-delay="400"
           >
-            <div className={`${language === 'ar' ? 'ml-4' : 'mr-4'} bg-[#f8f8f8] p-3 rounded-full`}>
+            <div
+              className={`${
+                language === "ar" ? "ml-4" : "mr-4"
+              } bg-[#f8f8f8] p-3 rounded-full`}
+            >
               <UniversityLogo />
             </div>
             <div>
@@ -309,9 +319,7 @@ const CountryPage = () => {
 
           {!showFullOverview ? (
             <div className="space-y-4">
-              <p className="text-[1rem] ">
-                {createTruncatedOverview()}
-              </p>
+              <p className="text-[1rem] ">{createTruncatedOverview()}</p>
               <button
                 onClick={() => setShowFullOverview(true)}
                 className="text-rose-600 text-[1rem]  hover:text-rose-700 transition-colors duration-300 flex items-center"
