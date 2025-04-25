@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TickMark from "../../../svg/TickMark";
 import UniversityRightLayout from "./UniversityRightLayout";
 import UniversityLeftLayout from "./UniversityLeftLayout";
 import UniversityHighlight from "./UniversityHighlight";
@@ -13,7 +12,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import UniversityPrograms from "./UniversityPrograms";
-import verify from '../../../svg/verify/verify.svg'
+import verify from "../../../svg/verify/verify.svg";
 const UniversityPage = () => {
   const { slug } = useParams();
   const { language } = useLanguage();
@@ -73,7 +72,7 @@ const UniversityPage = () => {
       : ""
   }`;
 
-  const { data, loading, refetch } = useFetch(apiUrl,false);
+  const { data, loading, refetch } = useFetch(apiUrl, false);
   const userInfo = JSON.parse(localStorage.getItem("eduuserInfo") || "{}");
   const token = userInfo?.token || "";
 
@@ -270,7 +269,7 @@ const UniversityPage = () => {
         {/* University Logo */}
         <div
           className={`absolute -bottom-8  -translate-y-1/2 
-          ${language === "ar" ? "right-8" :"left-8"} 
+          ${language === "ar" ? "right-8" : "left-8"} 
           w-24 h-24 sm:w-28 sm:h-28 md:w-[7.5rem] md:h-32 bg-white shadow-xl
           flex items-center justify-center rounded-2xl 
           transition-all duration-300 `}
@@ -285,7 +284,7 @@ const UniversityPage = () => {
             height="80"
           />
           <span className="absolute -bottom-3 -right-3 w-9 h-9 rounded-full flex items-center justify-center ">
-            <img src={verify}/>
+            <img src={verify} />
           </span>
         </div>
       </div>

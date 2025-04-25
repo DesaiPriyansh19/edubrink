@@ -32,15 +32,21 @@ const UniversityLeftLayout = ({
   // Add a state to track if initial options have been loaded
   const [initialOptionsLoaded, setInitialOptionsLoaded] = useState(false);
 
-  // Add these constant arrays at the top of the component function
+  // Add these multilingual objects
   const studyLevels = [
-    "Bachelor's",
-    "Master's",
-    "PhD",
-    "Diploma",
-    "Certificate",
+    { value: "Bachelor's", label: { en: "Bachelor's", ar: "بكالوريوس" } },
+    { value: "Master's", label: { en: "Master's", ar: "ماجستير" } },
+    { value: "PhD", label: { en: "PhD", ar: "دكتوراه" } },
+    { value: "Diploma", label: { en: "Diploma", ar: "دبلوم" } },
+    { value: "Certificate", label: { en: "Certificate", ar: "شهادة" } },
   ];
-  const studyModes = ["Full-time", "Part-time", "Online", "Blended"];
+
+  const studyModes = [
+    { value: "Full-time", label: { en: "Full-time", ar: "دوام كامل" } },
+    { value: "Part-time", label: { en: "Part-time", ar: "دوام جزئي" } },
+    { value: "Online", label: { en: "Online", ar: "عبر الإنترنت" } },
+    { value: "Blended", label: { en: "Blended", ar: "مزيج" } },
+  ];
 
   // Replace the useEffect that sets studyLevelOptions and modeOfStudyOptions
   useEffect(() => {
@@ -310,20 +316,25 @@ const UniversityLeftLayout = ({
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {activeFilters.studyLevel.map((level, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-[#3b3d8d]/10 text-[#3b3d8d] px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1"
-                    >
-                      {level}
-                      <button
-                        onClick={() => handleStudyLevelClick(level)}
-                        className="w-4 h-4 rounded-full bg-[#3b3d8d]/20 flex items-center justify-center hover:bg-[#3b3d8d]/30"
+                  {activeFilters.studyLevel.map((level, idx) => {
+                    const levelObj = studyLevels.find(
+                      (item) => item.value === level
+                    );
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-[#3b3d8d]/10 text-[#3b3d8d] px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1"
                       >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    </div>
-                  ))}
+                        {levelObj ? levelObj.label[language] : level}
+                        <button
+                          onClick={() => handleStudyLevelClick(level)}
+                          className="w-4 h-4 rounded-full bg-[#3b3d8d]/20 flex items-center justify-center hover:bg-[#3b3d8d]/30"
+                        >
+                          <X className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -343,20 +354,25 @@ const UniversityLeftLayout = ({
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {activeFilters.modeOfStudy.map((mode, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-[#3b3d8d]/10 text-[#3b3d8d] px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1"
-                    >
-                      {mode}
-                      <button
-                        onClick={() => handleModeOfStudyClick(mode)}
-                        className="w-4 h-4 rounded-full bg-[#3b3d8d]/20 flex items-center justify-center hover:bg-[#3b3d8d]/30"
+                  {activeFilters.modeOfStudy.map((mode, idx) => {
+                    const modeObj = studyModes.find(
+                      (item) => item.value === mode
+                    );
+                    return (
+                      <div
+                        key={idx}
+                        className="bg-[#3b3d8d]/10 text-[#3b3d8d] px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1"
                       >
-                        <X className="w-2.5 h-2.5" />
-                      </button>
-                    </div>
-                  ))}
+                        {modeObj ? modeObj.label[language] : mode}
+                        <button
+                          onClick={() => handleModeOfStudyClick(mode)}
+                          className="w-4 h-4 rounded-full bg-[#3b3d8d]/20 flex items-center justify-center hover:bg-[#3b3d8d]/30"
+                        >
+                          <X className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -378,11 +394,13 @@ const UniversityLeftLayout = ({
               data-aos-delay="100"
             >
               {studyLevelOptions.map((item, idx) => {
-                const isSelected = activeFilters.studyLevel.includes(item);
+                const isSelected = activeFilters.studyLevel.includes(
+                  item.value
+                );
                 return (
                   <button
                     key={idx}
-                    onClick={() => handleStudyLevelClick(item)}
+                    onClick={() => handleStudyLevelClick(item.value)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-sm cursor-pointer flex items-center gap-1.5 ${
                       isSelected
                         ? "bg-[#3b3d8d] text-white"
@@ -390,7 +408,7 @@ const UniversityLeftLayout = ({
                     }`}
                   >
                     {isSelected && <Check className="w-3.5 h-3.5" />}
-                    {item}
+                    {item.label[language ? language : "en"]}
                   </button>
                 );
               })}
@@ -410,11 +428,13 @@ const UniversityLeftLayout = ({
               data-aos-delay="200"
             >
               {modeOfStudyOptions.map((item, idx) => {
-                const isSelected = activeFilters.modeOfStudy.includes(item);
+                const isSelected = activeFilters.modeOfStudy.includes(
+                  item.value
+                );
                 return (
                   <button
                     key={idx}
-                    onClick={() => handleModeOfStudyClick(item)}
+                    onClick={() => handleModeOfStudyClick(item.value)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-sm cursor-pointer flex items-center gap-1.5 ${
                       isSelected
                         ? "bg-[#3b3d8d] text-white"
@@ -422,7 +442,7 @@ const UniversityLeftLayout = ({
                     }`}
                   >
                     {isSelected && <Check className="w-3.5 h-3.5" />}
-                    {item}
+                    {item.label[language]}
                   </button>
                 );
               })}

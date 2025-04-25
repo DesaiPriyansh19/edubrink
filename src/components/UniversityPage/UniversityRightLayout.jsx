@@ -73,7 +73,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                       {data?.lowestCourseTuitionFees ===
                       data?.highestCourseTuitionFees
                         ? `$${data?.highestCourseTuitionFees}${" "}`
-                        : `$${data?.lowestCourseTuitionFees} - $${data?.highestCourseTuitionFees}`}
+                        : `$${data?.lowestCourseTuitionFees} - $${data?.highestCourseTuitionFees}`}{" "}
                       {t("UniversitySlugPage.PerYear")}
                     </p>
 
