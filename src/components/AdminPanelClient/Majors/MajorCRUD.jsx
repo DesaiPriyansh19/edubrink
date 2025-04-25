@@ -79,6 +79,11 @@ export default function MajorCRUD() {
     setCurrentPage(1); // Reset to first page when changing filters
   };
 
+  const getToken = () => {
+    const userInfo = JSON.parse(localStorage.getItem("eduuserInfo"));
+    return userInfo?.token || "";
+  };
+
   // Toggle search mode function
   const toggleSearchMode = () => {
     setSearchMode((prev) => (prev === "duration" ? "tuition" : "duration"));
@@ -345,8 +350,14 @@ export default function MajorCRUD() {
       // Add sort parameters
       queryParams += `&sortBy=${sortBy}&sortDirection=${sortDirection}`;
 
+      const token = getToken();
       const response = await axios.get(
-        `https://edu-brink-backend.vercel.app/api/majors?${queryParams}`
+        `https://edu-brink-backend.vercel.app/api/majors?${queryParams}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setMajors(response.data.data || []);

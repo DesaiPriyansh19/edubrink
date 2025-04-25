@@ -23,12 +23,116 @@ import {
   ChevronDown,
   ChevronUp,
   MapPin,
+  BookOpenText,
 } from "lucide-react";
 import ShareCard from "../../../utils/ShareCard";
 import { useLanguage } from "../../../context/LanguageContext";
 import useFetch from "../../../hooks/useFetch";
 import { useTranslation } from "react-i18next";
 import FaqDropDown from "../../../utils/FaqDropDown";
+import LanguageLogo from "../../../svg/LanguageLogo";
+import DollerRounded from "../../../svg/DollerRounded/Index";
+
+const requirementMap = {
+  en: {
+    "High School Diploma": "High School Diploma",
+    "Bachelor Degree": "Bachelor Degree",
+    IELTS: "IELTS",
+    TOEFL: "TOEFL",
+    GRE: "GRE",
+    GMAT: "GMAT",
+    "Motivation Letter": "Motivation Letter",
+    "Recommendation Letters": "Recommendation Letters",
+  },
+  ar: {
+    "High School Diploma": "شهادة الثانوية العامة",
+    "Bachelor Degree": "درجة البكالوريوس",
+    IELTS: "آيلتس",
+    TOEFL: "توفل",
+    GRE: "جي آر إي",
+    GMAT: "جيمات",
+    "Motivation Letter": "خطاب الدافع",
+    "Recommendation Letters": "خطابات التوصية",
+  },
+};
+
+const unitMap = {
+  en: {
+    Years: "Years",
+    Months: "Months",
+    Weeks: "Weeks",
+  },
+  ar: {
+    Years: "سنوات",
+    Months: "أشهر",
+    Weeks: "أسابيع",
+  },
+};
+
+const monthMap = {
+  en: {
+    January: "January",
+    February: "February",
+    March: "March",
+    April: "April",
+    May: "May",
+    June: "June",
+    July: "July",
+    August: "August",
+    September: "September",
+    October: "October",
+    November: "November",
+    December: "December",
+  },
+  ar: {
+    January: "يناير",
+    February: "فبراير",
+    March: "مارس",
+    April: "أبريل",
+    May: "مايو",
+    June: "يونيو",
+    July: "يوليو",
+    August: "أغسطس",
+    September: "سبتمبر",
+    October: "أكتوبر",
+    November: "نوفمبر",
+    December: "ديسمبر",
+  },
+};
+
+const studyModesMap = {
+  en: {
+    "Full-time": "Full-time",
+    "Part-time": "Part-time",
+    Online: "Online",
+    Blended: "Blended",
+  },
+  ar: {
+    "Full-time": "دوام كامل",
+    "Part-time": "دوام جزئي",
+    Online: "عبر الإنترنت",
+    Blended: "تعليمي مدمج",
+  },
+};
+
+const majorLanguagesMap = {
+  en: {
+    English: "English",
+    French: "French",
+    German: "German",
+    Spanish: "Spanish",
+    Arabic: "Arabic",
+    Chinese: "Chinese",
+  },
+  ar: {
+    English: "الإنجليزية",
+    French: "الفرنسية",
+    German: "الألمانية",
+    Spanish: "الإسبانية",
+    Arabic: "العربية",
+    Chinese: "الصينية",
+  },
+};
 
 const MajorPage = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -54,6 +158,15 @@ const MajorPage = () => {
     slug
   )}`;
   const { data: majorData, loading } = useFetch(apiUrl, false);
+
+  const formatLanguages = (languages) => {
+    if (!languages || !Array.isArray(languages) || languages.length === 0)
+      return "English";
+    if (languages.length === 1) return languages[0];
+
+    // Show first language + count of additional languages
+    return `${languages[0]} +${languages.length - 1}`;
+  };
 
   useEffect(() => {
     // Update document head for SEO
@@ -181,6 +294,50 @@ const MajorPage = () => {
       ...prev,
       [index]: !prev[index],
     }));
+  };
+
+  const formatStudyLevel = (studyLevel) => {
+    if (!studyLevel || !Array.isArray(studyLevel) || studyLevel.length === 0)
+      return "N/A";
+
+    // Define study level names in both languages
+    const englishLevels = [
+      "Bachelor's",
+      "Master's",
+      "PhD",
+      "Diploma",
+      "Certificate",
+    ];
+    const arabicLevels = ["بكالوريوس", "ماجستير", "دكتوراه", "دبلوم", "شهادة"];
+
+    // Choose the appropriate array based on language
+    const levelsArray = language === "ar" ? arabicLevels : englishLevels;
+
+    // Map the English study level to the appropriate language
+    if (studyLevel.length === 1) {
+      // Find the index of the study level in the English array
+      const index = englishLevels.findIndex(
+        (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+      );
+
+      // If found, return the corresponding level in the selected language
+      if (index !== -1) {
+        return levelsArray[index];
+      }
+
+      // If not found in our mapping, return the original value
+      return studyLevel[0];
+    }
+
+    // For multiple study levels, show the first one + count
+    const firstLevelIndex = englishLevels.findIndex(
+      (level) => level.toLowerCase() === studyLevel[0].toLowerCase()
+    );
+
+    const firstLevel =
+      firstLevelIndex !== -1 ? levelsArray[firstLevelIndex] : studyLevel[0];
+
+    return `${firstLevel} +${studyLevel.length - 1}`;
   };
 
   const handleApplyNow = (id, category = "major", slug) => {
@@ -323,7 +480,7 @@ const MajorPage = () => {
             data-aos="fade-up"
             data-aos-delay="300"
           >
-            <div className="rounded-xl p-6 mb-8">
+            <div className="rounded-xl  mt-2 mb-8">
               <div
                 className={`relative transition-all duration-300 ease-in-out ${
                   isExpanded ? "max-h-full" : "max-h-40 overflow-hidden"
@@ -363,7 +520,7 @@ const MajorPage = () => {
 
             {/* Requirements Section */}
             <div
-              className="rounded-xl p-6"
+              className="rounded-xl my-8"
               data-aos="fade-up"
               data-aos-delay="400"
             >
@@ -384,7 +541,7 @@ const MajorPage = () => {
                     >
                       <CheckCircle className="w-5 h-5 flex-shrink-0 mt-1 text-[#3b3d8d]" />
                       <span className="font-medium text-gray-700">
-                        {req || "N/A"}
+                        {requirementMap[language]?.[req] || req || "N/A"}
                       </span>
                     </div>
                   ))
@@ -433,8 +590,11 @@ const MajorPage = () => {
                   <div>
                     <p className="text-[1rem] font-medium text-gray-900">
                       {majorData.duration || "N/A"}{" "}
-                      {majorData.durationUnits || ""}
+                      {unitMap[language]?.[majorData.durationUnits] ||
+                        majorData.durationUnits ||
+                        ""}
                     </p>
+
                     <p className="text-sm text-gray-800">
                       {t("majorPage.duration")}
                     </p>
@@ -448,26 +608,14 @@ const MajorPage = () => {
                   </div>
                   <div>
                     <p className="text-[1rem] font-medium text-gray-900">
-                      {majorData.majorIntakeMonth?.[0] || "N/A"}{" "}
+                      {monthMap[language]?.[majorData.majorIntakeMonth?.[0]] ||
+                        majorData.majorIntakeMonth?.[0] ||
+                        "N/A"}{" "}
                       {majorData.majorIntakeYear || "N/A"}
                     </p>
+
                     <p className="text-sm text-gray-800">
                       {t("UniversitySlugPage.StartMonth")}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Application Deadline */}
-                <div className="flex items-center gap-4 py-1 border-b border-gray-100">
-                  <div className="bg-gray-50 p-2 rounded-full">
-                    <Timer className="w-5 h-5 text-[#3b3d8d]" />
-                  </div>
-                  <div>
-                    <p className="text-[1rem] font-medium text-gray-900">
-                      Aug 2025
-                    </p>
-                    <p className="text-sm text-gray-800">
-                      {t("majorPage.applyBy")}
                     </p>
                   </div>
                 </div>
@@ -498,8 +646,11 @@ const MajorPage = () => {
                   </div>
                   <div>
                     <p className="text-[1rem] font-medium text-gray-900">
-                      {majorData.modeOfStudy || "N/A"}
+                      {studyModesMap[language]?.[majorData.modeOfStudy] ||
+                        majorData.modeOfStudy ||
+                        "N/A"}
                     </p>
+
                     <p className="text-sm text-gray-800">
                       {t("majorPage.modeOfStudy")}
                     </p>
@@ -515,7 +666,13 @@ const MajorPage = () => {
                     <p className="text-[1rem] font-medium text-gray-900">
                       {majorData.majorLanguages &&
                       majorData.majorLanguages.length > 0
-                        ? majorData.majorLanguages.join(", ")
+                        ? majorData.majorLanguages
+                            .map(
+                              (langItem) =>
+                                majorLanguagesMap[language]?.[langItem] ||
+                                langItem
+                            )
+                            .join(", ")
                         : "N/A"}
                     </p>
                     <p className="text-sm text-gray-800">
@@ -716,8 +873,8 @@ const MajorPage = () => {
       />
 
       {/* Related Majors Section - If available */}
-      {majorData?.university?.majorId?.length > 0 && (
-        <div className="max-w-[1200px] mx-auto md:ml-5 lg:ml-9 mb-16">
+      {majorData?.university?.major?.length > 0 && (
+        <div className="max-w-[1200px] mx-auto ">
           <div>
             <div
               dir={language === "ar" ? "rtl" : "ltr"}
@@ -725,14 +882,14 @@ const MajorPage = () => {
             >
               <div className="ml-5 md:ml-0">
                 <h1 className="text-2xl sm:text-4xl font-semibold">
-                  📚 {t("relatedMajors.title") || "Related Majors"}
+                  📚 {t("ourMajorSection.title") || "Related Majors"}
                 </h1>
                 <p className="text-sm mt-3 max-w-xl font-medium">
-                  {t("relatedMajors.description") ||
+                  {t("ourMajorSection.description") ||
                     "Explore other majors offered by this university"}
                 </p>
               </div>
-              <Link to={`/${language}/searchresults/Allmajors`}>
+              <Link to={`/${language}/searchresults/Allmajor`}>
                 <div
                   className={`w-full flex mt-4 ${
                     language === "ar" ? "justify-start" : "justify-end"
@@ -755,14 +912,218 @@ const MajorPage = () => {
             </div>
           </div>
 
-          {/* This would be populated with related majors if available */}
           <div
             dir={language === "ar" ? "rtl" : "ltr"}
-            className="flex overflow-x-scroll scrollbar-hide col-span-3 flex-col gap-4 sm:flex-row mx-3 md:ml-0"
+            className={`flex overflow-x-scroll scrollbar-hide col-span-3  gap-4 flex-row mx-3 md:ml-0
+           }`}
           >
-            {/* Placeholder for related majors */}
-            <div className="text-center w-full py-8 text-gray-500">
-              Related majors would appear here
+            {loading && majorData?.university?.major?.length === 0
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  //  Skeleton loader
+                  <div
+                    key={index}
+                    className="relative mt-2 px-4 rounded-xl shadow-sm bg-white "
+                  >
+                    <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
+                      <div className="flex gap-2 items-center mt-3 mb-3">
+                        <div className="w-14 h-14 bg-gray-300 rounded-full"></div>
+                        <div className="flex flex-col gap-1 mx-auto">
+                          <div className="w-24 h-4 bg-gray-300 rounded-md"></div>
+                          <div className="w-20 h-3 bg-gray-300 rounded-md"></div>
+                          <div className="w-12 h-3 bg-gray-300 rounded-md"></div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-4">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center justify-center gap-1"
+                          >
+                            <span className="rounded-full w-7 h-7 bg-gray-300"></span>
+                            <div>
+                              <div className="w-8 h-3 bg-gray-300 rounded-md"></div>
+                              <div className="w-8 h-3 bg-gray-300 rounded-md mt-1"></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid gap-3 px-2 grid-cols-2 mb-3 mt-2">
+                      <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+                      <div className="w-full h-8 bg-gray-300 rounded-md"></div>
+                    </div>
+                  </div>
+                ))
+              : majorData?.university?.major?.map((university, index) => {
+                  const dynamicFeatures = [
+                    {
+                      icon: <DollerRounded />,
+                      title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
+                      description: university?.majorTuitionFees || "N/A",
+                    },
+                    {
+                      icon: <LanguageLogo />,
+                      title: language === "ar" ? "اللغة" : "Language",
+                      description:
+                        majorData.majorLanguages &&
+                        majorData.majorLanguages.length > 0
+                          ? majorLanguagesMap[language]?.[
+                              majorData.majorLanguages[0]
+                            ] ||
+                            majorData.majorLanguages[0] +
+                              (majorData.majorLanguages.length > 1
+                                ? ` +${majorData.majorLanguages.length - 1}`
+                                : "")
+                          : "N/A",
+                    },
+                    {
+                      icon: <DollerRounded />,
+                      title: language === "ar" ? "مدة" : "Duration",
+                      description: `${university?.duration} ${university.durationUnits}`,
+                    },
+                  ];
+
+                  return (
+                    <div
+                      key={index}
+                      className={`relative mt-2 min-w-[300px] lg:min-w-[320px] rounded-xl shadow-md bg-white `}
+                    >
+                      <div
+                        className={`px-2 ${
+                          language === "ar"
+                            ? "pl-2 sm:pl-4 md:pl-5 lg:pl-10"
+                            : "pr-2 sm:pr-4 md:pr-5 lg:pr-10"
+                        } p-2`}
+                      >
+                        <div className="flex gap-2 items-center mt-3 sm:mt-2 mb-3">
+                          <div className="w-14 h-14">
+                            <img
+                              src={
+                                majorData.university.uniSymbol ||
+                                "https://placehold.co/56x56"
+                              }
+                              alt="College Logo"
+                              className="w-full h-full rounded-full"
+                            />
+                          </div>
+                          <div className="pl-3">
+                            <div className="min-h-[2em]">
+                              {" "}
+                              {/* Container that reserves space */}
+                              <h1 className="text-[16px] font-semibold leading-tight">
+                                {(() => {
+                                  const majorName =
+                                    language === "ar"
+                                      ? university?.majorName?.ar
+                                      : university?.majorName?.en || "N/A";
+
+                                  if (majorName.length > 17) {
+                                    const lastSpaceIndex =
+                                      majorName.lastIndexOf(" ", 17);
+                                    const splitIndex =
+                                      lastSpaceIndex > 0 ? lastSpaceIndex : 17;
+
+                                    return (
+                                      <>
+                                        {majorName.substring(0, splitIndex)}
+                                        <br />
+                                        {majorName.substring(splitIndex + 1)}
+                                      </>
+                                    );
+                                  }
+                                  return (
+                                    <>
+                                      {majorName}
+                                      {/* This invisible span creates the space for second line */}
+                                      <span className="block opacity-0 h-[1em]">
+                                        .
+                                      </span>
+                                    </>
+                                  );
+                                })()}
+                              </h1>
+                            </div>
+
+                            <p className="text-[10px] font-medium text-black flex items-center mt-1">
+                              {(() => {
+                                const universityName =
+                                  language === "ar"
+                                    ? majorData?.university?.uniName?.ar
+                                    : majorData?.university?.uniName?.en ||
+                                      "N/A";
+
+                                return universityName.length > 30
+                                  ? universityName.slice(0, 30) + "..."
+                                  : universityName;
+                              })()}
+                            </p>
+                            <div className="flex items-center mt-1">
+                              <p className="flex items-center gap-1 rounded-full mr-1">
+                                <BookOpenText className="w-3.5 font-semibold h-3.5" />
+                                <span className="text-xs">
+                                  {formatStudyLevel(university.studyLevel)}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center justify-start sm:justify-center mr-0 pl-2">
+                          {dynamicFeatures?.flat()?.map((feature, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-center"
+                            >
+                              <span className="rounded-full w-6 h-6 flex items-center justify-center border">
+                                {feature.icon}
+                              </span>
+                              <div className="ml-1">
+                                <p className="text-[9px] font-medium whitespace-nowrap">
+                                  {feature.title}
+                                </p>
+                                <p className="text-[9px] font-medium whitespace-nowrap">
+                                  {feature.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="w-full px-2 mb-2 mt-2">
+                        <button
+                          onClick={() => {
+                            navigate(
+                              `/${language}/major/${university?.customURLSlug?.en}`
+                            );
+                          }}
+                          className="text-white w-full bg-slateBlue text-[10px] px-2 py-2 hover:font-medium rounded-full border border-gray-700"
+                        >
+                          {t("learnMore")}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+            <div
+              className={`w-full flex mt-4 ${
+                language === "ar" ? "justify-start" : "justify-end"
+              } items-center px-4`}
+            >
+              <button
+                className={`md:hidden flex    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
+              >
+                {t("viewAll")}
+
+                <ArrowRight
+                  className={`inline-block ml-2 ${
+                    language === "ar"
+                      ? "rotate-180 group-hover:-translate-x-1"
+                      : "rotate-0 group-hover:translate-x-1"
+                  } w-4 h-4 transition-transform duration-300 group-hover:translate-x-1`}
+                />
+              </button>
             </div>
           </div>
         </div>

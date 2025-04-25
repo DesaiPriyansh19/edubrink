@@ -55,7 +55,6 @@ const CoursePage = () => {
       )}`;
 
   const { data, loading } = useFetch(apiUrl, false);
-  console.log(data?.university?.courseId);
   const navigate = useNavigate();
 
   // Update document head for SEO
@@ -668,7 +667,7 @@ const CoursePage = () => {
       />
 
       {data?.university?.courseId?.length > 0 && (
-        <div className="max-w-[1200px] mx-auto  md:ml-5 lg:ml-9">
+        <div className="max-w-[1200px] mx-auto  ">
           <div>
             <div
               dir={language === "ar" ? "rtl" : "ltr"}

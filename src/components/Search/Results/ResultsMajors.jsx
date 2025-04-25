@@ -396,7 +396,9 @@ function ResultsMajors({
               <div
                 key={index}
                 className={`relative mt-2 px-4 rounded-xl shadow-sm bg-white ${
-                  !isMajorsPath ? "minw-[290px] sm:min-w-[240px] flex-shrink-0" : ""
+                  !isMajorsPath
+                    ? "minw-[290px] sm:min-w-[240px] flex-shrink-0"
+                    : ""
                 }`}
               >
                 <div className="px-2 pr-2 sm:pr-4 md:pr-5 lg:pr-5 p-2">
@@ -457,7 +459,9 @@ function ResultsMajors({
                 <div
                   key={index}
                   className={`relative mt-2 rounded-xl shadow-md hover:shadow-xl bg-white ${
-                    !isMajorsPath ? "min-w-[300px] sm:min-w-[240px] flex-shrink-0" : ""
+                    !isMajorsPath
+                      ? "min-w-[300px] sm:min-w-[240px] flex-shrink-0"
+                      : ""
                   }`}
                 >
                   <div
@@ -480,58 +484,72 @@ function ResultsMajors({
                         />
                       </div>
                       <div className="pl-3 ">
-                      <div className="min-h-[2em] w-full    flex items-center">
-  <h1 className="text-[16px] font-semibold leading-tight">
-    {(() => {
-      const majorName = 
-        language === "ar" 
-          ? university?.majorName?.ar 
-          : university?.majorName?.en || "N/A";
+                        <div className="min-h-[2em] w-full    flex items-center">
+                          <h1 className="text-[16px] font-semibold leading-tight">
+                            {(() => {
+                              const majorName =
+                                language === "ar"
+                                  ? university?.majorName?.ar
+                                  : university?.majorName?.en || "N/A";
 
-      if (majorName === "N/A") return majorName;
+                              if (majorName === "N/A") return majorName;
 
-      if (majorName.length > 28) {
-        // Find last space before 28 character
-        const lastSpaceIndex = majorName.lastIndexOf(' ', 28);
-        // Split at space if found, otherwise at 28 character
-        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 28;
-        
-        // First line break at 17 chars
-        const firstBreakIndex = majorName.lastIndexOf(' ', 25) > 0 
-          ? majorName.lastIndexOf(' ', 25) 
-          : 25;
-          
-        return (
-          <>
-            {majorName.substring(0, firstBreakIndex)}
-            <br />
-            {majorName.substring(firstBreakIndex + 1, splitIndex)}...
-          </>
-        );
-      }
-      else if (majorName.length > 17) {
-        // Normal line break (original behavior)
-        const lastSpaceIndex = majorName.lastIndexOf(' ', 17);
-        const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 17;
-        
-        return (
-          <>
-            {majorName.substring(0, splitIndex)}
-            <br />
-            {majorName.substring(splitIndex + 1)}
-          </>
-        );
-      }
-      // For short names
-      return (
-        <>
-          {majorName}
-          <span className="inline-block opacity-0 w-0 h-[1em]">.</span>
-        </>
-      );
-    })()}
-  </h1>
-</div>
+                              if (majorName.length > 28) {
+                                // Find last space before 28 character
+                                const lastSpaceIndex = majorName.lastIndexOf(
+                                  " ",
+                                  28
+                                );
+                                // Split at space if found, otherwise at 28 character
+                                const splitIndex =
+                                  lastSpaceIndex > 0 ? lastSpaceIndex : 28;
+
+                                // First line break at 17 chars
+                                const firstBreakIndex =
+                                  majorName.lastIndexOf(" ", 25) > 0
+                                    ? majorName.lastIndexOf(" ", 25)
+                                    : 25;
+
+                                return (
+                                  <>
+                                    {majorName.substring(0, firstBreakIndex)}
+                                    <br />
+                                    {majorName.substring(
+                                      firstBreakIndex + 1,
+                                      splitIndex
+                                    )}
+                                    ...
+                                  </>
+                                );
+                              } else if (majorName.length > 17) {
+                                // Normal line break (original behavior)
+                                const lastSpaceIndex = majorName.lastIndexOf(
+                                  " ",
+                                  17
+                                );
+                                const splitIndex =
+                                  lastSpaceIndex > 0 ? lastSpaceIndex : 17;
+
+                                return (
+                                  <>
+                                    {majorName.substring(0, splitIndex)}
+                                    <br />
+                                    {majorName.substring(splitIndex + 1)}
+                                  </>
+                                );
+                              }
+                              // For short names
+                              return (
+                                <>
+                                  {majorName}
+                                  <span className="inline-block opacity-0 w-0 h-[1em]">
+                                    .
+                                  </span>
+                                </>
+                              );
+                            })()}
+                          </h1>
+                        </div>
 
                         <p className="text-[10px] font-medium text-black flex items-center mt-1">
                           {language === "ar"
@@ -626,6 +644,7 @@ function ResultsMajors({
         } items-center px-4`}
       >
         <button
+          onClick={() => navigate(`/${language}/searchresults/AllMajor`)}
           className={`md:hidden flex justify-center items-center text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
         >
           {t("viewAll")}

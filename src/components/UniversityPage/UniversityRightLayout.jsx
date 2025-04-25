@@ -20,13 +20,16 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
   const navigate = useNavigate();
 
   const formatModeOfStudy = (mod) => {
-    if (!mod || mod.length === 0) return "Full Time";
-    if (mod.length === 1) return mod[0];
-
-    // Show first language + count of additional languages
-    return `${mod[0]} + ${mod.length - 1}`;
+    if (!mod || mod.length === 0 || !Array.isArray(mod[0])) return "Full Time";
+  
+    const modes = mod[0];
+  
+    if (modes.length === 0) return "Full Time";
+    if (modes.length === 1) return modes[0];
+  
+    return `${modes[0]} + ${modes.length - 1}`;
   };
-
+  
   return (
     <>
       <div className="sticky top-24">
@@ -117,7 +120,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                     <p className="text-lg font-semibold text-gray-800">
                       {data?.uniStartDate
                         ? new Date(data.uniStartDate).toLocaleDateString(
-                            "en-US",
+                            language,
                             {
                               month: "short",
                               year: "numeric",
@@ -142,7 +145,7 @@ const UniversityRightLayout = ({ data, language, themeColor = "#3b3d8d" }) => {
                     <p className="text-lg font-semibold text-gray-800">
                       {data?.uniDeadline
                         ? new Date(data.uniDeadline).toLocaleDateString(
-                            "en-US",
+                            language,
                             {
                               month: "short",
                               year: "numeric",

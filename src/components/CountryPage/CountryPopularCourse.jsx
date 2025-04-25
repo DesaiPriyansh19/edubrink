@@ -1,7 +1,6 @@
 import React from "react";
 import DollerRounded from "../../../svg/DollerRounded/Index";
 
-import Master from "../../../svg/AboutStudent/Master";
 import LanguageLogo from "../../../svg/LanguageLogo";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
@@ -23,7 +22,7 @@ const CountryPopularCourse = ({ data }) => {
         ? [selectedValue]
         : [selectedValue],
     }));
-    navigate(`/${language}/searchresults/courses`);
+    navigate(`/${language}/searchresults/majors`);
   };
 
   const handleNavigation = (apply, id, category, slug) => {
@@ -65,109 +64,138 @@ const CountryPopularCourse = ({ data }) => {
       </div>
 
       <div className="flex flex-wrap justify-start gap-3">
-  {data?.universities?.map((university, index) => {
-    return university?.courseId?.map((course, courseIndex) => {
-      const dynamicFeatures = [
-        {
-          icon: <DollerRounded />,
-          title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
-          description: `$ ${course?.CourseFees}` || "N/A",
-        },
-        {
-          icon: <LanguageLogo />,
-          title: language === "ar" ? "اللغة" : "Language",
-          description: language === "ar" ? "الإنجليزية" : "English",
-        },
-        {
-          icon: <DollerRounded />,
-          title: language === "ar" ? "الموعد النهائي" : "Deadline",
-          description: course?.DeadLine
-            ? new Date(course?.DeadLine).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })
-            : "N/A",
-        },
-      ];
+        {data?.universities?.map((university, index) => {
+          return university?.courseId?.map((course, courseIndex) => {
+            console.log(course);
+            const dynamicFeatures = [
+              {
+                icon: <DollerRounded />,
+                title: language === "ar" ? "رسوم الدورة" : "Tuition Fees",
+                description: `$ ${course?.CourseFees}` || "N/A",
+              },
+              {
+                icon: <LanguageLogo />,
+                title: language === "ar" ? "اللغة" : "Language",
+                description: language === "ar" ? "الإنجليزية" : "English",
+              },
+              {
+                icon: <DollerRounded />,
+                title: language === "ar" ? "الموعد النهائي" : "Deadline",
+                description: course?.DeadLine
+                  ? new Date(course?.DeadLine).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "N/A",
+              },
+            ];
 
-      return (
-        <div
-          key={courseIndex}
-          className="relative w-[90%] sm:w-[45%] lg:w-[30%]     rounded-xl  bg-white p-3"
-        >
-          <div className="flex gap-2 items-center mt-2 mb-2">
-            <div className="w-14 h-14">
-              <img
-                src={course?.university?.uniSymbol || "https://placehold.co/80x80"}
-                alt="College Logo"
-                className="w-full h-full rounded-full"
-              />
-            </div>
-            <div>
-            <h1 className="text-sm font-semibold">
-  {(() => {
-    const courseName = language === "ar" ? course?.CourseName?.ar : course?.CourseName?.en;
-    if (!courseName) return "N/A";
-    
-    if (courseName.length > 25) {
-      // Find the last space before the 20th character
-      const lastSpaceIndex = courseName.lastIndexOf(' ', 25);
-      // If a space was found, split there, otherwise at 20 (as fallback)
-      const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 25;
-      
-      return (
-        <>
-          {courseName.substring(0, splitIndex)}
-          <br />
-          {courseName.substring(splitIndex + 1)}
-        </>
-      );
-    }
-    return courseName;
-  })()}
-</h1>
-              <p className="text-[0.7rem] font-medium text-black mt-1">
-                {language === "ar" ? university?.uniName?.ar : university?.uniName?.en || "N/A"}
-              </p>
-            </div>
-          </div>
+            return (
+              <div
+                key={courseIndex}
+                className="relative w-[90%] sm:w-[45%] lg:w-[30%]     rounded-xl  bg-white p-3"
+              >
+                <div className="flex gap-2 items-center mt-2 mb-2">
+                  <div className="w-14 h-14">
+                    <img
+                      src={
+                        university?.uniSymbol ||
+                        "https://placehold.co/80x80"
+                      }
+                      alt="College Logo"
+                      className="w-full h-full rounded-full"
+                    />
+                  </div>
+                  <div>
+                    <h1 className="text-sm font-semibold">
+                      {(() => {
+                        const courseName =
+                          language === "ar"
+                            ? course?.CourseName?.ar
+                            : course?.CourseName?.en;
+                        if (!courseName) return "N/A";
 
-          <div className="flex flex-wrap gap-2 justify-start">
-            {dynamicFeatures?.map((feature, index) => (
-            <div key={index} className="flex items-center">
-            <span className="rounded-full w-7 h-7 flex items-center justify-center border">
-              {feature.icon}
-            </span>
-            <div className={`${language === 'ar' ? 'mr-2' : 'ml-1'}`}>
-              <p className="text-[0.55rem] font-medium">{feature.title}</p>
-              <p className="text-[0.55rem] font-medium">{feature.description}</p>
-            </div>
-          </div>
-          
-            ))}
-          </div>
+                        if (courseName.length > 25) {
+                          // Find the last space before the 20th character
+                          const lastSpaceIndex = courseName.lastIndexOf(
+                            " ",
+                            25
+                          );
+                          // If a space was found, split there, otherwise at 20 (as fallback)
+                          const splitIndex =
+                            lastSpaceIndex > 0 ? lastSpaceIndex : 25;
 
-          <div className="grid gap-2 grid-cols-2 mt-3">
-            <button
-              onClick={() => handleNavigation(true, course._id, "course", course?.customURLSlug?.en)}
-              className="bg-slateBlue text-white text-xs py-1 px-2 rounded-full"
-            >
-              {t("applyNow")}
-            </button>
-            <button
-              onClick={() => handleNavigation(false, course._id, "course", course?.customURLSlug?.en)}
-              className="text-black text-xs px-2 py-1 hover:font-medium rounded-full border border-gray-800"
-            >
-              {t("learnMore")}
-            </button>
-          </div>
-        </div>
-      );
-    });
-  })}
-</div>
+                          return (
+                            <>
+                              {courseName.substring(0, splitIndex)}
+                              <br />
+                              {courseName.substring(splitIndex + 1)}
+                            </>
+                          );
+                        }
+                        return courseName;
+                      })()}
+                    </h1>
+                    <p className="text-[0.7rem] font-medium text-black mt-1">
+                      {language === "ar"
+                        ? university?.uniName?.ar
+                        : university?.uniName?.en || "N/A"}
+                    </p>
+                  </div>
+                </div>
 
+                <div className="flex flex-wrap gap-2 justify-start">
+                  {dynamicFeatures?.map((feature, index) => (
+                    <div key={index} className="flex items-center">
+                      <span className="rounded-full w-7 h-7 flex items-center justify-center border">
+                        {feature.icon}
+                      </span>
+                      <div className={`${language === "ar" ? "mr-2" : "ml-1"}`}>
+                        <p className="text-[0.55rem] font-medium">
+                          {feature.title}
+                        </p>
+                        <p className="text-[0.55rem] font-medium">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid gap-2 grid-cols-2 mt-3">
+                  <button
+                    onClick={() =>
+                      handleNavigation(
+                        true,
+                        course._id,
+                        "course",
+                        course?.customURLSlug?.en
+                      )
+                    }
+                    className="bg-slateBlue text-white text-xs py-1 px-2 rounded-full"
+                  >
+                    {t("applyNow")}
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleNavigation(
+                        false,
+                        course._id,
+                        "course",
+                        course?.customURLSlug?.en
+                      )
+                    }
+                    className="text-black text-xs px-2 py-1 hover:font-medium rounded-full border border-gray-800"
+                  >
+                    {t("learnMore")}
+                  </button>
+                </div>
+              </div>
+            );
+          });
+        })}
+      </div>
     </>
   );
 };

@@ -12,6 +12,19 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
+const unitMap = {
+  en: {
+    Years: "Years",
+    Months: "Months",
+    Weeks: "Weeks",
+  },
+  ar: {
+    Years: "سنوات",
+    Months: "أشهر",
+    Weeks: "أسابيع",
+  },
+};
+
 const UniversityPrograms = ({
   data,
   language,
@@ -112,9 +125,11 @@ const UniversityPrograms = ({
   return (
     <div className=" rounded-2xl  p-6 transition-all duration-300 ">
       {/* Header with tabs if we have both courses and majors */}
-      <div className={`flex items-center justify-between ${
+      <div
+        className={`flex items-center justify-between ${
           activeTab === "courses" ? "mb-0" : "mb-6"
-        } border-b pb-4`}>
+        } border-b pb-4`}
+      >
         <h2 className="text-2xl font-bold text-[#3b3d8d]">
           {t("UniversitySlugPage.FeaturedPrograms") || "Featured Programs"}
         </h2>
@@ -181,7 +196,7 @@ const UniversityPrograms = ({
         } justify-end my-6`}
       >
         <button
-          onClick={() => navigate(`/${currentLanguage}/searchresults/Allcorse`)}
+          onClick={() => navigate(`/${currentLanguage}/searchresults/Allmajor`)}
           className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-white bg-gradient-to-r from-[#3b3d8d] to-[#5254a3] hover:from-[#2d2f6e] hover:to-[#3b3d8d] transition-all duration-300 hover:shadow-md"
         >
           {t("viewAll") || "View All Courses"}
@@ -235,7 +250,9 @@ const UniversityPrograms = ({
                           {t("majorPage.duration")}
                         </p>
                         <p className="text-[#3b3d8d] font-medium">
-                          {item.CourseDuration} {item.CourseDurationUnits}
+                          {item.CourseDuration}{" "}
+                          {unitMap[language]?.[item.CourseDurationUnits] ||
+                            item.CourseDurationUnits}
                         </p>
                       </div>
 

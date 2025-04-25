@@ -68,6 +68,7 @@ function ResultsBlog({ filteredData, loading }) {
           } items-center px-4`}
         >
           <button
+               onClick={()=>navigate(`/${language}/searchresults/AllBlogs`)}
             className={` flex mb-2    justify-center items-center   text-black text-[.7rem] font-normal py-2 px-3 rounded-full transform hover:scale-105 transition-all duration-300 group`}
           >
             {t("viewAll")}
