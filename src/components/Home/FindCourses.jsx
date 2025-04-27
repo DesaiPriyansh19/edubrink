@@ -65,7 +65,6 @@ const FindCourses = () => {
             className="w-full border border-gray-300 sm:h-[37px] rounded-xl py-2 pl-3 pr-10 text-black font-light text-[.8rem]
              focus:outline-none focus:ring-1 focus:ring-[#380C95]"
           >
-            <option value="">{t("findCourses.select")}</option>
             {t("studyLevels", { returnObjects: true }).map((option, idx) => (
               <option key={idx} value={option.value}>
                 {option.label}
