@@ -61,10 +61,10 @@ function SearchResults() {
         universityFilters.EntranceExam = filterProp.EntranceExam;
       if (filterProp.ModeOfStudy)
         universityFilters.ModeOfStudy = filterProp.ModeOfStudy;
-      // if (filterProp.minBudget !== 0)
-      //   universityFilters.minBudget = filterProp.minBudget;
-      // if (filterProp.maxBudget !== 100000)
-      //   universityFilters.maxBudget = filterProp.maxBudget;
+      if (filterProp.minBudget !== 0)
+        universityFilters.minBudget = filterProp.minBudget;
+      if (filterProp.maxBudget !== 100000)
+        universityFilters.maxBudget = filterProp.maxBudget;
       if (filterProp.MajorDuration)
         // Changed from CourseDuration
         universityFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration

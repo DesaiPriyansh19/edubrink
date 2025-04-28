@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import KeyLogo from "../../../svg/KeyFact";
-import MillionLogo from "../../../svg/Millions";
 import LanguageLogo from "../../../svg/LanguageLogo";
 import UniversityLogo from "../../../svg/UniversityLogo";
 import DollerRounded from "../../../svg/DollerRounded/Index";

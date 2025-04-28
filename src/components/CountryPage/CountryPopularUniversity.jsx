@@ -88,6 +88,7 @@ const CountryPopularUniversity = ({ data }) => {
           <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-4">
             {/* Iterate through universities */}
             {data?.universities?.map((university, idx) => {
+              console.log(university);
               const dynamicFeatures = [
                 {
                   icon: <DollerRounded />,
@@ -121,129 +122,165 @@ const CountryPopularUniversity = ({ data }) => {
               ];
               return (
                 <div
-                key={idx}
-                dir={language === "ar" ? "rtl" : "ltr"}
-                className="relative w-[90%] sm:min-w-[300px] sm:max-w-[350px] xl:max-w-[400px] shadow-md mb-4 rounded-xl hover:shadow-xl bg-white p-2" 
-              >
-                <div className="p-3">
-                  <div
-                    className={`absolute top-0 ${
-                      language === "ar"
-                        ? "left-0 rounded-br-[6px] rounded-tl-xl "
-                        : "right-0 rounded-bl-[6px] rounded-tr-xl"
-                    } bg-red-500 text-white text-[0.6rem] px-2 py-1`}
-                  >
-                    {t("mostPopular")}
-                  </div>
-              
-                  <div className="flex gap-2 items-center mb-3">
-                    <div className="w-12 h-12">
-                      <img
-                        src={university.uniSymbol || "https://placehold.co/80x80"}
-                        alt="Logo"
-                        className="w-full h-full rounded-full object-cover"
-                      />
+                  key={idx}
+                  dir={language === "ar" ? "rtl" : "ltr"}
+                  className="relative w-[90%] sm:min-w-[300px] sm:max-w-[350px] xl:max-w-[400px] shadow-md mb-4 rounded-xl hover:shadow-xl bg-white p-2"
+                >
+                  <div className="p-3">
+                    <div
+                      className={`absolute top-0 ${
+                        language === "ar"
+                          ? "left-0 rounded-br-[6px] rounded-tl-xl "
+                          : "right-0 rounded-bl-[6px] rounded-tr-xl"
+                      } bg-red-500 text-white text-[0.6rem] px-2 py-1`}
+                    >
+                      {t("mostPopular")}
                     </div>
-                    <div className="flex-1">
-                    <h1 className="text-sm font-semibold inline-flex flex-wrap items-baseline">
-  {(() => {
-    const uniName = language === "ar" ? university?.uniName?.ar : university?.uniName?.en;
-    if (!uniName) return (
-      <>
-        N/A
-        <span className="ml-1 relative top-0.5">
-          <TickMark />
-        </span>
-      </>
-    );
-    
-    if (uniName.length > 18) {
-      const lastSpaceIndex = uniName.lastIndexOf(' ', 18);
-      const splitIndex = lastSpaceIndex > 0 ? lastSpaceIndex : 18;
-      
-      return (
-        <>
-          {uniName.substring(0, splitIndex)}
-          <br className="block w-full" />
-          <span className="inline-flex items-baseline">
-            {uniName.substring(splitIndex + 1)}
-            <span className="ml-1 relative top-0.5">
-              <TickMark />
-            </span>
-          </span>
-        </>
-      );
-    }
-    return (
-      <>
-        {uniName}
-        <span className="ml-1 relative top-0.5">
-          <TickMark />
-        </span>
-      </>
-    );
-  })()}
-</h1>
-              
-                      <p className="text-xs font-medium text-gray-700 mt-1">
-                        {data?.countryPhotos?.countryFlag} {data?.countryName?.[language] || "N/A"}
-                      </p>
-              
-                      <div className="flex items-center mt-1">
-                        <span className="w-4 h-4 rounded-full mr-1">
-                          <PrivetUniLogo />
-                        </span>
-                        <p className="text-xs capitalize font-medium text-gray-700">
-                          {language === "ar"
-                            ? university?.uniType === "Private"
-                              ? "جامعة خاصة"
-                              : "جامعة حكومية"
-                            : university?.uniType === "Private"
-                            ? "Private University"
-                            : "Public University"}
-                        </p>
+
+                    <div className="flex gap-2 items-center mb-3">
+                      <div className="w-12 h-12">
+                        <img
+                          src={
+                            university.uniSymbol || "https://placehold.co/80x80"
+                          }
+                          alt="Logo"
+                          className="w-full h-full rounded-full object-cover"
+                        />
                       </div>
-                    </div>
-                  </div>
-              
-                  <div className="grid grid-cols-3  gap-3 justify-start">
-                    {dynamicFeatures.flat().map((feature, index) => (
-                      <div key={index} className={`${language === 'ar' ? '' : ''}flex items-center gap-1`}>
-                        <span className="rounded-full w-7 h-7 flex items-center justify-center border">
-                          {feature.icon}
-                        </span>
-                        <div className={`${language === 'ar' ? 'mr-[2.5px]' : 'ml-1'}`}>
-                          <p className="text-[0.55rem] font-medium">{feature.title}</p>
-                          <p className="text-[0.55rem] font-medium">{feature.description}</p>
+                      <div className="flex-1">
+                        <h1 className="text-sm font-semibold inline-flex flex-wrap items-baseline">
+                          {(() => {
+                            const uniName =
+                              language === "ar"
+                                ? university?.uniName?.ar
+                                : university?.uniName?.en;
+                            if (!uniName)
+                              return (
+                                <>
+                                  N/A
+                                  <span className="ml-1 relative top-0.5">
+                                    <TickMark />
+                                  </span>
+                                </>
+                              );
+
+                            if (uniName.length > 18) {
+                              const lastSpaceIndex = uniName.lastIndexOf(
+                                " ",
+                                18
+                              );
+                              const splitIndex =
+                                lastSpaceIndex > 0 ? lastSpaceIndex : 18;
+
+                              return (
+                                <>
+                                  {uniName.substring(0, splitIndex)}
+                                  <br className="block w-full" />
+                                  <span className="inline-flex items-baseline">
+                                    {uniName.substring(splitIndex + 1)}
+                                    <span className="ml-1 relative top-0.5">
+                                      <TickMark />
+                                    </span>
+                                  </span>
+                                </>
+                              );
+                            }
+                            return (
+                              <>
+                                {uniName}
+                                <span className="ml-1 relative top-0.5">
+                                  <TickMark />
+                                </span>
+                              </>
+                            );
+                          })()}
+                        </h1>
+
+                        <p className="text-xs font-medium text-gray-700 mt-1">
+                          {data?.countryPhotos?.countryFlag}{" "}
+                          {data?.countryName?.[language] || "N/A"}
+                        </p>
+
+                        <div className="flex items-center mt-1">
+                          <span className="w-4 h-4 rounded-full mr-1">
+                            <PrivetUniLogo />
+                          </span>
+                          <p className="text-xs capitalize font-medium text-gray-700">
+                            {language === "ar"
+                              ? university?.uniType === "private"
+                                ? "جامعة خاصة"
+                                : "جامعة حكومية"
+                              : university?.uniType === "private"
+                              ? "Private University"
+                              : "Public University"}
+                          </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="grid grid-cols-3  gap-3 justify-start">
+                      {dynamicFeatures.flat().map((feature, index) => (
+                        <div
+                          key={index}
+                          className={`${
+                            language === "ar" ? "" : ""
+                          }flex items-center gap-1`}
+                        >
+                          <span className="rounded-full w-7 h-7 flex items-center justify-center border">
+                            {feature.icon}
+                          </span>
+                          <div
+                            className={`${
+                              language === "ar" ? "mr-[2.5px]" : "ml-1"
+                            }`}
+                          >
+                            <p className="text-[0.55rem] font-medium">
+                              {feature.title}
+                            </p>
+                            <p className="text-[0.55rem] font-medium">
+                              {feature.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="w-full h-[1px] bg-gray-300"></div>
+
+                  <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
+                    <button
+                      onClick={() => {
+                        handleApplyClick(
+                          university?.uniName,
+                          data?.countryName
+                        );
+                        handleNavigation(
+                          true,
+                          university?._id,
+                          "University",
+                          university?.customURLSlug?.en
+                        );
+                      }}
+                      className="bg-slateBlue text-white text-xs py-1 px-2 rounded-full"
+                    >
+                      {t("applyNow")}
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleNavigation(
+                          false,
+                          university?._id,
+                          "University",
+                          university?.customURLSlug?.en
+                        )
+                      }
+                      className="text-black text-xs px-2 py-1 hover:font-medium rounded-full border border-gray-800"
+                    >
+                      {t("learnMore")}
+                    </button>
                   </div>
                 </div>
-              
-                <div className="w-full h-[1px] bg-gray-300"></div>
-              
-                <div className="grid gap-2 px-2 grid-cols-2 mb-3 mt-2">
-                  <button
-                    onClick={() => {
-                      handleApplyClick(university?.uniName, data?.countryName);
-                      handleNavigation(true, university?._id, "University", university?.customURLSlug?.en);
-                    }}
-                    className="bg-slateBlue text-white text-xs py-1 px-2 rounded-full"
-                  >
-                    {t("applyNow")}
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleNavigation(false, university?._id, "University", university?.customURLSlug?.en)
-                    }
-                    className="text-black text-xs px-2 py-1 hover:font-medium rounded-full border border-gray-800"
-                  >
-                    {t("learnMore")}
-                  </button>
-                </div>
-              </div>
-              
               );
             })}
           </div>

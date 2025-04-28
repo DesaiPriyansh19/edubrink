@@ -249,7 +249,7 @@ export default function AddUniversity() {
     if (!formData.uniType) {
       errors["uniType"] = "University Type is required";
     }
-  
+
     if (!formData.uniMainImage) {
       errors["uniMainImage"] = "Main Image URL is required";
     }
@@ -650,7 +650,6 @@ export default function AddUniversity() {
               error={validationErrors["uniDeadline"]}
             />
 
-          
             <InputField
               label="Living Cost (per month)"
               type="text"
