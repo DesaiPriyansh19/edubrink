@@ -60,6 +60,9 @@ function ResultsMajors({
             MajorDuration: filterProp.MajorDuration,
             minBudget: filterProp.minBudget,
             maxBudget: filterProp.maxBudget,
+            IntakeYear: filterProp.IntakeYear,
+            IntakeMonth: filterProp.IntakeMonth,
+            StudyLevel: filterProp.StudyLevel,
             searchQuery: filterProp.searchQuery
               ? JSON.stringify(filterProp.searchQuery)
               : undefined,
@@ -133,6 +136,9 @@ function ResultsMajors({
         MajorDuration: filterProp.MajorDuration,
         minBudget: filterProp.minBudget,
         maxBudget: filterProp.maxBudget,
+        IntakeYear: filterProp.IntakeYear,
+        IntakeMonth: filterProp.IntakeMonth,
+        StudyLevel: filterProp.StudyLevel,
         searchQuery: filterProp.searchQuery
           ? JSON.stringify(filterProp.searchQuery)
           : undefined,

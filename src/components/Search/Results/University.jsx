@@ -300,10 +300,10 @@ const CollegeCard = ({ data, loading }) => {
                       </span>
                       <p className="text-[9px] font-medium text-gray-700">
                         {language === "ar"
-                          ? university?.uniType === "Private"
+                          ? university?.uniType === "private"
                             ? "جامعة خاصة"
                             : "جامعة حكومية"
-                          : university?.uniType === "Private"
+                          : university?.uniType === "private"
                           ? "Private University"
                           : "Public University"}
                       </p>
@@ -441,7 +441,7 @@ function Univrsiry({
           filterProp.minBudget !== 0 ? filterProp.minBudget : undefined,
         maxBudget:
           filterProp.maxBudget !== 100000 ? filterProp.maxBudget : undefined,
-        CourseDuration: filterProp.CourseDuration,
+        MajorDuration: filterProp.MajorDuration,
         // Add search query if it exists
         searchQuery:
           filterProp.searchQuery &&
@@ -569,7 +569,7 @@ function Univrsiry({
           filterProp.minBudget !== 0 ? filterProp.minBudget : undefined,
         maxBudget:
           filterProp.maxBudget !== 100000 ? filterProp.maxBudget : undefined,
-        CourseDuration: filterProp.CourseDuration,
+        MajorDuration: filterProp.MajorDuration,
         // Add search query if it exists
         searchQuery:
           filterProp.searchQuery &&

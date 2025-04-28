@@ -61,10 +61,10 @@ function SearchResults() {
         universityFilters.EntranceExam = filterProp.EntranceExam;
       if (filterProp.ModeOfStudy)
         universityFilters.ModeOfStudy = filterProp.ModeOfStudy;
-      if (filterProp.minBudget !== 0)
-        universityFilters.minBudget = filterProp.minBudget;
-      if (filterProp.maxBudget !== 100000)
-        universityFilters.maxBudget = filterProp.maxBudget;
+      // if (filterProp.minBudget !== 0)
+      //   universityFilters.minBudget = filterProp.minBudget;
+      // if (filterProp.maxBudget !== 100000)
+      //   universityFilters.maxBudget = filterProp.maxBudget;
       if (filterProp.MajorDuration)
         // Changed from CourseDuration
         universityFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration
@@ -91,6 +91,13 @@ function SearchResults() {
         majorFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration
       if (filterProp.minBudget) majorFilters.minBudget = filterProp.minBudget;
       if (filterProp.maxBudget) majorFilters.maxBudget = filterProp.maxBudget;
+
+      if (filterProp.StudyLevel)
+        majorFilters.StudyLevel = filterProp.StudyLevel;
+      if (filterProp.IntakeYear)
+        majorFilters.IntakeYear = filterProp.IntakeYear;
+      if (filterProp.IntakeMonth)
+        majorFilters.IntakeMonth = filterProp.IntakeMonth;
 
       // Handle searchQuery for majors
       if (

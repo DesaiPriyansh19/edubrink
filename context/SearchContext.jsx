@@ -17,7 +17,7 @@ export const SearchProvider = ({ children }) => {
     IntakeYear: null,
     IntakeMonth: "",
     ModeOfStudy: "",
-    CourseDuration: "",
+    MajorDuration: "",
     minBudget: 0,
     maxBudget: 100000,
   };
