@@ -66,7 +66,6 @@ const CountryPopularCourse = ({ data }) => {
       <div className="flex flex-wrap justify-start gap-3">
         {data?.universities?.map((university, index) => {
           return university?.courseId?.map((course, courseIndex) => {
-            console.log(course);
             const dynamicFeatures = [
               {
                 icon: <DollerRounded />,

@@ -88,7 +88,6 @@ const CountryPopularUniversity = ({ data }) => {
           <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-4">
             {/* Iterate through universities */}
             {data?.universities?.map((university, idx) => {
-              console.log(university);
               const dynamicFeatures = [
                 {
                   icon: <DollerRounded />,
