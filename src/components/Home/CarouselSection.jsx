@@ -13,24 +13,28 @@ const isWindows = navigator.userAgent.includes("Windows");
 // Default countries to show immediately while API loads
 const defaultCountries = [
   {
-    countryName: { en: "United States", ar: "الولايات المتحدة" },
-    countryCode: "USA",
-    customURLSlug: { en: "united-states", ar: "الولايات-المتحدة" },
+    countryName: { en: "United Arab Emirates", ar: "الإمارات العربية المتحدة" },
+    countryCode: "ARE",
+    customURLSlug: {
+      en: "united-arab-emirates",
+      ar: "الإمارات-العربية-المتحدة",
+    },
   },
+
   {
     countryName: { en: "United Kingdom", ar: "المملكة المتحدة" },
     countryCode: "GBR",
     customURLSlug: { en: "united-kingdom", ar: "المملكة-المتحدة" },
   },
   {
-    countryName: { en: "Germany", ar: "ألمانيا" },
-    countryCode: "DEU",
-    customURLSlug: { en: "germany", ar: "ألمانيا" },
+    countryName: { en: "Northern Cyprus", ar: "قبرص الشمالية" },
+    countryCode: "CYP",
+    customURLSlug: { en: "northern-cyprus", ar: "قبرص-الشمالية" },
   },
   {
-    countryName: { en: "India", ar: "الهند" },
-    countryCode: "IND",
-    customURLSlug: { en: "india", ar: "الهند" },
+    countryName: { en: "Türkiye", ar: "تركيا" },
+    countryCode: "TUR",
+    customURLSlug: { en: "turkiye", ar: "تركيا" },
   },
   {
     countryName: { en: "Azerbaijan", ar: "أذربيجان" },
@@ -62,20 +66,6 @@ const fetchCountries = async () => {
   return res.json();
 };
 
-const SkeletonLoader = () => (
-  <div className="flex gap-4 sm:gap-6">
-    {Array.from({ length: 6 }).map((_, index) => (
-      <div
-        key={index}
-        className="flex-shrink-0 flex flex-col items-center w-24 sm:w-28 md:w-28 lg:w-32"
-      >
-        <div className="w-20 h-20 rounded-full bg-gray-200 animate-none mb-3"></div>
-        <div className="w-16 h-4 bg-gray-200 animate-none rounded"></div>
-      </div>
-    ))}
-  </div>
-);
-
 const CarouselSection = () => {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -95,19 +85,17 @@ const CarouselSection = () => {
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: false,
     retry: 2,
-    onSuccess: (data) => {
-      // Only update if we got valid data
-      if (Array.isArray(data) && data.length > 0) {
-        setDisplayedCountries(data);
-      } else if (
-        data?.data &&
-        Array.isArray(data.data) &&
-        data.data.length > 0
-      ) {
-        setDisplayedCountries(data.data);
-      }
-    },
   });
+
+  useEffect(() => {
+    if (data) {
+      const countriesData = Array.isArray(data) ? data : data?.data;
+
+      if (Array.isArray(countriesData)) {
+        setDisplayedCountries(countriesData);
+      }
+    }
+  }, [data]);
 
   // Detect screen size
   useEffect(() => {
