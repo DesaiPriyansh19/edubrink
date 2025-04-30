@@ -90,7 +90,8 @@ function SearchResults() {
         // Changed from CourseDuration
         majorFilters.MajorDuration = filterProp.MajorDuration; // Changed from CourseDuration
       if (filterProp.minBudget) majorFilters.minBudget = filterProp.minBudget;
-      if (filterProp.maxBudget) majorFilters.maxBudget = filterProp.maxBudget;
+      if (filterProp.maxBudget !== 100000)
+        majorFilters.maxBudget = filterProp.maxBudget;
 
       if (filterProp.StudyLevel)
         majorFilters.StudyLevel = filterProp.StudyLevel;
@@ -106,6 +107,20 @@ function SearchResults() {
       ) {
         majorFilters.searchQuery = JSON.stringify(filterProp.searchQuery);
       }
+
+      const hasFilterProp =
+        // Check country filters
+        (countryFilters.Destination && countryFilters.Destination.length > 0) ||
+        // Check university filters
+        Object.keys(universityFilters).length > 0 ||
+        // Check major filters (excluding universityIds which is always set)
+        Object.keys(majorFilters).filter((key) => key !== "universityIds")
+          .length > 0;
+
+      console.log("Has filter properties:", hasFilterProp);
+
+      // Pass hasFilterProp to the major API endpoint
+      majorFilters.hasFilterProp = hasFilterProp;
 
       // ✅ Step 1: Fetch Countries First
       const { data: countryData } = await axios.get(

@@ -33,7 +33,6 @@ function ResultsMajors({
   const loaderRef = useRef(null);
   const observer = useRef(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
-  console.log(majors);
 
   // Keep track of previous filter state to detect changes
   const filterPropRef = useRef(filterProp);
@@ -67,6 +66,26 @@ function ResultsMajors({
               ? JSON.stringify(filterProp.searchQuery)
               : undefined,
           };
+          const hasFilterProp =
+            !!filterProp.ModeOfStudy ||
+            !!filterProp.MajorDuration ||
+            !!filterProp.EntranceExam ||
+            !!filterProp.UniType ||
+            (filterProp.minBudget !== 0 &&
+              filterProp.minBudget !== undefined) ||
+            (filterProp.maxBudget !== 100000 &&
+              filterProp.maxBudget !== undefined) ||
+            !!filterProp.IntakeYear ||
+            !!filterProp.IntakeMonth ||
+            !!(filterProp.Destination && filterProp.Destination.length > 0) ||
+            (filterProp.StudyLevel && filterProp.StudyLevel !== "All") ||
+            !!(
+              filterProp.searchQuery &&
+              (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+            );
+
+          // Add the hasFilterProp flag to the majorFilters
+          majorFilters.hasFilterProp = hasFilterProp;
 
           // Make API request with all filters
           const response = await axios.get(`${API_BASE_URL}/major`, {
@@ -144,6 +163,26 @@ function ResultsMajors({
           : undefined,
         page: page + 1, // Next page
       };
+
+      const hasFilterProp =
+        !!filterProp.ModeOfStudy ||
+        !!filterProp.MajorDuration ||
+        !!filterProp.EntranceExam ||
+        !!filterProp.UniType ||
+        (filterProp.minBudget !== 0 && filterProp.minBudget !== undefined) ||
+        (filterProp.maxBudget !== 100000 &&
+          filterProp.maxBudget !== undefined) ||
+        !!filterProp.IntakeYear ||
+        !!filterProp.IntakeMonth ||
+        !!(filterProp.Destination && filterProp.Destination.length > 0) ||
+        (filterProp.StudyLevel && filterProp.StudyLevel !== "All") ||
+        !!(
+          filterProp.searchQuery &&
+          (filterProp.searchQuery.en || filterProp.searchQuery.ar)
+        );
+
+      // Add the hasFilterProp flag to the majorFilters
+      majorFilters.hasFilterProp = hasFilterProp;
 
       // Make API request with all filters
       const response = await axios.get(`${API_BASE_URL}/major`, {
