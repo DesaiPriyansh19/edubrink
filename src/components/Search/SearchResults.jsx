@@ -55,7 +55,7 @@ function SearchResults() {
       const universityFilters = {};
 
       // Only add properties that have actual values
-      if (filterProp.StudyLevel)
+      if  (filterProp.StudyLevel && filterProp.StudyLevel !== "All")
         universityFilters.StudyLevel = filterProp.StudyLevel;
       if (filterProp.EntranceExam)
         universityFilters.EntranceExam = filterProp.EntranceExam;
@@ -93,7 +93,7 @@ function SearchResults() {
       if (filterProp.maxBudget !== 100000)
         majorFilters.maxBudget = filterProp.maxBudget;
 
-      if (filterProp.StudyLevel)
+      if  (filterProp.StudyLevel && filterProp.StudyLevel !== "All")
         majorFilters.StudyLevel = filterProp.StudyLevel;
       if (filterProp.IntakeYear)
         majorFilters.IntakeYear = filterProp.IntakeYear;

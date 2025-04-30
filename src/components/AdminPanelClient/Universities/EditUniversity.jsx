@@ -78,6 +78,7 @@ const initialFormData = {
   preparatory_year: false,
   preparatory_year_fees: "",
   housing_available: false,
+  entranceExamRequired: false,
   living_cost: "",
   uniFeatured: false,
   scholarshipsAvailable: false,
@@ -226,6 +227,7 @@ export default function EditUniversity() {
         preparatory_year_fees: data?.preparatory_year_fees || "",
         housing_available: data?.housing_available ?? false,
         living_cost: data?.living_cost || "",
+        entranceExamRequired: data?.entranceExamRequired || false,
         uniFeatured: data?.uniFeatured ?? false,
         scholarshipType: data?.scholarshipType || "none",
         scholarshipPercentage: data?.scholarshipPercentage || "",
@@ -1347,7 +1349,7 @@ export default function EditUniversity() {
                   label="Entrance Exam Required"
                   type="checkbox"
                   name="entranceExamRequired"
-                  checked={formData.entranceExamRequired}
+                  checked={formData?.entranceExamRequired}
                   onChange={handleInputChange}
                   variant={3}
                 />

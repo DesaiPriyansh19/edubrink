@@ -335,18 +335,18 @@ export default function UniCRUD() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(itemsPerPage)].map((_, index) => (
                 <div key={index} className="border rounded-lg overflow-hidden">
-                  <div className="aspect-video bg-gray-200 animate-pulse"></div>
+                  <div className="aspect-video bg-gray-200 "></div>
                   <div className="p-4">
-                    <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-4 w-2/3"></div>
+                    <div className="h-6 bg-gray-200 rounded  mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded  mb-4 w-2/3"></div>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <div className="h-6 w-24 bg-gray-200 rounded-full animate-pulse"></div>
-                      <div className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
-                      <div className="h-6 w-28 bg-gray-200 rounded-full animate-pulse"></div>
+                      <div className="h-6 w-24 bg-gray-200 rounded-full "></div>
+                      <div className="h-6 w-20 bg-gray-200 rounded-full "></div>
+                      <div className="h-6 w-28 bg-gray-200 rounded-full "></div>
                     </div>
                     <div className="flex justify-between">
-                      <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
-                      <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-5 w-20 bg-gray-200 rounded "></div>
+                      <div className="h-5 w-16 bg-gray-200 rounded "></div>
                     </div>
                   </div>
                 </div>

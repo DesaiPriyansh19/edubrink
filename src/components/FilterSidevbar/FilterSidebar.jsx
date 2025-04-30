@@ -10,22 +10,41 @@ import ReactSlider from "react-slider";
 import { countryFlags, getEmoji } from "../../../libs/countryFlags";
 
 // Default destinations to show while API loads
+
 const defaultDestinations = [
   {
-    countryName: { en: "United States", ar: "الولايات المتحدة" },
-    countryCode: "USA",
+    countryName: { en: "United Arab Emirates", ar: "الإمارات العربية المتحدة" },
+    countryCode: "ARE",
   },
+
   {
     countryName: { en: "United Kingdom", ar: "المملكة المتحدة" },
     countryCode: "GBR",
   },
-  { countryName: { en: "Germany", ar: "ألمانيا" }, countryCode: "DEU" },
-  { countryName: { en: "India", ar: "الهند" }, countryCode: "IND" },
-  { countryName: { en: "Azerbaijan", ar: "أذربيجان" }, countryCode: "AZE" },
-
-  { countryName: { en: "Italy", ar: "إيطاليا" }, countryCode: "ITA" },
-  { countryName: { en: "Georgia", ar: "جورجيا" }, countryCode: "GEO" },
-  { countryName: { en: "Malaysia", ar: "ماليزيا" }, countryCode: "MYS" },
+  {
+    countryName: { en: "Northern Cyprus", ar: "قبرص الشمالية" },
+    countryCode: "CYP",
+  },
+  {
+    countryName: { en: "Türkiye", ar: "تركيا" },
+    countryCode: "TUR",
+  },
+  {
+    countryName: { en: "Azerbaijan", ar: "أذربيجان" },
+    countryCode: "AZE",
+  },
+  {
+    countryName: { en: "Italy", ar: "إيطاليا" },
+    countryCode: "ITA",
+  },
+  {
+    countryName: { en: "Georgia", ar: "جورجيا" },
+    countryCode: "GEO",
+  },
+  {
+    countryName: { en: "Malaysia", ar: "ماليزيا" },
+    countryCode: "MYS",
+  },
 ];
 const isWindows = navigator.userAgent.includes("Windows");
 const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
@@ -247,6 +266,7 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
         </div>
 
         {/* Entrance Exam */}
+
         <p className="font-medium mb-2">{t("entranceExam", "Entrance Exam")}</p>
         <div className="flex space-x-4 mb-4">
           {[
@@ -256,14 +276,11 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
             <button
               key={option.en}
               onClick={() =>
-                setFilterProp((prev) => ({
-                  ...prev,
-                  EntranceExam: option.en === "Yes",
-                }))
+                handleToggleSelection("EntranceExam", option.en === "Yes")
               }
               className={`px-4 py-2 rounded-full text-sm text-black ${
                 (tempFilterProp.EntranceExam && option.en === "Yes") ||
-                (!tempFilterProp.EntranceExam && option.en === "No")
+                (tempFilterProp.EntranceExam === false && option.en === "No")
                   ? "bg-[#EDE9FE]"
                   : "bg-[#F3F4F6] hover:bg-gray-200"
               }`}
@@ -404,8 +421,8 @@ const FilterSidebar = ({ showFilter, setShowFilter, language }) => {
         <p className="font-medium mb-2">{t("modeOfStudy", "Mode of Study")}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {[
-            { en: "Full Time", ar: "دوام كامل" },
-            { en: "Distance Learning", ar: "تعلم عن بعد" },
+            { en: "Full-time", ar: "دوام كامل" },
+            { en: "Part-time", ar: "تعلم عن بعد" }, // Assuming "Distance Learning" means Part-time
             { en: "Online", ar: "عبر الإنترنت" },
             { en: "Blended", ar: "مدمج" },
           ].map((mode) => (
